@@ -26,6 +26,8 @@ featured: false
 
 image:
   focal_point: Right
+  
+url_video: "https://dominodatalab.wistia.com/medias/duhxs6epiy"
 ---
 
 **What's in Your Workflow?: Reproducible Business Analysis at Capital One**    

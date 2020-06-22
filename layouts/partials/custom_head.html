@@ -1,0 +1,5 @@
+<link rel='stylesheet' href='{{ "css/highlight-light.css" | relURL }}' title='hl-light'>
+<link rel='stylesheet' href='{{ "css/highlight-dark.css" | relURL }}' title='hl-dark' disabled>
+{{ range .Params.html_dependencies }}
+  {{ . | safeHTML }}
+{{ end }}

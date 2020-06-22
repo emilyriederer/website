@@ -1,0 +1,11 @@
+# Font style metadata
+name = "emily"
+
+# Optional Google font URL
+google_fonts = "Righteous|Lora:400,400i|Karla:400,400i,700,700i|Roboto+Mono"
+
+# Font families
+heading_font = "Lora"
+body_font = "Karla"
+nav_font = "Karla"
+mono_font = "Roboto Mono"

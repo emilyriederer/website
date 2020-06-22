@@ -19,3 +19,10 @@ pre code {
   background: none;
   font-size: 0.8rem;
 }
+
+/*disable parallax for background image on mobile*/
+@media only screen and (max-width:749px) {
+  .parallax {
+    background-attachment: inherit;
+  }
+}

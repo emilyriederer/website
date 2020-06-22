@@ -1,5 +1,5 @@
 ---
-title: satRday Chicago Organizer
+title: satRday Chicago Conference Organizer
 summary: Speaker & Sponsor lead for 2019 and 2020
 date: "2020-05-30T00:00:00Z"
 

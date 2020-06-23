@@ -7,7 +7,7 @@ subtitle: ""
 summary: "An annotated bibliography of advice for getting started with reproducible research"
 authors: []
 tags: [resources, workflow]
-categories: []
+categories: [resources, workflow]
 date: 2019-08-29
 lastmod: 2019-08-29
 featured: false
@@ -30,7 +30,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: 9c0d40d1a94471a3
+rmd_hash: 92e4b4b51ee220fb
 
 ---
 

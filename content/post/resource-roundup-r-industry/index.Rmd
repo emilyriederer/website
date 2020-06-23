@@ -7,7 +7,7 @@ subtitle: ""
 summary: "Case studies of the impact of R use on organizational culture and collaboration"
 authors: []
 tags: [resources, rstats]
-categories: []
+categories: [resources, rstats]
 date: 2019-08-30
 lastmod: 2019-08-30
 featured: false

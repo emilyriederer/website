@@ -7,7 +7,7 @@ subtitle: ""
 summary: "Conference planning tips to design a good speakers experience"
 authors: []
 tags: [speaking, notes]
-categories: []
+categories: [speaking, notes]
 date: 2019-05-07
 lastmod: 2019-05-07
 featured: false
@@ -29,7 +29,7 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
-projects: []
+projects: ['satrday']
 ---
 
 When I joined the team of co-organizers for [satRday Chicago](https://chicago2019.satrdays.org/), Chicago supeRlady [Angela Li](https://angela-li.github.io/) tasked me with managing all-things speaker. This set me reflecting on the best and worst of my own speaker experiences and I began to list out highs and lows I'd experienced. 

@@ -7,7 +7,7 @@ subtitle: ""
 summary: "Case studies of the impact of R use on organizational culture and collaboration"
 authors: []
 tags: [resources, rstats]
-categories: []
+categories: [resources, rstats]
 date: 2019-08-30
 lastmod: 2019-08-30
 featured: false
@@ -30,7 +30,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: cef7805e547e5f36
+rmd_hash: fc93e1d3d793ff1e
 
 ---
 

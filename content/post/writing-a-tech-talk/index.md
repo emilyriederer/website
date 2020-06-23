@@ -7,7 +7,7 @@ subtitle: ""
 summary: "A proposed workflow for methodically developing a good presentations"
 authors: []
 tags: [speaking, notes]
-categories: []
+categories: [speaking, notes]
 date: 2019-04-20
 lastmod: 2019-04-20
 featured: false
@@ -29,8 +29,8 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
-projects: []
-rmd_hash: 73398169248074e9
+projects: ['satrday']
+rmd_hash: e363d77a75ac2a1b
 
 ---
 

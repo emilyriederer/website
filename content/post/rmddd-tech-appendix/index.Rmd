@@ -5,7 +5,7 @@ subtitle: ""
 summary: "A recommended tech stack for implementing RMarkdown Driven Development"
 authors: []
 tags: [pkgdev, workflow, rstats, rmarkdown]
-categories: []
+categories: [pkgdev, workflow, rstats, rmarkdown]
 date: 2020-02-01
 lastmod: 2020-02-01
 featured: false

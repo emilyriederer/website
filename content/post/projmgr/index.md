@@ -5,7 +5,7 @@ subtitle: ""
 summary: "A walkthrough of using the projmgr package for GitHub-based project management via R"
 authors: []
 tags: [rstats, workflow]
-categories: []
+categories: [rstats, workflow]
 date: 2020-05-14
 lastmod: 2020-05-14
 featured: false
@@ -13,7 +13,6 @@ draft: false
 
 aliases:
   - /post/projmgr/
-  - /post/projmgr2/
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
@@ -29,7 +28,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["projmgr"]
-rmd_hash: c5f335cf07ee6c76
+rmd_hash: aa349cda9bc3b6d5
 
 ---
 
@@ -352,9 +351,9 @@ Using HTML and CSS grid, [`report_taskboard()`](https://rdrr.io/pkg/projmgr/man/
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/pkg/projmgr/man/report_taskboard.html'>report_taskboard</a></span>(<span class='k'>pkg_issues</span>, in_progress_when = <span class='nf'><a href='https://rdrr.io/pkg/projmgr/man/taskboard_helpers.html'>is_assigned_to</a></span>(<span class='s'>"emilyriederer"</span>), hover = <span class='kc'>TRUE</span>)
 </code></pre>
 
-<div class="qglzuiwmxf">
+<div class="higgtsheeg">
 
-<style>.taskboard{display: grid;grid-gap: 1%;grid-template-columns: 1fr 1fr 1fr;margin-bottom: 50px;}.head{background-color: #a9a9a9;border: 1px solid #d3d3d3;text-align: center;font-weight: strong;}.task{text-align: center;padding: 2%;margin: 2%;border: 1px solid #d3d3d3;box-shadow: 2px 2px 5px grey;transition-duration:0.5s;}.qglzuiwmxf .task:hover{margin: 0%;padding: 4%;}.qglzuiwmxf .ns{background-color:#f0e442;}.qglzuiwmxf .ip{background-color:#56b4e9;}.qglzuiwmxf .dn{background-color:#009e73;}div.taskboard a, div.taskboard a:visited{color: black;text-decoration: none;}div.taskboard a:hover{color: black;text-decoration: underline;}div.taskboard a:active{color: white;}</style>
+<style>.taskboard{display: grid;grid-gap: 1%;grid-template-columns: 1fr 1fr 1fr;margin-bottom: 50px;}.head{background-color: #a9a9a9;border: 1px solid #d3d3d3;text-align: center;font-weight: strong;}.task{text-align: center;padding: 2%;margin: 2%;border: 1px solid #d3d3d3;box-shadow: 2px 2px 5px grey;transition-duration:0.5s;}.higgtsheeg .task:hover{margin: 0%;padding: 4%;}.higgtsheeg .ns{background-color:#f0e442;}.higgtsheeg .ip{background-color:#56b4e9;}.higgtsheeg .dn{background-color:#009e73;}div.taskboard a, div.taskboard a:visited{color: black;text-decoration: none;}div.taskboard a:hover{color: black;text-decoration: underline;}div.taskboard a:active{color: white;}</style>
 
 <div class="taskboard">
 

@@ -7,7 +7,7 @@ subtitle: ""
 summary: "A workflow for refactoring one-time analyses to sustainable data products"
 authors: []
 tags: [pkgdev, rmarkdown, rstats, workflow]
-categories: []
+categories: [pkgdev, rmarkdown, rstats, workflow]
 date: 2019-05-04
 lastmod: 2019-05-04
 featured: false
@@ -30,7 +30,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: b94dd7a97ff8d278
+rmd_hash: 37e46604c5dbd325
 
 ---
 

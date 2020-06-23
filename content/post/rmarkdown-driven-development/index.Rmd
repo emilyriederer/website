@@ -7,7 +7,7 @@ subtitle: ""
 summary: "A workflow for refactoring one-time analyses to sustainable data products"
 authors: []
 tags: [pkgdev, rmarkdown, rstats, workflow]
-categories: []
+categories: [pkgdev, rmarkdown, rstats, workflow]
 date: 2019-05-04
 lastmod: 2019-05-04
 featured: false

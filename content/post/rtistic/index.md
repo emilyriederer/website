@@ -5,7 +5,7 @@ subtitle: ""
 summary: "A walkthrough of a GitHub template for making your own RMarkdown and ggplot2 theme package"
 authors: []
 tags: [rstats, pkgdev]
-categories: []
+categories: [rstats, pkgdev]
 date: 2019-05-25
 lastmod: 2020-05-25
 featured: false
@@ -28,7 +28,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["rtistic"]
-rmd_hash: ff76495d7d4df01d
+rmd_hash: 52fee08ed6c8da4b
 
 ---
 

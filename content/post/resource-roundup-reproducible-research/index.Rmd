@@ -7,7 +7,7 @@ subtitle: ""
 summary: "An annotated bibliography of advice for getting started with reproducible research"
 authors: []
 tags: [resources, workflow]
-categories: []
+categories: [resources, workflow]
 date: 2019-08-29
 lastmod: 2019-08-29
 featured: false

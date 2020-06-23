@@ -5,7 +5,7 @@ subtitle: ""
 summary: "A walkthrough of a GitHub template for making your own RMarkdown and ggplot2 theme package"
 authors: []
 tags: [rstats, pkgdev]
-categories: []
+categories: [rstats, pkgdev]
 date: 2019-05-25
 lastmod: 2020-05-25
 featured: false

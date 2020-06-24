@@ -12,6 +12,14 @@ links:
   icon_pack: fab
   name: Follow
   url: https://twitter.com/satRdays_org
+- icon: file
+  icon-pack: far
+  name: Post on Speaker Experience
+  url: /post/supporting-speakers/
+- icon: file
+  icon-pack: far
+  name: Post on Speaker Mentorship
+  url: /post/writing-a-tech-talk/
 ---
 
 I served as the Speaker & Sponsor lead for 2019 and 2020 satRday Chicago conferences.
@@ -21,8 +29,8 @@ I served as the Speaker & Sponsor lead for 2019 and 2020 satRday Chicago confere
 https://chicago2019.satrdays.org/
 
 - Launched inaugural even as dual-track conference with 200+ attendees
-- Led speaker recruitment, program curation, and speaker communication for 35 speakers and 2 keynotes
-- Envisioned and implemented novel speaker mentorship progam to enhance the speaker experience and promote diversity an inclusion of first-time speakers
+- Led speaker recruitment, program curation, and speaker communication for 35 speakers and 2 keynotes. 
+- Envisioned and implemented novel speaker mentorship progam to enhance the speaker experience and promote diversity an inclusion of first-time speakers. 
 
 ## 2020 Conference Highlights
 

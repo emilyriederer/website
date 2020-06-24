@@ -1,0 +1,39 @@
+---
+output: hugodown::md_document
+# Documentation: https://sourcethemes.com/academic/docs/managing-content/
+
+title: "Resource Round-Up: Passive Documentation"
+subtitle: ""
+summary: "Leaving docum"
+authors: []
+tags: [resources, rstats]
+categories: [resources, rstats]
+date: 2020-06-24
+lastmod: 2020-06-24
+featured: false
+draft: true
+
+# Featured image
+# To use, add an image named `featured.jpg/png` to your page's folder.
+# Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
+image:
+  caption: "Photo by [Sharon McCutcheon](https://unsplash.com/@sharonmccutcheon?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText) on Unsplash"
+  focal_point: ""
+  preview_only: false
+
+# Projects (optional).
+#   Associate this post with one or more of your projects.
+#   Simply enter your project's folder or file name without extension.
+#   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
+#   Otherwise, set `projects = []`.
+---
+
+## Passive Documentation
+
+Andy Oram [Getting Started with InnerSource](https://www.oreilly.com/programming/free/getting-started-with-innersource.csp)
+
+Jenny Bryan [Naming Things](https://speakerdeck.com/jennybc/how-to-name-files)
+
+Carl Anderson [Data Dictionary: A How To and Best Practices](https://medium.com/@leapingllamas/data-dictionary-a-how-to-and-best-practices-a09a685dcd61)
+
+`roxytest` [package](https://github.com/mikldk/roxytest)

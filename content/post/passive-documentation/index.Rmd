@@ -28,9 +28,13 @@ image:
 #   Otherwise, set `projects = []`.
 ---
 
+I've become intrigued with the simple problem of how to write documentation that lasts forever without really trying. 
+
 ## Passive Documentation
 
 Andy Oram [Getting Started with InnerSource](https://www.oreilly.com/programming/free/getting-started-with-innersource.csp)
+
+Etsy [Immutable Documentation](https://codeascraft.com/2018/10/10/etsys-experiment-with-immutable-documentation/)
 
 Jenny Bryan [Naming Things](https://speakerdeck.com/jennybc/how-to-name-files)
 

@@ -11,7 +11,6 @@ categories: [resources, rstats]
 date: 2020-07-03
 lastmod: 2020-07-03
 featured: false
-draft: true
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
@@ -26,7 +25,7 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
-rmd_hash: 753eac90ee085a22
+rmd_hash: 8956663a3117df2d
 
 ---
 

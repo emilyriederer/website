@@ -11,7 +11,6 @@ categories: [resources, rstats]
 date: 2020-07-03
 lastmod: 2020-07-03
 featured: false
-draft: false
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.

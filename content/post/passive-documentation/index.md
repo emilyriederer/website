@@ -25,7 +25,7 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
-rmd_hash: 8956663a3117df2d
+rmd_hash: 5f6575c9f326374f
 
 ---
 
@@ -61,7 +61,7 @@ While the linked presentation focuses on files within a single project, standard
 [**Understanding the InnerSource Checklist**](http://innersourcecommons.org/checklist/)  
 Silona Bonewald
 
-I've previously praised this book about PayPal's innersource journey in my post on [reproducible research resources](post/resource-roundup-reproducible-research/). More specifically to this conversation, the book introduces *passive documentation* as an antidote to the burden of maintainership and user support for innersource developers. Passive documentation is the practice of pushing all user support to public and openly accessible forums (e.g. GitHub issues versus Slack DMs) so that future users can self-service from the conversations of past users with project maintainers (just as StackOverflow and GitHub issues are used in open source). This relationship can be formalized in many ways, such as labeling issues with a special tag (such as "faq") or asking users to instead as questions by editing a wiki and sending a PR to a markdown file.
+I've previously praised this book about PayPal's innersource journey in my post on [reproducible research resources](/post/resource-roundup-reproducible-research/). More specifically to this conversation, the book introduces *passive documentation* as an antidote to the burden of maintainership and user support for innersource developers. Passive documentation is the practice of pushing all user support to public and openly accessible forums (e.g. GitHub issues versus Slack DMs) so that future users can self-service from the conversations of past users with project maintainers (just as StackOverflow and GitHub issues are used in open source). This relationship can be formalized in many ways, such as labeling issues with a special tag (such as "faq") or asking users to instead as questions by editing a wiki and sending a PR to a markdown file.
 
 Lasting Documentation
 ---------------------

@@ -19,7 +19,7 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Photo by [Sharon McCutcheon](https://unsplash.com/@sharonmccutcheon?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText) on Unsplash"
+  caption: "Photo by [Sharon McCutcheon](https://unsplash.com/@sharonmccutcheon) on Unsplash"
   focal_point: ""
   preview_only: false
 
@@ -28,7 +28,7 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
-rmd_hash: a4afcc6072bfbb8d
+rmd_hash: 558c95a2ad26e542
 
 ---
 

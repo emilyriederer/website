@@ -12,6 +12,9 @@ date: 2020-07-03
 lastmod: 2020-07-03
 featured: false
 
+aliases:
+  - /post/passive-documentation/
+
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
@@ -25,7 +28,7 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
-rmd_hash: 5f6575c9f326374f
+rmd_hash: a4afcc6072bfbb8d
 
 ---
 

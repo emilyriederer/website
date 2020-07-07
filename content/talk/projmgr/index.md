@@ -34,7 +34,7 @@ links:
   icon_pack: fab
   name: Follow
   url: https://twitter.com/useR2020stl
-url_video: ""
+url_video: "https://www.youtube.com/watch?v=8OfaIOICD20"
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.

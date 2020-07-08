@@ -18,7 +18,7 @@ organizations:
   url: ""
 
 # Short bio (displayed in user profile at end of posts)
-bio: Interested in reproducible research, causal inference, and feature engineering
+bio: ""
 
 interests:
 - Reproducible Research

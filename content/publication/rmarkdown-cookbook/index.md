@@ -17,7 +17,7 @@ publishDate: "2017-01-01T00:00:00Z"
 publication_types: ["5"]
 
 # Publication name and optional abbreviated publication name.
-publication: "Taylor & Francis CRC Press"
+publication: "Chapman & Hall / CRC Press"
 publication_short: "This book is designed to provide a range of examples of how to extend the functionality of your R Markdown documents. As a cookbook, this guide is recommended to new or intermediate R Markdown users who desire to enhance the efficiency of using R Markdown and also explore the power of R Markdown."
 
 abstract: "R Markdown is a powerful tool for combining analysis and reporting into the single document in the spirit of literate programming and reproducible research. Since the birth of the rmarkdown package in early 2014, R Markdown has grown substantially from a package that supports a few output formats (such as HTML, PDF, and Word) to an extensive and diverse ecosystem that enables the creation of books, blogs, scientific articles, websites, and more. Due to its rapid success, this ecosystem is hard to learn completely meaning that R Markdown users, from novices to advanced users, likely do not know all that these packages have to offer. The R Markdown Cookbook confronts this gap by showcasing short, practical examples of wide-ranging tips and tricks to get the most out of these tools."
@@ -26,12 +26,18 @@ abstract: "R Markdown is a powerful tool for combining analysis and reporting in
 summary: "This cookbook contains tips and tricks to help you get the most out of R Markdown. Topics include the automated generation of content (diagrams, text), customizing format (Pandoc, HTML, and LaTeX templates), workflow improvements (modularizing child documents, cross-referencing code chunks, chunk caching), modifying rendering behavior with hooks, and using alternative language engines."
 
 tags:
-- Source Themes
+- rstats
 featured: false
 
 links:
- - name: "Read Online"
+ - icon: "book"
+   icon_pack: "fa"
+   name: "Read Online"
    url: "https://bookdown.org/yihui/rmarkdown-cookbook/"
+ - icon: "globe"
+   icon_pack: "fas"
+   name: "Publisher Site"
+   url: https://www.routledge.com/R-Markdown-Cookbook/Xie-Dervieux-Riederer/p/book/9780367563820
 url_pdf: ''
 url_code: ''
 url_dataset: ''

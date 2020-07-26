@@ -176,7 +176,7 @@ text_demo <- function() {
 }
 ```
 
-We can follow the same pattern to create a module for the plot itself consisting of a UI (`plot_ui`), a server (`plot_server`), and a testing function (`plot_demo`). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file `mod-plot.R`: https://github.com/emilyriederer/shiny-modules-flights-demo/blob/master/mod-plot.R.
+We can follow the same pattern to create a module for the plot itself consisting of a UI (`plot_ui`), a server (`plot_server`), and a testing function (`plot_demo`). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file [`mod-plot.R`]( https://github.com/emilyriederer/shiny-modules-flights-demo/blob/master/mod-plot.R):
 
 Once again, we can run that self-contained file and then execute `plot_demo()` to run our mini-application. This time, it is more interactive. We can click the "Download" button and ensure that our download feature is working.
 

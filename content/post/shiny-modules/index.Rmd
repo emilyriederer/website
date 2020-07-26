@@ -5,7 +5,7 @@ subtitle: ""
 summary: "Don't believe the documentation! Shiny modules aren't just for advanced users; they might just be a great entry point for development"
 authors: []
 tags: [shiny, rstats, workflow]
-categories: []
+categories: [shiny, rstats, workflow]
 date: 2020-07-26
 lastmod: 2020-07-26
 featured: false

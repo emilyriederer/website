@@ -5,7 +5,7 @@ subtitle: ""
 summary: "A few tips and tools for finding the right selectors to style in RMarkdown"
 authors: []
 tags: [rmarkdown, rstats]
-categories: []
+categories: [rmarkdown, rstats]
 date: 2020-06-30
 lastmod: 2020-06-30
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: d920291f7e47210c
+rmd_hash: e4568f4853721f6c
 
 ---
 

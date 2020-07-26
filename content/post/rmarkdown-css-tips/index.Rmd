@@ -5,7 +5,7 @@ subtitle: ""
 summary: "A few tips and tools for finding the right selectors to style in RMarkdown"
 authors: []
 tags: [rmarkdown, rstats]
-categories: []
+categories: [rmarkdown, rstats]
 date: 2020-06-30
 lastmod: 2020-06-30
 featured: false

@@ -5,7 +5,7 @@ subtitle: ""
 summary: "Don't believe the documentation! Shiny modules aren't just for advanced users; they might just be a great entry point for development"
 authors: []
 tags: [shiny, rstats, workflow]
-categories: []
+categories: [shiny, rstats, workflow]
 date: 2020-07-26
 lastmod: 2020-07-26
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: f4e632c88b199a07
+rmd_hash: c4cd4a45edc4c05e
 
 ---
 
@@ -207,7 +207,7 @@ I saved the follow in a file called `mod-test.R`:
 
 </div>
 
-We can follow the same pattern to create a module for the plot itself consisting of a UI (`plot_ui`), a server (`plot_server`), and a testing function (`plot_demo`). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file `mod-plot.R`: <a href="https://github.com/emilyriederer/shiny-modules-flights-demo/blob/master/mod-plot.R" class="uri">https://github.com/emilyriederer/shiny-modules-flights-demo/blob/master/mod-plot.R</a>.
+We can follow the same pattern to create a module for the plot itself consisting of a UI (`plot_ui`), a server (`plot_server`), and a testing function (`plot_demo`). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file [`mod-plot.R`](https://github.com/emilyriederer/shiny-modules-flights-demo/blob/master/mod-plot.R):
 
 Once again, we can run that self-contained file and then execute `plot_demo()` to run our mini-application. This time, it is more interactive. We can click the "Download" button and ensure that our download feature is working.
 

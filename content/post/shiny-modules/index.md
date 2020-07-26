@@ -11,6 +11,7 @@ lastmod: 2020-07-26
 featured: false
 draft: false
 aliases:
+  - /tutorial/shiny-modules/
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
@@ -26,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: c4cd4a45edc4c05e
+rmd_hash: b55239b2693db35b
 
 ---
 

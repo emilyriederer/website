@@ -1,0 +1,306 @@
+---
+output: hugodown::md_document
+title: "A beginner's guide to Shiny modules"
+subtitle: ""
+summary: "Don't believe the documentation! Shiny modules aren't just for advanced users; they might just be a great entry point for development"
+authors: []
+tags: [shiny, rstats, workflow]
+categories: []
+date: 2020-07-26
+lastmod: 2020-07-26
+featured: false
+draft: true
+aliases:
+
+# Featured image
+# To use, add an image named `featured.jpg/png` to your page's folder.
+# Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
+image:
+  caption: ""
+  focal_point: ""
+  preview_only: true
+
+# Projects (optional).
+#   Associate this post with one or more of your projects.
+#   Simply enter your project's folder or file name without extension.
+#   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
+#   Otherwise, set `projects = []`.
+projects: [""]
+---
+
+```{r echo = FALSE}
+library(knitr)
+opts_chunk$set(warning = FALSE, message = FALSE, error = FALSE)
+```
+
+
+Recently, I argued the case on Twitter that Shiny modules are not an advanced topic and can actually be a great way for novice Shiny developers to start building more complex applications.
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">My Shiny hot take is that modules are **not** an advanced topic. IMHO it’s so much easier and more natural for <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> users to write small, modular functions that they can independently play with and test than huge monolithic apps (1/3)</p>&mdash; Emily Riederer (@EmilyRiederer) <a href="https://twitter.com/EmilyRiederer/status/1286072799463911424?ref_src=twsrc%5Etfw">July 22, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+The good people of [#rstats Twitter](https://twitter.com/search?q=%23rstats) helped me refine this thesis a bit with a few key caveats. If you already are an R user who likes to **think and write functions** and **understand Shiny basics** (i.e. the basics of reactivity come first no matter what), then modules **for certain types of tasks** (discussed at the end of this post) are an excellent way to up your game. 
+
+In fact, when I first tried to learn Shiny, the monolithic scripts and *lack* of function-based thinking in introductory materials was something that really tripped me up because it felt so unlike normal R programming. So, not only is it *possible* to learn modules early, it may actually be decidedly easier than the alternative depending on your frame of mind.
+
+In this post, I walk through a toy example of building a reporting app from the `flights` data in the `nycflights13` package to demonstrate how modules help scale basic Shiny skills. The recurring theme we will discuss are that modules help novice developers:
+
+- focus on smaller, narrower tasks at a time
+- test out and experiment with small pieces in isolation for easier debugging
+- avoid massively nested blocks of code that can arise in Shiny app development
+
+In effect, I aim to demonstrate a workflow and encourage use of modules for newer Shiny users. I do not aim to *teach* Shiny or module development itself, persay. For that, I recommend the [Shiny documentation](https://shiny.rstudio.com/) and Hadley Wickham's [Mastering Shiny book](https://mastering-shiny.org/).
+
+## Why Modules?
+
+In effect, you can think of modules as the "function-ization" of a set of Shiny UI and server elements. You may wonder why you cannot just accomplish this with the normal functions as you use in other R programming. The reason for this is a bit more technical. If you are interested, it is explained well in *Mastering Shiny*. However, I believe that it's only the "why functions won't work" part of Shiny modules that make them appear to be an advanced topic. If you see the value of writing functions, you are more than ready to take advantage of modules in app development.
+
+## Motivating Example
+
+For the sake of argument, let's pretend that we work for an airline and are tasked with building a basic dashboard to track various measures of travel delays against preset thresholds. We have the following requirements:
+
+- Let users pick a month of interest to visualize 
+- For each^[In the spirit of "don't repeat yourself", any time you have the phrase "for each" in your requirements, it's a strong signal that modules might make your work a good bit easier.] metric of interest, users should:
+  + See a time-series plot of the average daily value of the metric
+  + Click a download button to download a PNG of the plot
+  + Read a text summary that reports the number of days the value breached the threshold
+- The metrics of interest are:
+  + Average departure delay
+  + Average arrival delay
+  + Proportion of daily flights with an arrival delay exceeding 5 minutes
+  
+The completed application is hosted [here, on shinyapps.io,](https://emilyriederer.shinyapps.io/shiny-modules-demo/)^[If I stop hosting the app in the future and this link does not work, the easiest way to run the app is by going to the repo, copying the code in the file `flights-app-single-file.R` and running it locally.] and the underlying code can be read [on GitHub](https://github.com/emilyriederer/shiny-modules-flights-demo). 
+
+Below is a preview of the final application. It isn't going to win any beauty contests; I kept the layout and styling to a minimum so we could focus on modules in the code.
+
+![](app-photo.PNG)
+
+## Set-Up
+
+```{r}
+library(shiny)
+library(nycflights13)
+library(dplyr)
+library(ggplot2)
+```
+
+For any of the explanation below to make sense, it will help to familiarize yourself with the data. We filter the `flights` data down to a single airline and aggregate the results by day.
+
+```{r}
+ua_data <-
+  nycflights13::flights %>%
+  filter(carrier == "UA") %>%
+  mutate(ind_arr_delay = (arr_delay > 5)) %>%
+  group_by(year, month, day) %>%
+  summarize(
+    n = n(),
+    across(ends_with("delay"), mean, na.rm = TRUE)
+    ) %>%
+  ungroup()
+
+head(ua_data)
+```
+
+I've also defined the plotting function that we will want to visualize a month-long timeseries of data for each metric.
+
+```{r}
+viz_monthly <- function(df, y_var, threshhold = NULL) {
+  
+  ggplot(df) +
+    aes(
+      x = .data[["day"]],
+      y = .data[[y_var]]
+    ) +
+    geom_line() +
+    geom_hline(yintercept = threshhold, color = "red", linetype = 2) +
+    scale_x_continuous(breaks = seq(1, 29, by = 7)) +
+    theme_minimal()
+}
+```
+
+For example, to visualize the average arrival delay by day for all of March and compare it to a threshhold of 10 minutes, we can write:
+
+```{r}
+ua_data %>%
+  filter(month == 3) %>%
+  viz_monthly("arr_delay", threshhold = 10)
+```
+
+## One Module at a Time
+
+Modules don't just help organize your code; they help you organize your *thinking*. Given our list of requirements, it might feel overwhelming where to start. Filtering the data? Making the plots? Wiring up buttons? Inevitably, when juggling 10+ components (the reactive dataset plus a plot, button, and text summary for each of three metrics), you're likely to introduce a bug by copy-pasting a line with the wrong `id` or getting nested parentheses out of whack. 
+
+Instead, modules essentially allow your to write *many simple Shiny apps* and compose them together. 
+
+For example, we might decide that first we just want to focus on a very simple app: given a monhthly subset of the data, a metric, and a threshold of interest. Let's write a simple text summary of the flights performance. This task seems relatively straightforward. We now know we just need to define a UI (`text_ui`) with a single call to `textOutput()`, a server (`text_server`) that does a single calculation and calls `renderText()`. Best of all, we can immediately see whether or not our "app" works by writing a minimalistic testing function (`text_demo`) which renders the text for a small, fake dataset.^[In *Mastering Shiny*, Hadley points out its a good practice to always include such a demo function for testing: https://mastering-shiny.org/scaling-modules.html#updated-app]
+
+I saved the follow in a file called `mod-test.R`:
+
+```{r}
+# text module ----
+text_ui <- function(id) {
+  
+  fluidRow(
+    textOutput(NS(id, "text"))
+  )
+  
+}
+
+text_server <- function(id, df, vbl, threshhold) {
+  
+  moduleServer(id, function(input, output, session) {
+    
+    n <- reactive({sum(df()[[vbl]] > threshhold)})
+    output$text <- renderText({
+      paste("In this month", 
+            vbl, 
+            "exceeded the average daily threshhold of",
+            threshhold,
+            "a total of", 
+            n(), 
+            "days")
+    })
+    
+  })
+  
+}
+
+text_demo <- function() {
+  
+  df <- data.frame(day = 1:30, arr_delay = 1:30)
+  ui <- fluidPage(text_ui("x"))
+  server <- function(input, output, session) {
+    text_server("x", reactive({df}), "arr_delay", 15)
+  }
+  shinyApp(ui, server)
+  
+}
+```
+
+We can follow the same pattern to create a module for the plot itself consisting of a UI (`plot_ui`), a server (`plot_server`), and a testing function (`plot_demo`). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file `mod-plot.R`: https://github.com/emilyriederer/shiny-modules-flights-demo/blob/master/mod-plot.R.
+
+Once again, we can run that self-contained file and then execute `plot_demo()` to run our mini-application. This time, it is more interactive. We can click the "Download" button and ensure that our download feature is working.
+
+We don't have an application yet, but we have two components that build pretty easily off of our basic Shiny knowledge and that we can see working before our eyes^[Of course, "working for one use case" is not a substitute for real testing, but that's out of scope for this post].
+
+### Composing Modules
+
+We now have a text module and a plot module. However, recall for each metric of interest, we want to produce *both*. We could do this by simply calling these two modules one after the other in our final app, but if we want to, we can create another module that wraps our first two modules so that we can produce in single commands everything that we need for a given metric.
+
+With all of the underlying plot and text module logic abstracted, our metric module definition is very clean and simple. I define it in the `mod-metr.R` file:
+
+```{r}
+# metric module ----
+metric_ui <- function(id) {
+  
+  fluidRow(
+    text_ui(NS(id, "metric")),
+    plot_ui(NS(id, "metric"))
+  )
+  
+}
+
+metric_server <- function(id, df, vbl, threshhold) {
+  
+  moduleServer(id, function(input, output, session) {
+    
+    text_server("metric", df, vbl, threshhold)
+    plot_server("metric", df, vbl, threshhold)
+    
+  })
+  
+}
+
+metric_demo <- function() {
+  
+  df <- data.frame(day = 1:30, arr_delay = 1:30)
+  ui <- fluidPage(metric_ui("x"))
+  server <- function(input, output, session) {
+    metric_server("x", reactive({df}), "arr_delay", 15)
+  }
+  shinyApp(ui, server)
+  
+}
+```
+
+Again, we can test that these components went together as we intended by running the `metric_demo()` function. We will see the text from our text module on top of the plot and button from our plot module. Here's what our module looks like so far:
+
+![](mod-demo.PNG)
+
+For this app, this might seem like overkill, but I wanted to illustrate the ability to compose modules because it's very useful as your application grows in complexity. In essence, everything you bundle into a module gives you a license to forget about how the next layer lower is implemented and frees up your mind to take on the next challenge.
+
+### Putting it all together
+
+Finally, we are ready to write our complete application in a file called `flights-app.R`:
+
+```{r eval = FALSE}
+# load libraries ----
+library(nycflights13)
+library(shiny)
+library(ggplot2)
+library(dplyr)
+
+# load resources ----
+source("viz-mtly.R")
+source("mod-plot.R")
+source("mod-text.R")
+source("mod-metr.R")
+
+# data prep ----
+ua_data <-
+  nycflights13::flights %>%
+  filter(carrier == "UA") %>%
+  mutate(ind_arr_delay = (arr_delay > 5)) %>%
+  group_by(year, month, day) %>%
+  summarize(
+    n = n(),
+    across(ends_with("delay"), mean, na.rm = TRUE)
+    ) %>%
+  ungroup()
+
+# full application ----
+ui <- fluidPage(
+  
+  titlePanel("Flight Delay Report"),
+  
+  sidebarLayout(
+  sidebarPanel = sidebarPanel(
+    selectInput("month", "Month", 
+                choices = setNames(1:12, month.abb),
+                selected = 1
+    )
+  ),
+  mainPanel = mainPanel(
+    h2(textOutput("title")),
+    h3("Average Departure Delay"),
+    metric_ui("dep_delay"),
+    h3("Average Arrival Delay"),
+    metric_ui("arr_delay"),
+    h3("Proportion Flights with >5 Min Arrival Delay"),
+    metric_ui("ind_arr_delay")
+  )
+)
+)
+
+server <- function(input, output, session) {
+  
+  output$title <- renderText({paste(month.abb[as.integer(input$month)], "Report")})
+  df_month <- reactive({filter(ua_data, month == input$month)})
+  metric_server("dep_delay", df_month, vbl = "dep_delay", threshhold = 10)
+  metric_server("arr_delay", df_month, vbl = "arr_delay", threshhold = 10)
+  metric_server("ind_arr_delay", df_month, vbl = "ind_arr_delay", threshhold = 0.5)
+  
+}
+
+shinyApp(ui, server)
+```
+
+Notice how few lines of code this file requires to create all of our various components and interactions! We've eliminated much of the dense code, nesting, and potential duplication we might have encountered if trying to write our application without modules. Whether you were trying to maintain this app or reading someone else's code, the top-level code is accessible, semantic, and declarative. We can fairly easily infer the intent of each line and note which pieces of UI and server logic are responsible for which components. 
+
+Additionally, we also have all of the typical benefits afforded by functions. For example, if we were asked to change the plot download feature to download an `.svg` file instead of a `.png`, we could make a single change to the `plot_server()` function instead of having to change many pieces of our code for each metric. 
+
+### Caveats
+
+Not all modules are made alike, and in this walk-through I intentionally chose relatively easy pieces of logic to demonstrate. Note that our modules *consume* a reactive variable (data) from the global environment, but they themselves do not attempt to *alter* the global environment or *exchange* information between them. Both of those things are also very possible to do with modules, but they may feel a bit harder or more error prone at first. In my opinion, modules that simply consume reactives are the easiest way to start out. 
+
+I also intentionally did not discuss more advanced features of modules or more formal and automated testing of them. These topics are covered in both [*Mastering Shiny*](http://mastering-shiny.org/) and [*Engineering Production Grade Shiny Apps*](https://engineering-shiny.org/). These books also introduce ways to share modules via R packages and to organize them in Shiny app projects built with the excellent [`golem` package](https://cran.r-project.org/web/packages/golem/index.html) (the `usethis` of Shiny apps).
+

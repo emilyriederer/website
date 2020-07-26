@@ -9,7 +9,7 @@ categories: []
 date: 2020-07-26
 lastmod: 2020-07-26
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 1427553ab17af0c4
+rmd_hash: f4e632c88b199a07
 
 ---
 
@@ -70,7 +70,7 @@ For the sake of argument, let's pretend that we work for an airline and are task
 -   For each[^1] metric of interest, users should:
     -   See a time-series plot of the average daily value of the metric
     -   Click a download button to download a PNG of the plot
-    -   Read a text summary that reports the number of days the value breached the threshhold
+    -   Read a text summary that reports the number of days the value breached the threshold
 -   The metrics of interest are:
     -   Average departure delay
     -   Average arrival delay

@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: e4568f4853721f6c
+rmd_hash: 1682b0e58cee8e32
 
 ---
 
@@ -73,7 +73,7 @@ The following markdown syntax creates new sections in the text.
 -   Unordered lists made with [`-`](https://rdrr.io/r/base/Arithmetic.html) or [`*`](https://rdrr.io/r/base/Arithmetic.html) are wrapped in `<ul>` tags and individual elements are wrapped in `<li>` tags (list element)
 -   Ordered lists made with `1.` are wrapped in `<ol>` tags and individual elements are wrapped in `<li>` tags (list element)
 -   Markdown tables are made with `<table>` tags. Table rows are distinguished by `<tr>` tags and individual table data cells are separated by `<td>` tags.
--   Sections created by Pandoc Divs ([`:::`](https://rdrr.io/r/base/ns-dblcolon.html)) are fenced by `<div>` tags. These can be given a class. For example, `::: MyDiv` and `::: {.MyDiv}` translate to `<div class = 'MyDiv'>` (If this is a new concept to you, please see Sections @ref(multi-column) and @ref(custom-blocks) for examples)
+-   Sections created by Pandoc Divs ([`:::`](https://rdrr.io/r/base/ns-dblcolon.html)) are fenced by `<div>` tags. These can be given a class. For example, `::: MyDiv` and `::: {.MyDiv}` translate to `<div class = 'MyDiv'>` (If you haven't seen Divs before, please check out the ["Multi-column layout"](https://bookdown.org/yihui/rmarkdown-cookbook/multi-column.html) and ["Custom blocks"](https://bookdown.org/yihui/rmarkdown-cookbook/custom-blocks.html) recipes in the *R Markdown Cookbook*)
 
 #### Code
 

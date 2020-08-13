@@ -7,7 +7,6 @@ authors: []
 tags: [rstats, pkgdev]
 categories: [rstats, pkgdev]
 date: 2019-05-25
-lastmod: 2020-05-25
 featured: false
 draft: false
 

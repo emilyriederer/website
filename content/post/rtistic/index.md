@@ -7,7 +7,6 @@ authors: []
 tags: [rstats, pkgdev]
 categories: [rstats, pkgdev]
 date: 2019-05-25
-lastmod: 2020-05-25
 featured: false
 draft: false
 
@@ -28,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["rtistic"]
-rmd_hash: 52fee08ed6c8da4b
+rmd_hash: 6062cc14808606bb
 
 ---
 

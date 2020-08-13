@@ -38,6 +38,10 @@ links:
    icon_pack: "fas"
    name: "Publisher Site"
    url: https://www.routledge.com/R-Markdown-Cookbook/Xie-Dervieux-Riederer/p/book/9780367563820
+ - icon: "amazon"
+   icon_pack: "fab"
+   name: "Amazon"
+   url: https://www.amazon.com/Markdown-Cookbook-Chapman-Hall-CRC/dp/0367563835
 url_pdf: ''
 url_code: ''
 url_dataset: ''

@@ -322,15 +322,6 @@ data_trips = r.data_trips_py
 
 ```{python}
 import pandas as pd
-# data = {  'ID_ACCT': [1,2,3],
-#          'N_PLAYED': [1,2,3],
-#         'N_SKIPPED': [1,2,3],
-#         'IND_RENEW': [0,1,1],
-#          'CAT_TIER': ['free','paid','family']
-#         }
-# df = pd.DataFrame(data, columns = data.keys())
-
-
 cols_n   = [vbl for vbl in data_trips.columns if vbl[0:2] == 'N_']
 cols_grp = ["CAT_RIDER_TYPE"]
 data_trips.groupby(cols_grp)[cols_n].sum()

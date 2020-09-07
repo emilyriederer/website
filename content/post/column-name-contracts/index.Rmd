@@ -96,6 +96,8 @@ The first few tiers of the hierarchy are critical to standardize to make our "pe
 - `TIME`: Are durations measured in seconds? Minutes?
 - `RATING`: What are valid ranges for other known quantities like star ratings?
 
+Terminal "adjectives" could also be considered. For example, if the data-generating systems spit out analytically unideal quantities that should be preserved for data lineage purposes, suffixes such as `_RAW` and `_CLEAN` might denote version of the same variable in its original and manicured states, respectively.
+
 **Putting it all together**
 
 This structure now gives us a grammar to compactly name 35 variables in table:
@@ -126,9 +128,9 @@ dates <- sample(
 
 data_trips <-
   data.frame(
-    ID_DRIVER = runif(100, 1000, 9999),
-    ID_RIDER  = runif(100, 1000, 9999),
-    ID_TRIP   = runif(100, 1000, 9999),
+    ID_DRIVER = sample(1000:9999, 100),
+    ID_RIDER  = sample(1000:9999, 100),
+    ID_TRIP   = sample(1000:9999, 100),
     DT_ORIG   = dates,
     DT_DEST   = dates,
     N_DRIVER_PASSENGERS = sample(1:2, 100, replace = TRUE),

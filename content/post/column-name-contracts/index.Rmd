@@ -4,8 +4,8 @@ title: "Column Names as Contracts"
 subtitle: ""
 summary: "Using controlled dictionaries for low-touch documentation, validation, and usability of tabular data"
 authors: []
-tags: [rstats, data, workflow]
-categories: []
+tags: [data, workflow, rstats]
+categories: [data, workflow, rstats]
 date: 2020-09-06
 lastmod: 2020-09-06
 featured: false

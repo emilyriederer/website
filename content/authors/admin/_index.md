@@ -27,7 +27,7 @@ interests:
 
 education:
   courses:
-  - course: BS Mathetmatical Decision Sciences (Statistics & OR)
+  - course: BS Mathematical Decision Sciences (Statistics & OR)
     institution: UNC Chapel Hill
     year: 2016
   - course: BS Mathematics

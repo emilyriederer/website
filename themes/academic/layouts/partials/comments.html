@@ -1,3 +1,4 @@
+<!--
 {{ if site.Params.comments.engine | and (index site.Params.comments.commentable .Type) | and (ne .Params.commentable false) | or .Params.commentable }}
 <section id="comments">
   {{ if eq site.Params.comments.engine 1 }}
@@ -7,3 +8,13 @@
   {{ end }}
 </section>
 {{ end }}
+-->
+
+<script src="https://utteranc.es/client.js"
+        repo="emilyriederer/website"
+        issue-term="title"
+        label="post-comments"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>

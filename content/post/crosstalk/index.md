@@ -1,8 +1,8 @@
 ---
 output: hugodown::md_document
-title: "crosstalk: Shining without Shiny"
+title: "crosstalk: Dynamic filtering for R Markdown"
 subtitle: ""
-summary: "A tutorial on adding browser-based dynamic filtering to R Markdown -- no Shiny server required!"
+summary: "An introduction to browser-based interactivity of htmlwidgets -- no Shiny server required!"
 authors: []
 tags: []
 categories: [rstats, shiny, tutorial]
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 2aa2fe045941893f
+rmd_hash: a5420597cb547aa4
 
 ---
 

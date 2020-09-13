@@ -1,8 +1,8 @@
 ---
 output: hugodown::md_document
-title: "crosstalk: Shining without Shiny"
+title: "crosstalk: Dynamic filtering for R Markdown"
 subtitle: ""
-summary: "A tutorial on adding browser-based dynamic filtering to R Markdown -- no Shiny server required!"
+summary: "An introduction to browser-based interactivity of htmlwidgets -- no Shiny server required!"
 authors: []
 tags: []
 categories: [rstats, shiny, tutorial]

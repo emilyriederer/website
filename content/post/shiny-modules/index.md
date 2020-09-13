@@ -4,8 +4,8 @@ title: "A beginner's guide to Shiny modules"
 subtitle: ""
 summary: "Don't believe the documentation! Shiny modules aren't just for advanced users; they might just be a great entry point for development"
 authors: []
-tags: [shiny, rstats, workflow]
-categories: [shiny, rstats, workflow]
+tags: [shiny, rstats, workflow, tutorial]
+categories: [shiny, rstats, workflow, tutorial]
 date: 2020-07-26
 lastmod: 2020-07-26
 featured: false
@@ -27,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b55239b2693db35b
+rmd_hash: 7b87b58381f08771
 
 ---
 
@@ -161,7 +161,7 @@ Modules don't just help organize your code; they help you organize your *thinkin
 
 Instead, modules essentially allow your to write *many simple Shiny apps* and compose them together.
 
-For example, we might decide that first we just want to focus on a very simple app: given a monhthly subset of the data, a metric, and a threshold of interest. Let's write a simple text summary of the flights performance. This task seems relatively straightforward. We now know we just need to define a UI (`text_ui`) with a single call to [`textOutput()`](https://rdrr.io/pkg/shiny/man/textOutput.html), a server (`text_server`) that does a single calculation and calls [`renderText()`](https://rdrr.io/pkg/shiny/man/renderText.html). Best of all, we can immediately see whether or not our "app" works by writing a minimalistic testing function (`text_demo`) which renders the text for a small, fake dataset.[^3]
+For example, we might decide that first we just want to focus on a very simple app: given a monhthly subset of the data, a metric, and a threshold of interest. Let's write a simple text summary of the flights performance. This task seems relatively straightforward. We now know we just need to define a UI (`text_ui`) with a single call to [`textOutput()`](https://shiny.rstudio.com/reference/shiny/latest/textOutput.html), a server (`text_server`) that does a single calculation and calls [`renderText()`](https://shiny.rstudio.com/reference/shiny/latest/renderText.html). Best of all, we can immediately see whether or not our "app" works by writing a minimalistic testing function (`text_demo`) which renders the text for a small, fake dataset.[^3]
 
 I saved the follow in a file called `mod-test.R`:
 
@@ -170,18 +170,18 @@ I saved the follow in a file called `mod-test.R`:
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='c'># text module ----</span>
 <span class='k'>text_ui</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>(<span class='k'>id</span>) {
   
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidRow</a></span>(
-    <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/textOutput.html'>textOutput</a></span>(<span class='nf'><a href='https://rdrr.io/pkg/shiny/man/NS.html'>NS</a></span>(<span class='k'>id</span>, <span class='s'>"text"</span>))
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html'>fluidRow</a></span>(
+    <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/textOutput.html'>textOutput</a></span>(<span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/NS.html'>NS</a></span>(<span class='k'>id</span>, <span class='s'>"text"</span>))
   )
   
 }
 
 <span class='k'>text_server</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>(<span class='k'>id</span>, <span class='k'>df</span>, <span class='k'>vbl</span>, <span class='k'>threshhold</span>) {
   
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/moduleServer.html'>moduleServer</a></span>(<span class='k'>id</span>, <span class='nf'>function</span>(<span class='k'>input</span>, <span class='k'>output</span>, <span class='k'>session</span>) {
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/moduleServer.html'>moduleServer</a></span>(<span class='k'>id</span>, <span class='nf'>function</span>(<span class='k'>input</span>, <span class='k'>output</span>, <span class='k'>session</span>) {
     
-    <span class='k'>n</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/reactive.html'>reactive</a></span>({<span class='nf'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='nf'><a href='https://rdrr.io/r/stats/Fdist.html'>df</a></span>()[[<span class='k'>vbl</span>]] <span class='o'>&gt;</span> <span class='k'>threshhold</span>)})
-    <span class='k'>output</span><span class='o'>$</span><span class='k'>text</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/renderText.html'>renderText</a></span>({
+    <span class='k'>n</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/reactive.html'>reactive</a></span>({<span class='nf'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span>(<span class='nf'><a href='https://rdrr.io/r/stats/Fdist.html'>df</a></span>()[[<span class='k'>vbl</span>]] <span class='o'>&gt;</span> <span class='k'>threshhold</span>)})
+    <span class='k'>output</span><span class='o'>$</span><span class='k'>text</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/renderText.html'>renderText</a></span>({
       <span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='s'>"In this month"</span>, 
             <span class='k'>vbl</span>, 
             <span class='s'>"exceeded the average daily threshhold of"</span>,
@@ -198,11 +198,11 @@ I saved the follow in a file called `mod-test.R`:
 <span class='k'>text_demo</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>() {
   
   <span class='k'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(day = <span class='m'>1</span><span class='o'>:</span><span class='m'>30</span>, arr_delay = <span class='m'>1</span><span class='o'>:</span><span class='m'>30</span>)
-  <span class='k'>ui</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span>(<span class='nf'>text_ui</span>(<span class='s'>"x"</span>))
+  <span class='k'>ui</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html'>fluidPage</a></span>(<span class='nf'>text_ui</span>(<span class='s'>"x"</span>))
   <span class='k'>server</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>(<span class='k'>input</span>, <span class='k'>output</span>, <span class='k'>session</span>) {
-    <span class='nf'>text_server</span>(<span class='s'>"x"</span>, <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/reactive.html'>reactive</a></span>({<span class='k'>df</span>}), <span class='s'>"arr_delay"</span>, <span class='m'>15</span>)
+    <span class='nf'>text_server</span>(<span class='s'>"x"</span>, <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/reactive.html'>reactive</a></span>({<span class='k'>df</span>}), <span class='s'>"arr_delay"</span>, <span class='m'>15</span>)
   }
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/shinyApp.html'>shinyApp</a></span>(<span class='k'>ui</span>, <span class='k'>server</span>)
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html'>shinyApp</a></span>(<span class='k'>ui</span>, <span class='k'>server</span>)
   
 }</code></pre>
 
@@ -225,16 +225,16 @@ With all of the underlying plot and text module logic abstracted, our metric mod
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='c'># metric module ----</span>
 <span class='k'>metric_ui</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>(<span class='k'>id</span>) {
   
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidRow</a></span>(
-    <span class='nf'>text_ui</span>(<span class='nf'><a href='https://rdrr.io/pkg/shiny/man/NS.html'>NS</a></span>(<span class='k'>id</span>, <span class='s'>"metric"</span>)),
-    <span class='nf'>plot_ui</span>(<span class='nf'><a href='https://rdrr.io/pkg/shiny/man/NS.html'>NS</a></span>(<span class='k'>id</span>, <span class='s'>"metric"</span>))
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html'>fluidRow</a></span>(
+    <span class='nf'>text_ui</span>(<span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/NS.html'>NS</a></span>(<span class='k'>id</span>, <span class='s'>"metric"</span>)),
+    <span class='nf'>plot_ui</span>(<span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/NS.html'>NS</a></span>(<span class='k'>id</span>, <span class='s'>"metric"</span>))
   )
   
 }
 
 <span class='k'>metric_server</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>(<span class='k'>id</span>, <span class='k'>df</span>, <span class='k'>vbl</span>, <span class='k'>threshhold</span>) {
   
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/moduleServer.html'>moduleServer</a></span>(<span class='k'>id</span>, <span class='nf'>function</span>(<span class='k'>input</span>, <span class='k'>output</span>, <span class='k'>session</span>) {
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/moduleServer.html'>moduleServer</a></span>(<span class='k'>id</span>, <span class='nf'>function</span>(<span class='k'>input</span>, <span class='k'>output</span>, <span class='k'>session</span>) {
     
     <span class='nf'>text_server</span>(<span class='s'>"metric"</span>, <span class='k'>df</span>, <span class='k'>vbl</span>, <span class='k'>threshhold</span>)
     <span class='nf'>plot_server</span>(<span class='s'>"metric"</span>, <span class='k'>df</span>, <span class='k'>vbl</span>, <span class='k'>threshhold</span>)
@@ -246,11 +246,11 @@ With all of the underlying plot and text module logic abstracted, our metric mod
 <span class='k'>metric_demo</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>() {
   
   <span class='k'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(day = <span class='m'>1</span><span class='o'>:</span><span class='m'>30</span>, arr_delay = <span class='m'>1</span><span class='o'>:</span><span class='m'>30</span>)
-  <span class='k'>ui</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span>(<span class='nf'>metric_ui</span>(<span class='s'>"x"</span>))
+  <span class='k'>ui</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html'>fluidPage</a></span>(<span class='nf'>metric_ui</span>(<span class='s'>"x"</span>))
   <span class='k'>server</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>(<span class='k'>input</span>, <span class='k'>output</span>, <span class='k'>session</span>) {
-    <span class='nf'>metric_server</span>(<span class='s'>"x"</span>, <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/reactive.html'>reactive</a></span>({<span class='k'>df</span>}), <span class='s'>"arr_delay"</span>, <span class='m'>15</span>)
+    <span class='nf'>metric_server</span>(<span class='s'>"x"</span>, <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/reactive.html'>reactive</a></span>({<span class='k'>df</span>}), <span class='s'>"arr_delay"</span>, <span class='m'>15</span>)
   }
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/shinyApp.html'>shinyApp</a></span>(<span class='k'>ui</span>, <span class='k'>server</span>)
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html'>shinyApp</a></span>(<span class='k'>ui</span>, <span class='k'>server</span>)
   
 }</code></pre>
 
@@ -293,19 +293,19 @@ Finally, we are ready to write our complete application in a file called `flight
   <span class='nf'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>ungroup</a></span>()
 
 <span class='c'># full application ----</span>
-<span class='k'>ui</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/fluidPage.html'>fluidPage</a></span>(
+<span class='k'>ui</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html'>fluidPage</a></span>(
   
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/titlePanel.html'>titlePanel</a></span>(<span class='s'>"Flight Delay Report"</span>),
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/titlePanel.html'>titlePanel</a></span>(<span class='s'>"Flight Delay Report"</span>),
   
-  <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarLayout</a></span>(
-  sidebarPanel = <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>sidebarPanel</a></span>(
-    <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/selectInput.html'>selectInput</a></span>(<span class='s'>"month"</span>, <span class='s'>"Month"</span>, 
+  <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/sidebarLayout.html'>sidebarLayout</a></span>(
+  sidebarPanel = <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/sidebarLayout.html'>sidebarPanel</a></span>(
+    <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/selectInput.html'>selectInput</a></span>(<span class='s'>"month"</span>, <span class='s'>"Month"</span>, 
                 choices = <span class='nf'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span>(<span class='m'>1</span><span class='o'>:</span><span class='m'>12</span>, <span class='k'>month.abb</span>),
                 selected = <span class='m'>1</span>
     )
   ),
-  mainPanel = <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/sidebarLayout.html'>mainPanel</a></span>(
-    <span class='nf'><a href='https://rdrr.io/pkg/htmltools/man/builder.html'>h2</a></span>(<span class='nf'><a href='https://rdrr.io/pkg/shiny/man/textOutput.html'>textOutput</a></span>(<span class='s'>"title"</span>)),
+  mainPanel = <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/sidebarLayout.html'>mainPanel</a></span>(
+    <span class='nf'><a href='https://rdrr.io/pkg/htmltools/man/builder.html'>h2</a></span>(<span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/textOutput.html'>textOutput</a></span>(<span class='s'>"title"</span>)),
     <span class='nf'><a href='https://rdrr.io/pkg/htmltools/man/builder.html'>h3</a></span>(<span class='s'>"Average Departure Delay"</span>),
     <span class='nf'>metric_ui</span>(<span class='s'>"dep_delay"</span>),
     <span class='nf'><a href='https://rdrr.io/pkg/htmltools/man/builder.html'>h3</a></span>(<span class='s'>"Average Arrival Delay"</span>),
@@ -318,15 +318,15 @@ Finally, we are ready to write our complete application in a file called `flight
 
 <span class='k'>server</span> <span class='o'>&lt;-</span> <span class='nf'>function</span>(<span class='k'>input</span>, <span class='k'>output</span>, <span class='k'>session</span>) {
   
-  <span class='k'>output</span><span class='o'>$</span><span class='k'>title</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/renderText.html'>renderText</a></span>({<span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='k'>month.abb</span>[<span class='nf'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='k'>input</span><span class='o'>$</span><span class='k'>month</span>)], <span class='s'>"Report"</span>)})
-  <span class='k'>df_month</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/shiny/man/reactive.html'>reactive</a></span>({<span class='nf'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='k'>ua_data</span>, <span class='k'>month</span> <span class='o'>==</span> <span class='k'>input</span><span class='o'>$</span><span class='k'>month</span>)})
+  <span class='k'>output</span><span class='o'>$</span><span class='k'>title</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/renderText.html'>renderText</a></span>({<span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='k'>month.abb</span>[<span class='nf'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span>(<span class='k'>input</span><span class='o'>$</span><span class='k'>month</span>)], <span class='s'>"Report"</span>)})
+  <span class='k'>df_month</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/reactive.html'>reactive</a></span>({<span class='nf'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span>(<span class='k'>ua_data</span>, <span class='k'>month</span> <span class='o'>==</span> <span class='k'>input</span><span class='o'>$</span><span class='k'>month</span>)})
   <span class='nf'>metric_server</span>(<span class='s'>"dep_delay"</span>, <span class='k'>df_month</span>, vbl = <span class='s'>"dep_delay"</span>, threshhold = <span class='m'>10</span>)
   <span class='nf'>metric_server</span>(<span class='s'>"arr_delay"</span>, <span class='k'>df_month</span>, vbl = <span class='s'>"arr_delay"</span>, threshhold = <span class='m'>10</span>)
   <span class='nf'>metric_server</span>(<span class='s'>"ind_arr_delay"</span>, <span class='k'>df_month</span>, vbl = <span class='s'>"ind_arr_delay"</span>, threshhold = <span class='m'>0.5</span>)
   
 }
 
-<span class='nf'><a href='https://rdrr.io/pkg/shiny/man/shinyApp.html'>shinyApp</a></span>(<span class='k'>ui</span>, <span class='k'>server</span>)</code></pre>
+<span class='nf'><a href='https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html'>shinyApp</a></span>(<span class='k'>ui</span>, <span class='k'>server</span>)</code></pre>
 
 </div>
 

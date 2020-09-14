@@ -5,7 +5,7 @@ subtitle: ""
 summary: "An introduction to browser-based interactivity of htmlwidgets -- no Shiny server required!"
 authors: []
 tags: []
-categories: [rstats, shiny, tutorial]
+categories: [rstats, tutorial]
 date: 2020-09-12
 lastmod: 2020-09-12
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: a5420597cb547aa4
+rmd_hash: a11125bd77bebfef
 
 ---
 

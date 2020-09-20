@@ -5,7 +5,7 @@ subtitle: ""
 summary: "Maintaining codebases and communities in trying times"
 authors: []
 tags: []
-categories: [workflow, pkgdev]
+categories: [workflow]
 date: 2020-09-20
 lastmod: 2020-09-20
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 5f450daa3b32b2f5
+rmd_hash: 7d322aff364466f9
 
 ---
 
@@ -49,39 +49,39 @@ Designs
 
 Are there known bugs or issues in your org's repos that could use a patch? A *pumpkin* patch, perhaps? Both of these designs are inspired by the GitHub activity board; the latter is more minimal but also (on beta testing) was not obvious to anyone but me that it was pumpkins.
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/patch-grid.png)
+![](images/patch-grid.png)
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/patch-grid-minimal.png)
+![](images/patch-grid-minimal.png)
 
 ### November
 
 It's time for the fall harvest! If your team's work isn't on GitHub or is on GitHub but not optimized for discoverability (in an org; consistently named; has a README, Description, tags, etc.), "harvest" them off your hard-drive and centralize them for reuse.
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/harvest-grid.png)
+![](images/harvest-grid.png)
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/harvest-badge.png)
+![](images/harvest-badge.png)
 
 ### December
 
-Deck the halls -- with good documentation! We all have code or data that could use a bit better documentation, so take some time to work on this collaboratively. Think you've got all the boxes check on documentation? Think again. Consider if you have the best documentation for different audiences (users versus developers), different formats (written or visual diagrams), and different time durations (I'm a big fan of setting up [immutable documentation](https://codeascraft.com/2018/10/10/etsys-experiment-with-immutable-documentation/)). There's bound to be something to improve.
+Deck the halls -- with good documentation! We all have code or data that could use a bit better documentation, so take some time to work on this collaboratively. Think you've got all the boxes check on documentation? Think again. Consider if you have the best documentation for different audiences (users versus developers[^3]), different formats (written or visual diagrams), and different time durations (I'm a big fan of setting up [immutable documentation](https://codeascraft.com/2018/10/10/etsys-experiment-with-immutable-documentation/)). There's bound to be something to improve.
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/holiday-lights-grid.png)
+![](images/holiday-lights-grid.png)
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/ornaments-grid.png)
+![](images/ornaments-grid.png)
 
 Alternatively, your code "naughty or nice"? Santa makes his list and checks it twice; all you have to do is add unit tests and run them once.
 
 For R users, this could be a great time to learn about testing packages such as [{testthat}](https://testthat.r-lib.org/) or [{tinytest}](https://cran.r-project.org/web/packages/tinytest/index.html) or related packages like [{assertr}](https://cran.r-project.org/web/packages/assertr/index.html) or [{pointblank}](https://rich-iannone.github.io/pointblank/index.html) for a variety of static or live testing and checks.
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/naughty-nice-badge.png)
+![](images/naughty-nice-badge.png)
 
 ### March
 
 See a tool that doesn't quite meet your need? Work on an enhancement instead of starting a new project.
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/eggs-badge.png)
+![](images/eggs-badge.png)
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/eggs-grid.png)
+![](images/eggs-grid.png)
 
 ### April
 
@@ -89,7 +89,7 @@ As Ben Franklin once said, "Nothing can be said to be certain, except death and 
 
 This could include a wide range of activities such as code refactoring or fixing code style. For R users, in particular, it could be a good time to break out the [{lintr}](https://github.com/jimhester/lintr) or [{styler}](https://styler.r-lib.org/) packages. Formatting isn't generally high on the list of tech debt, but it can impede onboarding new people to your project and compounds over time since poorly formatted code doesn't model good behavior for contributors. It's also a relatively manageable issue to tackle during a short event.
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/tax-grid.png)
+![](images/tax-grid.png)
 
 ### July
 
@@ -97,9 +97,11 @@ Dependencies are great for quick prototyping, but when you're planning to launch
 
 For R users, the [{pkgdepends}](https://github.com/r-lib/pkgdepends) R package is a great resource here.
 
-![](https://raw.githubusercontent.com/emilyriederer/sticker-driven-maintenance/master/png/dependencies-badge.png)
+![](images/dependencies-badge.png)
 
 [^1]: In which a developer might hypothetically create a new package simply to justify the existence of a stunning new [hex sticker](http://hexb.in/)
 
 [^2]: In my defense, and in way of thanks, all logos were made with [Inkscape](inkscape.org), a great FOSS software with a very easy on-ramps. This was a weekend project mostly motivated by my needing to learn a touch of Inkscape basics, so I took this on as a use case. If you want to get hands-on to edit my designs or to make your own, I recommend the YouTube tutorials from [Logos by Nick](https://logosbynick.com/).
+
+[^3]: I generally believe that most R packages have a significant underinvestment in developer-facing documentation: <a href="https://twitter.com/EmilyRiederer/status/1266431103948206080?s=20" class="uri">https://twitter.com/EmilyRiederer/status/1266431103948206080?s=20</a>
 

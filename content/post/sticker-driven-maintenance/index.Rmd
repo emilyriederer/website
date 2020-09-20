@@ -9,7 +9,7 @@ categories: [workflow, pkgdev]
 date: 2020-09-20
 lastmod: 2020-09-20
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image

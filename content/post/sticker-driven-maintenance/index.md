@@ -9,7 +9,7 @@ categories: [workflow, pkgdev]
 date: 2020-09-20
 lastmod: 2020-09-20
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 61f6f079d58fa00c
+rmd_hash: 724246d76fbd4d34
 
 ---
 

@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Sticker-driven maintenance"
 subtitle: ""
-summary: "Maintaining codebases and communities in trying times"
+summary: "On the irrational exuberance needed to maintain codebases and communities"
 authors: []
 tags: []
 categories: [workflow]

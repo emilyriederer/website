@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: ab697101cf217bb9
+rmd_hash: 810ee3d8b20baca7
 
 ---
 
@@ -74,6 +74,22 @@ Alternatively, your code "naughty or nice"? Santa makes his list and checks it t
 For R users, this could be a great time to learn about testing packages such as [{testthat}](https://testthat.r-lib.org/) or [{tinytest}](https://cran.r-project.org/web/packages/tinytest/index.html) or related packages like [{assertr}](https://cran.r-project.org/web/packages/assertr/index.html) or [{pointblank}](https://rich-iannone.github.io/pointblank/index.html) for a variety of static or live testing and checks.
 
 ![](images/naughty-nice-badge.png)
+
+### January
+
+Much like hackathons tend to be biased towards novelty, they are more broadly also focus on *doing* instead of *thinking*. In January, we have a new year, new resolutions, and an old and mature toolkit. Gather around a whiteboard as a team *without* building a thing to reassess priorities and simply make a plan. Think about what work needs to be done and how the tools and packages that you *already have* can be re-used instead of reinvented.
+
+![](images/plan-grid.png)
+
+### February
+
+Being an open-source maintainer is a long-term relationship, and many open souce tools lack that "special someone" to support them when they break and help them to be their best. When codebases have few contributors or maintainers, they are more susceptible to going stale. Take the opportunity to do some "matchmaking" between orphaned packages and potential maintainers or, alternatively, help new maintainers get into relationships with existing projects.
+
+This GitHub-esque grid asks, will you "Be Mine"? Or alternatively, a candy heart cuts right to the chase as asks to be maintained.
+
+![](images/hearts-grid.png)
+
+![](images/heart-badge.png)
 
 ### March
 

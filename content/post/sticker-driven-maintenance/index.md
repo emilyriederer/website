@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Sticker-driven maintenance"
 subtitle: ""
-summary: "On the irrational exuberance needed to maintain codebases and communities"
+summary: "Marketing maintenance work with irrational exuberance"
 authors: []
 tags: []
 categories: [workflow]
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 08139e4cd10172bc
+rmd_hash: 8bdd3e779e429fab
 
 ---
 

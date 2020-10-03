@@ -27,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 7b87b58381f08771
+rmd_hash: 76d1cecaeb0a05cf
 
 ---
 
@@ -77,7 +77,7 @@ For the sake of argument, let's pretend that we work for an airline and are task
     -   Average arrival delay
     -   Proportion of daily flights with an arrival delay exceeding 5 minutes
 
-The completed application is hosted [here, on shinyapps.io,](https://emilyriederer.shinyapps.io/shiny-modules-demo/)[^2] and the underlying code can be read [on GitHub](https://github.com/emilyriederer/shiny-modules-flights-demo).
+The completed application is hosted [here, on shinyapps.io,](https://emilyriederer.shinyapps.io/shiny-modules-demo/)[^2] and the underlying code can be read [on GitHub](https://github.com/emilyriederer/demo-shiny-modules).
 
 Below is a preview of the final application. It isn't going to win any beauty contests; I kept the layout and styling to a minimum so we could focus on modules in the code.
 
@@ -208,7 +208,7 @@ I saved the follow in a file called `mod-test.R`:
 
 </div>
 
-We can follow the same pattern to create a module for the plot itself consisting of a UI (`plot_ui`), a server (`plot_server`), and a testing function (`plot_demo`). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file [`mod-plot.R`](https://github.com/emilyriederer/shiny-modules-flights-demo/blob/master/mod-plot.R):
+We can follow the same pattern to create a module for the plot itself consisting of a UI (`plot_ui`), a server (`plot_server`), and a testing function (`plot_demo`). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file [`mod-plot.R`](https://github.com/emilyriederer/demo-shiny-modules/blob/master/mod-plot.R):
 
 Once again, we can run that self-contained file and then execute `plot_demo()` to run our mini-application. This time, it is more interactive. We can click the "Download" button and ensure that our download feature is working.
 

@@ -34,7 +34,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, errors = FALSE)
 
 Software products use a range of strategies to make promises or contracts with their users. Mature code packages and APIs document expected inputs and outputs, check adherence with unit tests, and transparently report code coverage. Programs with graphical user interfaces form such contracts by labeling and illustrating interactive components to explain their intent (for example, the "Save" button typically does not bulk-delete files).
 
-Published data tables, however, exist in an ambiguous gray area; static enough not to be considered a "service" or "software", yet too raw to earn the attention to user experience given to interfaces. This ambiguity can create a strange symbiosis between data produces and consumers. Producers may publish whatever data is accessible by the system or seems relevant, and consumers may be quick to assume tables or fields that "sound right" happen to be custom-fit for their top-of-mind question. Producers wonder why consumers aren't satisfied, and consumers wonder why the data is never "right".
+Published data tables, however, exist in an ambiguous gray area; static enough not to be considered a "service" or "software", yet too raw to earn the attention to user experience given to interfaces. This ambiguity can create a strange symbiosis between data producers and consumers. Producers may publish whatever data is accessible by the system or seems relevant, and consumers may be quick to assume tables or fields that "sound right" happen to be custom-fit for their top-of-mind question. Producers wonder why consumers aren't satisfied, and consumers wonder why the data is never "right".
 
 Metadata management solutions aim to solve this problem, and there are many promising developments in this space including Lyft's [Amundsen](https://eng.lyft.com/amundsen-lyfts-data-discovery-metadata-engine-62d27254fbb9), LinkedIn's [DataHub](https://engineering.linkedin.com/blog/2019/data-hub), and Netflix's [Metacat](https://netflixtechblog.com/building-and-scaling-data-lineage-at-netflix-to-improve-data-infrastructure-reliability-and-1a52526a7977). However, metadata solutions generally require a great degree of cooperation: producers must vigilantly maintain the documentation and consumers must studiously check it -- despite such tools almost always living outside of either party's core toolkit and workflow.
 
@@ -42,7 +42,7 @@ Using [controlled vocabularies](https://en.wikipedia.org/wiki/Controlled_vocabul
 
 ## Controlled Vocabulary
 
-The basic idea of controlled vocabularies is to define upfront a set of words, phrases, or stubs with well-defined meanings which can be used to index information. When these stubs are defined for different types of information and pieces together in a consistent order, the vocabulary becomes of descriptive grammar that we can use to describe more complex content and behavior.
+The basic idea of controlled vocabularies is to define upfront a set of words, phrases, or stubs with well-defined meanings which can be used to index information. When these stubs are defined for different types of information and pieces together in a consistent order, the vocabulary becomes a descriptive grammar that we can use to describe more complex content and behavior.
 
 In the context of a data set, this vocabulary can also serve as a latent contract between data producers and data consumers and carry promises regarding different aspects of the data lineage, valid values, and appropriate uses. When used consistently across all of an organization's tables, it can significantly scale data management and increase usability as knowledge from working with one dataset easily transfers to another. 
 
@@ -55,8 +55,8 @@ For reasons that will be evident in the examples, I like the first level of the 
 - `ID`: Unique identified for an entity.
   + Numeric for more efficient storage and joins unless system of record generates IDs with characters
   + Likely a primary key in some other table
-- `IND`: Binary 0 or 1 indicator or an event occurence
-  + Because always 0 or 1, can be averaged to find proportion occurence
+- `IND`: Binary 0 or 1 indicator or an event occurrence
+  + Because always 0 or 1, can be averaged to find proportion occurrence
   + Can consider calling `IS` instead of `IND` for even less ambiguity which case is labeled 1
 - `N`: Count of quantity or event occurrence
   + Always a non-negative integer
@@ -65,9 +65,9 @@ For reasons that will be evident in the examples, I like the first level of the 
   + For example, rates and ratios that cannot be combined or numeric values like latitude and longitude for which typical arithmetic operations don't make sense
 - `DT`: Date of some event
   + Always cast as a `YYYY-MM-DD` date
-- `TM`: Timestamp of some event
-  + Always cast as a `YYYY-MM-DD HH:MM:SS` timestamp
-  + Distinguishing dates from timestamps will avoid faulty joins of two date fields arranged differently
+- `TM`: Time stamp of some event
+  + Always cast as a `YYYY-MM-DD HH:MM:SS` time stamp
+  + Distinguishing dates from time stamps will avoid faulty joins of two date fields arranged differently
 - `CAT`: Categorical variable as a character string (potentially encoded from an `ID` field)
 
 While these are relatively generic, domain-specific categories can also be used. For example, since location is so important for ride-sharing, it might be worth having `ADDR` as a level 1 category. 
@@ -326,6 +326,10 @@ cols_n   = [vbl for vbl in data_trips.columns if vbl[0:2] == 'N_']
 cols_grp = ["CAT_RIDER_TYPE"]
 data_trips.groupby(cols_grp)[cols_n].sum()
 ```
+
+## Update - New Package (Dec 2020)
+
+Since writing this post, I have released the [convo](https://emilyriederer.github.io/convo/reference/index.html) R package to facilitate maintenance and application of controlled vocabularies. Please check it out and let me know what you think!
 
 
 

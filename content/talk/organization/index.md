@@ -23,7 +23,7 @@ tags: []
 featured: false
 
 image:
-  caption: 'The many roles of internal packages'
+  caption: 'The many jobs of internal packages'
   focal_point: Right
 
 links:
@@ -32,6 +32,7 @@ links:
   name: Follow
   url: https://twitter.com/rstudio
 url_video: 
+url_slides: "https://docs.google.com/presentation/d/1CBrLyI_PWu7cGiXp7BH-phv-MSPObZzbzrSZADMlDJU/edit?usp=sharing"
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.

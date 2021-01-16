@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: d88681b75f41928b
+rmd_hash: d2bd3484a3429dcb
 
 ---
 
@@ -139,7 +139,7 @@ However, since we are using a remote backend, the `penguins_aggr` object does no
 
 </div>
 
-At this point, we already have a function SQL query and have saved ourselves the hassle of writing nine typo-free aggregation functions. However, since `dbplyr` was not written to generate "pretty" queries, this is not the most readable blog of SQL. Next, we can apply the `sqlfluff` linter and styler.
+At this point, we already have a function SQL query and have saved ourselves the hassle of writing nine typo-free aggregation functions. However, since `dbplyr` was not written to generate "pretty" queries, this is not the most readable or well-formatted code. To clean it up, we can apply the `sqlfluff` linter and styler.
 
 As a prerequisite, we slightly reformat the query to remove anything that isn't native to common SQL and will confuse the linter, such as the first line of the query vector: `<SQL>`.
 
@@ -183,20 +183,20 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff lint"</span>, <span class='nv'>tmp</span><span class='o'>)</span>, intern <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> 
 
-<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\Rtmpkzmtk7\file38b052573a3f' had status 65</span>
+<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpiC6w7c\file8b828936a1' had status 65</span>
 
-<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\Rtmpkzmtk7\\file38b052573a3f] FAIL"</span>
-<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                    </span>
+<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpiC6w7c\\file8b828936a1] FAIL" </span>
+<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                   </span>
 <span class='c'>#&gt; attr(,"status")</span>
 <span class='c'>#&gt; [1] 65</span>
 

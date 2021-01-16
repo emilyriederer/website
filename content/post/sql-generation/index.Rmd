@@ -92,7 +92,7 @@ penguins_query <- capture.output(show_query(penguins_aggr))
 penguins_query
 ```
 
-At this point, we already have a function SQL query and have saved ourselves the hassle of writing nine typo-free aggregation functions. However, since `dbplyr` was not written to generate "pretty" queries, this is not the most readable blog of SQL. Next, we can apply the `sqlfluff` linter and styler.
+At this point, we already have a function SQL query and have saved ourselves the hassle of writing nine typo-free aggregation functions. However, since `dbplyr` was not written to generate "pretty" queries, this is not the most readable or well-formatted code. To clean it up, we can apply the `sqlfluff` linter and styler.
 
 As a prerequisite, we slightly reformat the query to remove anything that isn't native to common SQL and will confuse the linter, such as the first line of the query vector: `<SQL>`. 
 

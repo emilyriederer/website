@@ -5,7 +5,7 @@ subtitle: ""
 summary: "Using the tidyverse's expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts"
 authors: []
 tags: [rstats, data, sql]
-categories: []
+categories: [rstats, data, sql]
 date: 2021-01-16
 lastmod: 2021-01-16
 featured: false

@@ -5,7 +5,7 @@ subtitle: ""
 summary: "Using the tidyverse's expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts"
 authors: []
 tags: [rstats, data, sql]
-categories: []
+categories: [rstats, data, sql]
 date: 2021-01-16
 lastmod: 2021-01-16
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: d839b1247ff3f61e
+rmd_hash: 9773a326b11c88d7
 
 ---
 
@@ -183,20 +183,20 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff lint"</span>, <span class='nv'>tmp</span><span class='o'>)</span>, intern <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> 
 
-<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpSqyFfa\file30c4632d3279' had status 65</span>
+<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpgpMe2O\filebc066b25d7c' had status 65</span>
 
-<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpSqyFfa\\file30c4632d3279] FAIL"</span>
-<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                    </span>
+<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpgpMe2O\\filebc066b25d7c] FAIL"</span>
+<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
+<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                   </span>
 <span class='c'>#&gt; attr(,"status")</span>
 <span class='c'>#&gt; [1] 65</span>
 

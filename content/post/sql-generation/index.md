@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 9773a326b11c88d7
+rmd_hash: d88681b75f41928b
 
 ---
 
@@ -105,8 +105,8 @@ Now, we're done with set-up. Suppose we want to write a SQL query to calculate t
   <span class='nf'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='o'>(</span>
     N <span class='o'>=</span> <span class='nf'><a href='https://dplyr.tidyverse.org/reference/context.html'>n</a></span><span class='o'>(</span><span class='o'>)</span>,
     <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>sum</span>, .names <span class='o'>=</span> <span class='s'>"TOT_{.col}"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>var</span>, .names <span class='o'>=</span> <span class='s'>"AVG_{.col}"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>mean</span>, .names <span class='o'>=</span> <span class='s'>"VAR_{.col}"</span><span class='o'>)</span>,
+    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>var</span>, .names <span class='o'>=</span> <span class='s'>"VAR_{.col}"</span><span class='o'>)</span>,
+    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>mean</span>, .names <span class='o'>=</span> <span class='s'>"AVG_{.col}"</span><span class='o'>)</span>,
   <span class='o'>)</span>
 <span class='nv'>penguins_aggr</span>
 
@@ -117,9 +117,9 @@ Now, we're done with set-up. Suppose we want to write a SQL query to calculate t
 <span class='c'>#&gt; <span style='color: #555555;'>1</span><span> Adelie    152            </span><span style='text-decoration: underline;'>5</span><span>858.            </span><span style='text-decoration: underline;'>2</span><span>770.            </span><span style='text-decoration: underline;'>28</span><span>683</span></span>
 <span class='c'>#&gt; <span style='color: #555555;'>2</span><span> Chinst㠼㸵    68            </span><span style='text-decoration: underline;'>3</span><span>321.            </span><span style='text-decoration: underline;'>1</span><span>253.            </span><span style='text-decoration: underline;'>13</span><span>316</span></span>6
 <span class='c'>#&gt; <span style='color: #555555;'>3</span><span> Gentoo    124            </span><span style='text-decoration: underline;'>5</span><span>843.            </span><span style='text-decoration: underline;'>1</span><span>843.            </span><span style='text-decoration: underline;'>26</span><span>714</span></span>
-<span class='c'>#&gt; <span style='color: #555555;'># 㠼㸵 with 6 more variables: AVG_bill_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, AVG_bill_depth_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span></span>m
-<span class='c'>#&gt; <span style='color: #555555;'>#   AVG_flipper_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, VAR_bill_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span></span>
-<span class='c'>#&gt; <span style='color: #555555;'>#   VAR_bill_depth_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, VAR_flipper_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='c'>#&gt; <span style='color: #555555;'># 㠼㸵 with 6 more variables: VAR_bill_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, VAR_bill_depth_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span></span>m
+<span class='c'>#&gt; <span style='color: #555555;'>#   VAR_flipper_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, AVG_bill_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span></span>
+<span class='c'>#&gt; <span style='color: #555555;'>#   AVG_bill_depth_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>, AVG_flipper_length_mm </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span></span>
 </code></pre>
 
 </div>
@@ -132,7 +132,7 @@ However, since we are using a remote backend, the `penguins_aggr` object does no
 <span class='nv'>penguins_query</span>
 
 <span class='c'>#&gt; [1] "&lt;SQL&gt;"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </span>
-<span class='c'>#&gt; [2] "SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `AVG_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `AVG_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `AVG_flipper_length_mm`, AVG(`bill_length_mm`) AS `VAR_bill_length_mm`, AVG(`bill_depth_mm`) AS `VAR_bill_depth_mm`, AVG(`flipper_length_mm`) AS `VAR_flipper_length_mm`"</span>
+<span class='c'>#&gt; [2] "SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`"</span>
 <span class='c'>#&gt; [3] "FROM `penguins`"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    </span>
 <span class='c'>#&gt; [4] "GROUP BY `species`"</span>
 </code></pre>
@@ -149,7 +149,7 @@ As a prerequisite, we slightly reformat the query to remove anything that isn't 
 <span class='nv'>penguins_query</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/grep.html'>gsub</a></span><span class='o'>(</span><span class='s'>"`"</span>, <span class='s'>""</span>, <span class='nv'>penguins_query</span><span class='o'>)</span>
 <span class='nv'>penguins_query</span>
 
-<span class='c'>#&gt; [1] "SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS AVG_bill_length_mm, VARIANCE(bill_depth_mm) AS AVG_bill_depth_mm, VARIANCE(flipper_length_mm) AS AVG_flipper_length_mm, AVG(bill_length_mm) AS VAR_bill_length_mm, AVG(bill_depth_mm) AS VAR_bill_depth_mm, AVG(flipper_length_mm) AS VAR_flipper_length_mm"</span>
+<span class='c'>#&gt; [1] "SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS VAR_bill_length_mm, VARIANCE(bill_depth_mm) AS VAR_bill_depth_mm, VARIANCE(flipper_length_mm) AS VAR_flipper_length_mm, AVG(bill_length_mm) AS AVG_bill_length_mm, AVG(bill_depth_mm) AS AVG_bill_depth_mm, AVG(flipper_length_mm) AS AVG_flipper_length_mm"</span>
 <span class='c'>#&gt; [2] "FROM penguins"                                                                                                                                                                                                                                                                                                                                                                                                                                              </span>
 <span class='c'>#&gt; [3] "GROUP BY species"</span>
 </code></pre>
@@ -170,7 +170,7 @@ The current state of our file looks like this:
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'>SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS AVG_bill_length_mm, VARIANCE(bill_depth_mm) AS AVG_bill_depth_mm, VARIANCE(flipper_length_mm) AS AVG_flipper_length_mm, AVG(bill_length_mm) AS VAR_bill_length_mm, AVG(bill_depth_mm) AS VAR_bill_depth_mm, AVG(flipper_length_mm) AS VAR_flipper_length_mm
+<pre class='chroma'><code class='language-r' data-lang='r'>SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS VAR_bill_length_mm, VARIANCE(bill_depth_mm) AS VAR_bill_depth_mm, VARIANCE(flipper_length_mm) AS VAR_flipper_length_mm, AVG(bill_length_mm) AS AVG_bill_length_mm, AVG(bill_depth_mm) AS AVG_bill_depth_mm, AVG(flipper_length_mm) AS AVG_flipper_length_mm
 FROM penguins
 GROUP BY species
 </code></pre>
@@ -183,20 +183,20 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff lint"</span>, <span class='nv'>tmp</span><span class='o'>)</span>, intern <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> 
 
-<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpgpMe2O\filebc066b25d7c' had status 65</span>
+<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\Rtmpkzmtk7\file38b052573a3f' had status 65</span>
 
-<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpgpMe2O\\filebc066b25d7c] FAIL"</span>
-<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                   </span>
+<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\Rtmpkzmtk7\\file38b052573a3f] FAIL"</span>
+<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                    </span>
 <span class='c'>#&gt; attr(,"status")</span>
 <span class='c'>#&gt; [1] 65</span>
 
@@ -225,12 +225,12 @@ The results of these commands are a well-formatted and readable query.
     SUM(bill_length_mm) AS tot_bill_length_mm,
     SUM(bill_depth_mm) AS tot_bill_depth_mm,
     SUM(flipper_length_mm) AS tot_flipper_length_mm,
-    VARIANCE(bill_length_mm) AS avg_bill_length_mm,
-    VARIANCE(bill_depth_mm) AS avg_bill_depth_mm,
-    VARIANCE(flipper_length_mm) AS avg_flipper_length_mm,
-    AVG(bill_length_mm) AS var_bill_length_mm,
-    AVG(bill_depth_mm) AS var_bill_depth_mm,
-    AVG(flipper_length_mm) AS var_flipper_length_mm
+    VARIANCE(bill_length_mm) AS var_bill_length_mm,
+    VARIANCE(bill_depth_mm) AS var_bill_depth_mm,
+    VARIANCE(flipper_length_mm) AS var_flipper_length_mm,
+    AVG(bill_length_mm) AS avg_bill_length_mm,
+    AVG(bill_depth_mm) AS avg_bill_depth_mm,
+    AVG(flipper_length_mm) AS avg_flipper_length_mm
 FROM penguins
 GROUP BY species
 </code></pre>

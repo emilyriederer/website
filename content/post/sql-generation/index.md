@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: d2bd3484a3429dcb
+rmd_hash: cfd4da2dd876c4b7
 
 ---
 
@@ -183,20 +183,20 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff lint"</span>, <span class='nv'>tmp</span><span class='o'>)</span>, intern <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> 
 
-<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpiC6w7c\file8b828936a1' had status 65</span>
+<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\Rtmp23XsTJ\file18ac36966532' had status 65</span>
 
-<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpiC6w7c\\file8b828936a1] FAIL" </span>
-<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers."</span>
-<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                   </span>
+<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\Rtmp23XsTJ\\file18ac36966532] FAIL"</span>
+<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
+<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                    </span>
 <span class='c'>#&gt; attr(,"status")</span>
 <span class='c'>#&gt; [1] 65</span>
 
@@ -402,14 +402,14 @@ In this case, we can simple mock a fake dataset using the column names, write it
   <span class='nf'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='o'>(</span>
     N <span class='o'>=</span> <span class='nf'><a href='https://dplyr.tidyverse.org/reference/context.html'>n</a></span><span class='o'>(</span><span class='o'>)</span>,
     <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>sum</span>, .names <span class='o'>=</span> <span class='s'>"TOT_{.col}"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>var</span>, .names <span class='o'>=</span> <span class='s'>"AVG_{.col}"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>mean</span>, .names <span class='o'>=</span> <span class='s'>"VAR_{.col}"</span><span class='o'>)</span>,
+    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>var</span>, .names <span class='o'>=</span> <span class='s'>"VAR_{.col}"</span><span class='o'>)</span>,
+    <span class='nf'><a href='https://dplyr.tidyverse.org/reference/across.html'>across</a></span><span class='o'>(</span><span class='nf'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>ends_with</a></span><span class='o'>(</span><span class='s'>"mm"</span><span class='o'>)</span>, <span class='nv'>mean</span>, .names <span class='o'>=</span> <span class='s'>"AVG_{.col}"</span><span class='o'>)</span>,
   <span class='o'>)</span>
 
 <span class='nf'><a href='https://dplyr.tidyverse.org/reference/explain.html'>show_query</a></span><span class='o'>(</span><span class='nv'>penguins_aggr</span><span class='o'>)</span>
 
 <span class='c'>#&gt; &lt;SQL&gt;</span>
-<span class='c'>#&gt; SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `AVG_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `AVG_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `AVG_flipper_length_mm`, AVG(`bill_length_mm`) AS `VAR_bill_length_mm`, AVG(`bill_depth_mm`) AS `VAR_bill_depth_mm`, AVG(`flipper_length_mm`) AS `VAR_flipper_length_mm`</span>
+<span class='c'>#&gt; SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`</span>
 <span class='c'>#&gt; FROM `penguins_mock`</span>
 <span class='c'>#&gt; GROUP BY `species`</span>
 </code></pre>

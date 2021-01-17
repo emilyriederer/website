@@ -194,8 +194,8 @@ penguins_aggr <-
   summarize(
     N = n(),
     across(ends_with("mm"), sum, .names = "TOT_{.col}"),
-    across(ends_with("mm"), var, .names = "AVG_{.col}"),
-    across(ends_with("mm"), mean, .names = "VAR_{.col}"),
+    across(ends_with("mm"), var, .names = "VAR_{.col}"),
+    across(ends_with("mm"), mean, .names = "AVG_{.col}"),
   )
 
 show_query(penguins_aggr)

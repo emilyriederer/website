@@ -1,0 +1,170 @@
+---
+output: hugodown::md_document
+title: "Introducing the {convo} package"
+subtitle: ""
+summary: "Using controlled vocabularies to encode contracts between data producers and consumers"
+authors: []
+tags: [rstats, package, data]
+categories: [rstats, package, data]
+date: 2020-12-30
+lastmod: 2020-12-30
+featured: false
+draft: false
+aliases:
+
+# Featured image
+# To use, add an image named `featured.jpg/png` to your page's folder.
+# Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
+image:
+  caption: ""
+  focal_point: ""
+  preview_only: true
+
+# Projects (optional).
+#   Associate this post with one or more of your projects.
+#   Simply enter your project's folder or file name without extension.
+#   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
+#   Otherwise, set `projects = []`.
+projects: ["convo"]
+---
+
+Back in September, I wrote about how [controlled vocabularies](../content/post/column-name-contracts) can help form contracts between data producers and consumers. In short, I argued that aligning on an ontology of stub names for use naming variables in a dataset can improve data documentation, validation, and wrangling with minimal overhead. 
+
+However, all of these benefits assume *absolute consistency* in the use of the controlled vocabulary. As soon as typos creep into variable names or fields violate the supposed data validation checks that their stubs promise, these vocabularies become more of a liability than an asset by luring data consumers into complacency.
+
+I'm pleased to announced the experimental [`convo`](https://emilyriederer.github.io/convo/index.html) package to enable the definition and application of controlled vocabularies. In this post, I briefly describe the key features. Please see the package website for full documentation.
+
+```{r}
+library(convo)
+```
+
+## Defining your vocabulary
+
+`convo` uses a YAML specification to define controlled vocabularies. Stubs are defined at each level which can optionally take on additional fields such as `desc` (a human-readable description), `valid` (which specifies `pointblank`-style data validation checks), and `rename` (which specifies how variable names should change under certain computations).
+
+```{r}
+filepath <- system.file("", "ex-convo.yml", package = "convo")
+cat(readLines(filepath), sep = "\n")
+```
+
+We can read this into R and retrieve a brief summary. Note that in this case the third-level stub allows for a regular expression to be used.
+
+```{r}
+convo <- read_convo(filepath)
+print(convo)
+```
+
+Alternatively, you may define a `convo` as a simple R list object (as shown when `bad_convo` is defined in the following two examples.)
+
+## Assessing vocabulary quality
+
+Good features of a vocabulary stubs include *monosemy* (having only one meaning) and *unique* (being the only thing to mean that thing). Functions `pivot_convo()` and `cluster_convo()` help us spot deviations from these two properties. To illustrate these functions, I'll use a different `convo` than above since that one exhibits both monosemy and uniqueness already.
+
+`pivot_convo()` allows us to obtain all of the level indices at which each stub appears. When the `repeats_only` argument is set to the default value `TRUE`, this function only returns stubs that exist at multiple levels, thus violating monsemy. For example, this function could help us realize that we had used the stub "CAT" to refer both to a categorical variable and an animal.
+
+```{r}
+bad_convo <- list(c("IND", "AMT", "CAT"), c("DOG", "CAT"))
+pivot_convo(bad_convo)
+```
+
+Similarly, `cluster_convo()` attempts to catch errors in uniqueness by clustering stubs based on string similarity. This can highlight similar but distinct stubs, which might arise when a common word or concept is abbreviated in different ways. In the following example, "ACCOUNT", "ACCT", and "ACCNT" are closely clustered in the second level, which might help us realize that all three are intended to represent a customer's account. 
+
+```{r}
+bad_convo <- list(c("IND", "IS", "AMT", "AMOUNT", "CAT", "CD"),
+              c("ACCOUNT", "ACCT", "ACCNT", "PROSPECT", "CUSTOMER"))
+clusts <- cluster_convo(bad_convo)
+plot(clusts[[2]])
+```
+
+## Evaluating variable names
+
+Having defined a `convo`, we can next use it to evaluate variable names. The `evaluate_convo()` function accepts a `convo` object and a set of names in a vector. It returns any variable names that violate the controlled vocabulary, listed at the specific level in which the violation occurs.
+
+```{r}
+col_names <- c("ID_A", "IND_A", "XYZ_D", "AMT_B", "AMT_Q", "ID_A_1234", "ID_A_12")
+evaluate_convo(convo, col_names, sep = "_")
+```
+
+If a large number of violations occur, it might be more useful to directly retrieve all of the stubs existing in variable names that are not part of the `convo`. To do this, we can use set operators available in the `compare_convo()` function to examing the unions, intersections, and set differences between our controlled vocabulary and our variable names. Doing so might inspire new candidate stubs that ought to be included in our controlled vocabulary.
+
+```{r}
+convo_colnames <- parse_stubs(col_names)
+compare_convo(convo_colnames, convo, fx = "setdiff")
+```
+
+If desired, newly uncovered stubs can be added to the `convo` object in R with the `add_convo_stub()` function:
+
+```{r}
+convo2 <- add_convo_stub(convo, level = 2, stub = "B", desc = "Type B")
+convo2 
+```
+
+Currently, there is not support for editing the YAML specification via R function. New stubs would need to be added manually. However, a completely new YAML file can be created with the `write_convo()` function. This is particularly useful if you are creating a controlled vocabulary for the first time based on an existing set of variables names. First, you may parse them with `parse_stubs()` to create a minimal controlled vocabulary (stubs without descriptions, validation checks, etc.) and then you may write this to a draft YAML file for further customization. 
+
+## Validating data fields fields
+
+The validation checks specified with `pointblank` verbs in your YAML file can be used to create either a `pointblank` agent or a `pointblank` [YAML file](https://rich-iannone.github.io/pointblank/reference/yaml_read_agent.html) which can be used to consistently apply all of the promised data checks. 
+
+The `pointblank` YAML file may be created with the `write_pb()`:
+
+```{r eval = FALSE}
+write_pb(convo, c("IND_A", "AMT_B"), filename = "convo-validation.yml")
+```
+```{r}
+cat(readLines("convo-validation.yml"), sep = "\n")
+```
+
+
+Alternatively, a validation agent can be created directly with `create_pb_agent()`:
+
+```{r eval = FALSE}
+data_to_validate <- data.frame(IND_A = 1, IND_B = 5, DT_B = as.Date("2020-01-01"))
+agent <- create_pb_agent(convo, data_to_validate)
+pointblank::interrogate(agent)
+```
+
+## Document fiels and vocabularies
+
+`convo` also offers preliminary support for documentation. 
+
+Basic data dictionaries may be created with `describe_names()` which attempts to create definitions for fields based on a user-provided glue string and YAML-specified stub definitions.
+
+```{r eval = FALSE}
+vars <- c("AMT_A_2019", "IND_C_2020")
+desc_df <- describe_names(vars, convo, desc_str = "{level1} of {level2} in given year")
+DT::datatable(desc_df)
+```
+
+![](data-docs.PNG)
+
+Alternatively, the entire controlled vocabulary may be put into a dictionary.
+
+```{r eval = FALSE}
+desc_df <- describe_convo(convo, include_valid = TRUE, for_DT = TRUE)
+DT::datatable(desc_df, escape = FALSE)
+```
+
+![](convo-docs.PNG)
+
+(The tables actually look much nicer when displayed with the full power of `DT`, which also allows for interactive filtering and sorting. Unfortunately, the Javascript behind DT causes a weird conflict with my static site generator weird interactions with my blog theme, so I just show screenshots here.)
+
+## Open issues
+
+`convo` is still very experimental and there are many open questions. Currently, I'm debating many aspects of `convo` specification including:
+
+- What other formats should be allowed for defining a controlled vocabulary? Should there be a spreadsheet/CSV-based format? More support for constructing the object in R directly?
+- Currently, the separators between levels are specified in the function calls. 
+  + Should this be part of the `convo` object instead? 
+  + Should there be support for varying selectors at different levels (e.g. this would generalize better to using `convo` to validate file names with `/` delimiting directories and subdirectories and `_` or `-` used in parts of file names)
+- `convo` assumes prefix-based schemes with names start and "grow" from the beginning. Should suffix-based scheme be supported?
+  + One on hand, this provides significantly more flexibility
+  + On the other hand, I do strongly believe there are advantages to prefixed-based names (e.g. autocomplete, related concepts clustering when sorted) and any additional flexibility will make the initial specification increasingly gnarly for users
+- Should specification allow truly hierarchical naming structures where allowed stubs at level `n+1` vary by the stub at level `n`?
+- Should it be possible to mark some levels are required? Currently, no levels may be "skipped" but if five levels are specified, the software permits derived names of lengths fewer or greater than 5 (so long as any existing levels 1-5 follow the format)
+- Would it be useful to be able to programmatically edit the YAML file specification within R? What is the use case for this?
+- Currently, the `describe` function family is rather primitive. I hope to make this more aesthetic or integrate more deeply with `pointblank`
+
+If you are interested, please take the package for a spin and do not hesitate to get in touch about these issues or any other ideas you have! Seeing more use cases beyond my own helps me understand which of these ideas add value versus unneccesary bloat and confusion. 
+
+
+

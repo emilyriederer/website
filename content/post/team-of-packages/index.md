@@ -17,7 +17,7 @@ image:
   preview_only: true
 
 projects: [""]
-rmd_hash: f2227d656a42857f
+rmd_hash: d394c0d371c52545
 
 ---
 
@@ -595,7 +595,7 @@ In summary, we all know the the joy of working with a great team, and, if you've
 
 ![](all-the-jobs.PNG)
 
-Ready to get started? Check out my posts on [R Markdown Driven Development](rmarkdown-driven-development) to learn the *technical* side of converting existing analysis scripts into reusable tools and packages, or see my [Rtistic project](../project/rtistic) for a template to make your organization's first package (for themes and color palettes).
+Ready to get started? Check out my posts on [R Markdown Driven Development](/post/rmarkdown-driven-development) to learn the *technical* side of converting existing analysis scripts into reusable tools and packages, or see my [Rtistic project](/project/rtistic) for a template to make your organization's first package (for themes and color palettes).
 
 *(One anti-climactic sidenote: not every organizational problem lends itself to an R package! In [this post](https://emilyriederer.netlify.app/post/resource-roundup-r-industry/), I review some great case studies of the use of R in industry including some great examples of when the jobs-to-be-done are best met by a different end-product like a GitHub repo, bookdown cookbook, etc.)*
 

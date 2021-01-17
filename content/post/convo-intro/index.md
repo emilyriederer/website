@@ -26,11 +26,11 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["convo"]
-rmd_hash: 65894ea29f83ebf9
+rmd_hash: 699e28c34e777111
 
 ---
 
-Back in September, I wrote about how [controlled vocabularies](../content/post/column-name-contracts) can help form contracts between data producers and consumers. In short, I argued that aligning on an ontology of stub names for use naming variables in a dataset can improve data documentation, validation, and wrangling with minimal overhead.
+Back in September, I wrote about how [controlled vocabularies](/post/column-name-contracts) can help form contracts between data producers and consumers. In short, I argued that aligning on an ontology of stub names for use naming variables in a dataset can improve data documentation, validation, and wrangling with minimal overhead.
 
 However, all of these benefits assume *absolute consistency* in the use of the controlled vocabulary. As soon as typos creep into variable names or fields violate the supposed data validation checks that their stubs promise, these vocabularies become more of a liability than an asset by luring data consumers into complacency.
 

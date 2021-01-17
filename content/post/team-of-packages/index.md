@@ -9,7 +9,7 @@ categories: [rstats, pkgdev, jtbd]
 date: 2021-01-21
 lastmod: 2021-01-21
 featured: false
-draft: true
+draft: false
 
 image:
   caption: ""
@@ -17,7 +17,7 @@ image:
   preview_only: true
 
 projects: [""]
-rmd_hash: dd2236fcd0a9d680
+rmd_hash: f2227d656a42857f
 
 ---
 
@@ -103,7 +103,7 @@ As an example, let's consider a simple function to connect to an organization's 
 
 <span class='nv'>conn</span> <span class='o'>&lt;-</span>
   <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span>
-    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'>odbc</span><span class='o'>(</span><span class='o'>)</span>,
+    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'><a href='https://rdrr.io/pkg/odbc/man/odbc.html'>odbc</a></span><span class='o'>(</span><span class='o'>)</span>,
     driver <span class='o'>=</span> <span class='s'>"driver name here"</span>,
     server <span class='o'>=</span> <span class='s'>"server string here"</span>,
     UID <span class='o'>=</span> <span class='nv'>username</span>,
@@ -130,7 +130,7 @@ In an open source package, I wouldn't presume to force users' hand to use one sp
 
 <span class='nv'>conn</span> <span class='o'>&lt;-</span>
   <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span>
-    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'>odbc</span><span class='o'>(</span><span class='o'>)</span>,
+    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'><a href='https://rdrr.io/pkg/odbc/man/odbc.html'>odbc</a></span><span class='o'>(</span><span class='o'>)</span>,
     driver <span class='o'>=</span> <span class='s'>"driver name here"</span>,
     server <span class='o'>=</span> <span class='s'>"server string here"</span>,
     UID <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='o'>(</span><span class='s'>"DB_USER"</span><span class='o'>)</span>,
@@ -169,7 +169,7 @@ Such support messages can be made even more approachable with the use of the [`c
 
 <span class='nv'>conn</span> <span class='o'>&lt;-</span>
   <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span>
-    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'>odbc</span><span class='o'>(</span><span class='o'>)</span>,
+    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'><a href='https://rdrr.io/pkg/odbc/man/odbc.html'>odbc</a></span><span class='o'>(</span><span class='o'>)</span>,
     driver <span class='o'>=</span> <span class='s'>"driver name here"</span>,
     server <span class='o'>=</span> <span class='s'>"server string here"</span>,
     UID <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='o'>(</span><span class='s'>"DB_USER"</span><span class='o'>)</span>,
@@ -201,7 +201,7 @@ Of course, even better than explaining errors is preventing them from occurring.
 
 <span class='nv'>conn</span> <span class='o'>&lt;-</span>
   <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span>
-    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'>odbc</span><span class='o'>(</span><span class='o'>)</span>,
+    drv <span class='o'>=</span> <span class='nf'>odbc</span><span class='nf'>::</span><span class='nf'><a href='https://rdrr.io/pkg/odbc/man/odbc.html'>odbc</a></span><span class='o'>(</span><span class='o'>)</span>,
     driver <span class='o'>=</span> <span class='s'>"driver name here"</span>,
     server <span class='o'>=</span> <span class='s'>"server string here"</span>,
     UID <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='o'>(</span><span class='s'>"DB_USER"</span><span class='o'>)</span>,
@@ -594,6 +594,8 @@ Final Thoughts
 In summary, we all know the the joy of working with a great team, and, if you've made it this far, I suspect you know the pleasure of cracking open a new R package. By taking advantage of unique opportunities when designing internal packages, we can truly achieve the best of both worlds. We can share the fun of working with good tools with the teammates we care about, and elevate those same tools to full-fledged teammates by giving them the skills to succeed.
 
 ![](all-the-jobs.PNG)
+
+Ready to get started? Check out my posts on [R Markdown Driven Development](rmarkdown-driven-development) to learn the *technical* side of converting existing analysis scripts into reusable tools and packages, or see my [Rtistic project](../project/rtistic) for a template to make your organization's first package (for themes and color palettes).
 
 *(One anti-climactic sidenote: not every organizational problem lends itself to an R package! In [this post](https://emilyriederer.netlify.app/post/resource-roundup-r-industry/), I review some great case studies of the use of R in industry including some great examples of when the jobs-to-be-done are best met by a different end-product like a GitHub repo, bookdown cookbook, etc.)*
 

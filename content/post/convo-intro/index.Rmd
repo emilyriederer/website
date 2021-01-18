@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Introducing the {convo} package"
 subtitle: ""
-summary: "Using controlled vocabularies to encode contracts between data producers and consumers"
+summary: "An R package for maintaining controlled vocabularies to encode contracts between data producers and consumers"
 authors: []
 tags: [rstats, package, data]
 categories: [rstats, package, data]

@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Introducing the {convo} package"
 subtitle: ""
-summary: "Using controlled vocabularies to encode contracts between data producers and consumers"
+summary: "An R package for maintaining controlled vocabularies to encode contracts between data producers and consumers"
 authors: []
 tags: [rstats, package, data]
 categories: [rstats, package, data]
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["convo"]
-rmd_hash: 699e28c34e777111
+rmd_hash: 29f50bf3f7aa78a7
 
 ---
 

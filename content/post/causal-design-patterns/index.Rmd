@@ -28,27 +28,35 @@ image:
 projects: [""]
 ---
 
-Software engineers study design patterns^[A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns).] to help them recognize archetypes in the specific problems they are facing, to discuss such challenges with a shared vocabulary, and to reuse tried-and-true paradigms to address these problems. 
+Software engineers study design patterns^[A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns).] to help them recognize archetypes, discuss with a common language, and reuse tried-and-true architectures. 
 
-Statistics also has plenty of examples of prototypical analyses; however, sometimes these frameworks become siloed within a specific field of study (e.g. epidemiology, economics, biostatistics) and clouded in domain-specific language that masks their general applicability^[Two other examples of this are categorical data analysis methods associated only with text mining and time-to-event analyses covered predominately in survival analysis]. This can make it hard for practitioners outside of these fields to easily survey, learn, and apply these methods.
+Similarly, statistics has many prototypical analyses; however, these frameworks are often siloed specific disciplines and clouded by domain-specific language that makes them hard to discover and masks their general applicability^[Two other examples of this are categorical data analysis methods associated only with text mining and time-to-event analyses covered predominately in survival analysis]. This can make it hard for practitioners outside of these fields to easily survey, learn, and apply these methods.
 
-Observational causal inference is most definitely one such field. Countless fields have the need to answer causal questions ("Does smoking cause cancer?", "Does protest cause political change?") when a randomized experiment is impossible -- either ethically, financially, temporally, or practically. In such cases, researchers look for alternative ways to construct control groups or a measure of the counterfactual outcome if the treatment had not been put into effect.
+Observational causal inference is one such field. The need to derive meaning and strategy from "found" historical data (as opposed to experimentally "manufactured" data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more. 
 
-In this post, I briefly summarize common cross-disciplinary design patterns for measuring causal effects from observational data. For each, I offer an illustration, summary of the method, explanation of the required data structure and assumptions, and an industry-focused example. Causal inference is very hard and nuanced; doing it well requires a large amount of both statistical and domain expertise. For brevity, I will not attempt to explain all of the technical details in this piece, but I hope that it can be useful to raise awareness so analysts can more readily recognize and further research designs conducive to their data.
+In this post, I briefly summarize common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each, I offer an illustration, summary of the method, explanation of the required data structure and assumptions, and an industry-focused example. Causal inference is complicated and nuanced; doing it well requires a large amount of both statistical and domain expertise. For brevity, I will not attempt to explain all of the technical details in this piece, but I hope that it can be useful to raise awareness so analysts can more readily recognize and further research designs conducive to their data.
 
 ## Why CI in Industry?
 
-Experimentation has become a mainstay of industry, so you might ask why does observational causal inference matter? 
+Observational causal inference allows researchers and analysts to ask causal questions and analyize *quasi-experiments* when experementaiton is infeasible. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so you might ask why does observational causal inference matter? 
 
 - Some situations you cannot test or even when you can, thinking about observational causal inference methods can help you better identify biases and design your experiments
 - Testing is expensive. There are direct costs (e.g. testing a marketing promotion) of instituting a policy that might not be effective, implementation costs (e.g. having a tech team implement a new display), and opportunity costs (e.g. holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)
 - Data collection can take time. Sometimes we may want to read long-term endpoints like customer retention or attrition after many year. Working with historical observational data can help get a preliminary answer sooner
-- There are so many questions that you can answer! As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in the real world to create quasi-experiments. Industry (and life in general) is full of well-defined yet somewhat arbitrary policies which make it fertile ground for observational causal inference
+
+Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer! As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in the real world to create quasi-experiments. Industry (and life in general) is full of well-defined yet somewhat arbitrary policies which make it fertile ground for observational causal inference. 
+
+To see how this works, we'll give a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods attempts to utilize different sources of randomness while avoiding different types of confounding to derive a valid inference. I'll focus particularly on the data required for each method because causal inference cannot be forced; the best method is a direct product of the specific data available to you.
 
 ## Stratification 
 
 ![](excalidraw-strat.png)
 
+Stratification helps us correct for imbalanced weighting of treated and control populations that arise due to a non-random assignment mechanism.
+
+**Motivating Example:** 
+
+- Suppose we attempted to A/B test "one-click instant checkout" on our website and want to measure the effect on total purchase amount (one on hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing.) However, due to a glitch the code, web users had a 50% chance of being in the treatment group (i.e. seeing the button) but mobile users only had a 30% chance. Additionally, we know that mobile users tend to spend less per order. Thus, the fact that web users are *over-represented* in the treatment group means that simply comparing treatment versus control outcomes will bias our results and make the causal effect of the button appear higher than it is in actuality.
 
 **Approach:**
 
@@ -62,12 +70,10 @@ Experimentation has become a mainstay of industry, so you might ask why does obs
 - All observations had some positive probability of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
 - Only a small number of variables require adjustment (because they impact both the treatment likelihood and the outcome) Otherwise, we are plagued by the [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality)
 
-**Example:**
+**Example Application:**
 
-- Suppose we attempt to A/B test a "One-Click Instant Checkout" option on our website before Black Friday and want to measure the effect on total purchase amount (one on hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing.) However, due to a glitch the code, there is a 50/50 split between treatment groups for web users but 30/70 for mobile users. Additionally, we know that mobile users tend to buy less in an order. 
 - Although we could run another A/B test, we only had one shot at Black Friday and need to decide whether or not to include this button next year. We can calculate separate treatment effects within web orders versus mobile orders and then weight average these effects based on the overall channel distribution across all orders. 
 - (Technically with modern web design, we could make separate decisions for mobile and web users, so we might not actually care about the overall treatment effect. This is just an example.)
-
 
 **Related Methods:**
 
@@ -82,21 +88,28 @@ Experimentation has become a mainstay of industry, so you might ask why does obs
 
 ![](excalidraw-psw.png)
 
+Similar to stratification, propensity score weighting helps us correct for imbalanced weighting of treated and control populations that arise due to a non-random assignment mechanism. However, this approach allows us to control for many covariates that influence assignment by reducing all relevant information into a single score on which we balance.
+
+**Motivating Example:** 
+
+- We sent a marketing promotion text message to all of our customers for whom we have a valid cell phone number and want to know the causal effect on the likelihood of making a purchase in the next month. Because we sent this text to all customers with a valid phone number, we only have customers for whom we do *not* have a phone number for a control. This is an optional field when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number tend to be older and less frequent shoppers. Thus, if we simply compare the treatment and control groups, the promotion will look *more effective* than it really was because it is being sent to generally *more active* customers.
+
 **Approach:**
 
-- Model the probability of receiving the treatment based each observation's covariates
-- Use predicted probabilities (propensity scores) to reweight the treatment group to fit the same distribution as the control group
+- Model the probability of receiving the treatment based each observation's covariates (the propensity score)
+- In observational data, the treatment group's distribution of propensity scores will generally skew right (tend higher, shown in solid blue) and the control group's distribution will skew left (tend lower, shown in solid green)
+- Use predicted probabilities (propensity scores) to reweight the treatment group to fit the same distribution of treatment likelihood as the control group (shown in dotted green)
 - Weights can be constructed in different ways depending on the quantity of interest (average treatment effect of treated, average treatment effect of population, average treatment effect on control, etc.)
 - Apply weights when calculating the average outcome in each of the treated and control groups and subtract to find the treatment effect
 
 **Key Assumptions:**
 
 - All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment and independent conditional on the covariates)
-- All observations had some positive probability of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
+- All observations had some positive probability^[This is often called the positivity assumption] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
 
-**Example:**
+**Example Application:**
 
-- We sent a marketing promotion text message to all of our customers for whom we have a valid cell phone number and want to know the causal effect on the likelihood of making a purchase in the next month. Because we sent this text to all customers with a valid phone number, we only have customers for whom we do *not* have a phone number for a control. This is an optional field when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number tend to be older and less frequent shoppers. We could build a propensity score model based on demographics and historical purchase behavior and use this to reweight our population when measuring the target outcome.
+- We could build a propensity score model based on demographics and historical purchase behavior and use this to re-weight our population when measuring the target outcome.
 
 **Related Methods:**
 
@@ -112,6 +125,12 @@ Experimentation has become a mainstay of industry, so you might ask why does obs
 
 ![](excalidraw-rdd.png)
 
+Often, in real life and particularly in industry, we violate the "positive probability of treatment throughout the covariate space" assumption required by stratification and propensity score weighting. Business and public policy often creates sharp cut-offs (e.g. customer segmentation based on age and spend) with individuals on either side of this cut-off receiving different treatments. In such cases, we have no relevant observations to reweight. However, we can apply a regression discontinuity design to understand the local effect of a treatment at the point of discontinuity.
+
+**Motivating Example:**
+
+- Customers who have not made a purchase in 90 days are sent a "\$10 Off Your Next Purchase" coupon. We can use the sharp cut-off in "days since last purchase" to measure the effect of a coupon on spend in the next year. While it's implausible to think that customers who haven't purchased in 10 days are similar to those who have not in 150 days, customers who haven't purchased in 88 days are likely not substantively different than those who have not purchased in 92 days except for the different treatment
+
 **Approach:** 
 
 - A set of individuals either do or do not receive a treatment based on an arbitrary cut-off. 
@@ -124,9 +143,9 @@ Experimentation has become a mainstay of industry, so you might ask why does obs
 - The outcome of interest can be modeled as a continuous function with respect to the decisioning variable
 - We can fit a reasonably well-specified and simple model between the outcome of interest and the decisioning variable. Since RDD necessarily requires us to use estimates from the very "tails" of our model, overly complex models (e.g. high degree polynomials) can reach bizarre conclusions
 
-**Example:** 
+**Example Application:** 
 
-- Customers who have not made a purchase in 90 days are sent a "\$10 Off Your Next Purchase" coupon. We can use the sharp cut-off in "days since last purchase" to measure the effect of a coupon on spend in the next year. While it's implausible to think that customers who haven't purchased in 10 days are similar to those who have not in 150 days, customers who haven't purchased in 88 days are likely not substantively different than those who have not purchased in 92 days except for the different treatment
+- We can model the relationship between "days since last spend" and "spend in the next year" and evaluate the difference in modeled values at the value of 90 for "days since last spend"
 - A *counter-example* that violates the assumption would be advertising "Free Shipping and Returns over \$50" and attempting to measure the effect of offering free shipping on future customer loyalty. Why? This cut-off is *known* to individuals ahead of time and can be gamed. For example, perhaps less loyal are more skeptical of a company's products and more likely to return, so they might intentionally spend more than \$50 to change their classification and gain entrance to the treatment group
 
 **Related Methods:**
@@ -143,6 +162,10 @@ Experimentation has become a mainstay of industry, so you might ask why does obs
 
 ![](excalidraw-did.png)
 
+Some treatments we wish to apply cannot be applied at the individual level but necessarily effect entire groups. Instead of comparing treatment and control groups within the same population at the same time, we can compare the *relative change* across treatment and control populations *across time*. 
+
+**Motivating Example:** We want to estimate the effect of a store remodel on visits. A remodel effect all potential customers, so this "treatment" cannot be applied at the individual level; in theory, it could be randomized to individual *stores*, but we do not have the budget for or interest in randomly remodel many stores before there is evidence of a positive effect.
+
 **Approach:**
 
 - In two separate populations, one receives the treatment and one does not. We believe but-for the treatment the two populations would have similar trends in outcome
@@ -156,10 +179,13 @@ Experimentation has become a mainstay of industry, so you might ask why does obs
 - If not for the treatment, the two groups being compared would have parallel trends in the outcome. Note that groups are allowed to have different *levels* but must have similar trends over time
 - There is no spill-over effect such that treating the treatment group has an effect on the control group
 
-**Example:**
+**Example Application:**
 
-- We could estimate the effect of a store remodel on visits by comparing store traffic before and after the remodel with traffic at a store that did not remodel. This only works if our assumptions hold; if the remodel is an expansion and caused by a foreseen increase in traffic, our first assumption is violated.
-- A *counter-example* that violates the assumption would be measuring the effect of placing a certain product brand near a store's check-out on sales and using sales of a different brand of the same product as the control. Why? Since these products are substitutes, the product placement of the treatment group could "spillover" to negatiely effect sales of the control
+- We can estimate the effect of a store remodel on visits by comparing store traffic before and after the remodel with traffic at a store that did not remodel. 
+- Note how sensitive this method is to our assumptions: 
+  + if the remodel is an expansion and caused by a foreseen increase in traffic, our first assumption is violated and our effect will be overestimated
+  + if the control we chose is another nearby store in the same town, we could experience spillover effects where more people who would have otherwise gone to the control store decide to go to the treatment store instead. This again would overestimate the effect
+- Another *counter-example* that violates the assumption would be measuring the effect of placing a certain product brand near a store's check-out on sales and using sales of a different brand of the same product as the control. Why? Since these products are substitutes, the product placement of the treatment group could "spillover" to negatively effect sales of the control
 
 **Related Methods:**
 
@@ -181,63 +207,6 @@ You may have noticed that, so far, we've only discussed methods that tell us the
 
 ## Learn More
 
-The point of this post is not to teach any one method of causal inference but to help raise awareness for the different tools and methods that arise given certain naturally occurring experiments and inference-friendly data structures. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. Below, I've linked a few favorites.
+The point of this post is not to teach any one method of causal inference but to help raise awareness for the different tools and methods that arise given certain naturally occurring experiments and inference-friendly data structures. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. 
 
-### Free Books
-
-- [Causal Inference: What If](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/) by Miguel Hernan and Jamie Robins
-  + Epidemiology perspective
-  + Code supplement in R, python, SAS, Stata
-- [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course) by Brady Neal
-  + ML perspective including Bayesian networks, causal discovery
-  + Book complemented by video lectures
-- [Causal Inference: the Mixtape](https://mixtape.scunning.com/) by Scott Cunningham
-  + Economics perspective
-  + Includes interactive R code chunks to run as you read
-- [The Effect: An Introduction to Research Design and Causality](https://nickchk.com/causalitybook.html) by Nick Huntington-Kline
-  + Economics perspective
-  + Holistic focus on research design with rich examples from literature
-- [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch
-
-### Course Material 
-
-- [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course) by Brady Neal
-  + ML perspective including Bayesian networks, causal discovery
-  + Slides and video lectures to go along with book linked above
-- [Program Evaluation](https://evalf19.classes.andrewheiss.com/) by Andrew Heiss
-  + Public policy perspective 
-  + Slides and assignments
-- [Causal Inference (Propensity Score) Tutorial from UseR!2020](https://github.com/LucyMcGowan/user2020-causal-inference) by Lucy D'Agostino McGowan and Malcolm Barrett
-  + Epidemiology perspective focused on propensity-score methods
-  + Video tutorial with R code on GitHub
-
-### Blogs and Talks
-
-**Overviews**
-
-- [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/) on the Uber Engineering blog
-
-**Propensity Score Methods**
-  
-- [Understanding propensity score weighting](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/) by Lucy D'Agostino McGowan
-- [To Balance or Not To Balance](https://www.unofficialgoogledatascience.com/2016/06/to-balance-or-not-to-balance.html) by Ivan Diaz and Joseph Kelly (Unofficial Google Data Science Blog)
-
-**Advanced Methods** (not discussed in this post)
-
-- [Causal Science 2020 Meeting talks](https://causalscience.org/programme/about/)
-- [Synthetic Control lecture](https://www.youtube.com/watch?v=nKzNp-qpE-I&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=11) by Alberto Abadie
-- [Heterogenous Treatment Effects lecture](https://www.youtube.com/watch?v=oZoizsX3bts&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=7) by Susan Athey
-- [Personalized Treatment Effect Estimation](https://www.youtube.com/watch?v=NRzObclZVT8) by Heidi Seibold
-- [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo
-
-### Podcasts
-
-- [Casual Inference](https://casualinfer.libsyn.com/)
-- [SERious EPI](https://seriousepi.blubrry.net/)
-
-### Other Introductory Books
-
-- [Mastering Metrics](https://www.amazon.com/gp/product/0691152845/ref=ox_sc_act_title_3?smid=ATVPDKIKX0DER&psc=1) and [Mostly Harmless Econometrics](https://www.amazon.com/Mostly-Harmless-Econometrics-Empiricists-Companion/dp/0691120358/ref=pd_sbs_14_1/134-6784964-9794862?_encoding=UTF8&pd_rd_i=0691120358&pd_rd_r=ebba5491-d197-4e79-be24-ec7e1c2bda17&pd_rd_w=xvRCC&pd_rd_wg=dpUZo&pf_rd_p=bc074051-81d1-4874-a3fd-fd0c867ce3b4&pf_rd_r=69D56CVPRFHAWNKFARBY&psc=1&refRID=69D56CVPRFHAWNKFARBY) by Joshua Angrist and Jorn-Steffen Pischke
-- [The Book of Why](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X/ref=sr_1_1?dchild=1&keywords=book+of+why&qid=1596111613&s=books&sr=1-1) by Judea Pearl
-
-
+Please check out my companion [research roundup post](post/resource-roundup-causal) for links to many free books, courses, talks, tutorials, and more. I split this into a separate document to make these links more accessible to those that didn't make it this far through my own naration. 

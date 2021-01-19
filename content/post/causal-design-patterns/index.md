@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: e4b5d2f02426e778
+rmd_hash: 053106e0e1bcf34a
 
 ---
 
@@ -217,7 +217,7 @@ Learn More
 
 The point of this post is not to teach any one method of causal inference but to help raise awareness for the different tools and methods that arise given certain naturally occurring experiments and inference-friendly data structures. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods.
 
-Please check out my companion [research roundup post](post/resource-roundup-causal) for links to many free books, courses, talks, tutorials, and more. I split this into a separate document to make these links more accessible to those that didn't make it this far through my own naration.
+Please check out my companion [research roundup post](/post/resource-roundup-causal/) for links to many free books, courses, talks, tutorials, and more. I split this into a separate document to make these links more accessible to those that didn't make it this far through my own naration.
 
 [^1]: A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns).
 

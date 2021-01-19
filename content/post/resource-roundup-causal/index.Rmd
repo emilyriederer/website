@@ -29,7 +29,7 @@ image:
 projects: []
 ---
 
-In my post on [causal design patterns](post/causal-design-patterns), I argue that these techniques are currently underutilized in industry because (at least, in part) they are so often couched in domain-specific language. Fortunately, the past few years have seen an explosion of fantastic resources and tools to help practitioners more readily learn and apply these methods. Below, I link some of my favorite readings. To help prioritize which resources (or which chapters within them) will be most relevant to you, please see my [previous post](post/causal-design-patterns) for an "advertisement" and overview of some of the main techniques.
+In my post on [causal design patterns](/post/causal-design-patterns/), I argue that these techniques are currently underutilized in industry because (at least, in part) they are so often couched in domain-specific language. Fortunately, the past few years have seen an explosion of fantastic resources and tools to help practitioners more readily learn and apply these methods. Below, I link some of my favorite readings. To help prioritize which resources (or which chapters within them) will be most relevant to you, please see my [previous post](/post/causal-design-patterns/) for an "advertisement" and overview of some of the main techniques.
 
 ## Free Books
 
@@ -60,11 +60,13 @@ In my post on [causal design patterns](post/causal-design-patterns), I argue tha
   + Epidemiology perspective focused on propensity-score methods
   + Video tutorial with R code on GitHub
 
-## Blogs and Talks
+## Papers, Blogs, and Talks
 
 **Overviews**
 
 - [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/) on the Uber Engineering blog
+- [The Impact of Machine Learning on Economics](https://www.nber.org/system/files/chapters/c14009/c14009.pdf) by Susan Athey
+- [The State of Applied Econometrics - Causality and Policy Evaluation](https://arxiv.org/abs/1607.00699) by Susan Athey and Guido Imbens
 
 **Propensity Score Methods**
   

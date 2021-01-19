@@ -6,8 +6,8 @@ summary: "An informal primer to causal analysis designs and data structures"
 authors: []
 tags: [causal, analysis, data]
 categories: [causal, analysis, data]
-date: 2021-02-06
-lastmod: 2021-02-06
+date: 2021-01-30
+lastmod: 2021-01-30
 featured: true
 draft: true
 aliases:
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: dc7818f10a1d2472
+rmd_hash: e4b5d2f02426e778
 
 ---
 

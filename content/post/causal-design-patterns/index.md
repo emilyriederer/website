@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 053106e0e1bcf34a
+rmd_hash: 9a039ba99467bb5a
 
 ---
 
@@ -41,13 +41,13 @@ In this post, I briefly summarize common cross-disciplinary design patterns for 
 Why CI in Industry?
 -------------------
 
-Observational causal inference allows researchers and analysts to ask causal questions and analyize *quasi-experiments* when experementaiton is infeasible. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so you might ask why does observational causal inference matter?
+Observational causal inference allows researchers and analysts to ask causal questions and analyize *quasi-experiments* when experimentation is infeasible. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so you might ask why does observational causal inference matter?
 
 -   Some situations you cannot test or even when you can, thinking about observational causal inference methods can help you better identify biases and design your experiments
 -   Testing is expensive. There are direct costs (e.g. testing a marketing promotion) of instituting a policy that might not be effective, implementation costs (e.g. having a tech team implement a new display), and opportunity costs (e.g. holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)
 -   Data collection can take time. Sometimes we may want to read long-term endpoints like customer retention or attrition after many year. Working with historical observational data can help get a preliminary answer sooner
 
-Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer! As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in the real world to create quasi-experiments. Industry (and life in general) is full of well-defined yet somewhat arbitrary policies which make it fertile ground for observational causal inference.
+Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer! As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in the real world to create quasi-experiments. Industry (and life in general) is full of well-defined yet somewhat arbitrary policies which make it fertile ground for observational causal inference. Data analysts can embark on search and rescue missions, finding new life and new potential in reams of historical data that might be otherwise discounted as hopelessly biased, confounded, or outdated.
 
 To see how this works, we'll give a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods attempts to utilize different sources of randomness while avoiding different types of confounding to derive a valid inference. I'll focus particularly on the data required for each method because causal inference cannot be forced; the best method is a direct product of the specific data available to you.
 

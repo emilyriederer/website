@@ -17,13 +17,45 @@ image:
   preview_only: true
 
 projects: [""]
-rmd_hash: d394c0d371c52545
+rmd_hash: 85f30d5a2fe0b60d
 
 ---
 
 *Note: this post is a written version of my [rstudio::global 2020 talk](talk/organization) on the same topic. Please see the link for the slides and video version. I do elaborate on a few points here that I cut from the talk; if you've already watched the talk and just want the delta, please see the sections in <span style="color: blue;">blue</span>*
 
-More and more organizations are beginning to write their own internal R packages to. These internal tools have great potential to improve overall code quality, promote reproducible analysis frameworks, and enhance knowledge management. Internal developers are often inspired by their favorite open-source tools when building these packages and, consequently, rely on the design patterns and best practices they have observed. While this is a good starting position, internal packages have unique challenges (such as a smaller developer community) and opportunities (such as an intimate understanding of the problem space and over-arching organization goals), and internal packages can realize their full potential by designing to embrace these unique features. In this post, I explore the jobs of internal packages and the types of different design decisions these jobs can inspire -- from function naming and documentation to training and testing. **If you'd rather just read the main ideas instead of the full essay, [skip to the tl;dr](#too-long-didnt-read).**
+More and more organizations are beginning to write their own internal R packages to. These internal tools have great potential to improve overall code quality, promote reproducible analysis frameworks, and enhance knowledge management. Internal developers are often inspired by their favorite open-source tools when building these packages and, consequently, rely on the design patterns and best practices they have observed. While this is a good starting position, internal packages have unique challenges (such as a smaller developer community) and opportunities (such as an intimate understanding of the problem space and over-arching organization goals), and internal packages can realize their full potential by designing to embrace these unique features. In this post, I explore the jobs of internal packages and the types of different design decisions these jobs can inspire -- from function naming and documentation to training and testing. **If you'd rather just read the main ideas instead of the full essay, [skip to the tl;dr](#too-long-didnt-read)** or use this handy table of contents:[^1]
+
+<div class="highlight">
+
+</div>
+
+<div class='highlight'>
+
+-   [Jobs to be Done](#jobs-to-be-done)
+-   [The IT Guy (Abstraction, Functions, and Opinionated Design)](#the-it-guy-(abstraction,-functions,-and-opinionated-design))
+    -   [Opinionated Design](#opinionated-design)
+    -   [Helpful Error Messages](#helpful-error-messages)
+    -   [Proactive Problem Solving](#proactive-problem-solving)
+-   [The Junior Analyst](#the-junior-analyst)
+    -   [Default Function Arguments](#default-function-arguments)
+    -   [Reserved Keywords](#reserved-keywords)
+    -   [Ellipsis](#ellipsis)
+-   [The Tech Lead](#the-tech-lead)
+    -   [Vignettes](#vignettes)
+    -   [Package Websites](#package-websites)
+    -   [R Markdown Templates](#r-markdown-templates)
+    -   [Project Templates](#project-templates)
+-   [The Project Manager](#the-project-manager)
+    -   [Modularization](#modularization)
+    -   [IDE Support](#ide-support)
+-   [Collaboration](#collaboration)
+    -   [Clear Communication (Naming Conventions)](#clear-communication-(naming-conventions))
+    -   [Defined Roles (Curation)](#defined-roles-(curation))
+    -   [Definded Roles (Dependencies)](#definded-roles-(dependencies))
+    -   [Delivering Reliably (Testing)](#delivering-reliably-(testing))
+-   [Final Thoughts](#final-thoughts)
+-   [Too Long; Didn't Read](#too-long;-didn't-read)
+    </div>
 
 To begin, think about the last time that you joined a new organization. There was so much you had to learn before you could get started. Remember the frustration when you could not figure out how to access data, the lost hours trying to answer the wrong questions until you built up intuition, and the awkwardness of sussing out team norms through trial and error. Thankfully, when we join a new organization, we have to descend this steep learning curve only once before we can hit the ground running. However, the off-the-shelf tools we use on a daily basis can't preserve this same context and culture. Every day is like their first day at work.
 
@@ -37,7 +69,7 @@ Performing at a high level of abstraction is one of the features that makes open
 
 Comparing internal and external packages on two dimensions illuminates this difference.
 
-First and foremost, they can aim to solve a far more domain-specific and concrete set of problems than open-source packages. Inherently, in an institution the **problem definition** can be much more specific and less abstract. This means our functions can be more tailored to the countours and corner cases of our problems and our documentation can use more relevant examples,
+First and foremost, they can aim to solve a far more domain-specific and concrete set of problems than open-source packages. Inherently, in an institution the **problem definition** can be much more specific and less abstract. This means our functions can be more tailored to the contours and corner cases of our problems and our documentation can use more relevant examples,
 
 Second, and somewhat unintuitively, these same internal packages that are narrower in their problem definition can actually span a broader **solution space**. For example, an open source package might offer many different methods to model time-to-event but remain agnostic to where the input data came from or what the analyst does with the results. In contrast, an internal package might cater to answering a narrower question but apply its insight into our organization to cover more of the steps in the workflow of answering that questions -- such as pulling data, engineering features, and communicating outcomes.
 
@@ -58,7 +90,7 @@ To motivate the design goals and decisions we'll discuss, it's useful to think a
 
 > we *hire* a product to do a job that helps us make progress towards a goal
 
-and sometimes[^1] the theory further asserts that
+and sometimes[^2] the theory further asserts that
 
 > these jobs can have functional, social, and emotional components
 
@@ -93,7 +125,7 @@ Put another way, the IT Guy fills the jobs of
 -   **Social:** Promoting or enforcing good practices
 -   **Emotional:** Avoiding frustrating or stress of lost time or "silly" questions
 
-We can emulate these characteristics in internal packages by including utility functions, taking an opinionated stance on design, and providing helpful and detailed error messages.[^2]
+We can emulate these characteristics in internal packages by including utility functions, taking an opinionated stance on design, and providing helpful and detailed error messages.[^3]
 
 As an example, let's consider a simple function to connect to an organization's internal database. First, we might start out with a rather boilerplate piece of code using the `DBI` package. We take in the username and password; hardcode the driver name, server location, and port; and return a connection object. (Note that the content of this example doesn't matter. The jobs of the IT Guy prototype are abstracting away things we don't need to think about and protecting us from anti-patterns -- not just connecting to databases. The design patterns shown will apply to the more general problem.)
 
@@ -120,7 +152,7 @@ As an example, let's consider a simple function to connect to an organization's 
 
 ### Opinionated Design
 
-Now, let's suppose our organization has strict rules against putting secure credentials in plain text. (Let's actually *hope* they have such rules!) To enforce this, we can remove `username` and `password` from the function header, and use [`Sys.getenv()`](https://rdrr.io/r/base/Sys.getenv.html) inside of the function to retrieve specifically named environment variables containing these quantities.[^3]
+Now, let's suppose our organization has strict rules against putting secure credentials in plain text. (Let's actually *hope* they have such rules!) To enforce this, we can remove `username` and `password` from the function header, and use [`Sys.getenv()`](https://rdrr.io/r/base/Sys.getenv.html) inside of the function to retrieve specifically named environment variables containing these quantities.[^4]
 
 In an open source package, I wouldn't presume to force users' hand to use one specific system set-up. However, in this case, we can make strong assumptions based on our knowledge of an organization's rules and norms. And this sort of function can be great leverage to incentivize users to do it right (like storing their credentials in environment variables) because there's only one way it can work.
 
@@ -532,7 +564,7 @@ We want teammates that are clear communicators, have defined responsibilities, a
 
 Clear function naming conventions and consistent method signatures help packages effectively communicate with both package and human collaborators.
 
-Internally, we can give our suite of internal packages a richer language by define a consistent set of prefix name stubs that indicate how each function is used. One approach is that each function prefix can denote the type of object being returned (like "viz" for a `ggplot` object).[^4]
+Internally, we can give our suite of internal packages a richer language by define a consistent set of prefix name stubs that indicate how each function is used. One approach is that each function prefix can denote the type of object being returned (like "viz" for a `ggplot` object).[^5]
 
 ![](in-out.PNG)
 
@@ -588,6 +620,14 @@ We can formalize that shared vision with integration tests. That is, we can add 
 
 </div>
 
+<span style="color: blue;">
+
+This type of two-way testing can also be deployed to more robustly test *external* and *cross-platform* dependencies. For example, if your internal package requires connects to external resources like APIs or databases, you could even write tests that connect to external resources and verify that certain API endpoints, database schemas, or even columns still exist.
+
+In open source packages, we generally employ "mocking" to avoid testing external dependencies since these fail when run by unauthenticated users or programs (such as CRAN checks.) However, once again, internally we can get differential value and safety by making different decisions.
+
+</span>
+
 Final Thoughts
 --------------
 
@@ -638,11 +678,13 @@ The following summarizes the key principles and practices discussed in this arti
 -   Tackle refactoring **across all our packages** instead of one-by-one to attempt to unneeded, potentially brittle dependencies
 -   Set up **two-way unit tests** (or "integration tests") where we have dependencies to ensure that the intent of dependent packages doesn't drift apart
 
-[^1]: Many practitioners have built off of Christensen's initial theory with sometimes passionately conflicting opinions on the nuances
+[^1]: Courtesy of Garrick Aden-Buie's [gist](https://gist.github.com/gadenbuie/c83e078bf8c81b035e32c3fc0cf04ee8)
 
-[^2]: The `usethis` package also has many great examples of "IT Guy"-like qualities. One that I don't discuss in this post is explicitly *informing* users what it intends to do and then seeking permission
+[^2]: Many practitioners have built off of Christensen's initial theory with sometimes passionately conflicting opinions on the nuances
 
-[^3]: This is *not* a recommendation for the best way to store credentials! There are many other options such as keychains and password managers that your organization may prefer. I use a relatively simple example here that I could implement without adding any bulky code or additional packages to illustrate the point of opinionated design - not to give advice on security.
+[^3]: The `usethis` package also has many great examples of "IT Guy"-like qualities. One that I don't discuss in this post is explicitly *informing* users what it intends to do and then seeking permission
 
-[^4]: rOpenSci has a nice discussion on function naming in their package [style guide](https://devguide.ropensci.org/building.html#package-api)
+[^4]: This is *not* a recommendation for the best way to store credentials! There are many other options such as keychains and password managers that your organization may prefer. I use a relatively simple example here that I could implement without adding any bulky code or additional packages to illustrate the point of opinionated design - not to give advice on security.
+
+[^5]: rOpenSci has a nice discussion on function naming in their package [style guide](https://devguide.ropensci.org/building.html#package-api)
 

@@ -26,7 +26,63 @@ opts_chunk$set(warning = FALSE, message = FALSE, error = FALSE)
 
 *Note: this post is a written version of my [rstudio::global 2020 talk](talk/organization) on the same topic. Please see the link for the slides and video version. I do elaborate on a few points here that I cut from the talk; if you've already watched the talk and just want the delta, please see the sections in <span style="color: blue;">blue</span>*
 
-More and more organizations are beginning to write their own internal R packages to. These internal tools have great potential to improve overall code quality, promote reproducible analysis frameworks, and enhance knowledge management. Internal developers are often inspired by their favorite open-source tools when building these packages and, consequently, rely on the design patterns and best practices they have observed. While this is a good starting position, internal packages have unique challenges (such as a smaller developer community) and opportunities (such as an intimate understanding of the problem space and over-arching organization goals), and internal packages can realize their full potential by designing to embrace these unique features. In this post, I explore the jobs of internal packages and the types of different design decisions these jobs can inspire -- from function naming and documentation to training and testing. **If you'd rather just read the main ideas instead of the full essay, [skip to the tl;dr](#too-long-didnt-read).**
+More and more organizations are beginning to write their own internal R packages to. These internal tools have great potential to improve overall code quality, promote reproducible analysis frameworks, and enhance knowledge management. Internal developers are often inspired by their favorite open-source tools when building these packages and, consequently, rely on the design patterns and best practices they have observed. While this is a good starting position, internal packages have unique challenges (such as a smaller developer community) and opportunities (such as an intimate understanding of the problem space and over-arching organization goals), and internal packages can realize their full potential by designing to embrace these unique features. In this post, I explore the jobs of internal packages and the types of different design decisions these jobs can inspire -- from function naming and documentation to training and testing. **If you'd rather just read the main ideas instead of the full essay, [skip to the tl;dr](#too-long-didnt-read)** or use this handy table of contents:^[Courtesy of Garrick Aden-Buie's [gist](https://gist.github.com/gadenbuie/c83e078bf8c81b035e32c3fc0cf04ee8)] 
+
+```{r echo = FALSE}
+# Source: https://gist.github.com/gadenbuie/c83e078bf8c81b035e32c3fc0cf04ee8
+render_toc <- function(
+  filename, 
+  toc_header_name = "Table of Contents",
+  base_level = NULL,
+  toc_depth = 3
+) {
+  x <- readLines(filename, warn = FALSE)
+  x <- paste(x, collapse = "\n")
+  x <- paste0("\n", x, "\n")
+  for (i in 5:3) {
+    regex_code_fence <- paste0("\n[`]{", i, "}.+?[`]{", i, "}\n")
+    x <- gsub(regex_code_fence, "", x)
+  }
+  x <- strsplit(x, "\n")[[1]]
+  x <- x[grepl("^#+", x)]
+  if (!is.null(toc_header_name)) 
+    x <- x[!grepl(paste0("^#+ ", toc_header_name), x)]
+  if (is.null(base_level))
+    base_level <- min(sapply(gsub("(#+).+", "\\1", x), nchar))
+  start_at_base_level <- FALSE
+  x <- sapply(x, function(h) {
+    level <- nchar(gsub("(#+).+", "\\1", h)) - base_level
+    if (level < 0) {
+      stop("Cannot have negative header levels. Problematic header \"", h, '" ',
+           "was considered level ", level, ". Please adjust `base_level`.")
+    }
+    if (level > toc_depth - 1) return("")
+    if (!start_at_base_level && level == 0) start_at_base_level <<- TRUE
+    if (!start_at_base_level) return("")
+    if (grepl("\\{#.+\\}(\\s+)?$", h)) {
+      # has special header slug
+      header_text <- gsub("#+ (.+)\\s+?\\{.+$", "\\1", h)
+      header_slug <- gsub(".+\\{\\s?#([-_.a-zA-Z]+).+", "\\1", h)
+    } else {
+      header_text <- gsub("#+\\s+?", "", h)
+      header_text <- gsub("\\s+?\\{.+\\}\\s*$", "", header_text) # strip { .tabset ... }
+      header_text <- gsub("^[^[:alpha:]]*\\s*", "", header_text) # remove up to first alpha char
+      header_slug <- paste(strsplit(header_text, " ")[[1]], collapse="-")
+      header_slug <- tolower(header_slug)
+    }
+    paste0(strrep(" ", level * 4), "- [", header_text, "](#", header_slug, ")")
+  })
+  x <- x[x != ""]
+  knitr::asis_output(paste(x, collapse = "\n"))
+}
+```
+
+```{r echo = FALSE}
+render_toc(
+  filename = "index.Rmd",
+  toc_header_name = 'Motivation'
+  )
+```
 
 To begin, think about the last time that you joined a new organization. There was so much you had to learn before you could get started. Remember the frustration when you could not figure out how to access data, the lost hours trying to answer the wrong questions until you built up intuition, and the awkwardness of sussing out team norms through trial and error. Thankfully, when we join a new organization, we have to descend this steep learning curve only once before we can hit the ground running. However, the off-the-shelf tools we use on a daily basis can’t preserve this same context and culture. Every day is like their first day at work. 
 
@@ -38,7 +94,7 @@ Performing at a high level of abstraction is one of the features that makes open
 
 Comparing internal and external packages on two dimensions illuminates this difference. 
 
-First and foremost, they can aim to solve a far more domain-specific and concrete set of problems than open-source packages. Inherently, in an institution the **problem definition** can be much more specific and less abstract. This means our functions can be more tailored to the countours and corner cases of our problems and our documentation can use more relevant examples, 
+First and foremost, they can aim to solve a far more domain-specific and concrete set of problems than open-source packages. Inherently, in an institution the **problem definition** can be much more specific and less abstract. This means our functions can be more tailored to the contours and corner cases of our problems and our documentation can use more relevant examples, 
 
 Second, and somewhat unintuitively, these same internal packages that are narrower in their problem definition can actually span a broader **solution space**. For example, an open source package might offer many different methods to model time-to-event but remain agnostic to where the input data came from or what the analyst does with the results. In contrast, an internal package might cater to answering a narrower question but apply its insight into our organization to cover more of the steps in the workflow of answering that questions -- such as pulling data, engineering features, and communicating outcomes. 
 
@@ -535,6 +591,14 @@ We can formalize that shared vision with integration tests. That is, we can add 
 ```{r fig.align='center', echo = FALSE, out.width = '70%'}
 knitr::include_graphics('test-2.PNG')
 ```
+
+<span style="color: blue;">
+
+This type of two-way testing can also be deployed to more robustly test *external* and *cross-platform* dependencies. For example, if your internal package requires connects to external resources like APIs or databases, you could even write tests that connect to external resources and verify that certain API endpoints, database schemas, or even columns still exist. 
+
+In open source packages, we generally employ "mocking" to avoid testing external dependencies since these fail when run by unauthenticated users or programs (such as CRAN checks.) However, once again, internally we can get differential value and safety by making different decisions.
+
+</span>
 
 ## Final Thoughts
 

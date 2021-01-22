@@ -27,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: e8571518b3ae3c16
+rmd_hash: 83500feb926b809d
 
 ---
 
@@ -64,21 +64,19 @@ Course Material
     -   Epidemiology perspective focused on propensity-score methods
     -   Video tutorial with R code on GitHub
 
-Papers, Blogs, and Talks
-------------------------
-
-**Overviews**
+Survey Papers & Blogs
+---------------------
 
 -   [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/) on the Uber Engineering blog
 -   [The Impact of Machine Learning on Economics](https://www.nber.org/system/files/chapters/c14009/c14009.pdf) by Susan Athey
 -   [The State of Applied Econometrics - Causality and Policy Evaluation](https://arxiv.org/abs/1607.00699) by Susan Athey and Guido Imbens
-
-**Propensity Score Methods**
-
 -   [Understanding propensity score weighting](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/) by Lucy D'Agostino McGowan
 -   [To Balance or Not To Balance](https://www.unofficialgoogledatascience.com/2016/06/to-balance-or-not-to-balance.html) by Ivan Diaz and Joseph Kelly (Unofficial Google Data Science Blog)
+-   [Curated List of Recent Advances](https://christinecai.github.io/PublicGoods/applied_micro_methods.pdf) by Christine Cai
+-   [Policy Evaluation in COVID](https://arxiv.org/abs/2009.01940): fantastic survey of diff-in-diff and event study methods by Noah Haber, et al
 
-**Miscellaneous Lectures**
+Talks
+-----
 
 -   [Causal Science 2020 Meeting talks](https://causalscience.org/programme/about/)
 -   [Synthetic Control lecture](https://www.youtube.com/watch?v=nKzNp-qpE-I&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=11) by Alberto Abadie

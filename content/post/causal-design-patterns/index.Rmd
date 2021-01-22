@@ -48,6 +48,13 @@ Beyond these specific challenges, perhaps the best reason is that there are so m
 
 To see how this works, we'll give a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods attempts to utilize different sources of randomness while avoiding different types of confounding to derive a valid inference. I'll focus particularly on the data required for each method because causal inference cannot be forced; the best method is a direct product of the specific data available to you.
 
+As a brief summary before we jump into the details, you might want to check out:
+
+- [Stratification](#stratifciation) or [Propensity Score Weighting](#propensity-score-weighting) to help you *rebalance* when you have significant overlap between treated and untreated individuals but treatment groups weren't randomly assigned
+- [Regression discontinuity](#regression-discontinuity) when your treated and untreated groups are disjoint but you want to know the *local* effect at the "juncture" between groups
+- [Difference-in-differences](#difference-in-differences) when you are analyzing group-level data and treatments and have data collected at ultiple periods in *time*
+- [Heterogenous treatment effect methods](#heterogenous-treatment-effects) if you are more interested in how the treatment effect *varies* across a population than the average
+
 ## Stratification 
 
 ![](excalidraw-strat.png)
@@ -198,7 +205,7 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 - [`Synth`](https://www.jstatsoft.org/article/view/v042i13) R package for synthetic controls
 - [`CausalImpact`](http://google.github.io/CausalImpact/CausalImpact.html) R package for Bayesian structural time-series
 
-## A Note on Personalized Effects
+## Heterogenous Treament Effects
 
 You may have noticed that, so far, we've only discussed methods that tell us the *average* treatment effect (or, in the case of RDD, the even narrower *local* average treatment effect.) Of course, in an ideal world, individual treatment effects would be significantly more useful to us. There's currently a lot of interesting work in the area of heterogeneous treatment effects to help better understand how causal effects vary by subgroup for better segmentation and targetting. As a few examples, check out:
 

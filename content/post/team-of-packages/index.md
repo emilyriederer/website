@@ -17,7 +17,7 @@ image:
   preview_only: true
 
 projects: [""]
-rmd_hash: dd29ef39478feb9c
+rmd_hash: 9a5bbe463f4acfa9
 
 ---
 
@@ -31,36 +31,36 @@ More and more organizations are beginning to write their own internal R packages
 
 <div class='highlight'>
 
--   [What differentiates internal packages?](#what-differentiates-internal-packages?)
+-   [What differentiates internal packages](#what-differentiates-internal-packages)
 -   [The theory of jobs-to-be-done](#the-theory-of-jobs-to-be-done)
--   [The IT Guy (Abstraction, Functions, and Opinionated Design)](#the-it-guy-(abstraction,-functions,-and-opinionated-design))
+-   [The IT Guy - Abstraction](#the-it-guy---abstraction)
     -   [Opinionated Design](#opinionated-design)
     -   [Helpful Error Messages](#helpful-error-messages)
     -   [Proactive Problem Solving](#proactive-problem-solving)
--   [The Junior Analyst (Proactive Problem-Solving)](#the-junior-analyst-(proactive-problem-solving))
+-   [The Junior Analyst - Proactive Problem-Solving](#the-junior-analyst---proactive-problem-solving)
     -   [Default Function Arguments](#default-function-arguments)
     -   [Reserved Keywords](#reserved-keywords)
     -   [Ellipsis](#ellipsis)
--   [The Tech Lead (Institutional Knowledge, Best Practices)](#the-tech-lead-(institutional-knowledge,-best-practices))
+-   [The Tech Lead - Knowledge Management](#the-tech-lead---knowledge-management)
     -   [Vignettes](#vignettes)
     -   [Package Websites](#package-websites)
     -   [R Markdown Templates](#r-markdown-templates)
     -   [Project Templates](#project-templates)
--   [The Project Manager (Coordination, Planning)](#the-project-manager-(coordination,-planning))
+-   [The Project Manager - Coordination](#the-project-manager---coordination)
     -   [Modularization](#modularization)
     -   [Project Planning](#project-planning)
     -   [IDE Support](#ide-support)
 -   [Collaboration](#collaboration)
-    -   [Clear Communication (Naming Conventions)](#clear-communication-(naming-conventions))
-    -   [Defined Roles (Curation)](#defined-roles-(curation))
-    -   [Definded Roles (Dependencies)](#definded-roles-(dependencies))
-    -   [Delivering Reliably (Testing)](#delivering-reliably-(testing))
+    -   [Clear Communication - Naming Conventions](#clear-communication---naming-conventions)
+    -   [Defined Roles - Curation](#defined-roles---curation)
+    -   [Definded Roles - Dependencies](#definded-roles---dependencies)
+    -   [Delivering Reliably - Testing](#delivering-reliably---testing)
 -   [Final Thoughts](#final-thoughts)
--   [Too Long; Didn't Read](#too-long;-didn't-read)
+-   [Too Long Didn't Read](#too-long-didn't-read)
     </div>
 
-What differentiates internal packages?
---------------------------------------
+What differentiates internal packages
+-------------------------------------
 
 To begin, think about the last time that you joined a new organization. There was so much you had to learn before you could get started -- accessing data, intuiting what problems are worth tackling, understanding team norms, and so much more. Thankfully, we only have to descend this learning curve once. However, the off-the-shelf tools we use can't preserve this context and culture. Every day is like their first day at work.
 
@@ -115,8 +115,8 @@ I claim that we can make internal tools more useful and more appealing by target
 
 So how does jobs-to-be-done inform our package design? To explore this, we'll consider what makes good teammates and how we can encode those traits in our tools.
 
-The IT Guy (Abstraction, Functions, and Opinionated Design)
------------------------------------------------------------
+The IT Guy - Abstraction
+------------------------
 
 <div class="highlight">
 
@@ -267,7 +267,7 @@ Secondly, in a constrained environment, there are more predictable ways things c
 
 </span>
 
-The Junior Analyst (Proactive Problem-Solving)
+The Junior Analyst - Proactive Problem-Solving
 ----------------------------------------------
 
 <div class="highlight">
@@ -442,8 +442,8 @@ Note that the benefits of the ellipsis are very similar to the benefits of funct
 
 </span>
 
-The Tech Lead (Institutional Knowledge, Best Practices)
--------------------------------------------------------
+The Tech Lead - Knowledge Management
+------------------------------------
 
 So far, we have mostly focused on that first dimension of differentiation between internal and open-source tools -- making our package teammates targeted to solving specific internal problems. But there's just as much value in that second dimension: using internal packages as a way to ship not just calculations but workflows and share an understanding of how the broader organization operates. This allows our packages to play leadership and mentorship roles in our org. To illustrate this, consider our intrepid tech lead.
 
@@ -525,8 +525,8 @@ Additionally, for a given problem that our package attempts to solve, we could p
 
 The idea of a standardized file structure is one of the 10 principles called out in the wonderful [Good Enough Practices for Scientific Computing](https://arxiv.org/abs/1609.00037) and potentially one of the single highest leverage practices I've found for driving consistency and preserving sanity when building collaboratively on large teams.
 
-The Project Manager (Coordination, Planning)
---------------------------------------------
+The Project Manager - Coordination
+----------------------------------
 
 <div class="highlight">
 
@@ -593,7 +593,7 @@ Now, speaking of collaboration, we've talked about how packages can act like tea
 
 We want teammates that are clear communicators, have defined responsibilities, and keep their promises. We can help our packages be good teammates with naming conventions, clearly defined scopes, and careful attention to dependencies and testing.
 
-### Clear Communication (Naming Conventions)
+### Clear Communication - Naming Conventions
 
 Clear function naming conventions and consistent method signatures help packages effectively communicate with both package and human collaborators.
 
@@ -603,7 +603,7 @@ Internally, we can give our suite of internal packages a richer language by defi
 
 This sort of convention can reduce the cognitive load when working with any packages; it's not particularly unique to internal tools. However, while the *practice* is general, the benefits scale significantly for internal packages. Since we can drive this consistent standard across a collection of packages, past experience working with any one of our internal packages gives a user intuition when working with the next.
 
-### Defined Roles (Curation)
+### Defined Roles - Curation
 
 Another aspect of good team communication is having clearly defined roles and responsibilities. Again, since we own our whole internal stack, we have more freedom in how we chose to divide functionality across packages.
 
@@ -611,7 +611,7 @@ Open source packages inevitably have overlapping functionality which forces user
 
 But internally, we can use some amount of central planning to ensure each package teammate has a clearly defined role -- whether that be to provide a horizontal utility or to enable progress on a specific workstream. And just like one team ought to work well with another, that central planning can include curation and promotion of open-source tools that "play nicely" with our internal ones. After all, no one team can go it alone!
 
-### Definded Roles (Dependencies)
+### Definded Roles - Dependencies
 
 When assigning these roles and responsibilities to our team of packages, we should consider how to manage the dependencies between them when different functionality needs to be shared.
 
@@ -623,7 +623,7 @@ Additionally, because we own the full stack, we may also consider if there are s
 
 ![](dep-structures.PNG)
 
-### Delivering Reliably (Testing)
+### Delivering Reliably - Testing
 
 Regardless of the type of dependencies we end up with, we can use tests to make sure that our packages are reliable teammates who do what they promised.
 
@@ -676,8 +676,8 @@ For general resources on building R packages, check out the [R Packages book](ht
 
 </span>
 
-Too Long; Didn't Read
----------------------
+Too Long Didn't Read
+--------------------
 
 The following summarizes the key principles and practices discussed in this article.
 

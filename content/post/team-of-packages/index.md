@@ -17,13 +17,13 @@ image:
   preview_only: true
 
 projects: [""]
-rmd_hash: 85f30d5a2fe0b60d
+rmd_hash: dd29ef39478feb9c
 
 ---
 
 *Note: this post is a written version of my [rstudio::global 2020 talk](talk/organization) on the same topic. Please see the link for the slides and video version. I do elaborate on a few points here that I cut from the talk; if you've already watched the talk and just want the delta, please see the sections in <span style="color: blue;">blue</span>*
 
-More and more organizations are beginning to write their own internal R packages to. These internal tools have great potential to improve overall code quality, promote reproducible analysis frameworks, and enhance knowledge management. Internal developers are often inspired by their favorite open-source tools when building these packages and, consequently, rely on the design patterns and best practices they have observed. While this is a good starting position, internal packages have unique challenges (such as a smaller developer community) and opportunities (such as an intimate understanding of the problem space and over-arching organization goals), and internal packages can realize their full potential by designing to embrace these unique features. In this post, I explore the jobs of internal packages and the types of different design decisions these jobs can inspire -- from function naming and documentation to training and testing. **If you'd rather just read the main ideas instead of the full essay, [skip to the tl;dr](#too-long-didnt-read)** or use this handy table of contents:[^1]
+More and more organizations are beginning to write their own internal R packages. These internal tools have great potential to improve an organization's code quality, promote reproducible analysis frameworks, and enhance knowledge management. Developers of such tools are often inspired by their favorite open-source tools and, consequently, rely on the design patterns and best practices they have observed. Although this is a good starting position, internal packages have unique challenges (such as a smaller developer community) and opportunities (such as an intimate understanding of the problem space and over-arching organizational goals). Internal packages can realize their full potential by engineering to embrace these unique features. In this post, I explore the jobs of internal packages and the types of different design decisions these jobs can inspire -- from API design and error handling to documentation to training and testing. **If you'd rather just read the main ideas instead of the full essay, [skip to the tl;dr](#too-long-didnt-read)** or use this handy table of contents:[^1]
 
 <div class="highlight">
 
@@ -31,22 +31,24 @@ More and more organizations are beginning to write their own internal R packages
 
 <div class='highlight'>
 
--   [Jobs to be Done](#jobs-to-be-done)
+-   [What differentiates internal packages?](#what-differentiates-internal-packages?)
+-   [The theory of jobs-to-be-done](#the-theory-of-jobs-to-be-done)
 -   [The IT Guy (Abstraction, Functions, and Opinionated Design)](#the-it-guy-(abstraction,-functions,-and-opinionated-design))
     -   [Opinionated Design](#opinionated-design)
     -   [Helpful Error Messages](#helpful-error-messages)
     -   [Proactive Problem Solving](#proactive-problem-solving)
--   [The Junior Analyst](#the-junior-analyst)
+-   [The Junior Analyst (Proactive Problem-Solving)](#the-junior-analyst-(proactive-problem-solving))
     -   [Default Function Arguments](#default-function-arguments)
     -   [Reserved Keywords](#reserved-keywords)
     -   [Ellipsis](#ellipsis)
--   [The Tech Lead](#the-tech-lead)
+-   [The Tech Lead (Institutional Knowledge, Best Practices)](#the-tech-lead-(institutional-knowledge,-best-practices))
     -   [Vignettes](#vignettes)
     -   [Package Websites](#package-websites)
     -   [R Markdown Templates](#r-markdown-templates)
     -   [Project Templates](#project-templates)
--   [The Project Manager](#the-project-manager)
+-   [The Project Manager (Coordination, Planning)](#the-project-manager-(coordination,-planning))
     -   [Modularization](#modularization)
+    -   [Project Planning](#project-planning)
     -   [IDE Support](#ide-support)
 -   [Collaboration](#collaboration)
     -   [Clear Communication (Naming Conventions)](#clear-communication-(naming-conventions))
@@ -57,7 +59,10 @@ More and more organizations are beginning to write their own internal R packages
 -   [Too Long; Didn't Read](#too-long;-didn't-read)
     </div>
 
-To begin, think about the last time that you joined a new organization. There was so much you had to learn before you could get started. Remember the frustration when you could not figure out how to access data, the lost hours trying to answer the wrong questions until you built up intuition, and the awkwardness of sussing out team norms through trial and error. Thankfully, when we join a new organization, we have to descend this steep learning curve only once before we can hit the ground running. However, the off-the-shelf tools we use on a daily basis can't preserve this same context and culture. Every day is like their first day at work.
+What differentiates internal packages?
+--------------------------------------
+
+To begin, think about the last time that you joined a new organization. There was so much you had to learn before you could get started -- accessing data, intuiting what problems are worth tackling, understanding team norms, and so much more. Thankfully, we only have to descend this learning curve once. However, the off-the-shelf tools we use can't preserve this context and culture. Every day is like their first day at work.
 
 <div class="highlight">
 
@@ -65,13 +70,13 @@ To begin, think about the last time that you joined a new organization. There wa
 
 </div>
 
-Performing at a high level of abstraction is one of the features that makes open-source data tools and R packages successful. Stripping context out of code enable reuse and collaboration across the global; the `survival` package need not care whether one is modeling the time-to-death in a clinical trial or the time-to-attrition of a Netflix subscriber. As such, users and developers of open-source tools are used to leaning *out* and thinking *big*. Unlike open source packages, though, internal packages can drive unique value if they become more of a colleague and embrace institutional knowledge.
+In open-source, this high level of abstraction is a feature, not a bug. Stripping context from code enables reuse and collaboration across the globe. The `survival` package, for example, need not care whether one is modeling the time-to-death in a clinical trial or the time-to-attrition of a Netflix subscriber. In contrast, internal packages can drive additional value if they act more like a colleague and embrace institutional knowledge.
 
-Comparing internal and external packages on two dimensions illuminates this difference.
+Contrasting internal and external packages on two dimensions illuminates this difference.
 
-First and foremost, they can aim to solve a far more domain-specific and concrete set of problems than open-source packages. Inherently, in an institution the **problem definition** can be much more specific and less abstract. This means our functions can be more tailored to the contours and corner cases of our problems and our documentation can use more relevant examples,
+First, internal packages can target more domain-specific and concrete problems than open-source packages. Inherently, within an institution, such tools can have a **narrower problem definition** without loss of *useful* generality. This means our functions can be more tailored to the contours and corner cases of our problems and our documentation can use more relevant examples.
 
-Second, and somewhat unintuitively, these same internal packages that are narrower in their problem definition can actually span a broader **solution space**. For example, an open source package might offer many different methods to model time-to-event but remain agnostic to where the input data came from or what the analyst does with the results. In contrast, an internal package might cater to answering a narrower question but apply its insight into our organization to cover more of the steps in the workflow of answering that questions -- such as pulling data, engineering features, and communicating outcomes.
+Second, and perhaps less intuitively, internal packages can actually span a **broader solution space**, as measured by the number of steps in the workflow that they span. For example, an open source package might offer many different methods to model time-to-event but remain agnostic to where the input data came from or what the analyst does with the results. In contrast, an internal package might cater to answering a narrower question but apply its insight into our organization to cover more of the steps in the workflow of answering that questions -- such as pulling data, engineering features, and communicating outcomes.
 
 ![](featured.PNG)
 
@@ -81,10 +86,10 @@ Because of these two factors, internal packages can make large contributions to 
 -   **Analysis**: Guiding analysts through a curated set of methods and packages to answer common questions
 -   **Developer Tools**: Helping analysts produce better outputs faster with building blocks like ggplot themes, R Markdown templates, and Shiny modules
 
-But it's not just what internal packages *do* that distinguishes them from open-source tools. Even more critical is how these packages are *designed* to do these tasks and embrace our organizations context. In the rest of this post, I share examples of how every step in the design of internal packages -- from writing functions, crafting documentation, and wiring up unit tests -- can be conscientiously crafted to help our packages act more like a veteran than a new hire.
+But it's not just what internal packages *do* that distinguishes them from open-source tools. Even more critical is how these packages are *designed* to do these tasks. In the rest of this post, I'll illustrate how internal packages can be conscientiously engineered to act more like a veteran than a new hire.
 
-Jobs to be Done
----------------
+The theory of jobs-to-be-done
+-----------------------------
 
 To motivate the design goals and decisions we'll discuss, it's useful to think about Harvard Business School Professor Clayton Christensen's [jobs-to-be-done](https://hbr.org/2016/09/know-your-customers-jobs-to-be-done) theory of disruptive innovation. This asserts that
 
@@ -96,9 +101,11 @@ and sometimes[^2] the theory further asserts that
 
 <span style="color: blue;">
 
-In the world of product development, that focus on the *progress* a customer is a critical distinction from the conventional understanding of competition and industry makeup. For example, if I ask you who Twitter's competitors are, you might first think of Facebook, Instagram, or TikTok -- other entrants in the category of mobile apps for social networking. However, if we think about the jobs that I might "hire" Twitter to do, I might consider "hiring" Twitter to help me pass the time while I wait in a long line or (back in "the olden days") ride my long commute to work. Through that lens, it not longer matters what industry Twitter is nominally in; this is about me and my needs - not Twitter. So, Twitter is "competing" for the position of my travel companion against all sorts of other potential hires like Spotify, podcast apps, books, or even an extra 20 minutes of sleep on the train.
+In the world of product development, that focus on the *progress* a customer is a critical distinction from the conventional understanding of competition and industry makeup. For example, if I ask you who Twitter's competitors are, you might first think of Facebook, Instagram, or TikTok -- other entrants in the category of "mobile apps for social networking". However, if we think about the jobs that I "hire" Twitter to do, I might "hire" Twitter to help me pass the time while I wait in a long line or (back in "the olden days") ride my long commute to work. Through that lens, it not longer matters what industry Twitter is nominally in; this is about me and my needs - not Twitter. So, Twitter is "competing" for the position of my travel companion against all sorts of other potential hires like Spotify, podcasts, books, or even an extra 20 minutes nap on the train.
 
-Bringing this back to packages, open source packages know a *task* we want done (e.g. "fit a Cox proportional hazard model"), but what really sets internal packages apart is that they can use their knowledge of our organization to cater to the kind of *progress* that we truly want to make. It's hard for passionate R users to imagine, but no one actually *wants* a package. I'd even go as far to say that no one even *wants* data (blasphemy!) Organizations need *progress* -- they need strategies, fueled by decisions, fueled by answers to questions, and fueled, in turn and in part, by data sets and tools.
+In relation to R packages, open source packages know a *task* we want done (e.g. "fit a Cox proportional hazard model") which is somewhat like a product category. But what really sets internal packages apart is that they can use their knowledge of our organization to cater to the kind of *progress* that we truly want to make.
+
+It's hard for passionate R users[^3] to imagine, but no one actually *wants* a package. I'd even go as far to say that no one even *wants* data (blasphemy!). Organizations need *progress* -- they need strategies, fueled by decisions, fueled by answers to questions, and fueled, in turn and in part, by data sets and tools. Since internal tools have a better sense of what that key bit of progress is, they can be more focused on helping us get there.
 
 </span>
 
@@ -106,7 +113,7 @@ I claim that we can make internal tools more useful and more appealing by target
 
 > let's build a *team of packages* that can do the *jobs* that help our organization make *answer impactful questions* with efficient workflows
 
-So how does jobs-to-be-done inform our package design? To explore this, we'll consider what makes good teammates and how we can imbue those traits in our tools.
+So how does jobs-to-be-done inform our package design? To explore this, we'll consider what makes good teammates and how we can encode those traits in our tools.
 
 The IT Guy (Abstraction, Functions, and Opinionated Design)
 -----------------------------------------------------------
@@ -117,7 +124,7 @@ The IT Guy (Abstraction, Functions, and Opinionated Design)
 
 </div>
 
-First, let's meet the IT Guy. IT and DevOps colleagues are great because they complement the skills of data analysts and think about the very things that data analysts generally are not the most skilled or experienced at handling independently -- production systems, servers, etc. In that abstraction process, they also take on additional responsibilities to promote good practices like data security and credential management. Ideally, they can save us time and frustration in navigating organization-specific roadblocks than no amount of searching on StackOverflow can help.
+First, let's meet the IT Guy. IT and DevOps colleagues complement the skills of data analysts by handling all of the things that analysts are generally not the most skilled or experienced at doing independently -- production systems, servers, deployments, etc. In that abstraction process, they also take on additional responsibilities to promote good practices like data security and credential management. Ideally, they can save us time and frustration in navigating organization-specific roadblocks than no amount of searching on StackOverflow can help.
 
 Put another way, the IT Guy fills the jobs of
 
@@ -125,9 +132,9 @@ Put another way, the IT Guy fills the jobs of
 -   **Social:** Promoting or enforcing good practices
 -   **Emotional:** Avoiding frustrating or stress of lost time or "silly" questions
 
-We can emulate these characteristics in internal packages by including utility functions, taking an opinionated stance on design, and providing helpful and detailed error messages.[^3]
+We can emulate these characteristics in internal packages by including utility functions, taking an opinionated stance on design, and providing helpful and detailed error messages.[^4]
 
-As an example, let's consider a simple function to connect to an organization's internal database. First, we might start out with a rather boilerplate piece of code using the `DBI` package. We take in the username and password; hardcode the driver name, server location, and port; and return a connection object. (Note that the content of this example doesn't matter. The jobs of the IT Guy prototype are abstracting away things we don't need to think about and protecting us from anti-patterns -- not just connecting to databases. The design patterns shown will apply to the more general problem.)
+As an example, let's consider a simple function to connect to an organization's internal database.[^5] First, we might start out with a rather boilerplate piece of code using the `DBI` package. We take in the username and password; hard-code the driver name, server location, and port; and return a connection object. (Note that the content of this example doesn't matter. The jobs of the IT Guy prototype are abstracting away things we don't need to think about and protecting us from anti-patterns -- not just connecting to databases. The design patterns shown will apply to the more general problem.)
 
 <div class="highlight">
 
@@ -152,9 +159,9 @@ As an example, let's consider a simple function to connect to an organization's 
 
 ### Opinionated Design
 
-Now, let's suppose our organization has strict rules against putting secure credentials in plain text. (Let's actually *hope* they have such rules!) To enforce this, we can remove `username` and `password` from the function header, and use [`Sys.getenv()`](https://rdrr.io/r/base/Sys.getenv.html) inside of the function to retrieve specifically named environment variables containing these quantities.[^4]
+Now, let's suppose our organization has strict rules against putting secure credentials in plain text. (Let's actually *hope* they have such rules!) To enforce this, we can remove `username` and `password` from the function header, and use [`Sys.getenv()`](https://rdrr.io/r/base/Sys.getenv.html) inside of the function to retrieve specifically named environment variables (`DB_USER` and `DB_PASS`) containing these quantities.[^6]
 
-In an open source package, I wouldn't presume to force users' hand to use one specific system set-up. However, in this case, we can make strong assumptions based on our knowledge of an organization's rules and norms. And this sort of function can be great leverage to incentivize users to do it right (like storing their credentials in environment variables) because there's only one way it can work.
+In an open source package, I would not presume to force users' hand to use one specific system set-up. However, in this case, we can make strong assumptions based on our knowledge of an organization's rules and norms. And this sort of function can be great leverage to incentivize users to do it right (like storing their credentials in environment variables) because there's only one way it can work.
 
 <div class="highlight">
 
@@ -180,7 +187,9 @@ In an open source package, I wouldn't presume to force users' hand to use one sp
 
 ### Helpful Error Messages
 
-Of course, that's only helpful if we provide a descriptive error message when the user does not have their credentials set in this way. Otherwise, they'll get an error that `DB_PASS` is missing and find nothing useful online to help them troubleshoot since this is a specific internal choice that we made. So, we can enhance the function with extremely custom and prescriptive error messages explaining what went wrong and either how to fix it (e.g. setting an environment variable, applying for an access) or where one can get more information (in a vignette, asking someone on a specific support team, checking out a specific document in a team wiki).
+Of course, opinionated design is only helpful if we communicate those opinions to our users. Otherwise, they'll get an error that `DB_PASS` is missing and find nothing useful online to help them troubleshoot since this is a specific internal choice that we made.
+
+So, we can enhance the function with extremely custom and prescriptive error messages explaining what went wrong and either how to fix it (e.g. setting an environment variable, applying for an access) or where one can get more information (in a vignette, asking someone on a specific support team, checking out a specific document in a team wiki).
 
 <span style="color: blue;">
 
@@ -218,7 +227,7 @@ Such support messages can be made even more approachable with the use of the [`c
 
 ### Proactive Problem Solving
 
-Of course, even better than explaining errors is preventing them from occurring. We might also know at our specific organization, non alphanumeric characters are required in passwords and that [`DBI::dbConnect()`](https://dbi.r-dbi.org/reference/dbConnect.html) doesn't natively encode these correctly when passing them to the database. Instead of troubling the users and telling them how to pick a password, we can instead handle this silently by running the password retrieved from the `DB_PASS` environment variable through the [`URLencode()`](https://rdrr.io/r/utils/URLencode.html) function.
+Of course, even better than explaining errors is preventing them from occurring. We might also know at our specific organization, non alphanumeric characters are required in passwords and that [`DBI::dbConnect()`](https://dbi.r-dbi.org/reference/dbConnect.html) does not natively encode these correctly when passing them to the database. Instead of troubling the users and telling them how to pick a password, we can instead handle this silently by running the password retrieved from the `DB_PASS` environment variable through the [`URLencode()`](https://rdrr.io/r/utils/URLencode.html) function.
 
 <div class="highlight">
 
@@ -258,8 +267,8 @@ Secondly, in a constrained environment, there are more predictable ways things c
 
 </span>
 
-The Junior Analyst
-------------------
+The Junior Analyst (Proactive Problem-Solving)
+----------------------------------------------
 
 <div class="highlight">
 
@@ -298,7 +307,7 @@ To illustrate, now let's imagine a basic visualization function that wraps `ggpl
 
 </div>
 
-This function is "fine", but we can probably draw on institutional knowledge to make our junior analyst a bit more proactive.
+This function is alright, but we can probably draw on institutional knowledge to make our junior analyst a bit more proactive.
 
 ### Default Function Arguments
 
@@ -357,8 +366,6 @@ If these are well-known and well-documented, users will then get into the habit 
 
 In the spirit of the IT Guy's proactive problem-solving, we can also help users catch potential errors caused by missing keywords. A few strategies here are to provide a function like `validate_{package name}_data()` to check that any required names exist or report out what is missing or to provide similar on-the-fly validation inside of functions that expect reserved keyword variable names to exist.
 
-</span>
-
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>validate_mypackage_data</span> <span class='o'>&lt;-</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>vbl_names</span><span class='o'>)</span> <span class='o'>{</span>
@@ -377,8 +384,6 @@ In the spirit of the IT Guy's proactive problem-solving, we can also help users 
 </code></pre>
 
 </div>
-
-<span style="color: blue;">
 
 (An alternative approach to reserved keywords is to let users specify important variables by using package [`options()`](https://rdrr.io/r/base/options.html). However, I do not prefer this approach because it does not have the benefits of driving consistency, and it requires more documentation and R knowledge. Most any user can grasp \")
 
@@ -425,8 +430,6 @@ This way, users can extend functions based on needs that the developer could not
 
 Note that the benefits of the ellipsis are very similar to the benefits of functional programming, in general, with small, modular, and composable functions that do not preserve state. This also provides users flexibility because they can continue to add on to our functions from the *outside* without having to modify the internals. For example, if users wanted to make our plot separate by the quarter that different cohorts began, they could simply create an additional column with this information before calling our function and add a `facet_grid()` call outside of `viz_cohort()`.
 
-</span>
-
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>my_org_data</span> <span class='o'>%&gt;%</span>
@@ -437,10 +440,12 @@ Note that the benefits of the ellipsis are very similar to the benefits of funct
 
 </div>
 
-The Tech Lead
--------------
+</span>
 
-So far, we've mostly focused on that first dimension of differentiation between internal and open-source tools -- making our package teammates targeted to solving specific internal problems. But there's just as much value in that second dimension: using internal packages as a way to ship not just calculations but workflows and share an understanding of how the broader organization operates. This allows our packages to play leadership and mentorship roles in our org. To illustrate this, consider our intrepid tech lead.
+The Tech Lead (Institutional Knowledge, Best Practices)
+-------------------------------------------------------
+
+So far, we have mostly focused on that first dimension of differentiation between internal and open-source tools -- making our package teammates targeted to solving specific internal problems. But there's just as much value in that second dimension: using internal packages as a way to ship not just calculations but workflows and share an understanding of how the broader organization operates. This allows our packages to play leadership and mentorship roles in our org. To illustrate this, consider our intrepid tech lead.
 
 <div class="highlight">
 
@@ -473,7 +478,7 @@ Just as a few examples, vignettes of an internal package might cover some of the
 
 <span style="color: blue;">
 
-These examples of potential vignettes further illustrate how our internal packages can help us better achieve *progress*. No one in an organization wants a model for the sake of having a model; they want is to answer a question or suggest an action. Open-souce packages are relatively "blind" to this, so their vignettes will focus on getting to the model; internal packages can partner with us in understanding that "moment before" and "moment after" with tips on everything from featuring engineering to assessing the ethics and bias in a certain output.
+These examples of potential vignettes further illustrate how our internal packages can help us better achieve *progress*. No one in an organization wants a model for the sake of having a model; they want is to answer a question or suggest an action. Open-source packages are relatively "blind" to this, so their vignettes will focus on getting to the model; internal packages can partner with us in understanding that "moment before" and "moment after" with tips on everything from featuring engineering to assessing the ethics and bias in a certain output.
 
 </span>
 
@@ -520,8 +525,8 @@ Additionally, for a given problem that our package attempts to solve, we could p
 
 The idea of a standardized file structure is one of the 10 principles called out in the wonderful [Good Enough Practices for Scientific Computing](https://arxiv.org/abs/1609.00037) and potentially one of the single highest leverage practices I've found for driving consistency and preserving sanity when building collaboratively on large teams.
 
-The Project Manager
--------------------
+The Project Manager (Coordination, Planning)
+--------------------------------------------
 
 <div class="highlight">
 
@@ -539,13 +544,41 @@ In short, a package can help project manage by addressing the jobs of
 -   **Social:** Help mediate conflict and find common ground
 -   **Emotional:** Meet individual teammates where they are at and remove barriers
 
-Specifically, when writing open-source packages, we rightly tend to assume our target audience is R users, but on a true cross-functional team not everyone will be, so we can intentionally modularize the workflow and think about how to augment RStudio's IDE to make sure our tools work well with all of our colleagues.
+Specifically, when writing open-source packages, we rightly tend to assume our target audience is R users, but on a true cross-functional team not everyone will be, so we can intentionally modularize the workflow, define specific tasks, and augment RStudio's IDE to make sure our tools work well with all of our colleagues.
 
 ### Modularization
 
 Modularizing allows us to isolate parts of our workflow that do not really require R code to provide a lower barrier of entry for more of our colleagues to contribute.
 
 For example, in the templates we just discussed, we could actually make separate template components for parts that require R code and for commentary. The commentary files could be plain vanilla markdown files that any collaborator could edit without even having R installed, and main R Markdown file can pull in this plaintext output using child documents. This approach is made even easier with advances in the RStudio IDE like the [visual markdown editor](https://rstudio.github.io/visual-markdown-editing/#/) provides great, graphical UI support for word processing in markdown.
+
+### Project Planning
+
+<span style="color: blue;">
+
+Pieces of code are not the only thing we can modularize for our users. Often, a good bit of work in the early stages of a project is figuring out what the right steps are. This is emphasized in the project management book [Shape Up](https://basecamp.com/shapeup/3.4-chapter-13#work-is-like-a-hill) which illustrates the flow of a project with "hill diagrams":
+
+![](https://basecamp.com/assets/books/shapeup/3.4/hill_concept-a0a77c0ebb209b61899b8b4cdb1a315f2807e3fdc2e1d2373e2f19060725f042.png)
+
+Our "tech lead" documentation can already help document some of the learned project steps and help speed up the "hill climbing". Additionally, a package could play the role of the project manager and make those steps more tangible by embedding a project plan. One option for this is the [`projmgr`](https://emilyriederer.github.io/projmgr/) package[^7] which allows for specification of main steps as a project as in a [YAML file](https://emilyriederer.github.io/projmgr/articles/building-custom-plans.html) which can then be bulk uploaded to GitHub issues and milestones.
+
+Technically, this would mean writing a project plan, saving it in the `inst/` folder of your package, and perhaps writing a custom function to wrap [`system.file()`](https://rdrr.io/r/base/system.file.html) to help users access the plan. Your function might look something like:
+
+<div class="highlight">
+
+<pre class='chroma'><code class='language-r' data-lang='r'>retrieve_{package name}_plan <- function(proj_type = c("a", "b", "c")) {
+  
+  match.arg(proj_type)
+  system.file("plan.yml", package = "{package name}")
+  
+}
+</code></pre>
+
+</div>
+
+Alternatively, you could automate similar project plans yourself using the public APIs for Jira, Trello, GitLab, or whatever project management solution your organization uses.
+
+</span>
 
 ### IDE Support
 
@@ -564,7 +597,7 @@ We want teammates that are clear communicators, have defined responsibilities, a
 
 Clear function naming conventions and consistent method signatures help packages effectively communicate with both package and human collaborators.
 
-Internally, we can give our suite of internal packages a richer language by define a consistent set of prefix name stubs that indicate how each function is used. One approach is that each function prefix can denote the type of object being returned (like "viz" for a `ggplot` object).[^5]
+Internally, we can give our suite of internal packages a richer language by define a consistent set of prefix name stubs that indicate how each function is used. One approach is that each function prefix can denote the type of object being returned (like "viz" for a `ggplot` object).[^8]
 
 ![](in-out.PNG)
 
@@ -635,9 +668,13 @@ In summary, we all know the the joy of working with a great team, and, if you've
 
 ![](all-the-jobs.PNG)
 
-Ready to get started? Check out my posts on [R Markdown Driven Development](/post/rmarkdown-driven-development) to learn the *technical* side of converting existing analysis scripts into reusable tools and packages, or see my [Rtistic project](/project/rtistic) for a template to make your organization's first package (for themes and color palettes).
+<span style="color: blue;">
 
-*(One anti-climactic sidenote: not every organizational problem lends itself to an R package! In [this post](https://emilyriederer.netlify.app/post/resource-roundup-r-industry/), I review some great case studies of the use of R in industry including some great examples of when the jobs-to-be-done are best met by a different end-product like a GitHub repo, bookdown cookbook, etc.)*
+Ready to get started? Check out my posts on [R Markdown Driven Development](/post/rmarkdown-driven-development) to learn the *technical* side of converting existing analysis scripts into reusable tools and packages, my [Rtistic project](/project/rtistic) for a template to make your organization's first package (for themes and color palettes), and my [round-up](https://emilyriederer.netlify.app/post/resource-roundup-r-industry/) of cool examples of R packages in industry.[^9]
+
+For general resources on building R packages, check out the [R Packages book](https://r-pkgs.org/), Malcolm Barrett and Rich Iannone's [My Organization's First Package training](https://github.com/rstudio-conf-2020/my-org-first-pkg) from rstudio::conf 2020, and Hadley Wickham's [Building Tidy Tools training](https://github.com/rstudio-conf-2020/build-tidy-tools) from rstudio::conf 2020.
+
+</span>
 
 Too Long; Didn't Read
 ---------------------
@@ -665,9 +702,10 @@ The following summarizes the key principles and practices discussed in this arti
 -   **R Markdown templates** to encode an interactive workflow or provide an analysis template
 -   **R Project templates** to drive consistency in how a project using that package is structured
 
-**Improving accessibility**: Internal packages can become more integral to how our organization works if they make it possible for non-R users to engage. Some strategies for this are:
+**Improving accessibility and coordination**: Internal packages can become more integral to how our organization works if they help all of our coworkers engage -- even non-R users. Some strategies for this are:
 
 -   **Modularizing** parts of the workflow that do and do not require programming. One way to do this is with R Markdown **child documents**
+-   **Defining project plans** with [`projmgr`](https://emilyriederer.github.io/projmgr/index.html) (or other APIs) and automatically publishing them to one's prefered project management platform
 -   Promoting use of the **RStudio Visual Markdown Editor**
 -   Providing **RStudio Add-ins** to help new users get some amount of graphical support in performing simple tasks with out package
 
@@ -682,9 +720,17 @@ The following summarizes the key principles and practices discussed in this arti
 
 [^2]: Many practitioners have built off of Christensen's initial theory with sometimes passionately conflicting opinions on the nuances
 
-[^3]: The `usethis` package also has many great examples of "IT Guy"-like qualities. One that I don't discuss in this post is explicitly *informing* users what it intends to do and then seeking permission
+[^3]: Particularly users interested enough to read this post =)
 
-[^4]: This is *not* a recommendation for the best way to store credentials! There are many other options such as keychains and password managers that your organization may prefer. I use a relatively simple example here that I could implement without adding any bulky code or additional packages to illustrate the point of opinionated design - not to give advice on security.
+[^4]: The `usethis` package also has many great examples of "IT Guy"-like qualities. One that I don't discuss in this post is explicitly *informing* users what it intends to do and then seeking permission
 
-[^5]: rOpenSci has a nice discussion on function naming in their package [style guide](https://devguide.ropensci.org/building.html#package-api)
+[^5]: Note that any functions I show in the post are psuedo-code and simplified to illustrate my key points.
+
+[^6]: This is *not* a recommendation for the best way to store credentials! There are many other options such as keychains and password managers that your organization may prefer. I use a relatively simple example here that I could implement without adding any bulky code or additional packages to illustrate the point of opinionated design - not to give advice on security.
+
+[^7]: Disclaimer, this is a shameless promotion of my own package.
+
+[^8]: rOpenSci has a nice discussion on function naming in their package [style guide](https://devguide.ropensci.org/building.html#package-api)
+
+[^9]: This round-up also illustrates some great examples of when you should *not* use an R package for your organization and when other types of end-products could be more beneficial.
 

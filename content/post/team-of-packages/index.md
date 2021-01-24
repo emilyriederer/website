@@ -17,7 +17,7 @@ image:
   preview_only: true
 
 projects: [""]
-rmd_hash: 9a5bbe463f4acfa9
+rmd_hash: ebc3fd96f8e35727
 
 ---
 
@@ -56,6 +56,7 @@ More and more organizations are beginning to write their own internal R packages
     -   [Definded Roles - Dependencies](#definded-roles---dependencies)
     -   [Delivering Reliably - Testing](#delivering-reliably---testing)
 -   [Final Thoughts](#final-thoughts)
+-   [Resources](#resources)
 -   [Too Long Didn't Read](#too-long-didn't-read)
     </div>
 
@@ -668,11 +669,27 @@ In summary, we all know the the joy of working with a great team, and, if you've
 
 ![](all-the-jobs.PNG)
 
+Resources
+---------
+
 <span style="color: blue;">
 
-Ready to get started? Check out my posts on [R Markdown Driven Development](/post/rmarkdown-driven-development) to learn the *technical* side of converting existing analysis scripts into reusable tools and packages, my [Rtistic project](/project/rtistic) for a template to make your organization's first package (for themes and color palettes), and my [round-up](https://emilyriederer.netlify.app/post/resource-roundup-r-industry/) of cool examples of R packages in industry.[^9]
+Ready to get started? Check out my posts on:
 
-For general resources on building R packages, check out the [R Packages book](https://r-pkgs.org/), Malcolm Barrett and Rich Iannone's [My Organization's First Package training](https://github.com/rstudio-conf-2020/my-org-first-pkg) from rstudio::conf 2020, and Hadley Wickham's [Building Tidy Tools training](https://github.com/rstudio-conf-2020/build-tidy-tools) from rstudio::conf 2020.
+-   [R Markdown Driven Development](/post/rmarkdown-driven-development) to learn the *technical* side of converting existing analysis scripts into reusable tools and packages
+-   my [Rtistic project](/project/rtistic) for a template to make your organization's first package (for themes and color palettes)
+-   my [round-up](https://emilyriederer.netlify.app/post/resource-roundup-r-industry/) of cool examples of R packages in industry.[^9]
+
+For general resources on building R packages, check out:
+
+-   the [R Packages book](https://r-pkgs.org/)
+-   Malcolm Barrett and Rich Iannone's [My Organization's First Package training](https://github.com/rstudio-conf-2020/my-org-first-pkg) from rstudio::conf 2020
+-   Hadley Wickham's [Building Tidy Tools training](https://github.com/rstudio-conf-2020/build-tidy-tools) from rstudio::conf 2020
+
+For opinionated guides to package design, check out:
+
+-   [rOpenSci Packages: Development, Maintenance, and Peer Review](https://devguide.ropensci.org/)
+-   [How to develop good R packages for open science](https://masalmon.eu/2017/12/11/goodrpackages/) by Maëlle Salmon
 
 </span>
 

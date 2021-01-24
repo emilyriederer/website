@@ -9,7 +9,7 @@ categories: [causal, data, tutorial]
 date: 2021-01-30
 lastmod: 2021-01-30
 featured: true
-draft: true
+draft: false
 aliases:
 
 # Featured image

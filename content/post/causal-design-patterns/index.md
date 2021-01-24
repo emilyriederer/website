@@ -4,8 +4,8 @@ title: "Causal design patterns for data analysts"
 subtitle: ""
 summary: "An informal primer to causal analysis designs and data structures"
 authors: []
-tags: [causal, analysis, data]
-categories: [causal, analysis, data]
+tags: [causal, data, tutorial]
+categories: [causal, data, tutorial]
 date: 2021-01-30
 lastmod: 2021-01-30
 featured: true
@@ -16,7 +16,7 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Mnemonic illustrations of CI methods, made with Excalidraw"
+  caption: "Mnemonic illustrations of CI methods, made with [Excalidraw](https://excalidraw.com/)"
   focal_point: ""
   preview_only: false
 
@@ -26,37 +26,42 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b32d3dd854662fec
+rmd_hash: 93bc4e9027463ebd
 
 ---
 
-Software engineers study design patterns[^1] to help them recognize archetypes, discuss with a common language, and reuse tried-and-true architectures.
-
-Statistics also has many prototypical analyses, but often these frameworks are often siloed within specific disciplines and clouded by domain-specific language. This makes methods hard to discover and hides their general applicability[^2]. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.
+Software engineers study design patterns[^1] to help them recognize archetypes, discuss with a common language, and reuse tried-and-true architectures. Similarly, statistics has many prototypical analyses, but often these frameworks are siloed within specific disciplines and clouded by domain-specific language. This makes methods hard to discover and hides their general applicability. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.
 
 Observational causal inference is one such field. The need to understand true causal (versus correlative) effects and to derive meaning and strategy from "found" historical data (as opposed to experimentally "produced" data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more.
 
-In this post, I briefly summarize common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each method, I offer an illustration, summary of the method, explanation of the required data structure and assumptions, and an industry-focused example. Causal inference is complicated and nuanced; doing it well requires a large amount of both statistical and domain expertise. For brevity, I will not attempt to explain all of the technical details in this piece, but I hope that it can be useful to raise awareness so analysts can more readily recognize and further research designs conducive to their data.
+This post aims to break down some of those barriers by briefly summarizing common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each method, I provide an illustration, overview of the method, summary of the required data structure and key assumptions, and a hypothetical consumer retail example.
+
+Causal inference is complex and doing it well requires both statistical and domain expertise. Instead of providing all of the details [which are already eloquently described in countless free resources](#learn-more), this post humbly aims to advertise and raise awareness for these methods so analysts can add them into their mental index and research them further when they encounter a relevant question to answer.
 
 Why CI in Industry?
 -------------------
 
-Observational causal inference allows researchers and analysts to ask causal questions and analyize *quasi-experiments* when experimentation is infeasible. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so you might ask why does observational causal inference matter?
+Observational causal inference allows analysts to explore causal questions when experimental data is not available. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so you might ask why does observational causal inference matter?
 
--   Some situations you cannot test or even when you can, thinking about observational causal inference methods can help you better identify biases and design your experiments
--   Testing is expensive. There are direct costs (e.g. testing a marketing promotion) of instituting a policy that might not be effective, implementation costs (e.g. having a tech team implement a new display), and opportunity costs (e.g. holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)
--   Data collection can take time. Sometimes we may want to read long-term endpoints like customer retention or attrition after many year. Working with historical observational data can help get a preliminary answer sooner
+-   Some situations you cannot test due to ethics or reputational risk
+-   Even when you can experiment, understanding observational causal inference can help you better identify biases and design your experiments
+-   Testing can be expensive. There are *direct costs* (e.g. testing a marketing promotion) of instituting a policy that might not be effective, *implementation costs* (e.g. having a tech team implement a new display), and *opportunity costs* (e.g. holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)[^2]
+-   Data collection can take time. W may want to read long-term endpoints like customer retention or attrition after many year. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
+-   It's not either-or but both-and. Due to the financial and temporal costs of experimentation, causal inference can also be a tool to help us better prioritize what experiments are worth running
 
-Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer! As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in the real world to create quasi-experiments. Industry (and life in general) is full of well-defined yet somewhat arbitrary policies which make it fertile ground for observational causal inference. Data analysts can embark on search and rescue missions, finding new life and new potential in reams of historical data that might be otherwise discounted as hopelessly biased, confounded, or outdated.
+Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of well-defined yet somewhat arbitrary policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions, finding new life and new potential in reams of historical data that might be otherwise discounted as hopelessly biased, confounded, or outdated.
 
-To see how this works, we'll give a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods attempts to utilize different sources of randomness while avoiding different types of confounding to derive a valid inference. I'll focus particularly on the data required for each method because causal inference cannot be forced; the best method is a direct product of the specific data available to you.
+Unifying themes
+---------------
 
-As a brief summary before we jump into the details, you might want to check out:
+To see how this works, this post will provide a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods deal with situations where some treatment of interest was not completely randomly assigned between two groups. Instead, these methods attempt to exploit different sources of partial random variation while avoiding different types of confounding in order to derive a valid inference.
 
--   [Stratification](#stratifciation) or [Propensity Score Weighting](#propensity-score-weighting) to help you *rebalance* when you have significant overlap between treated and untreated individuals but treatment groups weren't randomly assigned
--   [Regression discontinuity](#regression-discontinuity) when your treated and untreated groups are disjoint but you want to know the *local* effect at the "juncture" between groups
--   [Difference-in-differences](#difference-in-differences) when you are analyzing group-level data and treatments and have data collected at ultiple periods in *time*
--   [Heterogenous treatment effect methods](#heterogenous-treatment-effects) if you are more interested in how the treatment effect *varies* across a population than the average
+The types of partial randomization found in your historical data and the types of biases you are concerned about dictate which methods are applicable. In short:
+
+-   If you have significant overlap between "similar" treated and untreated individuals but the treatment was not randomly assigned, [stratification](#stratification) or [propensity score weighting](#propensity-score-weighting) can help you *rebalance* your data so that your treated and untreated groups have a more similar distribution of traits and their average outcomes are more comparable
+-   If you have *disjoint* treated and untreated groups partitioned by a sharp cut-off, [regression discontinuity](#regression-discontinuity) allows you to measure the *local* treatment effect at the juncture between groups
+-   If treatments are assigned to different *populations*, [difference-in-differences](#difference-in-differences) and event study methods help to compare different groups across multiple *time* periods
+-   If you are more interested in how treatment effects *vary* across a population than the average effect, advanced methods such as [causal forests](#heterogeneous-treatment-effects) are being developed
 
 Stratification
 --------------
@@ -65,9 +70,13 @@ Stratification
 
 Stratification helps us correct for imbalanced weighting of treated and control populations that arise due to a non-random assignment mechanism.
 
+**TLDR**: When you have "similar"[^3] treated and untreated *individuals* with different distributions on a small number of relevant dimensions, use stratification helps to *rebalance* these groups to make their average effects more comparable
+
 **Motivating Example:**
 
--   Suppose we attempted to A/B test "one-click instant checkout" on our website and want to measure the effect on total purchase amount (one on hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing.) However, due to a glitch the code, web users had a 50% chance of being in the treatment group (i.e. seeing the button) but mobile users only had a 30% chance. Additionally, we know that mobile users tend to spend less per order. Thus, the fact that web users are *over-represented* in the treatment group means that simply comparing treatment versus control outcomes will bias our results and make the causal effect of the button appear higher than it is in actuality.
+-   Suppose we attempted to A/B test "one-click instant checkout" on our Black Friday website and want to measure the effect on total purchase amount[^4].
+-   Due to a glitch the code, web users had a 50% chance of being in the treatment group (i.e. seeing the button) but mobile users only had a 30% chance.
+-   Additionally, we know that mobile users tend to spend less per order. Thus, the fact that web users are *over-represented* in the treatment group means that simply comparing treatment versus control outcomes will bias our results and make the causal effect of the button appear higher than it is in actuality.
 
 **Approach:**
 
@@ -92,7 +101,7 @@ Stratification helps us correct for imbalanced weighting of treated and control 
 
 **Tools:**
 
--   This method is computationally simple, so it can essentially be done with `SQL` or any R package like `dplyr` which can handle grouped aggregations
+-   This method is computationally simple, so it can essentially be done with `SQL` or any basic data wrangling package like `dplyr` or `pandas` so long as the tool can perform aggregations by group
 
 Propensity Score Weighting
 --------------------------
@@ -101,9 +110,13 @@ Propensity Score Weighting
 
 Similar to stratification, propensity score weighting helps us correct for imbalanced weighting of treated and control populations that arise due to a non-random assignment mechanism. However, this approach allows us to control for many covariates that influence assignment by reducing all relevant information into a single score on which we balance.
 
+**TLDR**: When you have "similar"[^5] treated and untreated *individuals* with different distributions on a larger number of relevant dimensions, use propensity score weighting helps to *rebalance* these groups to make their average effects more comparable
+
 **Motivating Example:**
 
--   We sent a marketing promotion text message to all of our customers for whom we have a valid cell phone number and want to know the causal effect on the likelihood of making a purchase in the next month. Because we sent this text to all customers with a valid phone number, we only have customers for whom we do *not* have a phone number for a control. This is an optional field when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number tend to be older and less frequent shoppers. Thus, if we simply compare the treatment and control groups, the promotion will look *more effective* than it really was because it is being sent to generally *more active* customers.
+-   We sent a marketing promotion text message to all of our customers for whom we have a valid cell phone number and want to know the causal effect on the likelihood of making a purchase in the next month.
+-   Because we sent this text to all customers with a valid phone number, we only have customers for whom we do *not* have a phone number for a control. This is an optional field when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number tend to be older and less frequent shoppers.
+-   Thus, if we simply compare the treatment and control groups, the promotion will look *more effective* than it really was because it is being sent to generally *more active* customers.
 
 **Approach:**
 
@@ -116,7 +129,7 @@ Similar to stratification, propensity score weighting helps us correct for imbal
 **Key Assumptions:**
 
 -   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment and independent conditional on the covariates)
--   All observations had some positive probability[^3] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
+-   All observations had some positive probability[^6] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
 
 **Example Application:**
 
@@ -125,11 +138,11 @@ Similar to stratification, propensity score weighting helps us correct for imbal
 **Related Methods:**
 
 -   Stratification is conceptually similar to propensity score weighting since it implicitly calculates the treatment effect on a reweighted sample. There, the reweighting comes after computing localized effects instead of before
--   Propensity scores are sometimes also used in matching, but there are [some arguments](https://www.youtube.com/watch?v=rBv39pK1iEs&list=PL0n492lUg2sjYNAtpfatEm-AuGkAmCz4G) against this approach
+-   Propensity scores are sometimes also used in matching, but there are [arguments](https://www.youtube.com/watch?v=rBv39pK1iEs&list=PL0n492lUg2sjYNAtpfatEm-AuGkAmCz4G) against this approach
 
 **Tools:**
 
--   [`WeightIt`](https://cran.r-project.org/web/packages/WeightIt/index.html) R package for IPW
+-   [`WeightIt`](https://cran.r-project.org/web/packages/WeightIt/index.html) R package
 -   Easy to implement with simple [`stats::glm()`](https://rdrr.io/r/stats/glm.html) as shown in Lucy D'Agostino McGowan's [blog post](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/)
 
 Regression Discontinuity
@@ -137,11 +150,15 @@ Regression Discontinuity
 
 ![](excalidraw-rdd.png)
 
-Often, in real life and particularly in industry, we violate the "positive probability of treatment throughout the covariate space" assumption required by stratification and propensity score weighting. Business and public policy often creates sharp cut-offs (e.g. customer segmentation based on age and spend) with individuals on either side of this cut-off receiving different treatments. In such cases, we have no relevant observations to reweight. However, we can apply a regression discontinuity design to understand the local effect of a treatment at the point of discontinuity.
+Often, in real life and particularly in industry, we violate the "positive probability of treatment throughout the covariate space" assumption required by stratification and propensity score weighting. Business and public policy often use strategies that have sharp cut-offs (e.g. customer segmentation based on age and spend) with individuals on either side of this cut-off receiving different treatments. In such cases, we have no relevant observations to re-weight. However, we can apply a regression discontinuity design to understand the local effect of a treatment at the point of discontinuity.
+
+**TLDR**: When you have disjoint treated and untreated *individuals* separated by a sharp cut-off, use the arbitrary variation in treatment assignment for those right above or below the cut-off to measure a local causal effect
 
 **Motivating Example:**
 
--   Customers who have not made a purchase in 90 days are sent a "\$10 Off Your Next Purchase" coupon. We can use the sharp cut-off in "days since last purchase" to measure the effect of a coupon on spend in the next year. While it's implausible to think that customers who haven't purchased in 10 days are similar to those who have not in 150 days, customers who haven't purchased in 88 days are likely not substantively different than those who have not purchased in 92 days except for the different treatment
+-   Customers who have not made a purchase in 90 days are sent a "\$10 Off Your Next Purchase" coupon.
+-   We can use the sharp cut-off in "days since last purchase" to measure the effect of a coupon on spend in the next year.
+-   While it's implausible to think that customers who haven't purchased in 10 days are similar to those who have not in 150 days, customers who haven't purchased in 88 days are likely not substantively different than those who have not purchased in 92 days except for the different treatment
 
 **Approach:**
 
@@ -177,7 +194,12 @@ Difference in Differences
 
 Some treatments we wish to apply cannot be applied at the individual level but necessarily effect entire groups. Instead of comparing treatment and control groups within the same population at the same time, we can compare the *relative change* across treatment and control populations *across time*.
 
-**Motivating Example:** We want to estimate the effect of a store remodel on visits. A remodel effect all potential customers, so this "treatment" cannot be applied at the individual level; in theory, it could be randomized to individual *stores*, but we do not have the budget for or interest in randomly remodel many stores before there is evidence of a positive effect.
+**TLDR**: When you have group-level treatments or data available, use random variation *across populations* to compare their overall trends *over time*
+
+**Motivating Example:**
+
+-   We want to estimate the effect of a store remodel on visits.
+-   A remodel effect all potential customers, so this "treatment" cannot be applied at the individual level; in theory, it could be randomized to individual *stores*, but we do not have the budget for or interest in randomly remodel many stores before there is evidence of a positive effect.
 
 **Approach:**
 
@@ -228,7 +250,13 @@ Please check out my companion [research roundup post](/post/resource-roundup-cau
 
 [^1]: A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns).
 
-[^2]: Two other examples of this are categorical data analysis methods associated only with text mining and time-to-event analyses covered predominately in survival analysis
+[^2]: Regarding opportunity costs, however, [multi-armed bandits](https://multithreaded.stitchfix.com/blog/2020/08/05/bandits/) can help balance this opportunitiy cost by deciding when to "explore versus exploit"
 
-[^3]: This is often called the positivity assumption
+[^3]: What is "similarity"? Without going into too much detail, we're specifically concerned here about characteristics of an individual that effect both their likelihood to receive the treatment of interest **and** effect the outcome of interest
+
+[^4]: On one hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing
+
+[^5]: See previous footnote on "similarity".
+
+[^6]: This is often called the positivity assumption
 

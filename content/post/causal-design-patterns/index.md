@@ -26,17 +26,17 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: f2215692b946c806
+rmd_hash: b32d3dd854662fec
 
 ---
 
 Software engineers study design patterns[^1] to help them recognize archetypes, discuss with a common language, and reuse tried-and-true architectures.
 
-Similarly, statistics has many prototypical analyses; however, these frameworks are often siloed specific disciplines and clouded by domain-specific language that makes them hard to discover and masks their general applicability[^2]. This can make it hard for practitioners outside of these fields to easily survey, learn, and apply these methods.
+Statistics also has many prototypical analyses, but often these frameworks are often siloed within specific disciplines and clouded by domain-specific language. This makes methods hard to discover and hides their general applicability[^2]. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.
 
-Observational causal inference is one such field. The need to derive meaning and strategy from "found" historical data (as opposed to experimentally "manufactured" data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more.
+Observational causal inference is one such field. The need to understand true causal (versus correlative) effects and to derive meaning and strategy from "found" historical data (as opposed to experimentally "produced" data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more.
 
-In this post, I briefly summarize common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each, I offer an illustration, summary of the method, explanation of the required data structure and assumptions, and an industry-focused example. Causal inference is complicated and nuanced; doing it well requires a large amount of both statistical and domain expertise. For brevity, I will not attempt to explain all of the technical details in this piece, but I hope that it can be useful to raise awareness so analysts can more readily recognize and further research designs conducive to their data.
+In this post, I briefly summarize common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each method, I offer an illustration, summary of the method, explanation of the required data structure and assumptions, and an industry-focused example. Causal inference is complicated and nuanced; doing it well requires a large amount of both statistical and domain expertise. For brevity, I will not attempt to explain all of the technical details in this piece, but I hope that it can be useful to raise awareness so analysts can more readily recognize and further research designs conducive to their data.
 
 Why CI in Industry?
 -------------------

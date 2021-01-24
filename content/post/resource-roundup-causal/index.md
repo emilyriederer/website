@@ -27,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: 83500feb926b809d
+rmd_hash: a174d91fd65b65ba
 
 ---
 
@@ -49,7 +49,7 @@ Free Books
     -   Economics perspective
     -   Holistic focus on research design with rich examples from literature
 -   [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch
--   [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo
+-   [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo[^1]
 
 Course Material
 ---------------
@@ -67,31 +67,35 @@ Course Material
 Survey Papers & Blogs
 ---------------------
 
+**Surveys**
+
 -   [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/) on the Uber Engineering blog
 -   [The Impact of Machine Learning on Economics](https://www.nber.org/system/files/chapters/c14009/c14009.pdf) by Susan Athey
 -   [The State of Applied Econometrics - Causality and Policy Evaluation](https://arxiv.org/abs/1607.00699) by Susan Athey and Guido Imbens
--   [Understanding propensity score weighting](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/) by Lucy D'Agostino McGowan
--   [To Balance or Not To Balance](https://www.unofficialgoogledatascience.com/2016/06/to-balance-or-not-to-balance.html) by Ivan Diaz and Joseph Kelly (Unofficial Google Data Science Blog)
+
+**Deeper Dives**
+
 -   [Curated List of Recent Advances](https://christinecai.github.io/PublicGoods/applied_micro_methods.pdf) by Christine Cai
 -   [Policy Evaluation in COVID](https://arxiv.org/abs/2009.01940): fantastic survey of diff-in-diff and event study methods by Noah Haber, et al
 
-Talks
------
+**Propensity Score Focused**
+
+-   [Understanding propensity score weighting](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/) by Lucy D'Agostino McGowan
+-   [To Balance or Not To Balance](https://www.unofficialgoogledatascience.com/2016/06/to-balance-or-not-to-balance.html) by Ivan Diaz and Joseph Kelly (Unofficial Google Data Science Blog)
+
+Miscellaneous Talks
+-------------------
 
 -   [Causal Science 2020 Meeting talks](https://causalscience.org/programme/about/)
 -   [Synthetic Control lecture](https://www.youtube.com/watch?v=nKzNp-qpE-I&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=11) by Alberto Abadie
 -   [Heterogenous Treatment Effects lecture](https://www.youtube.com/watch?v=oZoizsX3bts&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=7) by Susan Athey
 -   [Personalized Treatment Effect Estimation](https://www.youtube.com/watch?v=NRzObclZVT8) by Heidi Seibold
 
-Podcasts
---------
-
--   [Casual Inference](https://casualinfer.libsyn.com/)
--   [SERious EPI](https://seriousepi.blubrry.net/)
-
 Other Introductory Books
 ------------------------
 
 -   [Mastering Metrics](https://www.amazon.com/gp/product/0691152845/ref=ox_sc_act_title_3?smid=ATVPDKIKX0DER&psc=1) and [Mostly Harmless Econometrics](https://www.amazon.com/Mostly-Harmless-Econometrics-Empiricists-Companion/dp/0691120358/ref=pd_sbs_14_1/134-6784964-9794862?_encoding=UTF8&pd_rd_i=0691120358&pd_rd_r=ebba5491-d197-4e79-be24-ec7e1c2bda17&pd_rd_w=xvRCC&pd_rd_wg=dpUZo&pf_rd_p=bc074051-81d1-4874-a3fd-fd0c867ce3b4&pf_rd_r=69D56CVPRFHAWNKFARBY&psc=1&refRID=69D56CVPRFHAWNKFARBY) by Joshua Angrist and Jorn-Steffen Pischke
 -   [The Book of Why](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X/ref=sr_1_1?dchild=1&keywords=book+of+why&qid=1596111613&s=books&sr=1-1) by Judea Pearl
+
+[^1]: Field experiments are technically a type of experiment not observational inference. However, they also pose additional "real world" challenges that differ from controlled, clinical research, so both the challenges and methods here are useful to understand
 

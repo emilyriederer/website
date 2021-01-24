@@ -46,7 +46,7 @@ In my post on [causal design patterns](/post/causal-design-patterns/), I argue t
   + Economics perspective
   + Holistic focus on research design with rich examples from literature
 - [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch
-- [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo
+- [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo^[Field experiments are technically a type of experiment not observational inference. However, they also pose additional "real world" challenges that differ from controlled, clinical research, so both the challenges and methods here are useful to understand]
 
 ## Course Material 
 
@@ -62,25 +62,28 @@ In my post on [causal design patterns](/post/causal-design-patterns/), I argue t
 
 ## Survey Papers & Blogs
 
+**Surveys**
+
 - [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/) on the Uber Engineering blog
 - [The Impact of Machine Learning on Economics](https://www.nber.org/system/files/chapters/c14009/c14009.pdf) by Susan Athey
 - [The State of Applied Econometrics - Causality and Policy Evaluation](https://arxiv.org/abs/1607.00699) by Susan Athey and Guido Imbens
-- [Understanding propensity score weighting](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/) by Lucy D'Agostino McGowan
-- [To Balance or Not To Balance](https://www.unofficialgoogledatascience.com/2016/06/to-balance-or-not-to-balance.html) by Ivan Diaz and Joseph Kelly (Unofficial Google Data Science Blog)
+
+**Deeper Dives**
+
 - [Curated List of Recent Advances](https://christinecai.github.io/PublicGoods/applied_micro_methods.pdf) by Christine Cai
 - [Policy Evaluation in COVID](https://arxiv.org/abs/2009.01940): fantastic survey of diff-in-diff and event study methods by Noah Haber, et al
 
-## Talks
+**Propensity Score Focused**
+
+- [Understanding propensity score weighting](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/) by Lucy D'Agostino McGowan
+- [To Balance or Not To Balance](https://www.unofficialgoogledatascience.com/2016/06/to-balance-or-not-to-balance.html) by Ivan Diaz and Joseph Kelly (Unofficial Google Data Science Blog)
+
+## Miscellaneous Talks
 
 - [Causal Science 2020 Meeting talks](https://causalscience.org/programme/about/)
 - [Synthetic Control lecture](https://www.youtube.com/watch?v=nKzNp-qpE-I&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=11) by Alberto Abadie
 - [Heterogenous Treatment Effects lecture](https://www.youtube.com/watch?v=oZoizsX3bts&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=7) by Susan Athey
 - [Personalized Treatment Effect Estimation](https://www.youtube.com/watch?v=NRzObclZVT8) by Heidi Seibold
-
-## Podcasts
-
-- [Casual Inference](https://casualinfer.libsyn.com/)
-- [SERious EPI](https://seriousepi.blubrry.net/)
 
 ## Other Introductory Books
 

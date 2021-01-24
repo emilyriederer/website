@@ -26,13 +26,13 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: cfd4da2dd876c4b7
+rmd_hash: 394c12c81c29ad3d
 
 ---
 
 [Declarative programming languages](https://en.wikipedia.org/wiki/Declarative_programming) such as HTML, CSS, and SQL are popular because they allow users to focus more on the desired *outcome* than the exact computational steps required to achieve that outcome. This can increase efficiency and code readability since programmers describe what they *want* -- whether that be how their website is laid out (without worrying about how the browser computes this layout) or how a dataset is structured (regardless of how the database goes about obtaining and aggregating this data).
 
-However, sometimes this additional layer of abstraction can introduce problems of its own. Most notably, the lack of common [control flow](https://en.wikipedia.org/wiki/Control_flow) can introduce a lot of redundancy. This is part of the motivation for *pre-processing* tools which use more imperative programming concepts such as local variables and for-loops to automatically generate declarative code. Common examples in the world of web development are [Sass](https://sass-lang.com/) for CSS and [Haml](https://haml.info/docs/yardoc/file.REFERENCE.html) for HTML. Of course, such tools naturally come at a cost of their own by requiring developers to learn yet another tool.
+However, sometimes this additional layer of abstraction can introduce problems of its own. Most notably, the lack of common [control flow](https://en.wikipedia.org/wiki/Control_flow) can introduce a lot of redundancy. This is part of the motivation for *pre-processing* tools which use more imperative programming concepts such as local variables and for-loops to automatically generate declarative code. Common examples in the world of web development are [Sass](https://sass-lang.com/) for CSS and [Haml](https://haml.info/docs/yardoc/file.REFERENCE.html) for HTML. Of course, such tools naturally come at a cost of their own by requiring developers to learn yet another tool.[^1]
 
 For R (or, specifically `tidyverse`) users who need to generate SQL code, recent advances in [`dplyr v1.0.0`](https://dplyr.tidyverse.org/) and [`dbplyr v2.0.0`](https://dbplyr.tidyverse.org/) pose an interesting alternative. By using efficient, readable, and most important *familiar* syntax, users can generate accurate SQL queries that could otherwise be error-prone to write. For example, computing sums and means for a large number of variables. Coupled with the power of [`sqlfluff`](https://www.sqlfluff.com/), an innovative SQL styler which was announced at DBT's recent [coalesce conference](https://www.getdbt.com/coalesce/agenda/presenting-sqlfluff), these queries can be made not only accurate but also imminently readable.
 
@@ -183,9 +183,9 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff lint"</span>, <span class='nv'>tmp</span><span class='o'>)</span>, intern <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> 
 
-<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\Rtmp23XsTJ\file18ac36966532' had status 65</span>
+<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpyqR0XJ\file27b43e1773f2' had status 65</span>
 
-<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\Rtmp23XsTJ\\file18ac36966532] FAIL"</span>
+<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpyqR0XJ\\file27b43e1773f2] FAIL"</span>
 <span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
 <span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
 <span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
@@ -443,4 +443,6 @@ I have found this combination of tools to be useful for generating readable, typ
 **`dbplyr` *is* intended for you to *not* look at the SQL.** One major benefit of `dbplyr` for R users is distinctly to *not* change languages and to benefit from a database's compute power while staying in R. Not only is this use case not the intended purpose, you could go as far as to argue it is almost antithetical. Nevertheless, I do think there are many cases where one should preserve SQL independently; for example, you might need to do data tranformations in a production pipeline that does not run R, not wish to take on additional code dependencies, not be able to connect to your database with R, or be collaborating with non-R users.
 
 **`sqlfluff` is still experimental.** As the developers emphasized in their DBT talk, `sqlfluff` is still in its early changes and subject to change. While I'm optimistic that this only means this tool will only keep getting better, it's possible the exact rules, configuration, flags, syntax, etc. may change. Check out the docs for the latest documentation there.
+
+[^1]: That being said, for SQL [`dbt` with Jinja templating support](https://docs.getdbt.com/tutorial/using-jinja) is an intriguing option
 

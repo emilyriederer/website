@@ -164,11 +164,11 @@ The following query shows the basic results. In this case, the `sqlfluff` defaul
 ```{sql, code= readLines(tmp), eval = FALSE}
 ```
 
-# When you can't connect to you data
+## When you can't connect to you data
 
 Even if, for some reason, you cannot connect to R with your specific dataset, you may still use this approach. 
 
-For example, suppose we cannot connect to the `penguins` dataset directly, but we a data dictionary we can obtain a list of all of the fields in the dataset.
+For example, suppose we cannot connect to the `penguins` dataset directly, but with the help of a data dictionary we can obtain a list of all of the fields in the dataset.
 
 ```{r}
 penguins_cols <- names(palmerpenguins::penguins)

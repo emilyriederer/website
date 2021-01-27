@@ -27,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: a174d91fd65b65ba
+rmd_hash: c0b604dd858a81b2
 
 ---
 
@@ -97,5 +97,5 @@ Other Introductory Books
 -   [Mastering Metrics](https://www.amazon.com/gp/product/0691152845/ref=ox_sc_act_title_3?smid=ATVPDKIKX0DER&psc=1) and [Mostly Harmless Econometrics](https://www.amazon.com/Mostly-Harmless-Econometrics-Empiricists-Companion/dp/0691120358/ref=pd_sbs_14_1/134-6784964-9794862?_encoding=UTF8&pd_rd_i=0691120358&pd_rd_r=ebba5491-d197-4e79-be24-ec7e1c2bda17&pd_rd_w=xvRCC&pd_rd_wg=dpUZo&pf_rd_p=bc074051-81d1-4874-a3fd-fd0c867ce3b4&pf_rd_r=69D56CVPRFHAWNKFARBY&psc=1&refRID=69D56CVPRFHAWNKFARBY) by Joshua Angrist and Jorn-Steffen Pischke
 -   [The Book of Why](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X/ref=sr_1_1?dchild=1&keywords=book+of+why&qid=1596111613&s=books&sr=1-1) by Judea Pearl
 
-[^1]: Field experiments are technically a type of experiment not observational inference. However, they also pose additional "real world" challenges that differ from controlled, clinical research, so both the challenges and methods here are useful to understand
+[^1]: Field experiments are technically a type of experiment not observational inference. However, they also pose additional "real world" challenges that differ from controlled, clinical research, so both the challenges and methods here are useful to understand. In particular, *encouragement designs* are a derivative of instrumental variable methods. These may have been inadvertently conducted in your business strategy and be available in historical data.
 

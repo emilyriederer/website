@@ -46,7 +46,7 @@ In my post on [causal design patterns](/post/causal-design-patterns/), I argue t
   + Economics perspective
   + Holistic focus on research design with rich examples from literature
 - [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch
-- [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo^[Field experiments are technically a type of experiment not observational inference. However, they also pose additional "real world" challenges that differ from controlled, clinical research, so both the challenges and methods here are useful to understand]
+- [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo^[Field experiments are technically a type of experiment not observational inference. However, they also pose additional "real world" challenges that differ from controlled, clinical research, so both the challenges and methods here are useful to understand. In particular, *encouragement designs* are a derivative of instrumental variable methods. These may have been inadvertently conducted in your business strategy and be available in historical data.]
 
 ## Course Material 
 

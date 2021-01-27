@@ -459,6 +459,8 @@ Just as a few examples, vignettes of an internal package might cover some of the
 
 These examples of potential vignettes further illustrate how our internal packages can help us better achieve *progress*. No one in an organization wants a model for the sake of having a model; they want is to answer a question or suggest an action. Open-source packages are relatively "blind" to this, so their vignettes will focus on getting to the model; internal packages can partner with us in understanding that "moment before" and "moment after" with tips on everything from featuring engineering to assessing the ethics and bias in a certain output.
 
+Of course, any organization can document their processes, and this documentation doesn't strictly have to live inside an R package. However, many organizations struggle with knowledge management. Including documentation in a related R package ensures that it's easily discoverable to the *right* people (those doing a related project), at the *right* time (when they are working on that project). It also ensures that documentation won't be lost when any one person changes teams, leaves the organization, or gets a new computer.
+
 </span>
 
 ### Package Websites

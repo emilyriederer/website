@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 1afb3fb020233b5e
+rmd_hash: 02ea03d045095733
 
 ---
 
@@ -118,7 +118,8 @@ Similar to stratification, propensity score (think "likelihood of treatment") we
 **Motivating Example:**
 
 -   We sent a marketing promotion text message to all of our customers for whom we have a valid cell phone number and want to know the causal effect on the likelihood to make a purchase in the next month.
--   We sent this text to all customers with a valid cell phone number, so we only observe the untreated response for customers for whom we do *not* have a phone number. This is an optional field on our web purchase UI, so there is some randomness between the population; however, we know that those who do not provide a phone number tend to be older and less frequent shoppers.
+-   We did not intentionally leave a control group untreated, but we can observe the untreated response for customers for whom we do *not* have a valid cell phone number.
+-   Phone number is an optional field on UI when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number tend to be older and less frequent shoppers.
 -   Thus, if we simply compare the treated and untreated groups, the promotion will look *more effective* than it really was because it is being sent to generally *more active* customers.
 
 **Approach:**

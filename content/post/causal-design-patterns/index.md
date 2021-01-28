@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: a9fca80bd550d574
+rmd_hash: 1afb3fb020233b5e
 
 ---
 
@@ -65,7 +65,6 @@ The types of partial randomization found in your historical data and the types o
 -   If you have significant overlap between "similar" treated and untreated individuals but the treatment was not randomly assigned, [stratification](#stratification) or [propensity score weighting](#propensity-score-weighting) can help you *rebalance* your data so that your treated and untreated groups have a more similar distribution of traits and their average outcomes are more comparable
 -   If you have *disjoint* treated and untreated groups partitioned by a sharp cut-off, [regression discontinuity](#regression-discontinuity) allows you to measure the *local* treatment effect at the juncture between groups
 -   If treatments are assigned to different *populations*, [difference-in-differences](#difference-in-differences) and event study methods help to compare different groups across multiple *time* periods
--   If you are more interested in how treatment effects *vary* across a population than the average effect, advanced methods such as [causal forests](#heterogeneous-treatment-effects) are being developed
 
 Stratification
 --------------

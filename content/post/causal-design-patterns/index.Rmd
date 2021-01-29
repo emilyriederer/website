@@ -232,13 +232,6 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 - [`Synth`](https://www.jstatsoft.org/article/view/v042i13) R package for synthetic controls
 - [`CausalImpact`](http://google.github.io/CausalImpact/CausalImpact.html) R package for Bayesian structural time-series
 
-## Heterogenous Treament Effects
-
-You may have noticed that, so far, we've only discussed methods that tell us the *average* treatment effect (or, in the case of RDD, the even narrower *local* average treatment effect.) Of course, in an ideal world, individual treatment effects would be significantly more useful to us. There's currently a lot of interesting work in the area of heterogeneous treatment effects to help better understand how causal effects vary by subgroup for better segmentation and targetting. As a few examples, check out:
-
-- Causal forests developed by Susan Athey and Stefan Wagner discussed in [this lecture](https://www.youtube.com/watch?v=oZoizsX3bts&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=7)/[this paper](https://arxiv.org/abs/1902.07409) and implemented in the [`grf` R package](https://grf-labs.github.io/grf/index.html)
-- Tree-based subgroup analysis by Heidi Seibold discussed in [this talk](https://www.youtube.com/watch?v=NRzObclZVT8)/[this paper](https://journals.sagepub.com/doi/10.1177/0962280217693034) and implemented in the [`model4you` R package](https://cran.r-project.org/web/packages/model4you/index.html)
-
 ## Learn More
 
 The point of this post is not to teach any one method of causal inference but to help raise awareness for the different tools and methods that arise given certain naturally occurring experiments and inference-friendly data structures. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. 

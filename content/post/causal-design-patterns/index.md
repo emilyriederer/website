@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 590fcea48872ede3
+rmd_hash: b5ce9b070ab6502c
 
 ---
 
@@ -238,14 +238,6 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 -   [`did`](https://bcallaway11.github.io/did/) R package for difference-in-differences
 -   [`Synth`](https://www.jstatsoft.org/article/view/v042i13) R package for synthetic controls
 -   [`CausalImpact`](http://google.github.io/CausalImpact/CausalImpact.html) R package for Bayesian structural time-series
-
-Heterogenous Treament Effects
------------------------------
-
-You may have noticed that, so far, we've only discussed methods that tell us the *average* treatment effect (or, in the case of RDD, the even narrower *local* average treatment effect.) Of course, in an ideal world, individual treatment effects would be significantly more useful to us. There's currently a lot of interesting work in the area of heterogeneous treatment effects to help better understand how causal effects vary by subgroup for better segmentation and targetting. As a few examples, check out:
-
--   Causal forests developed by Susan Athey and Stefan Wagner discussed in [this lecture](https://www.youtube.com/watch?v=oZoizsX3bts&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=7)/[this paper](https://arxiv.org/abs/1902.07409) and implemented in the [`grf` R package](https://grf-labs.github.io/grf/index.html)
--   Tree-based subgroup analysis by Heidi Seibold discussed in [this talk](https://www.youtube.com/watch?v=NRzObclZVT8)/[this paper](https://journals.sagepub.com/doi/10.1177/0962280217693034) and implemented in the [`model4you` R package](https://cran.r-project.org/web/packages/model4you/index.html)
 
 Learn More
 ----------

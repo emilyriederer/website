@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 02ea03d045095733
+rmd_hash: bf879a504f3a98a4
 
 ---
 
@@ -49,7 +49,7 @@ Observational causal inference allows analysts to explore causal questions when 
 -   Data collection can take time. W may want to read long-term endpoints like customer retention or attrition after many year. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
 -   It's not either-or but both-and. Due to the financial and temporal costs of experimentation, causal inference can also be a tool to help us better prioritize what experiments are worth running
 
-Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of well-defined yet somewhat arbitrary policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions, finding new life and new potential in reams of historical data that might be otherwise discounted as hopelessly biased, confounded, or outdated.
+Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of non-random but well-defined (and somewhat arbitrary) policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions, finding new life and new potential in reams of historical data that might be otherwise discounted as hopelessly biased, confounded, or outdated.
 
 Unifying themes
 ---------------
@@ -111,34 +111,34 @@ Propensity Score Weighting
 
 ![](excalidraw-psw.png)
 
-Similar to stratification, propensity score (think "likelihood of treatment") weighting helps us correct for imbalanced weighting of treated and control populations that arise due to a non-random assignment mechanism. However, this approach allows us to control for many observable characteristics that influence assignment by reducing all relevant information into a single score on which we balance.
+Similar to stratification, propensity score (think "likelihood of treatment") weighting helps us correct for systemic differences between treatment and control populations that stem from non-random assignment mechanism. However, this approach allows us to control for many observable characteristics that influence assignment by reducing all relevant information into a single score on which we balance.[^5]
 
-**TLDR**: When you have "similar"[^5] treated and untreated *individuals* with different distributions on a larger number of relevant dimensions, propensity score weighting helps to *rebalance* these groups to make their average effects more comparable
+**TLDR**: When you have "similar"[^6] treated and untreated *individuals* with different distributions on a larger number of relevant dimensions, propensity score weighting helps to *rebalance* these groups to make their average effects more comparable
 
 **Motivating Example:**
 
 -   We sent a marketing promotion text message to all of our customers for whom we have a valid cell phone number and want to know the causal effect on the likelihood to make a purchase in the next month.
 -   We did not intentionally leave a control group untreated, but we can observe the untreated response for customers for whom we do *not* have a valid cell phone number.
--   Phone number is an optional field on UI when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number tend to be older and less frequent shoppers.
+-   Phone number is an optional field on UI when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number are less frequent shoppers *on average* but a full spectrum of low-to-high frequency shoppers exists in both groups
 -   Thus, if we simply compare the treated and untreated groups, the promotion will look *more effective* than it really was because it is being sent to generally *more active* customers.
 
 **Approach:**
 
--   Model the probability of *receiving* the treatment (the propensity score) based each observation's covariates. Note that we are modeling whether or not they *receive* treatment - not if they *respond* to it. This may seem unintuitive since we *know* whether or not they received treatment, but you can intuitively think of it ask modeling how similar various untreated observation are to treated ones
+-   Model the probability of *receiving* the treatment (the propensity score) based each observation's observable characteristics that are relevant both to their treatment assignment and to their outcome.[^7]
 -   In observational data, the treatment group's distribution of propensity scores will generally skew right (tend higher, shown in solid blue) and the control group's distribution will skew left (tend lower, shown in solid green)
--   Use predicted probabilities (propensity scores) to reweight the untreated observations to fit the same distribution of treatment likelihood as the control group (shown in dotted green)
+-   Use predicted probabilities (propensity scores) to weight the untreated observations to fit the same distribution of treatment likelihood as the control group (shown in dotted green)
 -   Weights can be constructed in different ways depending on the quantity of interest (average treatment effect of treated, average treatment effect of population, average treatment effect if given to the control population, etc.)
 -   Apply weights when calculating the average outcome in each of the treated and control groups and subtract to find the treatment effect
 
 **Key Assumptions:**
 
 -   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment and independent conditional on the covariates)
--   All observations had some positive probability[^6] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
+-   All observations had some positive probability[^8] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
 
 **Example Application:**
 
 -   Model the propensity of treatment (or equivalently, having a phone number on record) based on demographics and historical purchase behavior
--   Derive weights to calculate the average treatment effect of the treated. Treated observations are left unweighted; for untreated observations, the weight is the ratio of the propensity score over one minus the propensity score[^7]
+-   Derive weights to calculate the average treatment effect of the treated. Treated observations are left unweighted; for untreated observations, the weight is the ratio of the propensity score over one minus the propensity score[^9]
 
 **Related Methods:**
 
@@ -262,9 +262,13 @@ Please check out my companion [research roundup post](/post/resource-roundup-cau
 
 [^4]: On one hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing
 
-[^5]: See previous footnote on "similarity".
+[^5]: Heuristically, you can think of it as a type of "dimensionality reduction" based on *relevance* instead of *varaince*.
 
-[^6]: This is often called the positivity assumption
+[^6]: See previous footnote on "similarity".
 
-[^7]: Intuitively, you can think of this as cancelling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).
+[^7]: Note that we are modeling whether or not they *receive* treatment - not if they *respond* to it. This may seem unintuitive since we *know* whether or not they received treatment, but you can intuitively think of it as modeling how similar various untreated observation are to treated ones
+
+[^8]: This is often called the positivity assumption
+
+[^9]: Intuitively, you can think of this as cancelling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).
 

@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b5ce9b070ab6502c
+rmd_hash: e3bd5ca83f3cba11
 
 ---
 
@@ -230,6 +230,7 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 
 **Related Methods:**
 
+-   Variants exist that relax different assumptions. For example, there are methods that allow for variation in treatment timing, treatment effect, multiple time periods, and parallel trends conditional on covariates
 -   Synthetic control methods can be thought of as an extension of difference-in-differences where the control is a weighted average of a number of different possible controls
 -   Bayesian structural time-series methods relax the "parallel trends" asummptions of difference-in-differences by modeling the relationship between time series (including trend and seasonal components)
 

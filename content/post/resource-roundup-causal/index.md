@@ -27,7 +27,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: a79fc049f5361a70
+rmd_hash: 77e0e8e75b5ca97d
 
 ---
 
@@ -41,6 +41,7 @@ Free Books
     -   Code supplement in R, python, SAS, Stata
 -   [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course) by Brady Neal
     -   ML perspective including Bayesian networks, causal discovery
+    -   Builds strong theoretical basis with graphical and probabilistic proofs
     -   Book complemented by video lectures
 -   [Causal Inference: the Mixtape](https://mixtape.scunning.com/) by Scott Cunningham
     -   Economics perspective
@@ -48,8 +49,11 @@ Free Books
 -   [The Effect: An Introduction to Research Design and Causality](https://nickchk.com/causalitybook.html) by Nick Huntington-Kline
     -   Economics perspective
     -   Holistic focus on research design with rich examples from literature
--   [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch
--   [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo[^1]
+-   [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch of the World Bank
+-   [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo
+    -   Technically a type of experimentation not causal inference
+    -   However, the real world challenges of field (versus clinical) research creates some nice "blended" methodologies.
+    -   For example *encouragement designs* are closely related to instrumental variable methods. These may have been inadvertently conducted in your business strategy and be available in historical data.
 
 Course Material
 ---------------
@@ -97,6 +101,4 @@ Other Introductory Books
 -   [Learning Microeconometrics with R](https://www.routledge.com/Learning-Microeconometrics-with-R/Adams/p/book/9780367255381) by Christopher Adams
 -   [Mastering Metrics](https://www.amazon.com/gp/product/0691152845/ref=ox_sc_act_title_3?smid=ATVPDKIKX0DER&psc=1) and [Mostly Harmless Econometrics](https://www.amazon.com/Mostly-Harmless-Econometrics-Empiricists-Companion/dp/0691120358/ref=pd_sbs_14_1/134-6784964-9794862?_encoding=UTF8&pd_rd_i=0691120358&pd_rd_r=ebba5491-d197-4e79-be24-ec7e1c2bda17&pd_rd_w=xvRCC&pd_rd_wg=dpUZo&pf_rd_p=bc074051-81d1-4874-a3fd-fd0c867ce3b4&pf_rd_r=69D56CVPRFHAWNKFARBY&psc=1&refRID=69D56CVPRFHAWNKFARBY) by Joshua Angrist and Jorn-Steffen Pischke
 -   [The Book of Why](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X/ref=sr_1_1?dchild=1&keywords=book+of+why&qid=1596111613&s=books&sr=1-1) by Judea Pearl
-
-[^1]: Field experiments are technically a type of experiment not observational inference. However, they also pose additional "real world" challenges that differ from controlled, clinical research, so both the challenges and methods here are useful to understand. In particular, *encouragement designs* are a derivative of instrumental variable methods. These may have been inadvertently conducted in your business strategy and be available in historical data.
 

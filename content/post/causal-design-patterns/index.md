@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: bf879a504f3a98a4
+rmd_hash: 590fcea48872ede3
 
 ---
 
@@ -138,7 +138,7 @@ Similar to stratification, propensity score (think "likelihood of treatment") we
 **Example Application:**
 
 -   Model the propensity of treatment (or equivalently, having a phone number on record) based on demographics and historical purchase behavior
--   Derive weights to calculate the average treatment effect of the treated. Treated observations are left unweighted; for untreated observations, the weight is the ratio of the propensity score over one minus the propensity score[^9]
+-   Derive weights to calculate the average treatment effect of the treated. Treated observations are left unweighted; for untreated observations, the weight is the ratio of the propensity score over one minus the propensity score[^9] [^10]
 
 **Related Methods:**
 
@@ -270,5 +270,7 @@ Please check out my companion [research roundup post](/post/resource-roundup-cau
 
 [^8]: This is often called the positivity assumption
 
-[^9]: Intuitively, you can think of this as cancelling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).
+[^9]: Intuitively, you can think of this as canceling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).
+
+[^10]: I promised I wouldn't get into the math and formulas in the post, but here's a short numerical illustration of how this works. Suppose we have two groups A and B. A has 30 treated individuals and 20 untreated individuals, so the true propensity score is 60% (30/50). B has 10 treated individuals and 40 untreated individuals so the true propensity score is 20% (10/50). Thus, Group A accounts for 75% (30/40) of the treated group and 33% (20/60) of the untreated group. If the distinction between Group A and Group B suggests different performance on the outcome of interest, this imbalance would skew our comparison between the treated and untreated. Following our formula, the weight to apply to the untreated Group A population is 3/2 (0.6/0.4) and the weight to apply to the untreated Group B population is 1/4 (0.2/0.8). When we weight average our untreated group then, the weight on Group A in the untreated group is (20 \* 3/2) / ( 20\*3/2 + 40\*1/4) = 30 / 40 = 3/4 = 75%. And voila! Now the distribution is the same as in the treated group. In reality, we would apply propensity scores instead to situations with *multiple* and *continuous* factors effecting the propensity score (not just "Groups A and B"), but a univariate and discrete example can make it easier to see what is happening.
 

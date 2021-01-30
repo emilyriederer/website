@@ -8,7 +8,7 @@ tags: [causal, data, tutorial]
 categories: [causal, data, tutorial]
 date: 2021-01-30
 lastmod: 2021-01-30
-featured: true
+featured: false
 draft: false
 aliases:
 
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 2d5f0f0bd6ca3ae8
+rmd_hash: cd4a5c14f0e04d85
 
 ---
 

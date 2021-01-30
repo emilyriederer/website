@@ -4,7 +4,7 @@ title: "crosstalk: Dynamic filtering for R Markdown"
 subtitle: ""
 summary: "An introduction to browser-based interactivity of htmlwidgets -- no Shiny server required!"
 authors: []
-tags: []
+tags: [rstats, tutorial]
 categories: [rstats, tutorial]
 date: 2020-09-12
 lastmod: 2020-09-12

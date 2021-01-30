@@ -4,8 +4,8 @@ title: "Generating SQL with {dbplyr} and sqlfluff"
 subtitle: ""
 summary: "Using the tidyverse's expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts"
 authors: []
-tags: [rstats, data, sql]
-categories: [rstats, data, sql]
+tags: [rstats, data, sql, tutorial]
+categories: [rstats, data, sql,tutorial]
 date: 2021-01-16
 lastmod: 2021-01-16
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: ba75ba8490cc88f7
+rmd_hash: 3efa793eac46f6da
 
 ---
 
@@ -183,9 +183,9 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff lint"</span>, <span class='nv'>tmp</span><span class='o'>)</span>, intern <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> 
 
-<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpgfTyT7\file3e206aaa6365' had status 65</span>
+<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpOQYP6J\file3c14634554c8' had status 65</span>
 
-<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpgfTyT7\\file3e206aaa6365] FAIL"</span>
+<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpOQYP6J\\file3c14634554c8] FAIL"</span>
 <span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
 <span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
 <span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>

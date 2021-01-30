@@ -4,7 +4,7 @@ title: "crosstalk: Dynamic filtering for R Markdown"
 subtitle: ""
 summary: "An introduction to browser-based interactivity of htmlwidgets -- no Shiny server required!"
 authors: []
-tags: []
+tags: [rstats, tutorial]
 categories: [rstats, tutorial]
 date: 2020-09-12
 lastmod: 2020-09-12
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: a11125bd77bebfef
+rmd_hash: 658dbfcc4a33f19d
 
 ---
 

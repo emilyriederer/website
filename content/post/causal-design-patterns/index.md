@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: e3bd5ca83f3cba11
+rmd_hash: 2d5f0f0bd6ca3ae8
 
 ---
 
@@ -41,12 +41,14 @@ Causal inference is complex and doing it well requires both statistical and doma
 Why CI in Industry?
 -------------------
 
-Observational causal inference allows analysts to explore causal questions when experimental data is not available. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so you might ask why does observational causal inference matter?
+Businesses want to know what sorts of impacts their strategies (e.g. marketing spend, product launches) have on customers. However, if our business is any good, our actions are targeted not random. For example, we intend to market to customers who are apt to be more interested in the offers we are sending. However, when it comes to measuring our effectiveness, good business is bad science. Because our *treatments* are not given at random, comparing the *outcomes* of treated and untreated groups is confounded and biased towards making us thing we are more effective than we actually may be.
+
+One antidote to this is true experimentation in which treatment is randomly assigned *within* the homogenous target population. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so why observational causal inference matters?
 
 -   Some situations you cannot test due to ethics or reputational risk
 -   Even when you can experiment, understanding observational causal inference can help you better identify biases and design your experiments
 -   Testing can be expensive. There are *direct costs* (e.g. testing a marketing promotion) of instituting a policy that might not be effective, *implementation costs* (e.g. having a tech team implement a new display), and *opportunity costs* (e.g. holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)[^2]
--   Data collection can take time. W may want to read long-term endpoints like customer retention or attrition after many year. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
+-   Data collection can take time. We may want to read long-term endpoints like customer retention or attrition after many year. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
 -   It's not either-or but both-and. Due to the financial and temporal costs of experimentation, causal inference can also be a tool to help us better prioritize what experiments are worth running
 
 Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of non-random but well-defined (and somewhat arbitrary) policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions, finding new life and new potential in reams of historical data that might be otherwise discounted as hopelessly biased, confounded, or outdated.
@@ -64,7 +66,7 @@ The types of partial randomization found in your historical data and the types o
 
 -   If you have significant overlap between "similar" treated and untreated individuals but the treatment was not randomly assigned, [stratification](#stratification) or [propensity score weighting](#propensity-score-weighting) can help you *rebalance* your data so that your treated and untreated groups have a more similar distribution of traits and their average outcomes are more comparable
 -   If you have *disjoint* treated and untreated groups partitioned by a sharp cut-off, [regression discontinuity](#regression-discontinuity) allows you to measure the *local* treatment effect at the juncture between groups
--   If treatments are assigned to different *populations*, [difference-in-differences](#difference-in-differences) and event study methods help to compare different groups across multiple *time* periods
+-   If treatments are assigned to different *populations*, [difference-in-differences](#difference-in-differences) and event study methods help to compare different groups across multiple *time* periods.
 
 Stratification
 --------------
@@ -168,7 +170,7 @@ Often, in real life and particularly in industry, we violate the "positive proba
 **Approach:**
 
 -   A set of individuals either do or do not receive a treatment based on an arbitrary cut-off.
--   Model the relationship between the "decisioning" variable and the outcome on both sides of the cut-off. Then, the *local* treatment effect at the point of the cut-off can be determined by the difference in modeled outcome at this value of the "decisioning" variable.
+-   Model the relationship between the "running" variable (the variable used in the cut-off) and the outcome on both sides of the cut-off. Then, the *local* treatment effect at the point of the cut-off can be determined by the difference in modeled outcome at this value of the running variable.
 -   Note that we can only measure the *local* treatment effect *at the cut-off* -- not the global average treatment effect, as we did with stratification and propensity score weighting
 
 **Key Assumptions:**
@@ -230,9 +232,9 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 
 **Related Methods:**
 
--   Variants exist that relax different assumptions. For example, there are methods that allow for variation in treatment timing, treatment effect, multiple time periods, and parallel trends conditional on covariates
+-   Variants exist that relax different assumptions. For example, we may consider cases in which different units receive the treatment at different times, different units have different (heterogenous) treatment effects, the parallel trend assumption only holds after conditioning on covariates, and many more scenarios
 -   Synthetic control methods can be thought of as an extension of difference-in-differences where the control is a weighted average of a number of different possible controls
--   Bayesian structural time-series methods relax the "parallel trends" asummptions of difference-in-differences by modeling the relationship between time series (including trend and seasonal components)
+-   Bayesian structural time-series methods relax the "parallel trends" asumptions of difference-in-differences by modeling the relationship between time series (including trend and seasonal components)
 
 **Tools:**
 
@@ -243,9 +245,7 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 Learn More
 ----------
 
-The point of this post is not to teach any one method of causal inference but to help raise awareness for the different tools and methods that arise given certain naturally occurring experiments and inference-friendly data structures. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods.
-
-Please check out my companion [research roundup post](/post/resource-roundup-causal/) for links to many free books, courses, talks, tutorials, and more. I split this into a separate document to make these links more accessible to those that didn't make it this far through my own naration.
+The point of this post is not to teach any one method of causal inference but to help raise awareness for basic causal questions, data requirements, and analysis designs which one might be able to use in the wild. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. Please check out my companion [research roundup post](/post/resource-roundup-causal/) for links to many free books, courses, talks, tutorials, and more.
 
 [^1]: A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns).
 

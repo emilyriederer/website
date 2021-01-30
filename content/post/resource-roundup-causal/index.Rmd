@@ -34,18 +34,20 @@ In my post on [causal design patterns](/post/causal-design-patterns/), I argue t
 ## Free Books
 
 - [Causal Inference: What If](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/) by Miguel Hernan and Jamie Robins
-  + Epidemiology perspective
+  + Written from epidemiology perspective
+  + Nice "model free" section introduces causal intuition
   + Code supplement in R, python, SAS, Stata
 - [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course) by Brady Neal
-  + ML perspective including Bayesian networks, causal discovery
+  + Written from ML perspective including "advanced" topics such as Bayesian networks, causal discovery
   + Builds strong theoretical basis with graphical and probabilistic proofs
   + Book complemented by video lectures
 - [Causal Inference: the Mixtape](https://mixtape.scunning.com/) by Scott Cunningham
-  + Economics perspective
+  + Written from economics perspective
+  + Provides great insights into the history and relevance of different methods in economics literature
   + Includes interactive R code chunks to run as you read
 - [The Effect: An Introduction to Research Design and Causality](https://nickchk.com/causalitybook.html) by Nick Huntington-Kline
-  + Economics perspective
-  + Holistic focus on research design with rich examples from literature
+  + Written from the economics perspective
+  + Takes a holistic approach to research design with rich examples from literature
 - [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch of the World Bank
 - [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo
   + Technically a type of experimentation not causal inference

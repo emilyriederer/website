@@ -1,0 +1,99 @@
+---
+output: hugodown::md_document
+# Documentation: https://sourcethemes.com/academic/docs/managing-content/
+
+title: 'Resource Round-Up: Causal Inference'
+subtitle: ""
+summary: "Free books, lectures, blogs, papers, and more for a causal inference crash course"
+authors: []
+tags: [resources, causal]
+categories: [resources, causal]
+date: 2021-01-30
+lastmod: 2021-01-30
+featured: false
+draft: false
+
+# Featured image
+# To use, add an image named `featured.jpg/png` to your page's folder.
+# Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
+image:
+  caption: "Photo by [Sharon McCutcheon](https://unsplash.com/@sharonmccutcheon) on Unsplash"
+  focal_point: ""
+  preview_only: false
+  
+# Projects (optional).
+#   Associate this post with one or more of your projects.
+#   Simply enter your project's folder or file name without extension.
+#   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
+#   Otherwise, set `projects = []`.
+projects: []
+---
+
+In my post on [causal design patterns](/post/causal-design-patterns/), I argue that these techniques are currently underutilized in industry because (at least, in part) they are so often couched in domain-specific language. Fortunately, the past few years have seen an explosion of fantastic resources and tools to help practitioners more readily learn and apply these methods. Below, I link some of my favorite readings. To help prioritize which resources (or which chapters within them) will be most relevant to you, please see my [previous post](/post/causal-design-patterns/) for an "advertisement" and overview of some of the main techniques.
+
+## Free Books
+
+- [Causal Inference: What If](https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/) by Miguel Hernan and Jamie Robins
+  + Epidemiology perspective
+  + Code supplement in R, python, SAS, Stata
+- [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course) by Brady Neal
+  + ML perspective including Bayesian networks, causal discovery
+  + Builds strong theoretical basis with graphical and probabilistic proofs
+  + Book complemented by video lectures
+- [Causal Inference: the Mixtape](https://mixtape.scunning.com/) by Scott Cunningham
+  + Economics perspective
+  + Includes interactive R code chunks to run as you read
+- [The Effect: An Introduction to Research Design and Causality](https://nickchk.com/causalitybook.html) by Nick Huntington-Kline
+  + Economics perspective
+  + Holistic focus on research design with rich examples from literature
+- [Impact Evaluation in Practice](https://openknowledge.worldbank.org/handle/10986/25030) by Gertler, Martinez, Premand, Rawlings, Vermeersch of the World Bank
+- [Handbook of Field Experiments](https://www.povertyactionlab.org/page/handbook-field-experiments) by Ahbijit Banerjee and Esther Duflo
+  + Technically a type of experimentation not causal inference
+  + However, the real world challenges of field (versus clinical) research creates some nice "blended" methodologies. 
+  + For example *encouragement designs* are closely related to instrumental variable methods. These may have been inadvertently conducted in your business strategy and be available in historical data.
+
+## Course Material 
+
+- [Introduction to Causal Inference](https://www.bradyneal.com/causal-inference-course) by Brady Neal
+  + ML perspective including Bayesian networks, causal discovery
+  + Slides and video lectures to go along with book linked above
+- [Program Evaluation](https://evalf19.classes.andrewheiss.com/) by Andrew Heiss
+  + Public policy perspective 
+  + Slides and assignments
+- [Causal Inference (Propensity Score) Tutorial from UseR!2020](https://github.com/LucyMcGowan/user2020-causal-inference) by Lucy D'Agostino McGowan and Malcolm Barrett
+  + Epidemiology perspective focused on propensity-score methods
+  + Video tutorial with R code on GitHub
+
+## Survey Papers & Blogs
+
+**Surveys**
+
+- [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/) on the Uber Engineering blog
+- [The Impact of Machine Learning on Economics](https://www.nber.org/system/files/chapters/c14009/c14009.pdf) by Susan Athey
+- [The State of Applied Econometrics - Causality and Policy Evaluation](https://arxiv.org/abs/1607.00699) by Susan Athey and Guido Imbens
+
+**Deeper Dives**
+
+- [Curated List of Recent Advances](https://christinecai.github.io/PublicGoods/applied_micro_methods.pdf) by Christine Cai
+- [Policy Evaluation in COVID](https://arxiv.org/abs/2009.01940): fantastic survey of diff-in-diff and event study methods by Noah Haber, et al
+
+**Propensity Score Focused**
+
+- [Understanding propensity score weighting](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/) by Lucy D'Agostino McGowan
+- [To Balance or Not To Balance](https://www.unofficialgoogledatascience.com/2016/06/to-balance-or-not-to-balance.html) by Ivan Diaz and Joseph Kelly (Unofficial Google Data Science Blog)
+
+## Miscellaneous Advanced Topic Talks
+
+- [Causal Science 2020 Meeting talks](https://causalscience.org/programme/about/)
+- [Synthetic Control lecture](https://www.youtube.com/watch?v=nKzNp-qpE-I&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=11) by Alberto Abadie
+- [Heterogenous Treatment Effects lecture](https://www.youtube.com/watch?v=oZoizsX3bts&list=PLoazKTcS0RzZ1SUgeOgc6SWt51gfT80N0&index=7) by Susan Athey
+- [Personalized Treatment Effect Estimation](https://www.youtube.com/watch?v=NRzObclZVT8) by Heidi Seibold
+
+## Other Introductory Books
+
+- [Learning Microeconometrics with R](https://www.routledge.com/Learning-Microeconometrics-with-R/Adams/p/book/9780367255381) by Christopher Adams
+- [Mastering Metrics](https://www.amazon.com/gp/product/0691152845/ref=ox_sc_act_title_3?smid=ATVPDKIKX0DER&psc=1) and [Mostly Harmless Econometrics](https://www.amazon.com/Mostly-Harmless-Econometrics-Empiricists-Companion/dp/0691120358/ref=pd_sbs_14_1/134-6784964-9794862?_encoding=UTF8&pd_rd_i=0691120358&pd_rd_r=ebba5491-d197-4e79-be24-ec7e1c2bda17&pd_rd_w=xvRCC&pd_rd_wg=dpUZo&pf_rd_p=bc074051-81d1-4874-a3fd-fd0c867ce3b4&pf_rd_r=69D56CVPRFHAWNKFARBY&psc=1&refRID=69D56CVPRFHAWNKFARBY) by Joshua Angrist and Jorn-Steffen Pischke
+- [The Book of Why](https://www.amazon.com/Book-Why-Science-Cause-Effect/dp/046509760X/ref=sr_1_1?dchild=1&keywords=book+of+why&qid=1596111613&s=books&sr=1-1) by Judea Pearl
+
+
+

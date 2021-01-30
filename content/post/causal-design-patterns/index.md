@@ -26,22 +26,26 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: cd4a5c14f0e04d85
+rmd_hash: 53700eed0c9b8525
 
 ---
 
-Software engineers study design patterns[^1] to help them recognize archetypes, discuss with a common language, and reuse tried-and-true architectures. Similarly, statistics has many prototypical analyses, but often these frameworks are siloed within specific disciplines and clouded by domain-specific language. This makes methods hard to discover and hides their general applicability. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.
+Software engineers study design patterns[^1] to help them recognize archetypes, consider approaches with a common language, and reuse tried-and-true architectures. Similarly, statistics has many prototypical analyses, but too often these frameworks are siloed within specific disciplines and clouded by domain-specific language. This makes methods harder to discover and hides their general applicability. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.
 
 Observational causal inference is one such field. The need to understand true causal (versus correlative) effects and to derive meaning and strategy from "found" historical data (as opposed to experimentally "produced" data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more.
 
 This post aims to break down some of those barriers by briefly summarizing common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each method, I provide an illustration, overview of the method, summary of the required data structure and key assumptions, and a hypothetical consumer retail example.
 
-Causal inference is complex and doing it well requires both statistical and domain expertise. Instead of providing all of the details [which are already eloquently described in countless free resources](#learn-more), this post humbly aims to advertise and raise awareness for these methods so analysts can add them into their mental index and research them further when they encounter a relevant question to answer.
+Causal inference is complex and doing it well requires both statistical and domain expertise. Instead of providing all of the details [which are already eloquently described in countless free resources](#learn-more), this post humbly aims to advertise these methods so analysts can add them into their mental index and investigate them further when they encounter a relevant question.
 
 Why CI in Industry?
 -------------------
 
-Businesses want to know what sorts of impacts their strategies (e.g. marketing spend, product launches) have on customers. However, if our business is any good, our actions are targeted not random. For example, we intend to market to customers who are apt to be more interested in the offers we are sending. However, when it comes to measuring our effectiveness, good business is bad science. Because our *treatments* are not given at random, comparing the *outcomes* of treated and untreated groups is confounded and biased towards making us thing we are more effective than we actually may be.
+Classic examples of causal questions include "Does smoking cause cancer?" and "Does education cause extra income?" Naively, we might compare outcomes (cancer or income) for those receiving the treatment (smoking and education) and those not. However, the fact that someone chose to smoke or pursue higher education creates selection bias; these behaviors likely correlate to other factors (risk taking, financial support, etc.) which can also impact the outcome.
+
+In industry, businesses want to know what causal effect their strategies (e.g. promotional offers) have on customer behavior. Here, of course, business have a major advantage over the examples above because the assignment mechanism into the treatment group (e.g. whom to send a discount code) is *known* and *under their control*. They often also have richer "pre-treatment" behavior for each individual (customer) which can help both assess and correct for bias.
+
+However, these advantages don't make causal inference unnecessary; if anything, they simply make it more possible and more relevant. Good business don't act at random. For example, we market to customers who are likely to be interested in our company and who, therefore, might have been interested even without marketing. When it comes to measuring effectiveness, good business is bad science. Because our *treatments* are not given at random, comparing the *outcomes* of treated and untreated groups is confounded and biased towards making us thing we are more effective than we actually may be.
 
 One antidote to this is true experimentation in which treatment is randomly assigned *within* the homogenous target population. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so why observational causal inference matters?
 
@@ -51,16 +55,16 @@ One antidote to this is true experimentation in which treatment is randomly assi
 -   Data collection can take time. We may want to read long-term endpoints like customer retention or attrition after many year. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
 -   It's not either-or but both-and. Due to the financial and temporal costs of experimentation, causal inference can also be a tool to help us better prioritize what experiments are worth running
 
-Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of non-random but well-defined (and somewhat arbitrary) policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions, finding new life and new potential in reams of historical data that might be otherwise discounted as hopelessly biased, confounded, or outdated.
+Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of non-random but well-defined (and somewhat arbitrary) policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions and find new uses in reams of historical data that might be otherwise discounted as hopelessly biased or outdated.
 
 Unifying themes
 ---------------
 
-To see how this works, this post will provide a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods deal with situations where different groups receive different treatments but the assignment of groups was not completely randomly.
+To illustrate potential applications, this post will provide a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods deal with situations where different groups receive different treatments but the assignment of groups was not completely randomly.
 
 To measure a causal effect, we want to somehow consider the [potential outcomes](https://en.wikipedia.org/wiki/Rubin_causal_model) and be able to contrast the average outcome under the treatment versus the average outcome under a *counterfactual* scenario in which similiar observations went untreated.
 
-To create this counterfactual without true randomization, these methods attempt to exploit different sources of partial random variation while avoiding different types of confounding in order to derive a valid inference.
+To create this counterfactual without true randomization, these methods attempt to exploit different sources of partial random variation[^3] while avoiding different types of confounding in order to derive a valid inference.
 
 The types of partial randomization found in your historical data and the types of biases you are concerned about dictate which methods are applicable. In short:
 
@@ -75,11 +79,11 @@ Stratification
 
 Stratification helps us correct for imbalanced weighting of treated and control populations that arise due to a non-random assignment mechanism.
 
-**TLDR**: When you have "similar"[^3] treated and untreated *individuals* with different distributions on a small number of relevant dimensions, use stratification helps to *rebalance* these groups to make their average effects more comparable
+**TLDR**: When you have "similar"[^4] treated and untreated *individuals* with different distributions on a small number of relevant dimensions, use stratification helps to *rebalance* these groups to make their average effects more comparable
 
 **Motivating Example:**
 
--   Suppose we attempted to A/B test "one-click instant checkout" on our Black Friday website and want to measure the effect on total purchase amount[^4].
+-   Suppose we attempted to A/B test "one-click instant checkout" on our Black Friday website and want to measure the effect on total purchase amount[^5].
 -   Due to a glitch the code, web users had a 50% chance of being in the treatment group (i.e. seeing the button) but mobile users only had a 30% chance.
 -   Additionally, we know that mobile users tend to spend less per order. Thus, the fact that web users are *over-represented* in the treatment group means that simply comparing treatment versus control outcomes will bias our results and make the causal effect of the button appear higher than it is in actuality.
 
@@ -113,9 +117,9 @@ Propensity Score Weighting
 
 ![](excalidraw-psw.png)
 
-Similar to stratification, propensity score (think "likelihood of treatment") weighting helps us correct for systemic differences between treatment and control populations that stem from non-random assignment mechanism. However, this approach allows us to control for many observable characteristics that influence assignment by reducing all relevant information into a single score on which we balance.[^5]
+Similar to stratification, propensity score (think "likelihood of treatment") weighting helps us correct for systemic differences between treatment and control populations that stem from non-random assignment mechanism. However, this approach allows us to control for many observable characteristics that influence assignment by reducing all relevant information into a single score on which we balance.[^6]
 
-**TLDR**: When you have "similar"[^6] treated and untreated *individuals* with different distributions on a larger number of relevant dimensions, propensity score weighting helps to *rebalance* these groups to make their average effects more comparable
+**TLDR**: When you have "similar"[^7] treated and untreated *individuals* with different distributions on a larger number of relevant dimensions, propensity score weighting helps to *rebalance* these groups to make their average effects more comparable
 
 **Motivating Example:**
 
@@ -126,7 +130,7 @@ Similar to stratification, propensity score (think "likelihood of treatment") we
 
 **Approach:**
 
--   Model the probability of *receiving* the treatment (the propensity score) based each observation's observable characteristics that are relevant both to their treatment assignment and to their outcome.[^7]
+-   Model the probability of *receiving* the treatment (the propensity score) based each observation's observable characteristics that are relevant both to their treatment assignment and to their outcome.[^8]
 -   In observational data, the treatment group's distribution of propensity scores will generally skew right (tend higher, shown in solid blue) and the control group's distribution will skew left (tend lower, shown in solid green)
 -   Use predicted probabilities (propensity scores) to weight the untreated observations to fit the same distribution of treatment likelihood as the control group (shown in dotted green)
 -   Weights can be constructed in different ways depending on the quantity of interest (average treatment effect of treated, average treatment effect of population, average treatment effect if given to the control population, etc.)
@@ -135,12 +139,12 @@ Similar to stratification, propensity score (think "likelihood of treatment") we
 **Key Assumptions:**
 
 -   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment and independent conditional on the covariates)
--   All observations had some positive probability[^8] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
+-   All observations had some positive probability[^9] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
 
 **Example Application:**
 
 -   Model the propensity of treatment (or equivalently, having a phone number on record) based on demographics and historical purchase behavior
--   Derive weights to calculate the average treatment effect of the treated. Treated observations are left unweighted; for untreated observations, the weight is the ratio of the propensity score over one minus the propensity score[^9] [^10]
+-   Derive weights to calculate the average treatment effect of the treated. Treated observations are left unweighted; for untreated observations, the weight is the ratio of the propensity score over one minus the propensity score[^10] [^11]
 
 **Related Methods:**
 
@@ -247,23 +251,25 @@ Learn More
 
 The point of this post is not to teach any one method of causal inference but to help raise awareness for basic causal questions, data requirements, and analysis designs which one might be able to use in the wild. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. Please check out my companion [research roundup post](/post/resource-roundup-causal/) for links to many free books, courses, talks, tutorials, and more.
 
-[^1]: A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns).
+[^1]: A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns)
 
-[^2]: Regarding opportunity costs, however, [multi-armed bandits](https://multithreaded.stitchfix.com/blog/2020/08/05/bandits/) can help balance this opportunitiy cost by deciding when to "explore versus exploit"
+[^2]: Regarding opportunity costs, however, [multi-armed bandits](https://multithreaded.stitchfix.com/blog/2020/08/05/bandits/) can help balance this opportunity cost by deciding when to "explore versus exploit"
 
-[^3]: What is "similarity"? Without going into too much detail, we're specifically concerned here about characteristics of an individual that effect both their likelihood to receive the treatment of interest **and** effect the outcome of interest
+[^3]: You may see this called "exogeneity" in the economics literature
 
-[^4]: On one hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing
+[^4]: What is "similarity"? Without going into too much detail, we're specifically concerned here about characteristics of an individual that effect both their likelihood to receive the treatment of interest **and** effect the outcome of interest
 
-[^5]: Heuristically, you can think of it as a type of "dimensionality reduction" based on *relevance* instead of *varaince*.
+[^5]: On one hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing
 
-[^6]: See previous footnote on "similarity".
+[^6]: Heuristically, you can think of it as a type of "dimensionality reduction" based on *relevance* instead of *varaince*.
 
-[^7]: Note that we are modeling whether or not they *receive* treatment - not if they *respond* to it. This may seem unintuitive since we *know* whether or not they received treatment, but you can intuitively think of it as modeling how similar various untreated observation are to treated ones
+[^7]: See previous footnote on "similarity".
 
-[^8]: This is often called the positivity assumption
+[^8]: Note that we are modeling whether or not they *receive* treatment - not if they *respond* to it. This may seem unintuitive since we *know* whether or not they received treatment, but you can intuitively think of it as modeling how similar various untreated observation are to treated ones
 
-[^9]: Intuitively, you can think of this as canceling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).
+[^9]: This is often called the positivity assumption
 
-[^10]: I promised I wouldn't get into the math and formulas in the post, but here's a short numerical illustration of how this works. Suppose we have two groups A and B. A has 30 treated individuals and 20 untreated individuals, so the true propensity score is 60% (30/50). B has 10 treated individuals and 40 untreated individuals so the true propensity score is 20% (10/50). Thus, Group A accounts for 75% (30/40) of the treated group and 33% (20/60) of the untreated group. If the distinction between Group A and Group B suggests different performance on the outcome of interest, this imbalance would skew our comparison between the treated and untreated. Following our formula, the weight to apply to the untreated Group A population is 3/2 (0.6/0.4) and the weight to apply to the untreated Group B population is 1/4 (0.2/0.8). When we weight average our untreated group then, the weight on Group A in the untreated group is (20 \* 3/2) / ( 20\*3/2 + 40\*1/4) = 30 / 40 = 3/4 = 75%. And voila! Now the distribution is the same as in the treated group. In reality, we would apply propensity scores instead to situations with *multiple* and *continuous* factors effecting the propensity score (not just "Groups A and B"), but a univariate and discrete example can make it easier to see what is happening.
+[^10]: Intuitively, you can think of this as canceling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).
+
+[^11]: I promised I wouldn't get into the math and formulas in the post, but here's a short numerical illustration of how this works. Suppose we have two groups A and B. A has 30 treated individuals and 20 untreated individuals, so the true propensity score is 60% (30/50). B has 10 treated individuals and 40 untreated individuals so the true propensity score is 20% (10/50). Thus, Group A accounts for 75% (30/40) of the treated group and 33% (20/60) of the untreated group. If the distinction between Group A and Group B suggests different performance on the outcome of interest, this imbalance would skew our comparison between the treated and untreated. Following our formula, the weight to apply to the untreated Group A population is 3/2 (0.6/0.4) and the weight to apply to the untreated Group B population is 1/4 (0.2/0.8). When we weight average our untreated group then, the weight on Group A in the untreated group is (20 \* 3/2) / ( 20\*3/2 + 40\*1/4) = 30 / 40 = 3/4 = 75%. And voila! Now the distribution is the same as in the treated group. In reality, we would apply propensity scores instead to situations with *multiple* and *continuous* factors effecting the propensity score (not just "Groups A and B"), but a univariate and discrete example can make it easier to see what is happening.
 

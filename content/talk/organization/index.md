@@ -31,7 +31,7 @@ links:
   icon_pack: fab
   name: Follow
   url: https://twitter.com/rstudio
-url_video: 
+url_video: https://resources.rstudio.com/resources/rstudioglobal-2021/organization-how-to-make-internal-r-packages-part-of-your-team/
 url_slides: "https://docs.google.com/presentation/d/1CBrLyI_PWu7cGiXp7BH-phv-MSPObZzbzrSZADMlDJU/edit?usp=sharing"
 
 # Projects (optional).

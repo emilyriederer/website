@@ -10,7 +10,7 @@ tags: [pkgdev, rmarkdown, rstats, workflow]
 categories: [pkgdev, rmarkdown, rstats, workflow]
 date: 2019-05-04
 lastmod: 2019-05-04
-featured: false
+featured: true
 draft: false
 
 aliases:
@@ -30,7 +30,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: 37e46604c5dbd325
+rmd_hash: 188e2a7c6b11643c
 
 ---
 
@@ -60,7 +60,7 @@ A Taxonomy of RMarkdown Chunks
 
 First, let's consider a high-level classification of RMarkdown chunks by different purposes. For this discussion, I disregard finer points of different language engines and chunk options and only consider different RMarkdown components by what they contribute to the final output.
 
--   **Infrastructure**: These chunks set up the environment in which the RMarkdown is rendered. This includes code that helps add functions to your enviornment (e.g. `library()`, [`source()`](https://rdrr.io/r/base/source.html)), load data (e.g. functions from `readr` or [`data.table::fread()`](https://rdrr.io/pkg/data.table/man/fread.html) or functions calling APIs or databases), or define analysis parameters (e.g. hardcoded values that are somehow used to change behavior later in the script)
+-   **Infrastructure**: These chunks set up the environment in which the RMarkdown is rendered. This includes code that helps add functions to your enviornment (e.g. [`library()`](https://rdrr.io/r/base/library.html), [`source()`](https://rdrr.io/r/base/source.html)), load data (e.g. functions from `readr` or [`data.table::fread()`](https://Rdatatable.gitlab.io/data.table/reference/fread.html) or functions calling APIs or databases), or define analysis parameters (e.g. hardcoded values that are somehow used to change behavior later in the script)
 -   **Wrangling**: These chunks contain code to transform the data that you've loaded into information desired for analysis/discussion (e.g. tidying, aggregation, model fitting)
 -   **Communication**: These chunks help to produce meaningful output for a report such as data visualizations and summary tables
 
@@ -104,7 +104,7 @@ Of course, in this step, do be careful of being too "prescient". If some of your
 
 Reorganization offers other clear benefits, one of which is that code with similar purposes ends up physically closer in your document. This may make it easier for you to spot similarities. As you notice similarities in different chunks of wrangling or reporting chunks, keep in mind [the rule of three](https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)). That is, similar code repeated multiple times should be turned into a function.
 
-For example, I often encounter situations where I need to produce the same plots or tables for many different groups. While an analyst is in exploratory mode, they might reasonably copy-paste such code, edit some key parameters, and eagerly proceed to analyzing the results. Converting this code to functions makes is significantly easier to test and maintain. It also has the benefit of converting Reporting code into Infrastructure code which can be moved to the top of the RMarkdown, with the previously described benefits. Generally, I define any local functions after my `library()` and [`source()`](https://rdrr.io/r/base/source.html) commands.
+For example, I often encounter situations where I need to produce the same plots or tables for many different groups. While an analyst is in exploratory mode, they might reasonably copy-paste such code, edit some key parameters, and eagerly proceed to analyzing the results. Converting this code to functions makes is significantly easier to test and maintain. It also has the benefit of converting Reporting code into Infrastructure code which can be moved to the top of the RMarkdown, with the previously described benefits. Generally, I define any local functions after my [`library()`](https://rdrr.io/r/base/library.html) and [`source()`](https://rdrr.io/r/base/source.html) commands.
 
 For good advice on *how* to modularize your functions, including naming[^4] and behavior, I recommend [Maëlle Salmon's blog post](https://masalmon.eu/2017/12/11/goodrpackages/) and [rOpenSci's package development guide](https://ropensci.github.io/dev_guide/building.html).
 

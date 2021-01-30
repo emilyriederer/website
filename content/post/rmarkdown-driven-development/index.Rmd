@@ -10,7 +10,7 @@ tags: [pkgdev, rmarkdown, rstats, workflow]
 categories: [pkgdev, rmarkdown, rstats, workflow]
 date: 2019-05-04
 lastmod: 2019-05-04
-featured: false
+featured: true
 draft: false
 
 aliases:

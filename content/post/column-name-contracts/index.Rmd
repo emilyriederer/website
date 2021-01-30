@@ -8,7 +8,7 @@ tags: [data, workflow, rstats]
 categories: [data, workflow, rstats]
 date: 2020-09-06
 lastmod: 2020-09-06
-featured: false
+featured: true
 draft: false
 aliases:
 

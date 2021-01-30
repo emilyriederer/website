@@ -8,7 +8,7 @@ tags: [rstats, pkgdev, jtbd]
 categories: [rstats, pkgdev, jtbd]
 date: 2021-01-21
 lastmod: 2021-01-21
-featured: false
+featured: true
 draft: false
 
 image:

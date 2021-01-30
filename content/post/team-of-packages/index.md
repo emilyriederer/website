@@ -8,7 +8,7 @@ tags: [rstats, pkgdev, jtbd]
 categories: [rstats, pkgdev, jtbd]
 date: 2021-01-21
 lastmod: 2021-01-21
-featured: false
+featured: true
 draft: false
 
 image:
@@ -17,7 +17,7 @@ image:
   preview_only: true
 
 projects: [""]
-rmd_hash: c3c15c31c73e610e
+rmd_hash: fe8d03e29b6aad35
 
 ---
 

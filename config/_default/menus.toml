@@ -9,7 +9,12 @@
   weight = 10
 
 [[main]]
-  name = "Posts"
+  name = "Top Posts"
+  url = "#featured"
+  weight = 19
+
+[[main]]
+  name = "Recent Posts"
   url = "#posts"
   weight = 20
 

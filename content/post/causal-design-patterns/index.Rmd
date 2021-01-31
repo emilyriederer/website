@@ -8,7 +8,7 @@ tags: [causal, data, tutorial]
 categories: [causal, data, tutorial]
 date: 2021-01-30
 lastmod: 2021-01-30
-featured: false
+featured: true
 draft: false
 aliases:
 

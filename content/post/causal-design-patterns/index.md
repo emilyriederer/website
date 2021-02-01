@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 60a53342f907fff7
+rmd_hash: 6619eb03ba25da88
 
 ---
 
@@ -45,7 +45,7 @@ Classic examples of causal questions include "Does smoking cause cancer?" and "D
 
 In industry, businesses want to know what causal effect their strategies (e.g. promotional offers) have on customer behavior. Here, of course, business have a major advantage over the examples above because the assignment mechanism into the treatment group (e.g. whom to send a discount code) is *known* and *under their control*. They often also have richer "pre-treatment" behavior for each individual (customer) which can help both assess and correct for bias.
 
-However, these advantages don't make causal inference unnecessary; if anything, they simply make it more possible and more relevant. Good business don't act at random. For example, we market to customers who are likely to be interested in our company and who, therefore, might have been interested even without marketing. When it comes to measuring effectiveness, good business is bad science. Because our *treatments* are not given at random, comparing the *outcomes* of treated and untreated groups is confounded and biased towards making us thing we are more effective than we actually may be.
+However, these advantages don't make causal inference unnecessary; if anything, they simply make it more possible and more relevant. Good business don't act at random. For example, we market to customers who are likely to be interested in our company and who, therefore, might have been interested even without marketing. When it comes to measuring effectiveness, good business is bad science. Because our *treatments* are not given at random, comparing the *outcomes* of treated and untreated groups is confounded and biased towards making us think we are more effective than we actually may be.
 
 One antidote to this is true experimentation in which treatment is randomly assigned *within* the homogenous target population. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so why observational causal inference matters?
 
@@ -96,7 +96,7 @@ Stratification helps us correct for imbalanced weighting of treated and control 
 
 **Key Assumptions:**
 
--   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment and independent conditional on the covariates)
+-   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment are independent conditional on the covariates)
 -   All observations had some positive probability of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
 -   Only a small number of variables require adjustment (because they impact both the treatment likelihood and the outcome) Otherwise, we are plagued by the [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality)
 

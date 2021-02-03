@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 56180f8120e17ba9
+rmd_hash: 171744d9f57fd001
 
 ---
 
@@ -68,7 +68,7 @@ A brief intro to `dbt`
 
 Specific advantages of this approach include:
 
--   Templating with `if` statements and `while` loops
+-   Templating with `if` statements and `for` loops
 -   Dynamic insertion of local variables[^1]
 -   The ability to switch between dev and production schemas
 -   Easy toggling between views, tables, and inserts for the same base logic

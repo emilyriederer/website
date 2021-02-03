@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Embedding controlled vocabularies in data pipelines with dbt"
 subtitle: ""
-summary: "dbt supercharges SQL with Jinja templating, macros, and testing -- all of which can be customized to enforce data controlled vocabularies and their implied contracts"
+summary: "dbt supercharges SQL with Jinja templating, macros, and testing -- all of which can be customized to enforce controlled vocabularies and their implied contracts on a data model"
 authors: []
 tags: [data, sql]
 categories: [data, sql]
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 3251de94298eeecd
+rmd_hash: 56180f8120e17ba9
 
 ---
 
@@ -81,7 +81,7 @@ Additional `dbt` features include:
 -   Orchestration of SQL statements in the DAG
 -   Hooks for rote database management tasks like adding indices and keys or granting access
 
-For a general overview to `dbt`, check out the [introductory tutorial](https://docs.getdbt.com/tutorial/setting-up) on their website, the [dbt101 presentation](https://www.getdbt.com/coalesce/agenda/dbt-101-eu-and-us-friendly) from their recent Coalesce conference[^2], or the interview with one of their founds on the [Data Engineering Today](https://open.spotify.com/episode/1gKKgR8eZgdqdXztFGGkFe) podcast.
+For a general overview to `dbt`, check out the [introductory tutorial](https://docs.getdbt.com/tutorial/setting-up) on their website, the [dbt101 presentation](https://www.getdbt.com/coalesce/agenda/dbt-101-eu-and-us-friendly) from their recent Coalesce conference[^2], or the interview with one of their founders on the [Data Engineering Today](https://open.spotify.com/episode/1gKKgR8eZgdqdXztFGGkFe) podcast.
 
 In this post, I'll demonstrate how three features of `dbt` can be used to implement a rigorous controlled vocabulary by:
 
@@ -157,8 +157,8 @@ Our goal is to end up with a `model_monitor` table with one record per `observat
 -   `NM_(COUNTY|STATE)`: Human-readable county/state names-
 -   `DT_COUNTY`: The date a county's values are observed
 -   `N_(CASE|HOSP|DEATH)_(ACTL|PRED)_(07|14|21|28)`: The actual or predicted number of cases, hospitalizations, or deaths (and, for predictions only, the value of these predictions at 7, 14, 21, and 28 days prior to the day being forecasted)
--   `IND_COUNTY_HSPA`: Indicator of whether county is considered a shortage area
--   `PROP_COUNTY_HSPA`: Proportion of population that is underserved in a designated shortage area
+-   `IND_COUNTY_HPSA`: Indicator of whether county is considered a shortage area
+-   `PROP_COUNTY_HPSA`: Proportion of population that is underserved in a designated shortage area
 
 We will source these fields from four tables:
 
@@ -171,7 +171,7 @@ We will source these fields from four tables:
     -   one record per `date prediction was made` x `data being predicted` x `county` (initially)
     -   fields for county code, observation date, prediction date, predicted number of cases and deaths
     -   we transform to one record per `observation date` x `county` with observations at different time lags represented as separate fields
--   `hspa` table
+-   `hpsa` table
     -   sourced from `bigquery-public-data`.`sdoh_hrsa_shortage_areas`.`hpsa_primary_care`
     -   (after some wrangling on our end) one record per `county` for counties identified as having a shortage
     -   fields for the county code, date of designation, proportion of county under-served
@@ -188,7 +188,7 @@ For a conceptual mental map, once all the wrangling and cleaning is done for eac
         left join
       predictions using (cd_county, dt_county)
         left join
-      hspa using (cd_county)
+      hpsa using (cd_county)
         left join
       fips using (cd_county)
 
@@ -199,7 +199,7 @@ Variable Creation with Jinja Templating
 
 `dbt` makes it easy to create typo-free variable names that adhere to our controlled vocabulary by using the Jinja templating language.[^4] Jinja brings traditional control-flow elements like conditional statements and loops to make SQL more programmatic. When `dbt` is executed with `dbt run`, it first renders this Jinja to standard SQL before sending the query to the database.
 
-Templates, and specifically loops, help write more concise and proof-readable SQL code when deriving a large number of variables with similar logic. For example, below we collapse the raw prediction data (which is represented as one record for `each county` x `each day being prediction` x `each day a prediction was made`) to one record for each county and each day being predicted with different columns containing the numeric value of each prediction of cases, hospitalizations, and deaths at `lags` (defined in the `dbt_project.yml` file) of 7, 14, 21, and 28 days prior to the date being predicted.
+Templates, and specifically loops, help write more concise and proof-readable SQL code when deriving a large number of variables with similar logic. For example, below we collapse the raw prediction data (which is represented as one record for `each county` x `each day being prediction` x `each day a prediction was made`) to one record for each county and each day being predicted with different columns containing the numeric value of each prediction of cases, hospitalizations, and deaths at `lags` (defined in the `dbt_project.yml` configuration file) of 7, 14, 21, and 28 days prior to the date being predicted.
 
 Ordinarily, deriving these 12 variables (3 measures x 4 lags) would pose significant room for typos in either the code or the variable names, but in this script, the Jinja template of `n_case_pred_{{l}}` ensures consistency.
 
@@ -239,7 +239,94 @@ group by 1,2,3
 
 </div>
 
-This script and the other three that derive our base tables (`actual`, `prediction`, `fips`, and `hspa`) can be found in [the `models` directory](https://github.com/emilyriederer/dbt-convo-covid/tree/main/models) of the repo. After they are individually created, they are combined into the `model_monitor_staging` table in the relatively uninteresting [script](https://github.com/emilyriederer/dbt-convo-covid/blob/main/models/model_monitor_staging.sql) of the same name.
+This script renders to the following:
+
+<div class="highlight">
+
+<pre class='chroma'><code class='language-r' data-lang='r'>
+
+select
+  county_fips_code || ' ' || forecast_date as id,
+  county_fips_code as cd_county,
+  forecast_date as dt_county,
+  
+    max(if(date_diff(prediction_date, forecast_date, day) = 07, 
+         round(100*new_confirmed, 0), null)) as n_case_pred_07,
+    max(if(date_diff(prediction_date, forecast_date, day) = 07, 
+         round(100*hospitalized_patients, 0), null)) as n_hosp_pred_07,
+    max(if(date_diff(prediction_date, forecast_date, day) = 07, 
+         round(100*new_deaths, 0), null)) as n_death_pred_07
+  ,
+  
+    max(if(date_diff(prediction_date, forecast_date, day) = 14, 
+         round(100*new_confirmed, 0), null)) as n_case_pred_14,
+    max(if(date_diff(prediction_date, forecast_date, day) = 14, 
+         round(100*hospitalized_patients, 0), null)) as n_hosp_pred_14,
+    max(if(date_diff(prediction_date, forecast_date, day) = 14, 
+         round(100*new_deaths, 0), null)) as n_death_pred_14
+  ,
+  
+    max(if(date_diff(prediction_date, forecast_date, day) = 21, 
+         round(100*new_confirmed, 0), null)) as n_case_pred_21,
+    max(if(date_diff(prediction_date, forecast_date, day) = 21, 
+         round(100*hospitalized_patients, 0), null)) as n_hosp_pred_21,
+    max(if(date_diff(prediction_date, forecast_date, day) = 21, 
+         round(100*new_deaths, 0), null)) as n_death_pred_21
+  ,
+  
+    max(if(date_diff(prediction_date, forecast_date, day) = 28, 
+         round(100*new_confirmed, 0), null)) as n_case_pred_28,
+    max(if(date_diff(prediction_date, forecast_date, day) = 28, 
+         round(100*hospitalized_patients, 0), null)) as n_hosp_pred_28,
+    max(if(date_diff(prediction_date, forecast_date, day) = 28, 
+         round(100*new_deaths, 0), null)) as n_death_pred_28
+  
+  
+from `bigquery-public-data`.`covid19_public_forecasts`.`county_28d_historical`
+where 
+  cast(left(county_fips_code, 2) as int64) between 1 and 56 and
+  forecast_date <= current_date()
+  
+group by 1,2,3
+</code></pre>
+
+</div>
+
+This script and the other three that derive our base tables (`actual`, `prediction`, `fips`, and `hpsa`) can be found in [the `models` directory](https://github.com/emilyriederer/dbt-convo-covid/tree/main/models) of the repo. After they are individually created, they are combined into the `model_monitor_staging` table in the relatively uninteresting [script](https://github.com/emilyriederer/dbt-convo-covid/blob/main/models/model_monitor_staging.sql):
+
+<div class="highlight">
+
+<pre class='chroma'><code class='language-r' data-lang='r'>{{
+    config(
+        materialized='incremental',
+        unique_key='id'
+    )
+}}
+
+select
+  actual.*,
+  prediction.* except (cd_county, dt_county, id),
+  fips.* except (cd_county),
+  hspa.* except (cd_county)
+from
+  {{ ref('actual') }} as actual
+  inner join
+  {{ ref('prediction') }} as prediction
+  using (dt_county, cd_county)
+  left join
+  {{ ref('fips') }} as fips
+  using (cd_county)
+  left join
+  {{ ref('hpsa') }} as hspa
+  using (cd_county)
+{% if is_incremental() %}
+where dt_county >= (
+  select dateadd(day, -7, max(dt_county)) from {{this}}
+  )
+{% endif %}
+</code></pre>
+
+</div>
 
 Variable Manipulation with Regex Macros
 ---------------------------------------
@@ -367,7 +454,7 @@ Data Validation with Custom Tests
 
 Of course, not every contract can be made by force without risk of corrupting data. For any that we cannot enforce in their creation, we must rigorously test.
 
-`dbt` allows simple, single-column tests such as `unique`, `not_null`, and `relationship` to be implemented in the `schema.yml` configuration file. This is useful, for example, for checking the validity of the keys (e.g. `cd_county`) that connect the tables. However, even with a relatively small number of tests and columns, its cumbersome and easy to overlook a column.
+`dbt` allows simple, single-column tests such as `unique`, `not_null`, and `relationship` to be implemented in the `schema.yml` configuration file. This is useful, for example, for checking the validity of the keys (e.g. `cd_county`) that connect the tables. Tests specified under the `tests` key-value pair in the YAML for each relevant column, and can sometimes be shared across models with the YAML [`&`](https://rdrr.io/r/base/Logic.html) and [`*`](https://rdrr.io/r/base/Arithmetic.html) which allows for naming and repeating blocks (think copy-paste). However, even with a relatively small number of tests and columns, its cumbersome and easy to overlook a column.
 
 <div class="highlight">
 
@@ -379,7 +466,7 @@ sources:
     database: bigquery-public-data
     schema: sdoh_hrsa_shortage_areas
     tables:
-      - name: hspa
+      - name: hpsa
         identifier: hpsa_primary_care
   - name: bqcensus
     description: > 
@@ -424,7 +511,7 @@ models:
     description: > 
       Predicted COVID cases and deaths by county
     columns: *basetest
-  - name: hspa
+  - name: hpsa
     description: >
       Counties designated as healthcare shortage areas
     columns:
@@ -539,12 +626,32 @@ As with our `model_monitor.sql` data model, the beauty of these tests is that th
 
 The code for these tests, and a few more similar examples, are located in the [`tests/` directory](https://github.com/emilyriederer/dbt-convo-covid/tree/main/tests) of the repository. They can be run on the command line with the `dbt test` command.
 
-Data Wranging with Jinja Templates
-----------------------------------
+Sample Output
+-------------
 
-Although this post primarily focuses on uses of dbt to help data producers apply controlled vocabularies, dbt also provides an interesting framework for transitioning projects to data consumers with the use of their [Analyses](https://docs.getdbt.com/docs/building-a-dbt-project/analyses) feature. Analyses are additional SQL script templates that are not sent to the database to produce tables or views.Instead, running `dbt compile` simply renders these scripts for use in an analytical setting.
+To conclude, I show a few top rows of output from the final model monitoring table:
 
-For example, the following script uses our published table to compute the percent difference between actual observations and each prediction.
+<div class="highlight">
+
+<pre class='chroma'><code class='language-r' data-lang='r'>select * 
+from dbt_emily.model_monitor
+limit 5
+</code></pre>
+
+</div>
+
+<div class="highlight">
+
+<table style="width:100%;"><colgroup><col style="width: 3%" /><col style="width: 3%" /><col style="width: 5%" /><col style="width: 2%" /><col style="width: 3%" /><col style="width: 2%" /><col style="width: 3%" /><col style="width: 3%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 4%" /><col style="width: 5%" /><col style="width: 4%" /></colgroup><thead><tr class="header"><th style="text-align: left;">cd_county</th><th style="text-align: left;">dt_county</th><th style="text-align: left;">id</th><th style="text-align: left;">cd_state</th><th style="text-align: left;">nm_county</th><th style="text-align: left;">nm_state</th><th style="text-align: right;">n_case_actl</th><th style="text-align: right;">n_death_actl</th><th style="text-align: right;">n_case_pred_07</th><th style="text-align: right;">n_hosp_pred_07</th><th style="text-align: right;">n_death_pred_07</th><th style="text-align: right;">n_case_pred_14</th><th style="text-align: right;">n_hosp_pred_14</th><th style="text-align: right;">n_death_pred_14</th><th style="text-align: right;">n_case_pred_21</th><th style="text-align: right;">n_hosp_pred_21</th><th style="text-align: right;">n_death_pred_21</th><th style="text-align: right;">n_case_pred_28</th><th style="text-align: right;">n_hosp_pred_28</th><th style="text-align: right;">n_death_pred_28</th><th style="text-align: left;">dt_county_hpsa</th><th style="text-align: right;">prop_county_hpsa</th><th style="text-align: right;">ind_county_hpsa</th></tr></thead><tbody><tr class="odd"><td style="text-align: left;">01007</td><td style="text-align: left;">2021-01-05</td><td style="text-align: left;">2021-01-05 01007</td><td style="text-align: left;">01</td><td style="text-align: left;">Bibb County</td><td style="text-align: left;">Alabama</td><td style="text-align: right;">1923</td><td style="text-align: right;">46</td><td style="text-align: right;">1595</td><td style="text-align: right;">1236</td><td style="text-align: right;">43</td><td style="text-align: right;">1576</td><td style="text-align: right;">1239</td><td style="text-align: right;">43</td><td style="text-align: right;">1562</td><td style="text-align: right;">1233</td><td style="text-align: right;">43</td><td style="text-align: right;">1550</td><td style="text-align: right;">1224</td><td style="text-align: right;">42</td><td style="text-align: left;">1978-05-20</td><td style="text-align: right;">0.29</td><td style="text-align: right;">1</td></tr><tr class="even"><td style="text-align: left;">01007</td><td style="text-align: left;">2021-01-12</td><td style="text-align: left;">2021-01-12 01007</td><td style="text-align: left;">01</td><td style="text-align: left;">Bibb County</td><td style="text-align: left;">Alabama</td><td style="text-align: right;">2090</td><td style="text-align: right;">48</td><td style="text-align: right;">2583</td><td style="text-align: right;">1325</td><td style="text-align: right;">62</td><td style="text-align: right;">2986</td><td style="text-align: right;">1481</td><td style="text-align: right;">70</td><td style="text-align: right;">3306</td><td style="text-align: right;">1683</td><td style="text-align: right;">80</td><td style="text-align: right;">3542</td><td style="text-align: right;">1903</td><td style="text-align: right;">90</td><td style="text-align: left;">1978-05-20</td><td style="text-align: right;">0.29</td><td style="text-align: right;">1</td></tr><tr class="odd"><td style="text-align: left;">01007</td><td style="text-align: left;">2021-01-04</td><td style="text-align: left;">2021-01-04 01007</td><td style="text-align: left;">01</td><td style="text-align: left;">Bibb County</td><td style="text-align: left;">Alabama</td><td style="text-align: right;">1885</td><td style="text-align: right;">46</td><td style="text-align: right;">1344</td><td style="text-align: right;">1179</td><td style="text-align: right;">27</td><td style="text-align: right;">1680</td><td style="text-align: right;">1164</td><td style="text-align: right;">27</td><td style="text-align: right;">1905</td><td style="text-align: right;">1232</td><td style="text-align: right;">28</td><td style="text-align: right;">2053</td><td style="text-align: right;">1349</td><td style="text-align: right;">31</td><td style="text-align: left;">1978-05-20</td><td style="text-align: right;">0.29</td><td style="text-align: right;">1</td></tr><tr class="even"><td style="text-align: left;">01007</td><td style="text-align: left;">2021-01-24</td><td style="text-align: left;">2021-01-24 01007</td><td style="text-align: left;">01</td><td style="text-align: left;">Bibb County</td><td style="text-align: left;">Alabama</td><td style="text-align: right;">2223</td><td style="text-align: right;">48</td><td style="text-align: right;">663</td><td style="text-align: right;">1080</td><td style="text-align: right;">36</td><td style="text-align: right;">865</td><td style="text-align: right;">967</td><td style="text-align: right;">34</td><td style="text-align: right;">889</td><td style="text-align: right;">828</td><td style="text-align: right;">31</td><td style="text-align: right;">875</td><td style="text-align: right;">762</td><td style="text-align: right;">29</td><td style="text-align: left;">1978-05-20</td><td style="text-align: right;">0.29</td><td style="text-align: right;">1</td></tr><tr class="odd"><td style="text-align: left;">01007</td><td style="text-align: left;">2021-01-03</td><td style="text-align: left;">2021-01-03 01007</td><td style="text-align: left;">01</td><td style="text-align: left;">Bibb County</td><td style="text-align: left;">Alabama</td><td style="text-align: right;">1882</td><td style="text-align: right;">46</td><td style="text-align: right;">799</td><td style="text-align: right;">1126</td><td style="text-align: right;">16</td><td style="text-align: right;">1289</td><td style="text-align: right;">979</td><td style="text-align: right;">14</td><td style="text-align: right;">1591</td><td style="text-align: right;">935</td><td style="text-align: right;">14</td><td style="text-align: right;">1793</td><td style="text-align: right;">976</td><td style="text-align: right;">14</td><td style="text-align: left;">1978-05-20</td><td style="text-align: right;">0.29</td><td style="text-align: right;">1</td></tr></tbody></table>
+
+</div>
+
+Bonus - Analysis Prep with Jinja Templates
+------------------------------------------
+
+Although this post primarily focuses on uses of `dbt` to help data producers apply controlled vocabularies, dbt also provides an interesting framework for transitioning projects to data consumers with the use of their [Analyses](https://docs.getdbt.com/docs/building-a-dbt-project/analyses) feature. Analyses are additional SQL script templates that are not sent to the database to produce tables or views.Instead, running `dbt compile` simply renders these scripts for use in analyses or BI tools.
+
+For example of an "analysis", and as another example of templating in action, the following script uses our published table to compute the percent difference between actual observations and each prediction.
 
 <div class="highlight">
 
@@ -631,7 +738,7 @@ from `sonorous-wharf-302611`.`dbt_emily`.`model_monitor` as mm
 
 [^4]: For another exploration of using Jinja templating to generate SQL, check out this nice [blog post](https://multithreaded.stitchfix.com/blog/2017/07/06/one-weird-trick/) from Stitch Fix
 
-[^5]: Ordinarily, we would want to be careful setting null values to 0. We would not want to lie and imply the existence of missing data to nominally uphold a contract. However, this is the correct approach here. Our indicator variables in this case come from tables which only contain the `1` or "presence" values (e.g. the `hspa` relation which provides `ind_county_hpsa` only has records for counties which are shortage areas) so this is a safe approach.
+[^5]: Ordinarily, we would want to be careful setting null values to 0. We would not want to lie and imply the existence of missing data to nominally uphold a contract. However, this is the correct approach here. Our indicator variables in this case come from tables which only contain the `1` or "presence" values (e.g. the `hpsa` relation which provides `ind_county_hpsa` only has records for counties which are shortage areas) so this is a safe approach.
 
 [^6]: In fact, this could also be a macro, as I introduce before, and shipped in a package to apply across all data models in an analytical database. To make the narrative of this example easier to follow, I leave it as a standard query model.
 

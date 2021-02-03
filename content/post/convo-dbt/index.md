@@ -617,7 +617,7 @@ from cols
 where 
   l1 not in ('id', 'cd', 'n', 'nm', 'prop', 'pct', 'dt', 'ind') or 
   l2 not in ('county', 'state', 'case', 'hosp', 'death') or 
-  l3 not in ('hspa','pred', 'actl')
+  l3 not in ('hpsa','pred', 'actl')
 </code></pre>
 
 </div>

@@ -26,11 +26,11 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 171744d9f57fd001
+rmd_hash: f901db493c48a8b1
 
 ---
 
-In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers. I claim that field names can encode metadata and illustrate with R and python how these names can be used to improve data discoverability, wrangling, and validation.
+In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers. I claim that field names can encode metadata (as one *example* -- not a prescription for how all such vocabularies should work -- one might define that all counts start with `N_` and are non-negative integers; all identified start with `ID_` and are non-null) and illustrate with R and python how these names can be used to improve data discoverability, wrangling, and validation.
 
 However, demonstrations with R and python are biased towards the needs of data consumers. These popular data analysis tools provide handy, high-level interfaces for programmatically operating on columns. For example, `dplyr`'s [select helpers](https://tidyselect.r-lib.org/reference/select_helpers.html) make it easy to quickly manipulate all columns whose names match given patterns. For example, suppose I know that all variables beginning with `IND_` are binary and non-null so I may sum them to get a count or average them to get a valid proportion. I can succinctly write:
 
@@ -59,12 +59,12 @@ from my_data
 
 But that is tedious, static (would not automatically adapt to the addition of more indicator variables), and error-prone (easy to miss or mistype a variable).
 
-Although SQL itself is relatively inflexible, recent tools have added a layer of "programmability" on top of SQL which allows for far more flexibility and customization. In this post, I'll demonstrate how one such tool, `dbt` can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.
+Although SQL itself is relatively inflexible, recent tools have added a layer of "programmability" on top of SQL which allows for far more flexibility and customization. In this post, I'll demonstrate how one such tool, `dbt`, can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.
 
 A brief intro to `dbt`
 ----------------------
 
-`dbt` (which stands for [Data Build Tools](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `select` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing.
+`dbt` (which stands for [Data Build Tools](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `SELECT` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing.
 
 Specific advantages of this approach include:
 
@@ -175,7 +175,7 @@ We will source these fields from four tables:
     -   sourced from `bigquery-public-data`.`sdoh_hrsa_shortage_areas`.`hpsa_primary_care`
     -   (after some wrangling on our end) one record per `county` for counties identified as having a shortage
     -   fields for the county code, date of designation, proportion of county under-served
--   `fips` table
+-   `fips` table[^4]
     -   sourced from `bigquery-public-data`.`census_utility`.`fips_codes_all`
     -   (after some wrangling) one record per `county` for each county in the 50 US states
     -   fields for FIPS code (Census Bureau county identifiers), state name, county name
@@ -197,7 +197,7 @@ But as we're about to see, `dbt` allows us to get a bit more complex and elegant
 Variable Creation with Jinja Templating
 ---------------------------------------
 
-`dbt` makes it easy to create typo-free variable names that adhere to our controlled vocabulary by using the Jinja templating language.[^4] Jinja brings traditional control-flow elements like conditional statements and loops to make SQL more programmatic. When `dbt` is executed with `dbt run`, it first renders this Jinja to standard SQL before sending the query to the database.
+`dbt` makes it easy to create typo-free variable names that adhere to our controlled vocabulary by using the Jinja templating language.[^5] Jinja brings traditional control-flow elements like conditional statements and loops to make SQL more programmatic. When `dbt` is executed with `dbt run`, it first renders this Jinja to standard SQL before sending the query to the database.
 
 Templates, and specifically loops, help write more concise and proof-readable SQL code when deriving a large number of variables with similar logic. For example, below we collapse the raw prediction data (which is represented as one record for `each county` x `each day being prediction` x `each day a prediction was made`) to one record for each county and each day being predicted with different columns containing the numeric value of each prediction of cases, hospitalizations, and deaths at `lags` (defined in the `dbt_project.yml` configuration file) of 7, 14, 21, and 28 days prior to the date being predicted.
 
@@ -335,7 +335,7 @@ Of course, it's not enough to adhere to controlled vocabulary *naming*. If the a
 
 This time, we again use Jinja templating along with another dbt feature: custom macros. The final script in our pipeline ([`model_monitor`](https://github.com/emilyriederer/dbt-convo-covid/blob/main/models/model_monitor.sql)) uses custom macros `get_column_names()` to determine all of the column names in the staging table and `get_matches()` to subset this list for variable names which match regular expressions corresponding to different prefixes.
 
-Then, we iterate over each of these lists to apply certain treatments to each set of columns such as casting `cols_n` and `cols_dt` variables to `int64` and `date` respectively, rounding `cols_prop` variables to three decimal places, and coalescing `cols_ind` variables to be 0 if null.[^5]
+Then, we iterate over each of these lists to apply certain treatments to each set of columns such as casting `cols_n` and `cols_dt` variables to `int64` and `date` respectively, rounding `cols_prop` variables to three decimal places, and coalescing `cols_ind` variables to be 0 if null.[^6]
 
 <div class="highlight">
 
@@ -395,11 +395,11 @@ where dt_county >= (
 
 </div>
 
-Note how abstract this query template is. In fact, it completely avoids referencing specific variables in our table.[^6] If we should decide to go back and add more fields (for example, actual and predicted recoveries) into our upstream models, they will receive the correct post-processing and validation as long as they are named appropriately.
+Note how abstract this query template is. In fact, it completely avoids referencing specific variables in our table.[^7] If we should decide to go back and add more fields (for example, actual and predicted recoveries) into our upstream models, they will receive the correct post-processing and validation as long as they are named appropriately.
 
 For a peak under the hood, here's how those two macros work.
 
-First, `get_column_names()` simply queries the databases' built in [`INFORMATION_SCHEMA`](https://en.wikipedia.org/wiki/Information_schema)[^7] to collect all column names of a given table. In the case of the `model_monitor.sql` script, the table provided is the staging table (`model_monitor_staging`) which was made in the previous step.
+First, `get_column_names()` simply queries the databases' built in [`INFORMATION_SCHEMA`](https://en.wikipedia.org/wiki/Information_schema)[^8] to collect all column names of a given table. In the case of the `model_monitor.sql` script, the table provided is the staging table (`model_monitor_staging`) which was made in the previous step.
 
 <div class="highlight">
 
@@ -427,7 +427,7 @@ WHERE table_name = '{{relation.identifier}}';
 
 </div>
 
-Next, the `get_matches()` macro simply iterates through a list of characters (such as the column names obtained in the previous step) and appends only those that match our regex to the final list that is returned.[^8] [^9] (Thanks to [David Sanchez](https://twitter.com/dsmd4vid) on the `dbt` Slack community for helping me figure out how to call the `re` library from within Jinja.)
+Next, the `get_matches()` macro simply iterates through a list of characters (such as the column names obtained in the previous step) and appends only those that match our regex to the final list that is returned.[^9] [^10] (Thanks to [David Sanchez](https://twitter.com/dsmd4vid) on the `dbt` Slack community for helping me figure out how to call the `re` library from within Jinja.)
 
 <div class="highlight">
 
@@ -454,7 +454,9 @@ Data Validation with Custom Tests
 
 Of course, not every contract can be made by force without risk of corrupting data. For any that we cannot enforce in their creation, we must rigorously test.
 
-`dbt` allows simple, single-column tests such as `unique`, `not_null`, and `relationship` to be implemented in the `schema.yml` configuration file. This is useful, for example, for checking the validity of the keys (e.g. `cd_county`) that connect the tables. Tests specified under the `tests` key-value pair in the YAML for each relevant column, and can sometimes be shared across models with the YAML [`&`](https://rdrr.io/r/base/Logic.html) and [`*`](https://rdrr.io/r/base/Arithmetic.html) which allows for naming and repeating blocks (think copy-paste). However, even with a relatively small number of tests and columns, its cumbersome and easy to overlook a column.
+`dbt`'s testing framework allows for testing any data model in the project -- not just the final table. This is very useful to intercept errors as soon as they happen instead of trying to backtrack from bad output many steps later. Some tests are built-in but others can be custom written as SQL `SELECT` statements.
+
+Built-in tests for properties of individual columns include `unique`, `not_null`, and `relationship`[^11]. These can be implemented in the `schema.yml` configuration file under the `tests` key-value pair for each relevant column, and can sometimes be shared across models with the YAML [`&`](https://rdrr.io/r/base/Logic.html) and [`*`](https://rdrr.io/r/base/Arithmetic.html) (as shown below with the same `basetest` checks being applied to the `actual` and `prediction` data models) which allows for naming and repeating blocks (think copy-paste). However, even with a relatively small number of tests and columns, its cumbersome and easy to overlook a column.
 
 <div class="highlight">
 
@@ -556,7 +558,7 @@ models:
 
 </div>
 
-Instead, developers may also define custom tests as SQL `select` statements which returns only records that fail the test. Like data models, tests may also use Jinja and macros. This allows us to abstract some of our data validation tests to target all variables with a specific naming convention (and, thus, performance contract) at any arbitrary point in the pipeline.
+Instead, developers may also define custom tests as SQL `SELECT` statements which returns only records that fail the test. Like data models, tests may also use Jinja and macros. This allows us to abstract some of our data validation tests to target all variables with a specific naming convention (and, thus, performance contract) at any arbitrary point in the pipeline.
 
 For example, in the `model_monitor` data model shown in the last section, we explicitly cast all variables that start with `n` to be integers. However, before we do this, we should probably ensure that these fields are truly "integer-like"; otherwise, if we are casting values that have unexpected fractional components, we are simply masking inaccurate data.
 
@@ -621,6 +623,8 @@ where
 </code></pre>
 
 </div>
+
+We could further extend the script above and impose a *hierarchy* on our controlled vocabulary by adding additional conditions to the `WHERE` clause. For example, since the `HPSA` stub only makes sense as a suffix to `COUNTY` (e.g. there's no such thing as a health professional shortage area *case* or *death*), we could add the additional condition `or (l3 = 'hpsa' and not l2 = 'county')`.
 
 As with our `model_monitor.sql` data model, the beauty of these tests is that they have abstracted away the column names themselves. So, they will continue to test all of the correct pieces of intent regardless of whether columns are added or removed from the table. Like macros, these could also be put into a package so that the same tests could be applied to all tables in a database.
 
@@ -730,21 +734,25 @@ from `sonorous-wharf-302611`.`dbt_emily`.`model_monitor` as mm
 
 </div>
 
-[^1]: Some but not all databases offer this natively
+[^1]: Some but not all databases natively support local variables, but `dbt`'s approach works equaly well with those that do not
 
 [^2]: One excellent feature of this project is the impressive amount of onboarding and documentation materials
 
 [^3]: In fact, many COVID models were unduly criticized because their purpose was not strictly to have the most accurate forecast possible.
 
-[^4]: For another exploration of using Jinja templating to generate SQL, check out this nice [blog post](https://multithreaded.stitchfix.com/blog/2017/07/06/one-weird-trick/) from Stitch Fix
+[^4]: Technically, this table should be static, so the same information could be included with `dbt`'s [Snapshot](https://docs.getdbt.com/docs/building-a-dbt-project/snapshots/) feature
 
-[^5]: Ordinarily, we would want to be careful setting null values to 0. We would not want to lie and imply the existence of missing data to nominally uphold a contract. However, this is the correct approach here. Our indicator variables in this case come from tables which only contain the `1` or "presence" values (e.g. the `hpsa` relation which provides `ind_county_hpsa` only has records for counties which are shortage areas) so this is a safe approach.
+[^5]: For another exploration of using Jinja templating to generate SQL, check out this nice [blog post](https://multithreaded.stitchfix.com/blog/2017/07/06/one-weird-trick/) from Stitch Fix
 
-[^6]: In fact, this could also be a macro, as I introduce before, and shipped in a package to apply across all data models in an analytical database. To make the narrative of this example easier to follow, I leave it as a standard query model.
+[^6]: Ordinarily, we would want to be careful setting null values to 0. We would not want to lie and imply the existence of missing data to nominally uphold a contract. However, this is the correct approach here. Our indicator variables in this case come from tables which only contain the `1` or "presence" values (e.g. the `hpsa` relation which provides `ind_county_hpsa` only has records for counties which are shortage areas) so this is a safe approach.
 
-[^7]: An automatically created table containing metadata such as field names and types for each table in a database
+[^7]: In fact, this could also be a macro, as I introduce before, and shipped in a package to apply across all data models in an analytical database. To make the narrative of this example easier to follow, I leave it as a standard query model.
 
-[^8]: For those interested in the nitty gritty details, we must loop here because Jinja does not allow the more compact python list comprehensions. Additionally, Jinja only allows the python `append` method in display brackets `{{}}` so the `or ''` is a trick to silence the output, per [this site](http://svn.python.org/projects/external/Jinja-2.1.1/docs/_build/html/faq.html#isn-t-it-a-terrible-idea-to-put-logic-into-templates).
+[^8]: An automatically created table containing metadata such as field names and types for each table in a database
 
-[^9]: Note that if you have installed dbt previously, this solution might not work for you. The python `re` library for regular expressions was not enabled inside dbt's Jinja until the recent release of [v0.19.0](https://github.com/fishtown-analytics/dbt/releases/tag/v0.19.0)
+[^9]: For those interested in the nitty gritty details, we must loop here because Jinja does not allow the more compact python list comprehensions. Additionally, Jinja only allows the python `append` method in display brackets `{{}}` so the `or ''` is a trick to silence the output, per [this site](http://svn.python.org/projects/external/Jinja-2.1.1/docs/_build/html/faq.html#isn-t-it-a-terrible-idea-to-put-logic-into-templates).
+
+[^10]: Note that if you have installed dbt previously, this solution might not work for you. The python `re` library for regular expressions was not enabled inside dbt's Jinja until the recent release of [v0.19.0](https://github.com/fishtown-analytics/dbt/releases/tag/v0.19.0)
+
+[^11]: The add-on package `dbt-utils` contains many more common tests such as `unique_combination`, `not_null_where`, etc.
 

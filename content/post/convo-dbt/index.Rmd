@@ -28,7 +28,7 @@ image:
 projects: [""]
 ---
 
-In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers. I claim that field names can encode metadata and illustrate with R and python how these names can be used to improve data discoverability, wrangling, and validation. 
+In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers. I claim that field names can encode metadata (as one *example* -- not a prescription for how all such vocabularies should work -- one might define that all counts start with `N_` and are non-negative integers; all identified start with `ID_` and are non-null) and illustrate with R and python how these names can be used to improve data discoverability, wrangling, and validation. 
 
 However, demonstrations with R and python are biased towards the needs of data consumers. These popular data analysis tools provide handy, high-level interfaces for programmatically operating on columns. For example, `dplyr`'s [select helpers](https://tidyselect.r-lib.org/reference/select_helpers.html) make it easy to quickly manipulate all columns whose names match given patterns. For example, suppose I know that all variables beginning with `IND_` are binary and non-null so I may sum them to get a count or average them to get a valid proportion. I can succinctly write:
 
@@ -51,16 +51,16 @@ from my_data
 
 But that is tedious, static (would not automatically adapt to the addition of more indicator variables), and error-prone (easy to miss or mistype a variable). 
 
-Although SQL itself is relatively inflexible, recent tools have added a layer of "programmability" on top of SQL which allows for far more flexibility and customization. In this post, I'll demonstrate how one such tool, `dbt` can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.
+Although SQL itself is relatively inflexible, recent tools have added a layer of "programmability" on top of SQL which allows for far more flexibility and customization. In this post, I'll demonstrate how one such tool, `dbt`, can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.
 
 ## A brief intro to `dbt`
 
-`dbt` (which stands for [Data Build Tools](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `select` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing. 
+`dbt` (which stands for [Data Build Tools](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `SELECT` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing. 
 
 Specific advantages of this approach include:
 
 - Templating with `if` statements and `for` loops
-- Dynamic insertion of local variables^[Some but not all databases offer this natively]
+- Dynamic insertion of local variables^[Some but not all databases natively support local variables, but `dbt`'s approach works equaly well with those that do not]
 - The ability to switch between dev and production schemas
 - Easy toggling between views, tables, and inserts for the same base logic
 - Automated testing of each modular SQL unit 
@@ -165,7 +165,7 @@ We will source these fields from four tables:
   + sourced from `bigquery-public-data`.`sdoh_hrsa_shortage_areas`.`hpsa_primary_care`
   + (after some wrangling on our end) one record per `county` for counties identified as having a shortage
   + fields for the county code, date of designation, proportion of county under-served
-- `fips` table
+- `fips` table^[Technically, this table should be static, so the same information could be included with `dbt`'s [Snapshot](https://docs.getdbt.com/docs/building-a-dbt-project/snapshots/) feature]
   + sourced from `bigquery-public-data`.`census_utility`.`fips_codes_all`
   + (after some wrangling) one record per `county` for each county in the 50 US states
   + fields for FIPS code (Census Bureau county identifiers), state name, county name
@@ -239,12 +239,14 @@ These macros live in the [`macros/` directory](https://github.com/emilyriederer/
 
 Of course, not every contract can be made by force without risk of corrupting data. For any that we cannot enforce in their creation, we must rigorously test.
 
-`dbt` allows simple, single-column tests such as `unique`, `not_null`, and `relationship` to be implemented in the `schema.yml` configuration file. This is useful, for example, for checking the validity of the keys (e.g. `cd_county`) that connect the tables. Tests specified under the `tests` key-value pair in the YAML for each relevant column, and can sometimes be shared across models with the YAML `&` and `*` which allows for naming and repeating blocks (think copy-paste).  However, even with a relatively small number of tests and columns, its cumbersome and easy to overlook a column.
+`dbt`'s testing framework allows for testing any data model in the project -- not just the final table. This is very useful to intercept errors as soon as they happen instead of trying to backtrack from bad output many steps later. Some tests are built-in but others can be custom written as SQL `SELECT` statements.
+
+Built-in tests for properties of individual columns include `unique`, `not_null`, and `relationship`^[The add-on package `dbt-utils` contains many more common tests such as `unique_combination`, `not_null_where`, etc.]. These can be implemented in the `schema.yml` configuration file under the `tests` key-value pair for each relevant column, and can sometimes be shared across models with the YAML `&` and `*` (as shown below with the same `basetest` checks being applied to the `actual` and `prediction` data models) which allows for naming and repeating blocks (think copy-paste).  However, even with a relatively small number of tests and columns, its cumbersome and easy to overlook a column.
 
 ```{r code=xfun::read_utf8('../../../../Documents/dbt-covid/models/schema.yml'), eval = FALSE}
 ```
 
-Instead, developers may also define custom tests as SQL `select` statements which returns only records that fail the test. Like data models, tests may also use Jinja and macros. This allows us to abstract some of our data validation tests to target all variables with a specific naming convention (and, thus, performance contract) at any arbitrary point in the pipeline. 
+Instead, developers may also define custom tests as SQL `SELECT` statements which returns only records that fail the test. Like data models, tests may also use Jinja and macros. This allows us to abstract some of our data validation tests to target all variables with a specific naming convention (and, thus, performance contract) at any arbitrary point in the pipeline. 
 
 For example, in the `model_monitor` data model shown in the last section, we explicitly cast all variables that start with `n` to be integers. However, before we do this, we should probably ensure that these fields are truly "integer-like"; otherwise, if we are casting values that have unexpected fractional components, we are simply masking inaccurate data.
 
@@ -262,6 +264,8 @@ Finally, we may also use tests to ensure our naming conventions are upheld. The 
 
 ```{r code=xfun::read_utf8('../../../../Documents/dbt-covid/tests/con_vo.sql'), eval = FALSE}
 ```
+
+We could further extend the script above and impose a *hierarchy* on our controlled vocabulary by adding additional conditions to the `WHERE` clause. For example, since the `HPSA` stub only makes sense as a suffix to `COUNTY` (e.g. there's no such thing as a health professional shortage area *case* or *death*), we could add the additional condition `or (l3 = 'hpsa' and not l2 = 'county')`.
 
 As with our `model_monitor.sql` data model, the beauty of these tests is that they have abstracted away the column names themselves. So, they will continue to test all of the correct pieces of intent regardless of whether columns are added or removed from the table. Like macros, these could also be put into a package so that the same tests could be applied to all tables in a database. 
 

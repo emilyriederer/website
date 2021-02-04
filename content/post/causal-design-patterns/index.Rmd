@@ -46,12 +46,13 @@ However, these advantages don't make causal inference unnecessary; if anything, 
 
 One antidote to this is true experimentation in which treatment is randomly assigned *within* the homogenous target population. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so why does observational causal inference matter? 
 
-- Some situations you cannot test due to ethics or reputational risk
-- Even when you can experiment, understanding observational causal inference can help you better identify biases and design your experiments
+- Some situations you cannot test due to ethics, logistics, or reputational risk
 - Testing can be expensive. There are *direct costs* (e.g. testing a marketing promotion) of instituting a policy that might not be effective, *implementation costs* (e.g. having a tech team implement a new display), and *opportunity costs* (e.g. holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)^[Regarding opportunity costs, however, [multi-armed bandits](https://multithreaded.stitchfix.com/blog/2020/08/05/bandits/) can help balance this opportunity cost by deciding when to "explore versus exploit"]
 - Randomized experimentation is harder than it sounds! Sometimes experiments may not go as planned, but treating the results as observational data may help salvage some information value
-- Data collection can take time. We may want to read long-term endpoints like customer retention or attrition after many years. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
+- Data collection can take time. We may want to read long-term endpoints like customer retention or attrition after many year.^[Specifically, we *should* consider these endpoints. Notoriously, short-term tests can be superficially rosy due to a novelty effect] When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
+- Similarly, we can't time travel. Some strategies that we've fully launched we cannot unwind just to test. If we regret not testing after the fact, we can potential find a quasiexperiment to analyze
 - It's not either-or but both-and. Due to the financial and temporal costs of experimentation, causal inference can also be a tool to help us better prioritize what experiments are worth running
+- Even when you can experiment, understanding observational causal inference can help you better identify biases and design your experiments
 
 Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of non-random but well-defined (and somewhat arbitrary) policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions and find new uses in reams of historical data that might be otherwise discounted as hopelessly biased or outdated.
 
@@ -254,4 +255,4 @@ Finally, a solid grasp of probabilistic reasoning and understanding of these met
 
 ## Learn More
 
-The point of this post is not to teach any one method of causal inference but to help raise awareness for basic causal questions, data requirements, and analysis designs which one might be able to use in the wild. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. Please check out my companion [research roundup post](/post/resource-roundup-causal/) for links to many free books, courses, talks, tutorials, and more.
+The point of this post is not to teach any one method of causal inference but to help raise awareness for basic causal questions, data requirements, and analysis designs which one might be able to use in the wild. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. Please check out my companion [resource roundup post](/post/resource-roundup-causal/) for links to many free books, courses, talks, tutorials, and more.

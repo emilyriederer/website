@@ -15,6 +15,8 @@ baseurl = "https://emilyriederer.netlify.app/"
 # To display a copyright symbol, type `&copy;`. For current year, type `{year}`.
 copyright = "&copy; Emily Riederer {year}"
 
+privacy_pack = true
+
 ############################
 ## Advanced options below ##
 ############################
@@ -75,3 +77,17 @@ pygmentsUseClasses = true
   category = "categories"
   publication_type = "publication_types"
   author = "authors"
+
+[privacy]
+  [privacy.disqus]
+    disable = true
+  [privacy.googleAnalytics]
+    disable = false
+  [privacy.instagram]
+    disable = true
+  [privacy.twitter]
+    disable = true
+  [privacy.vimeo]
+    disable = true
+  [privacy.youtube]
+    disable = true

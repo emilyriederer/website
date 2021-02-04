@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 04908e08fb01fc55
+rmd_hash: 7a08136ee253dc8a
 
 ---
 
@@ -247,6 +247,19 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 -   [`Synth`](https://www.jstatsoft.org/article/view/v042i13) R package for synthetic controls
 -   [`CausalImpact`](http://google.github.io/CausalImpact/CausalImpact.html) R package for Bayesian structural time-series
 
+Implications
+------------
+
+![](excalidraw-implications.png)
+
+If the examples above have at all intrigued you, there are a few more things to keep in mind. Explaining these design patterns is easy; implementing them when, and *only* when, relevant is hard. Causal inference requires investment in data management, domain knowledge, and probabilistic reasoning.
+
+Data management is need to ensure that data on past treatments is preserved, discoverable, and sufficiently detailed. All of these methods require rich data with measures of baseline characteristics of each individual being studied and a solid understanding of the treatment they received. This may seem obvious, but it's easy to neglect to preserve data of sufficient granularity. For example, we might have a database that maps every customer's account to a system-generated `campaign_id` denoting some marketing campaign that they participated in; however, unless information about that specific campaign (the specific treatment, the targeting, the timing, etc.) is readily available, this is not terribly useful. Additionally, as in our stratification example, some of the best opportunities for causal inference come from execution errors (or, more gently, "natural experiments"). We may be inclined to forget about these errors and move on, but information on events that did not go as intended can be powerful fodder for future analysis.
+
+Domain knowledge is essential to validating the assumptions. Unlike other forms of inference (e.g. a basic linear regression), many of the assumptions we discussed for the methods above cannot be computational or visually assessed (e.g. not like the quintessential residual or QQ plots). Instead, assumptions rely largely and careful attention to detail combined with intuition and background knowledge from one's domain. This means causal inference should necessarily be a human-in-the-loop activity.
+
+Finally, a solid grasp of probabilistic reasoning and understanding of these methods is also critical. As many of the resources I link below discuss at length, it's easy to do causal inference wrong. For example, attempting to control for the wrong variables can sometimes *induce* correlations and cause biases instead of eliminating them.[^12]
+
 Learn More
 ----------
 
@@ -273,4 +286,6 @@ The point of this post is not to teach any one method of causal inference but to
 [^10]: Intuitively, you can think of this as canceling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).
 
 [^11]: I promised I wouldn't get into the math and formulas in the post, but here's a short numerical illustration of how this works. Suppose we have two groups A and B. A has 30 treated individuals and 20 untreated individuals, so the true propensity score is 60% (30/50). B has 10 treated individuals and 40 untreated individuals so the true propensity score is 20% (10/50). Thus, Group A accounts for 75% (30/40) of the treated group and 33% (20/60) of the untreated group. If the distinction between Group A and Group B suggests different performance on the outcome of interest, this imbalance would skew our comparison between the treated and untreated. Following our formula, the weight to apply to the untreated Group A population is 3/2 (0.6/0.4) and the weight to apply to the untreated Group B population is 1/4 (0.2/0.8). When we weight average our untreated group then, the weight on Group A in the untreated group is (20 \* 3/2) / ( 20\*3/2 + 40\*1/4) = 30 / 40 = 3/4 = 75%. And voila! Now the distribution is the same as in the treated group. In reality, we would apply propensity scores instead to situations with *multiple* and *continuous* factors effecting the propensity score (not just "Groups A and B"), but a univariate and discrete example can make it easier to see what is happening.
+
+[^12]: For more here, look for references to "collider bias" in the linked resources, such as [this section](https://mixtape.scunning.com/ch2.html#colliding) of *Causal Inference: the Mixtape*.
 

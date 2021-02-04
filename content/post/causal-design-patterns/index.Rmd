@@ -240,6 +240,18 @@ Some treatments we wish to apply cannot be applied at the individual level but n
 - [`Synth`](https://www.jstatsoft.org/article/view/v042i13) R package for synthetic controls
 - [`CausalImpact`](http://google.github.io/CausalImpact/CausalImpact.html) R package for Bayesian structural time-series
 
+## Implications
+
+![](excalidraw-implications.png)
+
+If the examples above have at all intrigued you, there are a few more things to keep in mind. Explaining these design patterns is easy; implementing them when, and *only* when, relevant is hard. Causal inference requires investment in data management, domain knowledge, and probabilistic reasoning. 
+
+Data management is need to ensure that data on past treatments is preserved, discoverable, and sufficiently detailed. All of these methods require rich data with measures of baseline characteristics of each individual being studied and a solid understanding of the treatment they received. This may seem obvious, but it's easy to neglect to preserve data of sufficient granularity. For example, we might have a database that maps every customer's account to a system-generated `campaign_id` denoting some marketing campaign that they participated in; however, unless information about that specific campaign (the specific treatment, the targeting, the timing, etc.) is readily available, this is not terribly useful. Additionally, as in our stratification example, some of the best opportunities for causal inference come from execution errors (or, more gently, "natural experiments"). We may be inclined to forget about these errors and move on, but information on events that did not go as intended can be powerful fodder for future analysis.
+
+Domain knowledge is essential to validating the assumptions. Unlike other forms of inference (e.g. a basic linear regression), many of the assumptions we discussed for the methods above cannot be computational or visually assessed (e.g. not like the quintessential residual or QQ plots). Instead, assumptions rely largely and careful attention to detail combined with intuition and background knowledge from one's domain. This means causal inference should necessarily be a human-in-the-loop activity.
+
+Finally, a solid grasp of probabilistic reasoning and understanding of these methods is also critical. As many of the resources I link below discuss at length, it's easy to do causal inference wrong. For example, attempting to control for the wrong variables can sometimes *induce* correlations and cause biases instead of eliminating them.^[For more here, look for references to "collider bias" in the linked resources, such as [this section](https://mixtape.scunning.com/ch2.html#colliding) of *Causal Inference: the Mixtape*.] 
+
 ## Learn More
 
 The point of this post is not to teach any one method of causal inference but to help raise awareness for basic causal questions, data requirements, and analysis designs which one might be able to use in the wild. There's a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. Please check out my companion [research roundup post](/post/resource-roundup-causal/) for links to many free books, courses, talks, tutorials, and more.

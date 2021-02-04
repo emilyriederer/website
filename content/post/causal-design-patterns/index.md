@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 6619eb03ba25da88
+rmd_hash: 04908e08fb01fc55
 
 ---
 
@@ -45,15 +45,15 @@ Classic examples of causal questions include "Does smoking cause cancer?" and "D
 
 In industry, businesses want to know what causal effect their strategies (e.g. promotional offers) have on customer behavior. Here, of course, business have a major advantage over the examples above because the assignment mechanism into the treatment group (e.g. whom to send a discount code) is *known* and *under their control*. They often also have richer "pre-treatment" behavior for each individual (customer) which can help both assess and correct for bias.
 
-However, these advantages don't make causal inference unnecessary; if anything, they simply make it more possible and more relevant. Good business don't act at random. For example, we market to customers who are likely to be interested in our company and who, therefore, might have been interested even without marketing. When it comes to measuring effectiveness, good business is bad science. Because our *treatments* are not given at random, comparing the *outcomes* of treated and untreated groups is confounded and biased towards making us think we are more effective than we actually may be.
+However, these advantages don't make causal inference unnecessary; if anything, they simply make it more possible and more relevant. Good businesses don't act at random. For example, we market to customers who are likely to be interested in our company and who, therefore, might have been interested even without marketing. When it comes to measuring effectiveness, good business is bad science. Because our *treatments* are not given at random, comparing the *outcomes* of treated and untreated groups is confounded and biased towards making us think we are more effective than we actually may be.
 
-One antidote to this is true experimentation in which treatment is randomly assigned *within* the homogenous target population. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so why observational causal inference matters?
+One antidote to this is true experimentation in which treatment is randomly assigned *within* the homogenous target population. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so why does observational causal inference matter?
 
 -   Some situations you cannot test due to ethics or reputational risk
 -   Even when you can experiment, understanding observational causal inference can help you better identify biases and design your experiments
 -   Testing can be expensive. There are *direct costs* (e.g. testing a marketing promotion) of instituting a policy that might not be effective, *implementation costs* (e.g. having a tech team implement a new display), and *opportunity costs* (e.g. holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)[^2]
 -   Randomized experimentation is harder than it sounds! Sometimes experiments may not go as planned, but treating the results as observational data may help salvage some information value
--   Data collection can take time. We may want to read long-term endpoints like customer retention or attrition after many year. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
+-   Data collection can take time. We may want to read long-term endpoints like customer retention or attrition after many years. When we long to read an experiment that *wasn't* launched three years ago, historical observational data can help us get a preliminary answer sooner
 -   It's not either-or but both-and. Due to the financial and temporal costs of experimentation, causal inference can also be a tool to help us better prioritize what experiments are worth running
 
 Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we'll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of non-random but well-defined (and somewhat arbitrary) policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions and find new uses in reams of historical data that might be otherwise discounted as hopelessly biased or outdated.
@@ -61,9 +61,9 @@ Beyond these specific challenges, perhaps the best reason is that there are so m
 Unifying themes
 ---------------
 
-To illustrate potential applications, this post will provide a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods deal with situations where different groups receive different treatments but the assignment of groups was not completely randomly.
+To illustrate potential applications, this post will provide a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods deal with situations where different groups receive different treatments but the assignment of groups was not completely random.
 
-To measure a causal effect, we want to somehow consider the [potential outcomes](https://en.wikipedia.org/wiki/Rubin_causal_model) and be able to contrast the average outcome under the treatment versus the average outcome under a *counterfactual* scenario in which similiar observations went untreated.
+To measure a causal effect, we want to somehow consider the [potential outcomes](https://en.wikipedia.org/wiki/Rubin_causal_model) and be able to contrast the average outcome under the treatment versus the average outcome under a *counterfactual* scenario in which similar observations went untreated.
 
 To create this counterfactual without true randomization, these methods attempt to exploit different sources of partial random variation[^3] while avoiding different types of confounding in order to derive a valid inference.
 
@@ -97,7 +97,7 @@ Stratification helps us correct for imbalanced weighting of treated and control 
 **Key Assumptions:**
 
 -   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment are independent conditional on the covariates)
--   All observations had some positive probability of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
+-   All observations had some positive probability of being treated. Heuristically, you can think of this as meaning in the image above that there are no major regions where there are only green control observations and no blue treatment observations
 -   Only a small number of variables require adjustment (because they impact both the treatment likelihood and the outcome) Otherwise, we are plagued by the [curse of dimensionality](https://en.wikipedia.org/wiki/Curse_of_dimensionality)
 
 **Example Application:**
@@ -118,7 +118,7 @@ Propensity Score Weighting
 
 ![](excalidraw-psw.png)
 
-Similar to stratification, propensity score (think "likelihood of treatment") weighting helps us correct for systemic differences between treatment and control populations that stem from non-random assignment mechanism. However, this approach allows us to control for many observable characteristics that influence assignment by reducing all relevant information into a single score on which we balance.[^6]
+Similar to stratification, propensity score (think "likelihood of treatment") weighting helps us correct for systemic differences between treatment and control populations that stem from non-random assignment mechanisms. However, this approach allows us to control for many observable characteristics that influence assignment by reducing all relevant information into a single score on which we balance.[^6]
 
 **TLDR**: When you have "similar"[^7] treated and untreated *individuals* with different distributions on a larger number of relevant dimensions, propensity score weighting helps to *rebalance* these groups to make their average effects more comparable
 
@@ -139,8 +139,8 @@ Similar to stratification, propensity score (think "likelihood of treatment") we
 
 **Key Assumptions:**
 
--   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment and independent conditional on the covariates)
--   All observations had some positive probability[^9] of being treated. Heuristically, you can think of this as meaning in the image above there are no areas where there are no major regions where there are only green control observations and no treatment observations
+-   All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment are independent conditional on the covariates)
+-   All observations had some positive probability[^9] of being treated. Heuristically, you can think of this as meaning in the image above there are no regions on the line where the treatement or control frequency curves go all the way down to zero
 
 **Example Application:**
 
@@ -205,14 +205,14 @@ Difference in Differences
 
 ![](excalidraw-did.png)
 
-Some treatments we wish to apply cannot be applied at the individual level but necessarily effect entire groups. Instead of comparing treatment and control groups within the same population at the same time, we can compare the *relative change* across treatment and control populations *across time*.
+Some treatments we wish to apply cannot be applied at the individual level but necessarily affect entire groups. Instead of comparing treatment and control groups within the same population at the same time, we can compare the *relative change* across treatment and control populations *across time*.
 
 **TLDR**: When you have group-level treatments or data available, use random variation *across populations* to compare their overall trends *over time*
 
 **Motivating Example:**
 
 -   We want to estimate the effect of a store remodel on visits.
--   A remodel effect all potential customers, so this "treatment" cannot be applied at the individual level; in theory, it could be randomized to individual *stores*, but we do not have the budget for or interest in randomly remodel many stores before there is evidence of a positive effect.
+-   A remodel affects all potential customers, so this "treatment" cannot be applied at the individual level; in theory, it could be randomized to individual *stores*, but we do not have the budget for or interest to randomly remodel many stores before there is evidence of a positive effect.
 
 **Approach:**
 
@@ -258,11 +258,11 @@ The point of this post is not to teach any one method of causal inference but to
 
 [^3]: You may see this called "exogeneity" in the economics literature
 
-[^4]: What is "similarity"? Without going into too much detail, we're specifically concerned here about characteristics of an individual that effect both their likelihood to receive the treatment of interest **and** effect the outcome of interest
+[^4]: What is "similarity"? Without going into too much detail, we're specifically concerned here about characteristics of an individual that affect both their likelihood to receive the treatment of interest **and** affect the outcome of interest
 
 [^5]: On one hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing
 
-[^6]: Heuristically, you can think of it as a type of "dimensionality reduction" based on *relevance* instead of *varaince*.
+[^6]: Heuristically, you can think of it as a type of "dimensionality reduction" based on *relevance* instead of *variance*.
 
 [^7]: See previous footnote on "similarity".
 

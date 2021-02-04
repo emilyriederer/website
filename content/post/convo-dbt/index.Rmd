@@ -1,6 +1,6 @@
 ---
 output: hugodown::md_document
-title: "Embedding controlled vocabularies in data pipelines with dbt"
+title: "Embedding column-name contracts in data pipelines with dbt"
 subtitle: ""
 summary: "dbt supercharges SQL with Jinja templating, macros, and testing -- all of which can be customized to enforce controlled vocabularies and their implied contracts on a data model"
 authors: []
@@ -28,7 +28,7 @@ image:
 projects: [""]
 ---
 
-In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers. I claim that field names can encode metadata (as one *example* -- not a prescription for how all such vocabularies should work -- one might define that all counts start with `N_` and are non-negative integers; all identified start with `ID_` and are non-null) and illustrate with R and python how these names can be used to improve data discoverability, wrangling, and validation. 
+In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers. In short, I argue that field names can encode metadata^[As one *example* -- not a prescription for how all such vocabularies should work -- one might define that all counts start with `N_` and are non-negative integers; all identified start with `ID_` and are non-null] and illustrate with R and python how these names can be used to improve data documentation, wrangling, and validation. 
 
 However, demonstrations with R and python are biased towards the needs of data consumers. These popular data analysis tools provide handy, high-level interfaces for programmatically operating on columns. For example, `dplyr`'s [select helpers](https://tidyselect.r-lib.org/reference/select_helpers.html) make it easy to quickly manipulate all columns whose names match given patterns. For example, suppose I know that all variables beginning with `IND_` are binary and non-null so I may sum them to get a count or average them to get a valid proportion. I can succinctly write:
 
@@ -38,7 +38,7 @@ summarize_at(my_data,
              .funs = list(sum, mean))
 ```
 
-In contrast, SQL remains a mainstay for data production -- both for traditional relational databases and SQL interfaces for modern large-scale data processing engines like Spark. As a *very* high-level and declarative language, SQL variants generally don't offer a control flow (e.g. for loops, if statements) or programmatic control which would allow for similar operations on columns as shown above. That is, one might have to manually write:
+In contrast, SQL remains a mainstay for data production -- both for traditional relational databases and SQL interfaces for modern large-scale data processing engines like Spark. As a *very* high-level and declarative language, SQL variants generally don't offer a control flow (e.g. for loops, if statements) or programmatic control which would allow for column operations that are similar to the one shown above. That is, one might have to manually write:
 
 ```{r eval = FALSE}
 select 
@@ -51,30 +51,30 @@ from my_data
 
 But that is tedious, static (would not automatically adapt to the addition of more indicator variables), and error-prone (easy to miss or mistype a variable). 
 
-Although SQL itself is relatively inflexible, recent tools have added a layer of "programmability" on top of SQL which allows for far more flexibility and customization. In this post, I'll demonstrate how one such tool, `dbt`, can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.
+Although SQL itself is relatively inflexible, recent tools have added a layer of "programmability" on top of SQL which affords far more flexibility and customization. In this post, I'll demonstrate how one such tool, `dbt`, can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.
 
 ## A brief intro to `dbt`
 
-`dbt` (which stands for [Data Build Tools](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `SELECT` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing. 
+`dbt` ([Data Build Tools](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `SELECT` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing. 
 
-Specific advantages of this approach include:
+For the purposes of implementing a controlled vocabulary, key advantages of this approach include:
 
 - Templating with `if` statements and `for` loops
-- Dynamic insertion of local variables^[Some but not all databases natively support local variables, but `dbt`'s approach works equaly well with those that do not]
-- The ability to switch between dev and production schemas
-- Easy toggling between views, tables, and inserts for the same base logic
+- Dynamic insertion of local variables^[Some but not all databases natively support local variables, but `dbt`'s approach works equally well with those that do not]
 - Automated testing of each modular SQL unit 
 - Code sharing with tests and macros exportable in a package framework
 
-Additional `dbt` features include:
+Additional slick (but tangential for this post) `dbt` features include:
 
+- The ability to switch between dev and production schemas
+- Easy toggling between views, tables, and inserts for the same base logic
 - Automatic generation of a static website documenting data lineage, metadata, and test results (the featured image above is a screenshot from the created website)
 - Orchestration of SQL statements in the DAG
 - Hooks for rote database management tasks like adding indices and keys or granting access
 
 For a general overview to `dbt`, check out the [introductory tutorial](https://docs.getdbt.com/tutorial/setting-up) on their website, the [dbt101 presentation](https://www.getdbt.com/coalesce/agenda/dbt-101-eu-and-us-friendly) from their recent Coalesce conference^[One excellent feature of this project is the impressive amount of onboarding and documentation materials], or the interview with one of their founders on the [Data Engineering Today](https://open.spotify.com/episode/1gKKgR8eZgdqdXztFGGkFe) podcast.
 
-In this post, I'll demonstrate how three features of `dbt` can be used to implement a rigorous controlled vocabulary by:
+In this post, I'll demonstrate how three features of `dbt` can support the use of controlled vocabulary column naming by:
 
 - Creating variable names that adhere to conventions with [Jinja templating](#variable-creation-with-jinja-templating)
 - Operating on subgroups of columns created by [custom macros](#variable-manipulation-with-regex-macros) to enforce contracts

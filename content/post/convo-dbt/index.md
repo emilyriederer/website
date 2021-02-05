@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b036aece59c52a1d
+rmd_hash: 8e4b344cc69f1f27
 
 ---
 
@@ -744,7 +744,7 @@ from `sonorous-wharf-302611`.`dbt_emily`.`model_monitor` as mm
 
 [^5]: In fact, many COVID models were unduly criticized because their purpose was not strictly to have the most accurate forecast possible.
 
-[^6]: Technically, this table should be static, so the same information could be included with `dbt`'s [Snapshot](https://docs.getdbt.com/docs/building-a-dbt-project/snapshots/) feature
+[^6]: Technically, this table should be static, so the same information could be included with `dbt`'s [Seeds](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) feature
 
 [^7]: For another exploration of using Jinja templating to generate SQL, check out this nice [blog post](https://multithreaded.stitchfix.com/blog/2017/07/06/one-weird-trick/) from Stitch Fix
 

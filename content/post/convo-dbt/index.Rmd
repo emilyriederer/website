@@ -165,7 +165,7 @@ We will source these fields from four tables:
   + sourced from `bigquery-public-data`.`sdoh_hrsa_shortage_areas`.`hpsa_primary_care`
   + (after some wrangling on our end) one record per `county` for counties identified as having a shortage
   + fields for the county code, date of designation, proportion of county under-served
-- `fips` table^[Technically, this table should be static, so the same information could be included with `dbt`'s [Snapshot](https://docs.getdbt.com/docs/building-a-dbt-project/snapshots/) feature]
+- `fips` table^[Technically, this table should be static, so the same information could be included with `dbt`'s [Seeds](https://docs.getdbt.com/docs/building-a-dbt-project/seeds) feature]
   + sourced from `bigquery-public-data`.`census_utility`.`fips_codes_all`
   + (after some wrangling) one record per `county` for each county in the 50 US states
   + fields for FIPS code (Census Bureau county identifiers), state name, county name

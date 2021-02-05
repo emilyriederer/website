@@ -55,7 +55,7 @@ Although SQL itself is relatively inflexible, recent tools have added a layer of
 
 ## A brief intro to `dbt`
 
-`dbt` ([Data Build Tools](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `SELECT` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution on your database of choice^[`dbt` has adapters for most major databases and engines including Amazon Redshift, Snowflake, and Apache Spark. An up-to-date list is available [here](https://docs.getdbt.com/docs/available-adapters/)]. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing. 
+`dbt` ([Data Build Tool](https://www.getdbt.com/)) "applies the principles of software engineering to analytics code". Specifically, it encourages data producers to write modular, atomic SQL `SELECT` statements in separate files (as opposed to the use of CTEs or subqueries) from which dbt derives a DAG and orchestrates the execution on your database of choice^[`dbt` has adapters for most major databases and engines including Amazon Redshift, Snowflake, and Apache Spark. An up-to-date list is available [here](https://docs.getdbt.com/docs/available-adapters/)]. Further, it enables the ability to write more programmatic (with control flow) SQL *templates* with `Jinja2` which `dbt` compiles to standard SQL files before executing. 
 
 For the purposes of implementing a controlled vocabulary, key advantages of this approach include:
 

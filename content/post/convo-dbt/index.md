@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 8e4b344cc69f1f27
+rmd_hash: 06216da5ece7dc92
 
 ---
 
@@ -60,6 +60,8 @@ from my_data
 But that is tedious, static (would not automatically adapt to the addition of more indicator variables), and error-prone (easy to miss or mistype a variable).
 
 Although SQL itself is relatively inflexible, recent tools have added a layer of "programmability" on top of SQL which affords far more flexibility and customization. In this post, I'll demonstrate how one such tool, `dbt`, can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.
+
+*(In fact, after writing this post, I've also begun experimenting with a [dbt package, `dbt_dplyr`](https://github.com/emilyriederer/dbt_dplyr) that brings `dplyr`'s select-helper semantics to SQL.)*
 
 A brief intro to `dbt`
 ----------------------

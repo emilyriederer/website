@@ -28,7 +28,7 @@ image:
 projects: [""]
 ---
 
-In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers. In short, I argue that field names can encode metadata^[As one *example* -- not a prescription for how all such vocabularies should work -- one might define that all counts start with `N_` and are non-negative integers; all identified start with `ID_` and are non-null] and illustrate with R and python how these names can be used to improve data documentation, wrangling, and validation. 
+In my post [Column Names as Contracts](/post/column-name-contracts/), I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers^[Note that, in many cases, the distinction between a data producer and consumer is transient and somewhat arbitrary. In many cases, the same person can be both. Here, I use the terms mostly to differentiate the *goal* of a specific step of work. By "data producer", I mean someone engaged in the act of wrangling source data into a form suitable for analysis; by "data consumer", I mean someone actually using that wrangled data for reporting, analysis, visualization, modeling, etc.]. In short, I argue that field names can encode metadata^[As one *example* -- not a prescription for how all such vocabularies should work -- one might define that all counts start with `N_` and are non-negative integers; all identified start with `ID_` and are non-null] and illustrate with R and python how these names can be used to improve data documentation, wrangling, and validation. 
 
 However, demonstrations with R and python are biased towards the needs of data consumers. These popular data analysis tools provide handy, high-level interfaces for programmatically operating on columns. For example, `dplyr`'s [select helpers](https://tidyselect.r-lib.org/reference/select_helpers.html) make it easy to quickly manipulate all columns whose names match given patterns. For example, suppose I know that all variables beginning with `IND_` are binary and non-null so I may sum them to get a count or average them to get a valid proportion. I can succinctly write:
 
@@ -38,7 +38,7 @@ summarize_at(my_data,
              .funs = list(sum, mean))
 ```
 
-In contrast, SQL remains a mainstay for data production -- both for traditional relational databases and SQL interfaces for modern large-scale data processing engines like Spark. As a *very* high-level and declarative language, SQL variants generally don't offer a control flow (e.g. for loops, if statements) or programmatic control which would allow for column operations that are similar to the one shown above. That is, one might have to manually write:
+In contrast, SQL remains a mainstay for data producers -- both for use in traditional relational databases and SQL interfaces for modern large-scale data processing engines like Spark. As a *very* high-level and declarative language, SQL variants generally don't offer a control flow (e.g. for loops, if statements) or programmatic control which would allow for column operations that are similar to the one shown above. That is, one might have to manually write:
 
 ```{r eval = FALSE}
 select 

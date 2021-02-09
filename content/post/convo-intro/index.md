@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["convo"]
-rmd_hash: 29f50bf3f7aa78a7
+rmd_hash: 3d63c50c5edf76ee
 
 ---
 
@@ -233,8 +233,8 @@ If desired, newly uncovered stubs can be added to the `convo` object in R with t
 
 Currently, there is not support for editing the YAML specification via R function. New stubs would need to be added manually. However, a completely new YAML file can be created with the [`write_convo()`](https://rdrr.io/pkg/convo/man/write_convo.html) function. This is particularly useful if you are creating a controlled vocabulary for the first time based on an existing set of variables names. First, you may parse them with [`parse_stubs()`](https://rdrr.io/pkg/convo/man/parse_stubs.html) to create a minimal controlled vocabulary (stubs without descriptions, validation checks, etc.) and then you may write this to a draft YAML file for further customization.
 
-Validating data fields fields
------------------------------
+Validating data fields
+----------------------
 
 The validation checks specified with `pointblank` verbs in your YAML file can be used to create either a `pointblank` agent or a `pointblank` [YAML file](https://rich-iannone.github.io/pointblank/reference/yaml_read_agent.html) which can be used to consistently apply all of the promised data checks.
 
@@ -252,21 +252,21 @@ The `pointblank` YAML file may be created with the [`write_pb()`](https://rdrr.i
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span><span class='o'>(</span><span class='s'>"convo-validation.yml"</span><span class='o'>)</span>, sep <span class='o'>=</span> <span class='s'>"\n"</span><span class='o'>)</span>
 
 <span class='c'>#&gt; read_fn: ~setNames(as.data.frame(matrix(1, ncol = 2)), c("IND_A", "AMT_B"))</span>
-<span class='c'>#&gt; tbl_name: .na.character</span>
-<span class='c'>#&gt; label: '[2021-01-17|12:45:17]'</span>
+<span class='c'>#&gt; tbl_name: ~</span>
+<span class='c'>#&gt; label: '[2021-02-09|05:57:05]'</span>
 <span class='c'>#&gt; locale: en</span>
 <span class='c'>#&gt; steps:</span>
 <span class='c'>#&gt; - col_is_numeric:</span>
-<span class='c'>#&gt;     columns: vars(IND_A)</span>
+<span class='c'>#&gt;     columns: matches("^([A-Za-z]_){0}IND")</span>
 <span class='c'>#&gt; - col_vals_in_set:</span>
-<span class='c'>#&gt;     columns: vars(IND_A)</span>
+<span class='c'>#&gt;     columns: matches("^([A-Za-z]_){0}IND")</span>
 <span class='c'>#&gt;     set:</span>
 <span class='c'>#&gt;     - 0.0</span>
 <span class='c'>#&gt;     - 1.0</span>
 <span class='c'>#&gt; - col_is_numeric:</span>
-<span class='c'>#&gt;     columns: vars(AMT_B)</span>
+<span class='c'>#&gt;     columns: matches("^([A-Za-z]_){0}AMT")</span>
 <span class='c'>#&gt; - col_vals_gte:</span>
-<span class='c'>#&gt;     columns: vars(AMT_B)</span>
+<span class='c'>#&gt;     columns: matches("^([A-Za-z]_){0}AMT")</span>
 <span class='c'>#&gt;     value: 0.0</span>
 </code></pre>
 

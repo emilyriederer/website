@@ -101,7 +101,7 @@ convo2
 
 Currently, there is not support for editing the YAML specification via R function. New stubs would need to be added manually. However, a completely new YAML file can be created with the `write_convo()` function. This is particularly useful if you are creating a controlled vocabulary for the first time based on an existing set of variables names. First, you may parse them with `parse_stubs()` to create a minimal controlled vocabulary (stubs without descriptions, validation checks, etc.) and then you may write this to a draft YAML file for further customization. 
 
-## Validating data fields fields
+## Validating data fields
 
 The validation checks specified with `pointblank` verbs in your YAML file can be used to create either a `pointblank` agent or a `pointblank` [YAML file](https://rich-iannone.github.io/pointblank/reference/yaml_read_agent.html) which can be used to consistently apply all of the promised data checks. 
 
@@ -110,6 +110,7 @@ The `pointblank` YAML file may be created with the `write_pb()`:
 ```{r eval = FALSE}
 write_pb(convo, c("IND_A", "AMT_B"), filename = "convo-validation.yml")
 ```
+
 ```{r}
 cat(readLines("convo-validation.yml"), sep = "\n")
 ```

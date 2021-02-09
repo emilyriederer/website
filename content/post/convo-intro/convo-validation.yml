@@ -1,17 +1,17 @@
 read_fn: ~setNames(as.data.frame(matrix(1, ncol = 2)), c("IND_A", "AMT_B"))
-tbl_name: .na.character
-label: '[2021-01-17|12:45:17]'
+tbl_name: ~
+label: '[2021-02-09|05:57:05]'
 locale: en
 steps:
 - col_is_numeric:
-    columns: vars(IND_A)
+    columns: matches("^([A-Za-z]_){0}IND")
 - col_vals_in_set:
-    columns: vars(IND_A)
+    columns: matches("^([A-Za-z]_){0}IND")
     set:
     - 0.0
     - 1.0
 - col_is_numeric:
-    columns: vars(AMT_B)
+    columns: matches("^([A-Za-z]_){0}AMT")
 - col_vals_gte:
-    columns: vars(AMT_B)
+    columns: matches("^([A-Za-z]_){0}AMT")
     value: 0.0

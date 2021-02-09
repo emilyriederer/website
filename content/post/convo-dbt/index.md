@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 9a5a4e44b2b01527
+rmd_hash: a099e6c622608c58
 
 ---
 
@@ -545,16 +545,16 @@ models:
         test:
         - unique
         - not_null
-      - name: ind_county_hspa
+      - name: ind_county_hpsa
         tests:
         - not_null
         - accepted_values:
             values: [0,1]  
             quote: false   
-      - name: prop_county_hspa
+      - name: prop_county_hpsa
         tests:
           - dbt_utils.not_null_where:
-              where: "ind_county_hspa = 1"
+              where: "ind_county_hpsa = 1"
   
 </code></pre>
 
@@ -627,6 +627,32 @@ where
 </div>
 
 We could further extend the script above and impose a *hierarchy* on our controlled vocabulary by adding additional conditions to the `WHERE` clause. For example, since the `HPSA` stub only makes sense as a suffix to `COUNTY` (e.g. there's no such thing as a health professional shortage area *case* or *death*), we could add the additional condition `or (l3 = 'hpsa' and not l2 = 'county')`.
+
+Similarly, we can query the `INFORMATION_SCHEMA` to validate that each column has its implied data type.
+
+<div class="highlight">
+
+<pre class='chroma'><code class='language-r' data-lang='r'>with cols_type as (
+select distinct 
+  regexp_extract(lower(column_name), '^[a-z]+') as stub,
+  data_type
+from 
+  {{ ref('model_monitor').database }}.
+    {{ ref('model_monitor').schema }}.
+      INFORMATION_SCHEMA.COLUMNS
+where table_name = '{{ ref('model_monitor').identifier }}'
+)
+
+select * 
+from cols_type
+where 
+    (stub in ('id', 'cd', 'nm') and not data_type = 'STRING') or 
+    (stub in ('n', 'ind') and not data_type = 'INT64') or 
+    (stub in ('prop', 'pct') and not data_type = 'FLOAT64') or
+    (stub = 'dt' and not data_type = 'DATE')
+</code></pre>
+
+</div>
 
 As with our `model_monitor.sql` data model, the beauty of these tests is that they have abstracted away the column names themselves. So, they will continue to test all of the correct pieces of intent regardless of whether columns are added or removed from the table. Like macros, these could also be put into a package so that the same tests could be applied to all tables in a database.
 

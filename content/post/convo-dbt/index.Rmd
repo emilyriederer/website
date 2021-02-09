@@ -269,6 +269,12 @@ Finally, we may also use tests to ensure our naming conventions are upheld. The 
 
 We could further extend the script above and impose a *hierarchy* on our controlled vocabulary by adding additional conditions to the `WHERE` clause. For example, since the `HPSA` stub only makes sense as a suffix to `COUNTY` (e.g. there's no such thing as a health professional shortage area *case* or *death*), we could add the additional condition `or (l3 = 'hpsa' and not l2 = 'county')`.
 
+Similarly, we can query the `INFORMATION_SCHEMA` to validate that each column has its implied data type.
+
+```{r code=xfun::read_utf8('../../../../Documents/dbt-covid/tests/con_vo_type.sql'), eval = FALSE}
+```
+
+
 As with our `model_monitor.sql` data model, the beauty of these tests is that they have abstracted away the column names themselves. So, they will continue to test all of the correct pieces of intent regardless of whether columns are added or removed from the table. Like macros, these could also be put into a package so that the same tests could be applied to all tables in a database. 
 
 The code for these tests, and a few more similar examples, are located in the [`tests/` directory](https://github.com/emilyriederer/dbt-convo-covid/tree/main/tests) of the repository. They can be run on the command line with the `dbt test` command.

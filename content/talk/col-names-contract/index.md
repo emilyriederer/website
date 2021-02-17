@@ -1,13 +1,8 @@
 ---
 title: "Column Names as Contracts"
-event: Toronto Data Workshop on Reproducibility
-event_url: https://rohanalexander.com/reproducibility
+event: Data Workshop on Reproducibility (Univ Toronto) | Good Tech Fest (Chicago)
 
-location: University of Toronto - Department of Statistical Sciences
-address:
-  city:  Virtual - Hosted by Toronto
-  region: Ontario
-  country: Canada
+location: University of Toronto | Chicago
 
 summary: Exploring the benefits of using controlled vocabularies to organize data and introducing the `convo` R package
 

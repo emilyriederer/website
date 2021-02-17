@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 90afcee571170b6c
+rmd_hash: e8b7f16b1229af38
 
 ---
 
@@ -206,7 +206,7 @@ Difference in Differences
 
 ![](excalidraw-did.png)
 
-Some treatments we wish to apply cannot be applied at the individual level but necessarily affect entire groups. Instead of comparing treatment and control groups within the same population at the same time, we can compare the *relative change* across treatment and control populations *across time*.
+So far, we've looked at methods that try to make groups as *similar* before treatment as possible. One way we can evaluate these methods is to see if, as we would expect, their values of the variable of interest before treatment are similar (e.g. spend in the 6 months leading up to a promotion.) However, the data we have available makes that intractably restrictive. Instead of looking for similarity in absolute level, difference-in-differences helps us more flexibly settle for similarity in trajectories over time. That is, instead of comparing treatment and control groups within the same population at the same time, we can compare the *relative change* across treatment and control populations *across time*.
 
 **TLDR**: When you have group-level treatments or data available, use random variation *across populations* to compare their overall trends *over time*
 

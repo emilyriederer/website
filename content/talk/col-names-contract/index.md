@@ -29,7 +29,7 @@ links:
   icon_pack: fab
   name: Follow
   url: https://twitter.com/RohanAlexander
-url_video: ""
+url_video: "https://t.co/nGu9fDAvsk?amp=1"
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -46,7 +46,7 @@ In this talk, I will explain how controlled vocabularies can be used to form con
 
 Doing so can offload the burden of data producers by facilitating automated data validation and metadata management. At the same time, data consumers benefit by a reduction in the cognitive load to remember names, a deeper understanding of variable encoding, and opportunities to more efficiently analyze the resulting dataset. 
 
-After discussing the theory of controlled vocabulary column-naming and related workflows, I will illustrate these ideas with a demonstration of the `convo` R package, which aids in the creation, upkeep, and application of controlled vocabularies.
+After discussing the theory of controlled vocabulary column-naming and related workflows, I illustrate how to implement these ideas at various stages in the data management lifecycle, either with the R package `convo` or with the SQL-based tool `dbt`.
 
 This talk is based on by related [blog post](content/post/column-name-contracts) and [R package](content/project/convo). 
 

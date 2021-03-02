@@ -6,7 +6,7 @@ event_url: https://rstudio.com/conference/
 location: rstudio::global(2021)
 address:
   city:  Virtual
-summary: An overview of the unique design challenges and opportunities when building R packages for use inside of a single organization
+summary: An overview of the unique design challenges and opportunities when building R packages for use inside of a single organization versus open-source. By using the jobs-to-be-done framework, this talk explores how internal packages can be better teammates by following specific design patterns for API design, testing, documentaiton, and more.
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
@@ -32,7 +32,7 @@ links:
   name: Follow
   url: https://twitter.com/rstudio
 url_video: https://resources.rstudio.com/resources/rstudioglobal-2021/organization-how-to-make-internal-r-packages-part-of-your-team/
-url_slides: "https://docs.google.com/presentation/d/1CBrLyI_PWu7cGiXp7BH-phv-MSPObZzbzrSZADMlDJU/edit?usp=sharing"
+url_slides: "slides.pdf"
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.

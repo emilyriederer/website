@@ -4,7 +4,7 @@ event: Data Workshop on Reproducibility (Univ Toronto) | Good Tech Fest (Chicago
 
 location: University of Toronto | Chicago
 
-summary: Exploring the benefits of using controlled vocabularies to organize data and introducing the `convo` R package
+summary: Exploring the benefits of using controlled vocabularies to encode metadata in column names, and demonstrations of implementing this approach with the `convo` R package or `dbt` extensions of SQL.
 
 # Talk start and end times.
 #   End time can optionally be hidden by prefixing the line with `#`.
@@ -30,6 +30,7 @@ links:
   name: Follow
   url: https://twitter.com/RohanAlexander
 url_video: "https://t.co/nGu9fDAvsk?amp=1"
+url_slides: "slides.pdf"
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.

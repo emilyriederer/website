@@ -2,7 +2,7 @@
 title: "97 Things Every Data Engineer Should Know: Collective Wisdom from the Experts"
 authors:
 - Tobias Macey
-date: "2021-03-01T00:00:00Z"
+date: "2021-08-01T00:00:00Z"
 doi: ""
 
 # Schedule page publish date (NOT publication's date).
@@ -20,7 +20,7 @@ publication_short: "With this in-depth book, data engineers will learn powerful,
 
 abstract: "With this in-depth book, data engineers will learn powerful, real-world best practices for managing data—both big and small. Contributors from companies including Google, Microsoft, IBM, Facebook, Databricks, and GitHub share their experiences and lessons learned on cleaning, prepping, wrangling, and storing data.
 \n\n
-I contributed the chapter 'Column Names as Contracts'."
+I contributed the six chapters on topics ranging from data documentation, community building, field naming, documentation, and validation."
 
 # Summary. An optional shortened abstract.
 summary: "Contributed chapter on use of controlled vocabularies to improve data communication, validation, and munging."
@@ -59,3 +59,11 @@ image:
   preview_only: true
 ---
 
+I contributed six chapters to the book:
+
+- **Develop Communities Not Just Code**: On building developing communities along with code bases and empowering versus patronizing your data product's customers 
+- **Give Data Products a Front-End with Latent Documentation**: On low effort practices for improving data documentation and usability
+- **There's No Such Thing as Data Quality**: On the value of data "fit for purpose"
+- **The many meanings of missingness**: On causes and consequences of null field encoding
+- **Column Names as Contracts**: On embedding metadata and performance "contracts" in column names
+- **Data validation is more than summary statistics**: On the importance of context-informed data validation

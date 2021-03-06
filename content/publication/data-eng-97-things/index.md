@@ -23,7 +23,7 @@ abstract: "With this in-depth book, data engineers will learn powerful, real-wor
 I contributed the six chapters on topics ranging from data documentation, community building, field naming, documentation, and validation."
 
 # Summary. An optional shortened abstract.
-summary: "Contributed chapter on use of controlled vocabularies to improve data communication, validation, and munging."
+summary: "Contributed six chapters on tops ranging from data design, development, validation, and democratization"
 
 tags:
 - data

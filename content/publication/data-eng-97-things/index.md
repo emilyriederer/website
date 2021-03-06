@@ -61,9 +61,9 @@ image:
 
 I contributed six chapters to the book:
 
-- **Develop Communities Not Just Code**: On building developing communities along with code bases and empowering versus patronizing your data product's customers 
-- **Give Data Products a Front-End with Latent Documentation**: On low effort practices for improving data documentation and usability
-- **There's No Such Thing as Data Quality**: On the value of data "fit for purpose"
+- **Develop communities - not just code**: On building developing communities along with code bases and empowering versus patronizing your data product's customers 
+- **Give data products a front-end with latent documentation**: On low effort practices for improving data documentation and usability
+- **There's no such thinng as data quality**: On the value of data "fit for purpose"
 - **The many meanings of missingness**: On causes and consequences of null field encoding
-- **Column Names as Contracts**: On embedding metadata and performance "contracts" in column names
-- **Data validation is more than summary statistics**: On the importance of context-informed data validation
+- **Column names as contracts**: On embedding metadata and performance "contracts" in column names
+- **Data validation needs more than summary statistics**: On the importance of context-informed data validation

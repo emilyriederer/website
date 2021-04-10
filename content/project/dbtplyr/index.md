@@ -1,5 +1,5 @@
 ---
-title: dbt_dplyr
+title: dbtplyr
 summary: dbt package bringing `dplyr` semantics to SQL
 tags:
 - package
@@ -12,11 +12,11 @@ links:
 - icon: github
   icon_pack: fab
   name: Repo
-  url: https://github.com/emilyriederer/dbt_dplyr
+  url: https://github.com/emilyriederer/dbtplyr
 - icon: book
   icon_pack: fas
   name: Docs
-  url: https://github.com/emilyriederer/dbt_dplyr
+  url: https://emilyriederer.github.io/dbtplyr
 - icon: file
   icon-pack: far
   name: Post
@@ -45,13 +45,13 @@ summarize(
 This package enables us to similarly write `dbt` data models with commands like:
 
 ```
-{% cols_n = starts_with( ref('mydata'), 'N') %}
-{% cols_ind = starts_with( ref('mydata'), 'IND') %}
+{% cols_n = dbtplyr.starts_with( ref('mydata'), 'N') %}
+{% cols_ind = dbtplyr.starts_with( ref('mydata'), 'IND') %}
 
 select
 
-  {{ across(cols_n, "sum({{var}}) as {{var}}_tot") }},
-  {{ across(cols_ind, "mean({{var}}) as {{var}}_avg") }}
+  {{ dbtplyr.across(cols_n, "sum({{var}}) as {{var}}_tot") }},
+  {{ dbtplyr.across(cols_ind, "mean({{var}}) as {{var}}_avg") }}
 
 from {{ ref('mydata') }}
 ```

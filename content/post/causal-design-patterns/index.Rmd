@@ -28,6 +28,9 @@ image:
 projects: [""]
 ---
 
+<a href="https://www.kdnuggets.com/2021/04/top-stories-2021-mar.html">
+<img src="https://www.kdnuggets.com/images/tkb-2103-s.png" width=96 alt="Silver Blog" align="right"></a>
+
 Software engineers study design patterns^[A concept popularized by the 1994 book *Design Patterns: Elements of Reusable Object-Oriented Software*. See more on [Wikipedia](https://en.wikipedia.org/wiki/Design_Patterns)] to help them recognize archetypes, consider approaches with a common language, and reuse tried-and-true architectures. Similarly, statistics has many prototypical analyses, but too often these frameworks are siloed within specific disciplines and clouded by domain-specific language. This makes methods harder to discover and hides their general applicability. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.
 
 Observational causal inference is one such field. The need to understand true causal (versus correlative) effects and to derive meaning and strategy from "found" historical data (as opposed to experimentally "produced" data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more. 

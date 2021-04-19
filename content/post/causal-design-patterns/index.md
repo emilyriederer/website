@@ -26,9 +26,11 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: e8b7f16b1229af38
+rmd_hash: 99cf0a80d56a916e
 
 ---
+
+<a href="https://www.kdnuggets.com/2021/04/top-stories-2021-mar.html"> <img src="https://www.kdnuggets.com/images/tkb-2103-s.png" width=96 alt="Silver Blog" align="right"></a>
 
 Software engineers study design patterns[^1] to help them recognize archetypes, consider approaches with a common language, and reuse tried-and-true architectures. Similarly, statistics has many prototypical analyses, but too often these frameworks are siloed within specific disciplines and clouded by domain-specific language. This makes methods harder to discover and hides their general applicability. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.
 

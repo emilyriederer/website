@@ -327,10 +327,19 @@ cols_grp = ["CAT_RIDER_TYPE"]
 data_trips.groupby(cols_grp)[cols_n].sum()
 ```
 
-## Update - New Package (Dec 2020)
+## Updates
+
+### Concept Map
+
+Thanks to Greg Wilson for helping illustrate the concepts from this post in a concept map:
+
+![](concept-map.png)
+
+### New Package (Dec 2020)
 
 Since writing this post, I have released the [convo](https://emilyriederer.github.io/convo/reference/index.html) R package to facilitate maintenance and application of controlled vocabularies. Please check it out and let me know what you think!
 
+### New Package (April 2021)
 
-
+I also released a dbt package called [dbtplyr](https://github.com/emilyriederer/dbtplyr) to port `dplyr`'s useful select-helper semantics to SQL via [dbt](http://getdbt.com/).
 

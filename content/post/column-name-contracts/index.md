@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: badb4d928d2e2c5c
+rmd_hash: b5784f42da5e4407
 html_dependencies:
 - <script src="htmlwidgets-1.5.1/htmlwidgets.js"></script>
 - <script src="d3-4.10.2/d3.min.js"></script>
@@ -133,33 +133,33 @@ To start, we create a small fake data set using our schema. For simplicity, I si
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='o'>(</span><span class='nv'>data_trips</span><span class='o'>)</span>
 
 <span class='c'>#&gt;   ID_DRIVER ID_RIDER ID_TRIP    DT_ORIG    DT_DEST N_DRIVER_PASSENGERS</span>
-<span class='c'>#&gt; 1      9669     2040    5242 2019-02-05 2019-02-05                   1</span>
-<span class='c'>#&gt; 2      3686     1812    9083 2019-09-12 2019-09-12                   1</span>
-<span class='c'>#&gt; 3      7693     6590    8635 2019-08-31 2019-08-31                   1</span>
-<span class='c'>#&gt; 4      5903     7196    1645 2019-09-26 2019-09-26                   2</span>
-<span class='c'>#&gt; 5      5768     7817    4052 2019-10-20 2019-10-20                   1</span>
-<span class='c'>#&gt; 6      7424     2477    1057 2019-06-01 2019-06-01                   2</span>
+<span class='c'>#&gt; 1      5698     1027    9714 2019-12-28 2019-12-28                   1</span>
+<span class='c'>#&gt; 2      6458     7822    7405 2019-09-07 2019-09-07                   1</span>
+<span class='c'>#&gt; 3      4838     5968    8554 2019-05-14 2019-05-14                   2</span>
+<span class='c'>#&gt; 4      3785     2309    1241 2019-08-16 2019-08-16                   2</span>
+<span class='c'>#&gt; 5      4539     9109    2017 2019-03-25 2019-03-25                   1</span>
+<span class='c'>#&gt; 6      4007     6878    1698 2019-09-09 2019-09-09                   1</span>
 <span class='c'>#&gt;   N_TRIP_ORIG N_TRIP_DEST AMT_TRIP_DIST IND_SURGE VAL_DRIVER_RATING</span>
-<span class='c'>#&gt; 1           1           1      21.25501         1          4.378420</span>
-<span class='c'>#&gt; 2           1           1      41.09537         0          4.194537</span>
-<span class='c'>#&gt; 3           1           1      13.89200         1          2.858332</span>
-<span class='c'>#&gt; 4           1           1      24.03236         0          2.067865</span>
-<span class='c'>#&gt; 5           1           1      46.29372         1          2.480779</span>
-<span class='c'>#&gt; 6           1           1      40.28132         0          1.469299</span>
+<span class='c'>#&gt; 1           1           1      24.98156         0          2.228128</span>
+<span class='c'>#&gt; 2           1           1      11.32751         1          3.678452</span>
+<span class='c'>#&gt; 3           1           1      25.71858         1          1.531821</span>
+<span class='c'>#&gt; 4           1           1      13.86827         0          1.982823</span>
+<span class='c'>#&gt; 5           1           1      25.05063         1          2.371799</span>
+<span class='c'>#&gt; 6           1           1      16.00619         0          1.585752</span>
 <span class='c'>#&gt;   VAL_RIDER_RATING VAL_ORIG_LAT VAL_DEST_LAT VAL_ORIG_LON VAL_DEST_LON</span>
-<span class='c'>#&gt; 1         3.536973     40.60340     41.54574     83.51436     74.13974</span>
-<span class='c'>#&gt; 2         2.771511     40.78117     40.94065    115.90785     73.72642</span>
-<span class='c'>#&gt; 3         3.862882     40.91356     41.78615    105.03942     98.34434</span>
-<span class='c'>#&gt; 4         3.831349     41.29988     41.50293     94.65050     98.42709</span>
-<span class='c'>#&gt; 5         1.855250     40.41563     40.03782     70.45878    107.03600</span>
-<span class='c'>#&gt; 6         3.274161     40.05467     40.71324     85.70780    114.20890</span>
+<span class='c'>#&gt; 1         3.253223     41.24602     40.48390    108.44754    102.87971</span>
+<span class='c'>#&gt; 2         3.466021     40.26759     41.66849    108.23701     93.70541</span>
+<span class='c'>#&gt; 3         3.316094     40.40432     40.94727     82.81049     90.85842</span>
+<span class='c'>#&gt; 4         4.862184     40.52839     41.43372     71.78928    119.20213</span>
+<span class='c'>#&gt; 5         4.436828     40.29525     41.86572    112.69544    118.53023</span>
+<span class='c'>#&gt; 6         1.217744     41.29352     41.79860    117.98442    108.41519</span>
 <span class='c'>#&gt;   CAT_TRIP_TYPE CAT_RIDER_TYPE</span>
 <span class='c'>#&gt; 1         Elite       Frequent</span>
-<span class='c'>#&gt; 2          Pool          Basic</span>
-<span class='c'>#&gt; 3         Elite          Basic</span>
-<span class='c'>#&gt; 4      Standard          Basic</span>
-<span class='c'>#&gt; 5         Elite          Basic</span>
-<span class='c'>#&gt; 6          Pool          Basic</span>
+<span class='c'>#&gt; 2         Elite   Subscription</span>
+<span class='c'>#&gt; 3          Pool          Basic</span>
+<span class='c'>#&gt; 4          Pool          Basic</span>
+<span class='c'>#&gt; 5         Elite       Frequent</span>
+<span class='c'>#&gt; 6      Standard          Basic</span>
 </code></pre>
 
 </div>
@@ -254,8 +254,8 @@ Similarly, we can use visualization to both validate and explore the available f
                 nodeSize <span class='o'>=</span> <span class='s'>"leafCount"</span>
                 <span class='o'>)</span>
 
-<!--html_preserve--><div id="htmlwidget-d721f613db367ef11ca0" style="width:700px;height:415.296px;" class="collapsibleTree html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d721f613db367ef11ca0">{"x":{"data":{"name":"cols_components","SizeOfNode":29.8,"children":[{"name":"ID","SizeOfNode":12.17,"children":[{"name":"DRIVER","SizeOfNode":7.02},{"name":"RIDER","SizeOfNode":7.02},{"name":"TRIP","SizeOfNode":7.02}]},{"name":"DT","SizeOfNode":9.93,"children":[{"name":"ORIG","SizeOfNode":7.02},{"name":"DEST","SizeOfNode":7.02}]},{"name":"N","SizeOfNode":12.17,"children":[{"name":"DRIVER","SizeOfNode":7.02,"children":[{"name":"PASSENGERS","SizeOfNode":7.02}]},{"name":"TRIP","SizeOfNode":9.93,"children":[{"name":"ORIG","SizeOfNode":7.02},{"name":"DEST","SizeOfNode":7.02}]}]},{"name":"AMT","SizeOfNode":7.02,"children":[{"name":"TRIP","SizeOfNode":7.02,"children":[{"name":"DIST","SizeOfNode":7.02}]}]},{"name":"IND","SizeOfNode":7.02,"children":[{"name":"SURGE","SizeOfNode":7.02}]},{"name":"VAL","SizeOfNode":17.21,"children":[{"name":"DRIVER","SizeOfNode":7.02,"children":[{"name":"RATING","SizeOfNode":7.02}]},{"name":"RIDER","SizeOfNode":7.02,"children":[{"name":"RATING","SizeOfNode":7.02}]},{"name":"ORIG","SizeOfNode":9.93,"children":[{"name":"LAT","SizeOfNode":7.02},{"name":"LON","SizeOfNode":7.02}]},{"name":"DEST","SizeOfNode":9.93,"children":[{"name":"LAT","SizeOfNode":7.02},{"name":"LON","SizeOfNode":7.02}]}]},{"name":"CAT","SizeOfNode":9.93,"children":[{"name":"TRIP","SizeOfNode":7.02,"children":[{"name":"TYPE","SizeOfNode":7.02}]},{"name":"RIDER","SizeOfNode":7.02,"children":[{"name":"TYPE","SizeOfNode":7.02}]}]}]},"options":{"hierarchy":["level1","level2","level3"],"input":null,"attribute":"leafCount","linkLength":null,"fontSize":10,"tooltip":false,"collapsed":true,"zoomable":true,"margin":{"top":20,"bottom":20,"left":119.8,"right":75},"fill":"lightsteelblue"}},"evals":[],"jsHooks":[]}</script><!--/html_preserve--></code></pre>
+<!--html_preserve--><div id="htmlwidget-f9800c11f94ae72cf3f7" style="width:700px;height:415.296px;" class="collapsibleTree html-widget"></div>
+<script type="application/json" data-for="htmlwidget-f9800c11f94ae72cf3f7">{"x":{"data":{"name":"cols_components","SizeOfNode":29.8,"children":[{"name":"ID","SizeOfNode":12.17,"children":[{"name":"DRIVER","SizeOfNode":7.02},{"name":"RIDER","SizeOfNode":7.02},{"name":"TRIP","SizeOfNode":7.02}]},{"name":"DT","SizeOfNode":9.93,"children":[{"name":"ORIG","SizeOfNode":7.02},{"name":"DEST","SizeOfNode":7.02}]},{"name":"N","SizeOfNode":12.17,"children":[{"name":"DRIVER","SizeOfNode":7.02,"children":[{"name":"PASSENGERS","SizeOfNode":7.02}]},{"name":"TRIP","SizeOfNode":9.93,"children":[{"name":"ORIG","SizeOfNode":7.02},{"name":"DEST","SizeOfNode":7.02}]}]},{"name":"AMT","SizeOfNode":7.02,"children":[{"name":"TRIP","SizeOfNode":7.02,"children":[{"name":"DIST","SizeOfNode":7.02}]}]},{"name":"IND","SizeOfNode":7.02,"children":[{"name":"SURGE","SizeOfNode":7.02}]},{"name":"VAL","SizeOfNode":17.21,"children":[{"name":"DRIVER","SizeOfNode":7.02,"children":[{"name":"RATING","SizeOfNode":7.02}]},{"name":"RIDER","SizeOfNode":7.02,"children":[{"name":"RATING","SizeOfNode":7.02}]},{"name":"ORIG","SizeOfNode":9.93,"children":[{"name":"LAT","SizeOfNode":7.02},{"name":"LON","SizeOfNode":7.02}]},{"name":"DEST","SizeOfNode":9.93,"children":[{"name":"LAT","SizeOfNode":7.02},{"name":"LON","SizeOfNode":7.02}]}]},{"name":"CAT","SizeOfNode":9.93,"children":[{"name":"TRIP","SizeOfNode":7.02,"children":[{"name":"TYPE","SizeOfNode":7.02}]},{"name":"RIDER","SizeOfNode":7.02,"children":[{"name":"TYPE","SizeOfNode":7.02}]}]}]},"options":{"hierarchy":["level1","level2","level3"],"input":null,"attribute":"leafCount","linkLength":null,"fontSize":10,"tooltip":false,"collapsed":true,"zoomable":true,"margin":{"top":20,"bottom":20,"left":119.8,"right":75},"fill":"lightsteelblue"}},"evals":[],"jsHooks":[]}</script><!--/html_preserve--></code></pre>
 
 </div>
 
@@ -268,8 +268,8 @@ Depending on the type of exploraion being done, it might be more convenient to d
                 nodeSize <span class='o'>=</span> <span class='s'>"leafCount"</span>
                 <span class='o'>)</span>
 
-<!--html_preserve--><div id="htmlwidget-f9bf5ab210d0aa7e7ccc" style="width:700px;height:415.296px;" class="collapsibleTree html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f9bf5ab210d0aa7e7ccc">{"x":{"data":{"name":"cols_components","SizeOfNode":24.33,"children":[{"name":"DRIVER","SizeOfNode":9.93,"children":[{"name":"ID","SizeOfNode":5.74},{"name":"N","SizeOfNode":5.74,"children":[{"name":"PASSENGERS","SizeOfNode":5.74}]},{"name":"VAL","SizeOfNode":5.74,"children":[{"name":"RATING","SizeOfNode":5.74}]}]},{"name":"RIDER","SizeOfNode":9.93,"children":[{"name":"ID","SizeOfNode":5.74},{"name":"VAL","SizeOfNode":5.74,"children":[{"name":"RATING","SizeOfNode":5.74}]},{"name":"CAT","SizeOfNode":5.74,"children":[{"name":"TYPE","SizeOfNode":5.74}]}]},{"name":"TRIP","SizeOfNode":12.83,"children":[{"name":"ID","SizeOfNode":5.74},{"name":"N","SizeOfNode":8.11,"children":[{"name":"ORIG","SizeOfNode":5.74},{"name":"DEST","SizeOfNode":5.74}]},{"name":"AMT","SizeOfNode":5.74,"children":[{"name":"DIST","SizeOfNode":5.74}]},{"name":"CAT","SizeOfNode":5.74,"children":[{"name":"TYPE","SizeOfNode":5.74}]}]},{"name":"ORIG","SizeOfNode":9.93,"children":[{"name":"DT","SizeOfNode":5.74},{"name":"VAL","SizeOfNode":8.11,"children":[{"name":"LAT","SizeOfNode":5.74},{"name":"LON","SizeOfNode":5.74}]}]},{"name":"DEST","SizeOfNode":9.93,"children":[{"name":"DT","SizeOfNode":5.74},{"name":"VAL","SizeOfNode":8.11,"children":[{"name":"LAT","SizeOfNode":5.74},{"name":"LON","SizeOfNode":5.74}]}]},{"name":"SURGE","SizeOfNode":5.74,"children":[{"name":"IND","SizeOfNode":5.74}]}]},"options":{"hierarchy":["level2","level1","level3"],"input":null,"attribute":"leafCount","linkLength":null,"fontSize":10,"tooltip":false,"collapsed":true,"zoomable":true,"margin":{"top":20,"bottom":20,"left":114.33,"right":75},"fill":"lightsteelblue"}},"evals":[],"jsHooks":[]}</script><!--/html_preserve--></code></pre>
+<!--html_preserve--><div id="htmlwidget-13420b62cf5b079fe4ed" style="width:700px;height:415.296px;" class="collapsibleTree html-widget"></div>
+<script type="application/json" data-for="htmlwidget-13420b62cf5b079fe4ed">{"x":{"data":{"name":"cols_components","SizeOfNode":24.33,"children":[{"name":"DRIVER","SizeOfNode":9.93,"children":[{"name":"ID","SizeOfNode":5.74},{"name":"N","SizeOfNode":5.74,"children":[{"name":"PASSENGERS","SizeOfNode":5.74}]},{"name":"VAL","SizeOfNode":5.74,"children":[{"name":"RATING","SizeOfNode":5.74}]}]},{"name":"RIDER","SizeOfNode":9.93,"children":[{"name":"ID","SizeOfNode":5.74},{"name":"VAL","SizeOfNode":5.74,"children":[{"name":"RATING","SizeOfNode":5.74}]},{"name":"CAT","SizeOfNode":5.74,"children":[{"name":"TYPE","SizeOfNode":5.74}]}]},{"name":"TRIP","SizeOfNode":12.83,"children":[{"name":"ID","SizeOfNode":5.74},{"name":"N","SizeOfNode":8.11,"children":[{"name":"ORIG","SizeOfNode":5.74},{"name":"DEST","SizeOfNode":5.74}]},{"name":"AMT","SizeOfNode":5.74,"children":[{"name":"DIST","SizeOfNode":5.74}]},{"name":"CAT","SizeOfNode":5.74,"children":[{"name":"TYPE","SizeOfNode":5.74}]}]},{"name":"ORIG","SizeOfNode":9.93,"children":[{"name":"DT","SizeOfNode":5.74},{"name":"VAL","SizeOfNode":8.11,"children":[{"name":"LAT","SizeOfNode":5.74},{"name":"LON","SizeOfNode":5.74}]}]},{"name":"DEST","SizeOfNode":9.93,"children":[{"name":"DT","SizeOfNode":5.74},{"name":"VAL","SizeOfNode":8.11,"children":[{"name":"LAT","SizeOfNode":5.74},{"name":"LON","SizeOfNode":5.74}]}]},{"name":"SURGE","SizeOfNode":5.74,"children":[{"name":"IND","SizeOfNode":5.74}]}]},"options":{"hierarchy":["level2","level1","level3"],"input":null,"attribute":"leafCount","linkLength":null,"fontSize":10,"tooltip":false,"collapsed":true,"zoomable":true,"margin":{"top":20,"bottom":20,"left":114.33,"right":75},"fill":"lightsteelblue"}},"evals":[],"jsHooks":[]}</script><!--/html_preserve--></code></pre>
 
 </div>
 
@@ -300,9 +300,9 @@ Note what our controlled vocabulary and the implied "contracts" have given us. W
 <span class='c'>#&gt; <span style='color: #555555;'># A tibble: 3 x 5</span></span>
 <span class='c'>#&gt;   CAT_RIDER_TYPE N_DRIVER_PASSENGERS N_TRIP_ORIG N_TRIP_DEST IND_SURGE</span>
 <span class='c'>#&gt;   <span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>                        </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span></span>
-<span class='c'>#&gt; <span style='color: #555555;'>1</span><span> Basic                           45          34          34     0.529</span></span>
-<span class='c'>#&gt; <span style='color: #555555;'>2</span><span> Frequent                        46          30          30     0.367</span></span>
-<span class='c'>#&gt; <span style='color: #555555;'>3</span><span> Subscription                    55          36          36     0.389</span></span>
+<span class='c'>#&gt; <span style='color: #555555;'>1</span><span> Basic                           51          31          31     0.548</span></span>
+<span class='c'>#&gt; <span style='color: #555555;'>2</span><span> Frequent                        53          33          33     0.485</span></span>
+<span class='c'>#&gt; <span style='color: #555555;'>3</span><span> Subscription                    54          36          36     0.5</span></span>
 </code></pre>
 
 </div>
@@ -365,9 +365,9 @@ These vectors can be used in aggregation operations such as [`stats::aggregate`]
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/stats/aggregate.html'>aggregate</a></span><span class='o'>(</span><span class='nv'>data_trips</span><span class='o'>[</span><span class='nv'>cols_n</span><span class='o'>]</span>, by <span class='o'>=</span> <span class='nv'>data_trips</span><span class='o'>[</span><span class='nv'>cols_grp</span><span class='o'>]</span>, FUN <span class='o'>=</span> <span class='nv'>sum</span><span class='o'>)</span>
 
 <span class='c'>#&gt;   CAT_RIDER_TYPE N_DRIVER_PASSENGERS N_TRIP_ORIG N_TRIP_DEST</span>
-<span class='c'>#&gt; 1          Basic                  45          34          34</span>
-<span class='c'>#&gt; 2       Frequent                  46          30          30</span>
-<span class='c'>#&gt; 3   Subscription                  55          36          36</span>
+<span class='c'>#&gt; 1          Basic                  51          31          31</span>
+<span class='c'>#&gt; 2       Frequent                  53          33          33</span>
+<span class='c'>#&gt; 3   Subscription                  54          36          36</span>
 </code></pre>
 
 </div>
@@ -381,9 +381,9 @@ Or with `data.table` syntax:
 <span class='nv'>dt</span><span class='o'>[</span>, <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='o'>(</span><span class='nv'>.SD</span>, <span class='nv'>sum</span><span class='o'>)</span>, by <span class='o'>=</span> <span class='nv'>cols_grp</span>, .SDcols <span class='o'>=</span> <span class='nv'>cols_n</span><span class='o'>]</span>
 
 <span class='c'>#&gt;    CAT_RIDER_TYPE N_DRIVER_PASSENGERS N_TRIP_ORIG N_TRIP_DEST</span>
-<span class='c'>#&gt; 1:       Frequent                  46          30          30</span>
-<span class='c'>#&gt; 2:          Basic                  45          34          34</span>
-<span class='c'>#&gt; 3:   Subscription                  55          36          36</span>
+<span class='c'>#&gt; 1:       Frequent                  53          33          33</span>
+<span class='c'>#&gt; 2:   Subscription                  54          36          36</span>
+<span class='c'>#&gt; 3:          Basic                  51          31          31</span>
 </code></pre>
 
 </div>
@@ -401,17 +401,29 @@ data_trips.groupby(cols_grp)[cols_n].sum()
 
 #>                 N_DRIVER_PASSENGERS  N_TRIP_ORIG  N_TRIP_DEST
 #> CAT_RIDER_TYPE                                               
-#> Basic                            45         34.0         34.0
-#> Frequent                         46         30.0         30.0
-#> Subscription                     55         36.0         36.0
+#> Basic                            51         31.0         31.0
+#> Frequent                         53         33.0         33.0
+#> Subscription                     54         36.0         36.0
 </code></pre>
 
 </div>
 
-Update - New Package (Dec 2020)
--------------------------------
+Updates
+-------
+
+### Concept Map
+
+Thanks to Greg Wilson for helping illustrate the concepts from this post in a concept map:
+
+![](concept-map.png)
+
+### New Package (Dec 2020)
 
 Since writing this post, I have released the [convo](https://emilyriederer.github.io/convo/reference/index.html) R package to facilitate maintenance and application of controlled vocabularies. Please check it out and let me know what you think!
+
+### New Package (April 2021)
+
+I also released a dbt package called [dbtplyr](https://github.com/emilyriederer/dbtplyr) to port `dplyr`'s useful select-helper semantics to SQL via [dbt](http://getdbt.com/).
 
 [^1]: Again, vocabularies should span a database -- not just an individual dataset, but for simplicity we just talk through a smaller example.
 

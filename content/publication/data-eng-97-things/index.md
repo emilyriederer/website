@@ -37,11 +37,11 @@ links:
  - icon: "globe"
    icon_pack: "fas"
    name: "Publisher Site"
-   url: ""
+   url: "https://www.oreilly.com/library/view/97-things-every/9781492062400/"
  - icon: "amazon"
    icon_pack: "fab"
    name: "Amazon"
-   url: ""
+   url: "https://www.amazon.com/Things-Every-Data-Engineer-Should/dp/1492062413/"
 url_pdf: ''
 url_code: ''
 url_dataset: ''

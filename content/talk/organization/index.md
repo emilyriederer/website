@@ -1,6 +1,6 @@
 ---
 title: "oRganization: Design patterns for internal packages"
-event: rstudio::global(2021)
+event: rstudio::global(2021) | csv,conf,v6
 event_url: https://rstudio.com/conference/
 
 location: rstudio::global(2021)

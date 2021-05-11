@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Generating SQL with {dbplyr} and sqlfluff"
 subtitle: ""
-summary: "Using the tidyverse's expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts"
+summary: "Using the tidyverse's expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts. *(Image source `techdaily.ca`)*"
 authors: []
 tags: [rstats, data, sql, tutorial]
 categories: [rstats, data, sql,tutorial]
@@ -16,7 +16,7 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Photo by [Markus Spiske](https://unsplash.com/@markusspiske) on Unsplash"
+  caption: "Photo by [techdaily.ca](techdaily.ca)"
   focal_point: ""
   preview_only: true
 
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 3efa793eac46f6da
+rmd_hash: 1c9975fc1214c3c5
 
 ---
 
@@ -183,22 +183,7 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff lint"</span>, <span class='nv'>tmp</span><span class='o'>)</span>, intern <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> 
 
-<span class='c'>#&gt; Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command 'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpOQYP6J\file3c14634554c8' had status 65</span>
-
-<span class='c'>#&gt;  [1] "== [C:\\Users\\emily\\AppData\\Local\\Temp\\RtmpOQYP6J\\file3c14634554c8] FAIL"</span>
-<span class='c'>#&gt;  [2] "L:   1 | P:  29 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [3] "L:   1 | P:  55 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [4] "L:   1 | P:  97 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [5] "L:   1 | P: 142 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [6] "L:   1 | P: 193 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [7] "L:   1 | P: 240 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [8] "L:   1 | P: 290 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt;  [9] "L:   1 | P: 336 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [10] "L:   1 | P: 378 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [11] "L:   1 | P: 423 | L014 | Inconsistent capitalisation of unquoted identifiers." </span>
-<span class='c'>#&gt; [12] "L:   1 | P: 444 | L016 | Line is too long."                                    </span>
-<span class='c'>#&gt; attr(,"status")</span>
-<span class='c'>#&gt; [1] 65</span>
+<span class='c'>#&gt; Error in system(paste("sqlfluff lint", tmp), intern = TRUE): 'sqlfluff' not found</span>
 
 <span class='c'># intern = TRUE is only useful for the sake of showing linter results for this blog post</span>
 <span class='c'># it is not needed for interactive use</span>
@@ -210,7 +195,7 @@ Finally, we are ready to use `sqlfluff`. The `lint` command highlights errors in
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff fix --no-safety -f"</span>, <span class='nv'>tmp</span><span class='o'>)</span><span class='o'>)</span>
 
-<span class='c'>#&gt; [1] 0</span>
+<span class='c'>#&gt; [1] 127</span>
 </code></pre>
 
 </div>
@@ -219,18 +204,7 @@ The results of these commands are a well-formatted and readable query.
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'>SELECT
-    species,
-    COUNT(*) AS n,
-    SUM(bill_length_mm) AS tot_bill_length_mm,
-    SUM(bill_depth_mm) AS tot_bill_depth_mm,
-    SUM(flipper_length_mm) AS tot_flipper_length_mm,
-    VARIANCE(bill_length_mm) AS var_bill_length_mm,
-    VARIANCE(bill_depth_mm) AS var_bill_depth_mm,
-    VARIANCE(flipper_length_mm) AS var_flipper_length_mm,
-    AVG(bill_length_mm) AS avg_bill_length_mm,
-    AVG(bill_depth_mm) AS avg_bill_depth_mm,
-    AVG(flipper_length_mm) AS avg_flipper_length_mm
+<pre class='chroma'><code class='language-r' data-lang='r'>SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS VAR_bill_length_mm, VARIANCE(bill_depth_mm) AS VAR_bill_depth_mm, VARIANCE(flipper_length_mm) AS VAR_flipper_length_mm, AVG(bill_length_mm) AS AVG_bill_length_mm, AVG(bill_depth_mm) AS AVG_bill_depth_mm, AVG(flipper_length_mm) AS AVG_flipper_length_mm
 FROM penguins
 GROUP BY species
 </code></pre>
@@ -281,7 +255,7 @@ Following the same process as before, we can convert this to a SQL query.
 <span class='nf'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='o'>(</span><span class='nv'>query</span>, <span class='nv'>tmp</span><span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/r/base/system.html'>system</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='s'>"sqlfluff fix --no-safety -f"</span>, <span class='nv'>tmp</span><span class='o'>)</span><span class='o'>)</span>
 
-<span class='c'>#&gt; [1] 0</span>
+<span class='c'>#&gt; [1] 127</span>
 </code></pre>
 
 </div>
@@ -290,71 +264,7 @@ The following query shows the basic results. In this case, the `sqlfluff` defaul
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'>SELECT
-    species,
-    AVG(
-        CASE
-            WHEN
-                (year = 2009) THEN (bill_length_mm)
-            WHEN NOT(year = 2009) THEN (0.0)
-        END
-    ) AS bill_length_mm_in09,
-    AVG(
-        CASE
-            WHEN
-                (year = 2009) THEN (bill_depth_mm)
-            WHEN NOT(year = 2009) THEN (0.0)
-        END
-    ) AS bill_depth_mm_in09,
-    AVG(
-        CASE
-            WHEN
-                (year = 2009) THEN (flipper_length_mm)
-            WHEN NOT(year = 2009) THEN (0.0)
-        END
-    ) AS flipper_length_mm_in09,
-    AVG(
-        CASE
-            WHEN
-                (year = 2008) THEN (bill_length_mm)
-            WHEN NOT(year = 2008) THEN (0.0)
-        END
-    ) AS bill_length_mm_in08,
-    AVG(
-        CASE
-            WHEN
-                (year = 2008) THEN (bill_depth_mm)
-            WHEN NOT(year = 2008) THEN (0.0)
-        END
-    ) AS bill_depth_mm_in08,
-    AVG(
-        CASE
-            WHEN
-                (year = 2008) THEN (flipper_length_mm)
-            WHEN NOT(year = 2008) THEN (0.0)
-        END
-    ) AS flipper_length_mm_in08,
-    AVG(
-        CASE
-            WHEN
-                (year = 2007) THEN (bill_length_mm)
-            WHEN NOT(year = 2007) THEN (0.0)
-        END
-    ) AS bill_length_mm_in07,
-    AVG(
-        CASE
-            WHEN
-                (year = 2007) THEN (bill_depth_mm)
-            WHEN NOT(year = 2007) THEN (0.0)
-        END
-    ) AS bill_depth_mm_in07,
-    AVG(
-        CASE
-            WHEN
-                (year = 2007) THEN (flipper_length_mm)
-            WHEN NOT(year = 2007) THEN (0.0)
-        END
-    ) AS flipper_length_mm_in07
+<pre class='chroma'><code class='language-r' data-lang='r'>SELECT species, AVG(CASE WHEN (year = 2009) THEN (bill_length_mm) WHEN NOT(year = 2009) THEN (0.0) END) AS bill_length_mm_in09, AVG(CASE WHEN (year = 2009) THEN (bill_depth_mm) WHEN NOT(year = 2009) THEN (0.0) END) AS bill_depth_mm_in09, AVG(CASE WHEN (year = 2009) THEN (flipper_length_mm) WHEN NOT(year = 2009) THEN (0.0) END) AS flipper_length_mm_in09, AVG(CASE WHEN (year = 2008) THEN (bill_length_mm) WHEN NOT(year = 2008) THEN (0.0) END) AS bill_length_mm_in08, AVG(CASE WHEN (year = 2008) THEN (bill_depth_mm) WHEN NOT(year = 2008) THEN (0.0) END) AS bill_depth_mm_in08, AVG(CASE WHEN (year = 2008) THEN (flipper_length_mm) WHEN NOT(year = 2008) THEN (0.0) END) AS flipper_length_mm_in08, AVG(CASE WHEN (year = 2007) THEN (bill_length_mm) WHEN NOT(year = 2007) THEN (0.0) END) AS bill_length_mm_in07, AVG(CASE WHEN (year = 2007) THEN (bill_depth_mm) WHEN NOT(year = 2007) THEN (0.0) END) AS bill_depth_mm_in07, AVG(CASE WHEN (year = 2007) THEN (flipper_length_mm) WHEN NOT(year = 2007) THEN (0.0) END) AS flipper_length_mm_in07
 FROM penguins
 GROUP BY species
 </code></pre>

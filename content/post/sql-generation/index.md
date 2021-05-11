@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Generating SQL with {dbplyr} and sqlfluff"
 subtitle: ""
-summary: "Using the tidyverse's expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts. *(Image source `techdaily.ca`)*"
+summary: "Using the tidyverse's expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts. *(Image source [techdaily.ca](techdaily.ca))*"
 authors: []
 tags: [rstats, data, sql, tutorial]
 categories: [rstats, data, sql,tutorial]
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 1c9975fc1214c3c5
+rmd_hash: e3dd6a5da25223d5
 
 ---
 

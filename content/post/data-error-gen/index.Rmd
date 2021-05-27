@@ -9,7 +9,7 @@ categories: [data]
 date: 2021-05-27
 lastmod: 2021-05-27
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image

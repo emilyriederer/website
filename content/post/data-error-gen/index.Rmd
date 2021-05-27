@@ -201,7 +201,7 @@ Suppose the e-commerce company in question offers three shipping speeds at check
 - These features of the data might behave inconsistently across time due to seasonality (e.g. no shipping on weekends or federal holidays), so heuristics developed to clean the data based on a small number of observations could fail
 - From an analytical perspective, orders with faster shipping would be disproportionately overrepresented in the "tail" (most recent) data. If shipping category correlated with other characteristics like total order spend, this could create an artificial trend in the data
 
-Once again, understanding that data is *collected* at point of shipment and reasoning how shipment timing varies and impacts *loading* is necessary for succesful validation.
+Once again, understanding that data is *collected* at point of shipment and reasoning how shipment timing varies and impacts *loading* is necessary for successful validation.
 
 ## Data Transformation
 

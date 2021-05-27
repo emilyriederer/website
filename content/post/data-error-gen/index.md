@@ -16,9 +16,9 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Photo by [Brett Jordan](https://unsplash.com/@brett_jordan) on Unsplash"
+  caption: "Example failure modes in data loading"
   focal_point: ""
-  preview_only: true
+  preview_only: false
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 0e9b33dac4d21697
+rmd_hash: 71ff1595350c0f24
 
 ---
 
@@ -49,12 +49,12 @@ However, DGPs are not only useful for modeling. **Conceptualizing the DGP of our
 
 Unfortunately, consumers of analytical data may not always be familiar with the craft of data production (including data engineering, data modeling, and data management). Without an understanding of the general flow of data processing between collection and publication to a data warehouse, data consumers are less able to theorize about failure modes. Instead, similarly to blindly fitting models without an underlying theory, consumers may default to cursory checks of summary statistics without hypotheses for the kind of errors they are trying to detect or how these checks might help them.
 
-This post explores the DGP of system-generated data and the common ways that these processes can introduce risks to data quality[^3]. Along the way, we will explore how this can lead to more principled analytical data validation.
+This post explores the DGP of system-generated data and the common ways that these processes can introduce risks to data quality. As we discuss data validation, we will make reference to the six dimensions of data quality defined by [DAMA](https://damauk.wildapricot.org/resources/Documents/DAMA%20UK%20DQ%20Dimensions%20White%20Paper2020.pdf): completeness, uniqueness, timeliness, validity, accuracy, and consistency. Along the way, we will explore how understanding how understanding key failure modes in the data production process can lead to more principled analytical data validation.
 
 The Four DGPs for Data Management
 ---------------------------------
 
-To better theorize about data quality issues, it's useful to think of four DGPs: the real-world DGP, the data collection/extraction DGP[^4], the data loading DGP, and the data transformation DGP.
+To better theorize about data quality issues, it's useful to think of four DGPs: the real-world DGP, the data collection/extraction DGP[^3], the data loading DGP, and the data transformation DGP.
 
 ![](dgp.png)
 
@@ -65,7 +65,7 @@ For example, consider the role of each of these four DGPs for e-commerce data:
 -   **Data loading DGP**: Data recorded by different systems is moved to a data warehouse for further processing through some sort of manual, scheduled, or orchestrated job. These different systems may make data available at different frequencies.
 -   **Data transformation DGP**: To arrive at that final data presentation requires creating a [data model](https://en.wikipedia.org/wiki/Data_model) to describe domain-specific attributes with key variables crafted with data transformations
 
-Or, consider the role of each of these four DGPs for subway ridership data[^5]:
+Or, consider the role of each of these four DGPs for subway ridership data[^4]:
 
 -   **Real-world DGP**: Riders are motivated to use public transportation to commute, run errands, or visit friends. Different motivating factors may cause different weekly and annual seasonality
 -   **Data collection DGP**: To ride the subway, riders go to a station and enter and exit through turnstiles. The mechanical rotation of the turnstile caused by a rider passing through is recorded
@@ -77,7 +77,7 @@ In the next sections, we'll explore how understanding key concepts about each of
 Data Collection
 ---------------
 
-Data collection can happen in countless different ways: experimentation, surveys, observation, sensors, etc. In many business settings, data is often extracted from source systems whose primary purpose is to execute some sort of real-world process.[^6] Such systems may naturally collect data for operational purposes or may be *instrumented* to collect and log data as they are used. This production data is then often extracted from a source system to an alternative location such as a data warehouse for analysis.
+Data collection can happen in countless different ways: experimentation, surveys, observation, sensors, etc. In many business settings, data is often extracted from source systems whose primary purpose is to execute some sort of real-world process.[^5] Such systems may naturally collect data for operational purposes or may be *instrumented* to collect and log data as they are used. This production data is then often extracted from a source system to an alternative location such as a data warehouse for analysis.
 
 One of the largest risks to data validity is not that the data itself is incorrect *given its stated purpose* but rather that users misconstrue the population or metrics it includes. Thus, understanding what systems are intending to capture, publish, and extract and how they chose to encode information for those observations is essential for data validation and subsequent analysis.
 
@@ -108,7 +108,7 @@ For example, an analyst might seek out a `logins` table in order to calculate th
 
 While humans have a shared intuition of what concepts like a user, session, or login are, the act of collecting data forces us to map that intuition onto an atomic event . Any misunderstanding in precisely what that definition is can have massive impact on the perceived data quality; "per event" data will appear heavily duplicated if it is assumed to be "per session" data.
 
-In some cases, this could be obvious to detect. If the system outputs fields that are incredibly specific (e.g. with some hyperbole, imagine a `step_in_the_login_process` field with values taking any of the human-readable descriptions of the fifteen processes listed in the image above), but depending how this source is organized (e.g. in contrast to above, if we only have fields like `sourceid` and `processid` with unintuitive alphanumeric encoded values) and defined, it could be nearly impossible to understand the nuances without uncovering quality metadata or talking to a data producer.[^7]
+In some cases, this could be obvious to detect. If the system outputs fields that are incredibly specific (e.g. with some hyperbole, imagine a `step_in_the_login_process` field with values taking any of the human-readable descriptions of the fifteen processes listed in the image above), but depending how this source is organized (e.g. in contrast to above, if we only have fields like `sourceid` and `processid` with unintuitive alphanumeric encoded values) and defined, it could be nearly impossible to understand the nuances without uncovering quality metadata or talking to a data producer.[^6]
 
 ### What Doesn't Count
 
@@ -139,9 +139,15 @@ Each of these encoding choices changes the definitions of appropriate completene
 Data Loading
 ------------
 
-Checking that data contains expected and *only* expected records (that is, completeness, uniqueness, and timeliness) is one of the most common first steps in data validation. However, the superficially simple act of loading data into a data warehouse can introduce a variety of risks to data completeness which require different strategies to detect. Data loading errors can result in data that is stale, missing, duplicate, inconsistently up-to-date across sources, or complete but for only a subset of the range you think.
+Checking that data contains expected and *only* expected records (that is, completeness, uniqueness, and timeliness) is one of the most common first steps in data validation. However, the superficially simple act of loading data into a data warehouse or updating data between tables can introduce a variety of risks to data completeness which require different strategies to detect. Data loading errors can result in data that is stale, missing, duplicate, inconsistently up-to-date across sources, or complete but for only a subset of the range you think.
 
-While the data quality principles of completeness, uniqueness, and timeliness would suggest that records should exist once and only once, the reality of many haphazard data loading process means data may appear sometime between zero and a handful of times. Data loads can be manually executed, scheduled (like a [cron](https://en.wikipedia.org/wiki/Cron) job), or orchestrated (with a tool like [Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/)) -- each with their own challenges. For example, scheduled jobs risk executing before an upstream process has completed (resulting in stale or missing data); poorly orchestrated jobs may be prevented from working due to one missing dependency or might allow multiple stream to get out of sync (resulting in multisource missing data). Regardless of the method, all approaches must be carefully configured to handle failures gracefully to avoid creating duplicates, and the frequency at which they are executed may cause partial loading issues if it is incompatible with the granularity of the source data.
+While the data quality principles of **completeness**, **uniqueness**, and **timeliness** would suggest that records should exist once and only once, the reality of many haphazard data loading process means data may appear sometime between zero and a handful of times. Data loads can occur in many different ways. For example, they might be:
+
+-   manually executed
+-   scheduled (like a [cron](https://en.wikipedia.org/wiki/Cron) job)
+-   orchestrated (with a tool like [Airflow](https://airflow.apache.org/) or [Prefect](https://www.prefect.io/))
+
+No approach is free from challenges. For example, scheduled jobs risk executing before an upstream process has completed (resulting in stale or missing data); poorly orchestrated jobs may be prevented from working due to one missing dependency or might allow multiple stream to get out of sync (resulting in multisource missing data). Regardless of the method, all approaches must be carefully configured to handle failures gracefully to avoid creating duplicates, and the frequency at which they are executed may cause partial loading issues if it is incompatible with the granularity of the source data.
 
 ### Data Load Failure Modes
 
@@ -176,7 +182,7 @@ Another interesting aspect of multi-source data, is multiple sources can contrib
 
 ### Partial Loads
 
-Partial loads really are not data errors at all, but are still important to detect since they can jeopardize an analysis. A common scenario might occur if a job loads new data every 12 hours (say, data from the morning and afternoon of day n-1 loads on day n at 12AM and 12PM, respectively). An analyst retrieving data at 11AM may be concerned to see an approximate \~50% drop in sales in the past day, despite confirming that their data looks to be "complete" since the maximum record date is, in fact, day n-1.[^8]
+Partial loads really are not data errors at all, but are still important to detect since they can jeopardize an analysis. A common scenario might occur if a job loads new data every 12 hours (say, data from the morning and afternoon of day n-1 loads on day n at 12AM and 12PM, respectively). An analyst retrieving data at 11AM may be concerned to see an approximate \~50% drop in sales in the past day, despite confirming that their data looks to be "complete" since the maximum record date is, in fact, day n-1.[^7]
 
 ### Delayed or Transient Records
 
@@ -203,6 +209,8 @@ Once again, understanding that data is *collected* at point of shipment and reas
 Data Transformation
 -------------------
 
+Finally, once the data is roughly where we want it, it likely undergoes many transformations to translate all of the system-generated fields we discussed in data collection into dimensions more relevant to business users. Of course, the types of transformations that could be done are innumerable with far more variation than data loading. So, we'll just look at a few examples of common failure patterns.
+
 ### Pre-Aggregation
 
 Data transformations may include aggregating data up to higher levels of granularity for easier analysis. For example, a transformation might add up item-level purchase data to make it easier for an analyst to look at spend per *order* of a specific user.
@@ -228,7 +236,7 @@ Each approach has different implications on data consistency and usability.
 
 Using fields from the source simply is what it is -- there's no subjectivity or room for manual human error. If multiple tables come from the same source, it's likely but not guaranteed that they will be encoded in the same way.
 
-Coding transformations in the ETL process is easy for data producers. There's no need to coordinate across multiple processes or use cases, and the transformation can be immediately modified when needed. However, that same lack of coordination can lead to different results for fields that should be the same.
+Coding transformations in the ELT process is easy for data producers. There's no need to coordinate across multiple processes or use cases, and the transformation can be immediately modified when needed. However, that same lack of coordination can lead to different results for fields that should be the same.
 
 Alternatively, macros, UDFs, and look-up tables provided centralized ways to map source data inputs to desired analytical data outputs in a systemic and consistent way. Of course, centralization has its own challenges. If something in the source data changes, the process of updating a centralized UDF or look-up table may be slowed down by the need to seek consensus and collaborate. So, data is more *consistent* but potentially less *accurate*.
 
@@ -265,15 +273,13 @@ Similarly for data validation, data consumers cannot know everything about the d
 
 [^2]: The open-source text [*Modern Statistics for Modern Biology*](https://web.stanford.edu/class/bios221/book/Chap-Mixtures.html) by Susan Holmes and Wolfgang Huber contains more examples.
 
-[^3]: As we discuss data validation, we will make reference to the six dimensions of data quality defined by [DAMA](https://damauk.wildapricot.org/resources/Documents/DAMA%20UK%20DQ%20Dimensions%20White%20Paper2020.pdf): completeness, uniqueness, timeliness, validity, accuracy, and consistency.
+[^3]: I don't mean to imply statisticians do not regularly think about the data collection DGP! The rich literatures on missing data imputation, censored data in survival analysis, and non-response bias is survey data collection are just a few examples of how carefully statisticians think about how data collection impacts analysis. I chose to break it out here to discuss the more technical aspects of collection
 
-[^4]: I don't mean to imply statisticians do not regularly think about the data collection DGP! The rich literatures on missing data imputation, censored data in survival analysis, and non-response bias is survey data collection are just a few examples of how carefully statisticians think about how data collection impacts analysis. I chose to break it out here to discuss the more technical aspects of collection
+[^4]: Like NYC's infamously messy [turnstile data](http://web.mta.info/developers/turnstile.html). I don't claim to know precisely how this dataset is created, but many of the specific challenges it contains are highly relevant.
 
-[^5]: Like NYC's infamously messy [turnstile data](http://web.mta.info/developers/turnstile.html). I don't claim to know precisely how this dataset is created, but many of the specific challenges it contains are highly relevant.
+[^5]: As Angela Bass so aptly [writes](https://medium.com/@angebassa/data-alone-isnt-ground-truth-9e733079dfd4): "Data isn't ground truth. Data are artifacts of systems."
 
-[^6]: As Angela Bass so aptly [writes](https://medium.com/@angebassa/data-alone-isnt-ground-truth-9e733079dfd4): "Data isn't ground truth. Data are artifacts of systems."
+[^6]: Of course, this isn't the only potential type of issue in data collection. While *instrumentation* often leads to these definitional challenges, other types of data collection like *sensors* can have other types of challenges like systematically failing to capture certain observations. Consider, for example, bus ridership data collected as riders scan their pass upon entering. If students can ride free by showing the driver their student ID, these observations may be systemically not recorded. Again, relying on an *operational* system could lead *analytics* uses astray (like failing to account for peak usage times for this demographic.)
 
-[^7]: Of course, this isn't the only potential type of issue in data collection. While *instrumentation* often leads to these definitional challenges, other types of data collection like *sensors* can have other types of challenges like systematically failing to capture certain observations. Consider, for example, bus ridership data collected as riders scan their pass upon entering. If students can ride free by showing the driver their student ID, these observations may be systemically not recorded. Again, relying on an *operational* system could lead *analytics* uses astray (like failing to account for peak usage times for this demographic.)
-
-[^8]: Of course, this concern could be somewhat easily allayed if they then checked a timestamp field, but such a field might not exists or might not have been used for validation since its harder to anticipate the appropriate maximum timestamp than it is the maximum date.
+[^7]: Of course, this concern could be somewhat easily allayed if they then checked a timestamp field, but such a field might not exists or might not have been used for validation since its harder to anticipate the appropriate maximum timestamp than it is the maximum date.
 

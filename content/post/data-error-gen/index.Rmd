@@ -73,9 +73,11 @@ In the next sections, we'll explore how understanding key concepts about each of
 
 ## Data Collection
 
-Data collection can happen in countless different ways: experimentation, surveys, observation, sensors, etc. In many business settings, data is often extracted from source systems whose primary purpose is to execute some sort of real-world process.^[As Angela Bass so aptly [writes](https://medium.com/@angebassa/data-alone-isnt-ground-truth-9e733079dfd4): "Data isn't ground truth. Data are artifacts of systems."] Such systems may naturally collect data for operational purposes or may be *instrumented* to collect and log data as they are used. This production data is then often extracted from a source system to an alternative location such as a data warehouse for analysis.
+Data collection is necessarily the first step in data production, but the very goal of data collection: translating complex human concepts into tabular data records is fraught with error. Data collection is effectively dimensionality reduction, and just like statistical dimensionality reduction, it must sometimes sacrifice accuracy for clarity. 
 
-One of the largest risks to data validity is not that the data itself is incorrect *given its stated purpose* but rather that users misconstrue the population or metrics it includes. Thus, understanding what systems are intending to capture, publish, and extract and how they chose to encode information for those observations is essential for data validation and subsequent analysis. 
+This tradeoff makes data collection vulnerable to one of the largest risks to data validity: not that the data itself is incorrect *given its stated purpose* but rather that users misconstrue the population or metrics it includes. Thus, understanding what systems are intending to capture, publish, and extract and how they chose to encode information for those observations is essential for data validation and subsequent analysis. 
+
+Data collection can happen in countless different ways: experimentation, surveys, observation, sensors, etc. In many business settings, data is often extracted from source systems whose primary purpose is to execute some sort of real-world process.^[As Angela Bass so aptly [writes](https://medium.com/@angebassa/data-alone-isnt-ground-truth-9e733079dfd4): "Data isn't ground truth. Data are artifacts of systems."] Such systems may naturally collect data for operational purposes or may be *instrumented* to collect and log data as they are used. This production data is then often extracted from a source system to an alternative location such as a data warehouse for analysis.
 
 ### What Counts
 
@@ -203,7 +205,7 @@ Once again, understanding that data is *collected* at point of shipment and reas
 
 ## Data Transformation
 
-Finally, once the data is roughly where we want it, it likely undergoes many transformations to translate all of the system-generated fields we discussed in data collection into dimensions more relevant to business users. Of course, the types of transformations that could be done are innumerable with far more variation than data loading. So, we'll just look at a few examples of common failure patterns. 
+Finally, once the data is roughly where we want it, it likely undergoes many transformations to translate all of the system-generated fields we discussed in data collection into semantically-relevant dimensions for analytical consumers. Of course, the types of transformations that could be done are innumerable with far more variation than data loading. So, we'll just look at a few examples of common failure patterns. 
 
 ### Pre-Aggregation
 

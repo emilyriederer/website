@@ -21,9 +21,9 @@ organizations:
 bio: ""
 
 interests:
-- Reproducible Research
 - Causal Inference
-- Feature Engineering
+- Data Management and Innovation (from modeling to metric/feature engineering)
+- Reproducible Research and Analytical Tooling
 
 education:
   courses:
@@ -72,5 +72,7 @@ user_groups:
 Currently, I’m a Senior Analytics Manager at Capital One. My team focuses on reimagining our analytical infrastructure by building data products, elevating business analysis with novel data sources and statistical methods, and providing consultation and training to our partner teams.
 
 Previously, I earned degrees in Mathematics and Mathematical Decision Sciences (Stats / OR) at UNC Chapel Hill. At Carolina, I was a research assistant in the Department of Statistics & Operations Research and focused on testing the impact of Emergency Department patient flow strategies using discrete event simulation.
+
+In my free time, I enjoy working on open source projects, reviewing book proposals for [CRC Press](https://www.routledge.com/), and serving on the editorial board of [rOpenSci](https://ropensci.org/).
 
 When I’m not crunching numbers, I enjoy reading, weightlifting, and watching college basketball (Go Tar Heels!)

@@ -9,7 +9,7 @@ categories: [rstats, workflow, sql]
 date: 2021-07-17
 lastmod: 2021-07-17
 featured: false
-draft: false
+draft: true
 aliases:
 
 # Featured image
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 14316b849bcea254
+rmd_hash: 2c4cb58c52a78001
 
 ---
 
@@ -57,7 +57,13 @@ A connection is formed (in this case to a fake database that lives only in my co
 
 However, as queries get longer and more complex, this succinct solution becomes less attractive. Writing the query directly inside [`dbGetQuery()`](https://dbi.r-dbi.org/reference/dbGetQuery.html) blurs the line between "glue code" (rote connection and execution) and our more nuanced, problem-specific logic. This makes the latter harder to extract, share, and version.
 
-Below, I demonstrate a few alternatives that I find helpful in different circumstances such as reading queries that are saved separately (in different files or at web URLs) and forming increasingly complex query templates.
+Below, I demonstrate a few alternatives that I find helpful in different circumstances such as reading queries that are saved separately (in different files or at web URLs) and forming increasingly complex query templates. Specifically, we'll see how to:
+
+-   Read a query from a separate file
+-   Retrieve a query from a web URL
+-   Convert a query into a template
+-   Compose more complex queries from templates
+-   Store and access queries/templates from within packages
 
 Read query from separate file
 -----------------------------
@@ -321,7 +327,7 @@ This approach has some benefits such as making it easier to share queries across
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>dat</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://dbi.r-dbi.org/reference/dbGetQuery.html'>dbGetQuery</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='nv'>query</span><span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/r/base/readRDS.html'>saveRDS</a></span><span class='o'>(</span><span class='nv'>dat</span>, <span class='s'>"data.rds"</span><span class='o'>)</span>
-<span class='nf'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='o'>(</span><span class='nv'>query</span>, <span class='s'>"query-data.rds"</span><span class='o'>)</span>
+<span class='nf'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='o'>(</span><span class='nv'>query</span>, <span class='s'>"query-data.sql"</span><span class='o'>)</span>
 </code></pre>
 
 </div>

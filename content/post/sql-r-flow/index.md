@@ -6,10 +6,10 @@ summary: ""
 authors: []
 tags: [rstats, workflow, sql]
 categories: [rstats, workflow, sql]
-date: 2021-07-17
-lastmod: 2021-07-17
+date: 2021-07-14
+lastmod: 2021-07-14
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 2c4cb58c52a78001
+rmd_hash: 3076fb8a94762840
 
 ---
 
@@ -53,7 +53,7 @@ A prototypical example of forming and using a database connection with `DBI` mig
 
 </div>
 
-A connection is formed (in this case to a fake database that lives only in my computer's RAM), the `diamonds` dataset from the `ggplot2` package is written to the database (once again, this is for example purposes only; a real database would, of course, have data), and [`dbGetQuery()`](https://dbi.r-dbi.org/reference/dbGetQuery.html) executes a querying on the resulting table.
+A connection is formed (in this case to a fake database that lives only in my computer's RAM), the `diamonds` dataset from the `ggplot2` package is written to the database (once again, this is for example purposes only; a real database would, of course, have data), and [`dbGetQuery()`](https://dbi.r-dbi.org/reference/dbGetQuery.html) executes a query on the resulting table.
 
 However, as queries get longer and more complex, this succinct solution becomes less attractive. Writing the query directly inside [`dbGetQuery()`](https://dbi.r-dbi.org/reference/dbGetQuery.html) blurs the line between "glue code" (rote connection and execution) and our more nuanced, problem-specific logic. This makes the latter harder to extract, share, and version.
 
@@ -64,6 +64,7 @@ Below, I demonstrate a few alternatives that I find helpful in different circums
 -   Convert a query into a template
 -   Compose more complex queries from templates
 -   Store and access queries/templates from within packages
+-   Bonus: Data Testing
 
 Read query from separate file
 -----------------------------
@@ -123,9 +124,9 @@ Sometimes, you might prefer that your query not live in your project at all. For
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='kr'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='o'>(</span><span class='nv'><a href='http://r-dbi.github.io/DBI'>DBI</a></span><span class='o'>)</span>
 
 <span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RSQLite</span><span class='nf'>::</span><span class='nf'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='o'>(</span><span class='o'>)</span>, <span class='s'>":memory:"</span><span class='o'>)</span>
-<span class='nv'>url</span> <span class='o'>&lt;-</span> <span class='s'>"https://raw.githubusercontent.com/emilyriederer/dbtplyr/main/macros/across.sql"</span>
+<span class='nv'>url</span> <span class='o'>&lt;-</span> <span class='s'>"https://raw.githubusercontent.com/emilyriederer/website/master/content/post/sql-r-flow/query-cut.sql"</span>
 <span class='nv'>query</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span><span class='o'>(</span><span class='nv'>url</span><span class='o'>)</span>, collapse <span class='o'>=</span> <span class='s'>"\n"</span><span class='o'>)</span>
-<span class='c'>#dat &lt;- dbGetQuery(con, query)</span>
+<span class='nv'>dat</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://dbi.r-dbi.org/reference/dbGetQuery.html'>dbGetQuery</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='nv'>query</span><span class='o'>)</span>
 <span class='nv'>dat</span>
 
 <span class='c'>#&gt;         cut     n</span>
@@ -144,26 +145,11 @@ This works because the `query` variable simply contains our complete text file r
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nf'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='o'>(</span><span class='nv'>query</span><span class='o'>)</span>
 
-<span class='c'>#&gt; {% macro across(var_list, script_string, final_comma) %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt;   {% for v in var_list %}</span>
-<span class='c'>#&gt;   {{ script_string | replace('{{var}}', v) }}</span>
-<span class='c'>#&gt;   {%- if not loop.last %},{% endif %}</span>
-<span class='c'>#&gt;   {%- if loop.last and final_comma|default(false) %},{% endif %}</span>
-<span class='c'>#&gt;   {% endfor %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; {% endmacro %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; {% macro c_across(var_list, script_string) %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt;   {% if script_string | length &lt; 2 %}</span>
-<span class='c'>#&gt;     {{ var_list | join(script_string) }}</span>
-<span class='c'>#&gt;   {% else %}</span>
-<span class='c'>#&gt;   {% set vars = var_list | join(",") %}</span>
-<span class='c'>#&gt;   {{ script_string | replace('{{var}}', vars) }}</span>
-<span class='c'>#&gt;   {% endif %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; {% endmacro %}</span>
+<span class='c'>#&gt; select</span>
+<span class='c'>#&gt;   cut,</span>
+<span class='c'>#&gt;   count(*) as n</span>
+<span class='c'>#&gt; from diamonds</span>
+<span class='c'>#&gt; group by 1</span>
 </code></pre>
 
 </div>
@@ -174,30 +160,15 @@ Alternatively, in an institutional setting you may find that you need some sort 
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='kr'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='o'>(</span><span class='nv'><a href='https://httr.r-lib.org/'>httr</a></span><span class='o'>)</span>
 
-<span class='nv'>url</span> <span class='o'>&lt;-</span> <span class='s'>"https://raw.githubusercontent.com/emilyriederer/dbtplyr/main/macros/across.sql"</span>
+<span class='nv'>url</span> <span class='o'>&lt;-</span> <span class='s'>"https://raw.githubusercontent.com/emilyriederer/website/master/content/post/sql-r-flow/query-cut.sql"</span>
 <span class='nv'>query</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://httr.r-lib.org/reference/content.html'>content</a></span><span class='o'>(</span><span class='nf'><a href='https://httr.r-lib.org/reference/GET.html'>GET</a></span><span class='o'>(</span><span class='nv'>url</span><span class='o'>)</span><span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='o'>(</span><span class='nv'>query</span><span class='o'>)</span>
 
-<span class='c'>#&gt; {% macro across(var_list, script_string, final_comma) %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt;   {% for v in var_list %}</span>
-<span class='c'>#&gt;   {{ script_string | replace('{{var}}', v) }}</span>
-<span class='c'>#&gt;   {%- if not loop.last %},{% endif %}</span>
-<span class='c'>#&gt;   {%- if loop.last and final_comma|default(false) %},{% endif %}</span>
-<span class='c'>#&gt;   {% endfor %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; {% endmacro %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; {% macro c_across(var_list, script_string) %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt;   {% if script_string | length &lt; 2 %}</span>
-<span class='c'>#&gt;     {{ var_list | join(script_string) }}</span>
-<span class='c'>#&gt;   {% else %}</span>
-<span class='c'>#&gt;   {% set vars = var_list | join(",") %}</span>
-<span class='c'>#&gt;   {{ script_string | replace('{{var}}', vars) }}</span>
-<span class='c'>#&gt;   {% endif %}</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; {% endmacro %}</span>
+<span class='c'>#&gt; select</span>
+<span class='c'>#&gt;   cut,</span>
+<span class='c'>#&gt;   count(*) as n</span>
+<span class='c'>#&gt; from diamonds</span>
+<span class='c'>#&gt; group by 1</span>
 </code></pre>
 
 </div>
@@ -229,15 +200,15 @@ This query continues to count the number of diamonds in our dataset by their cut
 <span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RSQLite</span><span class='nf'>::</span><span class='nf'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='o'>(</span><span class='o'>)</span>, <span class='s'>":memory:"</span><span class='o'>)</span>
 <span class='nv'>template</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/readLines.html'>readLines</a></span><span class='o'>(</span><span class='s'>"template-cut.sql"</span><span class='o'>)</span>, collapse <span class='o'>=</span> <span class='s'>"\n"</span><span class='o'>)</span>
 <span class='nv'>query</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://glue.tidyverse.org/reference/glue.html'>glue</a></span><span class='o'>(</span><span class='nv'>template</span>, max_price <span class='o'>=</span> <span class='m'>500</span><span class='o'>)</span>
-<span class='c'>#dat &lt;- dbGetQuery(con, query)</span>
+<span class='nv'>dat</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://dbi.r-dbi.org/reference/dbGetQuery.html'>dbGetQuery</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='nv'>query</span><span class='o'>)</span>
 <span class='nv'>dat</span>
 
-<span class='c'>#&gt;         cut     n</span>
-<span class='c'>#&gt; 1      Fair  1610</span>
-<span class='c'>#&gt; 2      Good  4906</span>
-<span class='c'>#&gt; 3     Ideal 21551</span>
-<span class='c'>#&gt; 4   Premium 13791</span>
-<span class='c'>#&gt; 5 Very Good 12082</span>
+<span class='c'>#&gt;         cut   n</span>
+<span class='c'>#&gt; 1      Fair   7</span>
+<span class='c'>#&gt; 2      Good 226</span>
+<span class='c'>#&gt; 3     Ideal 628</span>
+<span class='c'>#&gt; 4   Premium 215</span>
+<span class='c'>#&gt; 5 Very Good 653</span>
 </code></pre>
 
 </div>
@@ -328,6 +299,42 @@ This approach has some benefits such as making it easier to share queries across
 <pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>dat</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://dbi.r-dbi.org/reference/dbGetQuery.html'>dbGetQuery</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='nv'>query</span><span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/r/base/readRDS.html'>saveRDS</a></span><span class='o'>(</span><span class='nv'>dat</span>, <span class='s'>"data.rds"</span><span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/r/base/writeLines.html'>writeLines</a></span><span class='o'>(</span><span class='nv'>query</span>, <span class='s'>"query-data.sql"</span><span class='o'>)</span>
+</code></pre>
+
+</div>
+
+Bonus: Data Testing
+-------------------
+
+Although unrelated to the previous workflow, another nice aspect of working with SQL through R is the ability to use R's superior toolkit for creating small datasets on the fly for testing purposes.
+
+Mocking data to easily test SQL can be a tedious exercise since you generally need to write out the dataset row-by-row:
+
+<div class="highlight">
+
+<pre class='chroma'><code class='language-r' data-lang='r'>INSERT INTO test_tbl
+  ( x, y, z )
+VALUES
+  (1, 'A', NA), 
+  (2, 'B', 0), 
+  (3, 'C', 1);
+</code></pre>
+
+</div>
+
+This may be fine for a few rows, but it can easily get cumbersome when you require a mock dataset in the 10s or 20s of rows.
+
+Of course, R has many helpful functions for generating data including sequences, predefined vectors (e.g. `letters`), and random number generators. This can make it easy to quickly generate data and push it to a database for testing SQL scripts:
+
+<div class="highlight">
+
+<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>n</span> <span class='o'>&lt;-</span> <span class='m'>26</span>
+<span class='nv'>test_df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>
+  x <span class='o'>=</span> <span class='m'>1</span><span class='o'>:</span><span class='nv'>n</span>,
+  y <span class='o'>=</span> <span class='nv'>LETTERS</span>,
+  z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='m'>0</span>,<span class='m'>1</span>,<span class='kc'>NA</span><span class='o'>)</span>, <span class='nv'>n</span>, replace <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span>
+<span class='o'>)</span>
+<span class='nf'><a href='https://dbi.r-dbi.org/reference/dbWriteTable.html'>dbWriteTable</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='s'>"test_tbl"</span>, <span class='nv'>test_df</span><span class='o'>)</span>
 </code></pre>
 
 </div>

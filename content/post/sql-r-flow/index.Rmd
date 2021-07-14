@@ -6,10 +6,10 @@ summary: ""
 authors: []
 tags: [rstats, workflow, sql]
 categories: [rstats, workflow, sql]
-date: 2021-07-17
-lastmod: 2021-07-17
+date: 2021-07-14
+lastmod: 2021-07-14
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -42,7 +42,7 @@ dat <- dbGetQuery(con, "select cut, count(*) as n from diamonds group by 1")
 dat
 ```
 
-A connection is formed (in this case to a fake database that lives only in my computer's RAM), the `diamonds` dataset from the `ggplot2` package is written to the database (once again, this is for example purposes only; a real database would, of course, have data), and `dbGetQuery()` executes a querying on the resulting table. 
+A connection is formed (in this case to a fake database that lives only in my computer's RAM), the `diamonds` dataset from the `ggplot2` package is written to the database (once again, this is for example purposes only; a real database would, of course, have data), and `dbGetQuery()` executes a query on the resulting table. 
 
 However, as queries get longer and more complex, this succinct solution becomes less attractive. Writing the query directly inside `dbGetQuery()` blurs the line between "glue code" (rote connection and execution) and our more nuanced, problem-specific logic. This makes the latter harder to extract, share, and version. 
 
@@ -53,6 +53,7 @@ Below, I demonstrate a few alternatives that I find helpful in different circums
 - Convert a query into a template
 - Compose more complex queries from templates
 - Store and access queries/templates from within packages
+- Bonus: Data Testing
 
 ## Read query from separate file
 
@@ -90,9 +91,9 @@ library(DBI)
 
 con <- dbConnect(RSQLite::SQLite(), ":memory:")
 dbWriteTable(con, "diamonds", ggplot2::diamonds)
-url <- "https://raw.githubusercontent.com/emilyriederer/dbtplyr/main/macros/across.sql"
+url <- "https://raw.githubusercontent.com/emilyriederer/website/master/content/post/sql-r-flow/query-cut.sql"
 query <- paste(readLines(url), collapse = "\n")
-#dat <- dbGetQuery(con, query)
+dat <- dbGetQuery(con, query)
 dat
 ```
 
@@ -107,7 +108,7 @@ Alternatively, in an institutional setting you may find that you need some sort 
 ```{r}
 library(httr)
 
-url <- "https://raw.githubusercontent.com/emilyriederer/dbtplyr/main/macros/across.sql"
+url <- "https://raw.githubusercontent.com/emilyriederer/website/master/content/post/sql-r-flow/query-cut.sql"
 query <- content(GET(url))
 cat(query)
 ```
@@ -129,7 +130,7 @@ con <- dbConnect(RSQLite::SQLite(), ":memory:")
 dbWriteTable(con, "diamonds", ggplot2::diamonds)
 template <- paste(readLines("template-cut.sql"), collapse = "\n")
 query <- glue(template, max_price = 500)
-#dat <- dbGetQuery(con, query)
+dat <- dbGetQuery(con, query)
 dat
 ```
 
@@ -185,5 +186,32 @@ saveRDS(dat, "data.rds")
 writeLines(query, "query-data.sql")
 ```
 
+## Bonus: Data Testing
 
+Although unrelated to the previous workflow, another nice aspect of working with SQL through R is the ability to use R's superior toolkit for creating small datasets on the fly for testing purposes. 
+
+Mocking data to easily test SQL can be a tedious exercise since you generally need to write out the dataset row-by-row:
+
+```{sql, eval = FALSE}
+INSERT INTO test_tbl
+  ( x, y, z )
+VALUES
+  (1, 'A', NA), 
+  (2, 'B', 0), 
+  (3, 'C', 1);
+```
+
+This may be fine for a few rows, but it can easily get cumbersome when you require a mock dataset in the 10s or 20s of rows. 
+
+Of course, R has many helpful functions for generating data including sequences, predefined vectors (e.g. `letters`), and random number generators. This can make it easy to quickly generate data and push it to a database for testing SQL scripts:
+
+```{r}
+n <- 26
+test_df <- data.frame(
+  x = 1:n,
+  y = LETTERS,
+  z = sample(c(0,1,NA), n, replace = TRUE)
+)
+dbWriteTable(con, "test_tbl", test_df)
+```
 

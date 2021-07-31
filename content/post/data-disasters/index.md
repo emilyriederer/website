@@ -2,12 +2,12 @@
 output: hugodown::md_document
 title: "Data Disasters"
 subtitle: ""
-summary: "Pitfalls moving from Stats 101 to the real world"
+summary: "From academic training to real world data analysis"
 authors: []
 tags: [data]
 categories: [data]
-date: 2021-07-31
-lastmod: 2021-07-31
+date: 2021-08-01
+lastmod: 2021-08-01
 featured: false
 draft: false
 
@@ -25,7 +25,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["data-disasters"]
-rmd_hash: 6fe34bff4a975462
+rmd_hash: c10e33d2c1db8341
 
 ---
 

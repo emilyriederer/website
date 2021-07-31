@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Data Disasters"
 subtitle: ""
-summary: "A walkthrough of using the projmgr package for GitHub-based project management via R"
+summary: "Pitfalls moving from Stats 101 to the real world"
 authors: []
 tags: [data]
 categories: [data]

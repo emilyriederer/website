@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Data Disasters"
 subtitle: ""
-summary: "A walkthrough of using the projmgr package for GitHub-based project management via R"
+summary: "Pitfalls moving from Stats 101 to the real world"
 authors: []
 tags: [data]
 categories: [data]
@@ -25,7 +25,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: ["data-disasters"]
-rmd_hash: 05f290af4d98a1e3
+rmd_hash: 0fb6a947e05abbfb
 
 ---
 

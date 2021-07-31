@@ -1,6 +1,6 @@
 ---
 output: hugodown::md_document
-title: "Data Disasters"
+title: "Launching the Data Disasters project"
 subtitle: ""
 summary: "From academic training to real world data analysis"
 authors: []
@@ -25,7 +25,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: []
-rmd_hash: 31f26104134522c2
+rmd_hash: 6901073a7b780154
 
 ---
 

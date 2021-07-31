@@ -1,6 +1,6 @@
 ---
 output: hugodown::md_document
-title: "Data Disasters"
+title: "Launching the Data Disasters project"
 subtitle: ""
 summary: "From academic training to real world data analysis"
 authors: []

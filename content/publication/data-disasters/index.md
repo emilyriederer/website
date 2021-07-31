@@ -2,7 +2,7 @@
 title: "Data Disasters (work in progress)"
 authors:
 - Emily Riederer
-date: "2018-01-01T00:00:00Z"
+date: "2022-01-01T00:00:00Z"
 doi: ""
 
 # Schedule page publish date (NOT publication's date).

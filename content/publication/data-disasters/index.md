@@ -15,7 +15,7 @@ publishDate: "2017-01-01T00:00:00Z"
 publication_types: ["5"]
 
 # Publication name and optional abbreviated publication name.
-publication: "None Yet =)"
+publication: "Online Only"
 publication_short: "A real-world companion to statistics 101 exploring disasters in data management, analytical reasoning, and workflow through counterexample and data simulation."
 
 abstract: "A real-world companion to statistics 101 exploring disasters in data management, analytical reasoning, and workflow through counterexample and data simulation."
@@ -25,6 +25,7 @@ summary: "A real-world companion to statistics 101 exploring disasters in data m
 
 tags:
 - data
+- rstats
 featured: false
 
 links:
@@ -48,7 +49,7 @@ url_video: ''
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder. 
 image:
-  caption: Book cover
+  caption: Data disasters as an homage to Simpson's paradox
   focal_point: ""
   preview_only: true
 ---

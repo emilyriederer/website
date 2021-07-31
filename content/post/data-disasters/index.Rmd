@@ -4,8 +4,8 @@ title: "Data Disasters"
 subtitle: ""
 summary: "From academic training to real world data analysis"
 authors: []
-tags: [data]
-categories: [data]
+tags: [data, rstats]
+categories: [data, rstats]
 date: 2021-08-01
 lastmod: 2021-08-01
 featured: false
@@ -24,7 +24,7 @@ image:
 #   Simply enter your project's folder or file name without extension.
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
-projects: ["data-disasters"]
+projects: []
 ---
 
 Every summer, I'm always excited to start seeing a slew of job announcements from fresh college graduates announcing where they'll be beginning their careers as data professionals. This influx of new talent and energy is always an interesting opportunity to reflect on the beginning of my own career and, more specifically, the experience of moving between data analysis as its taught as an academic discipline and data analysis in the real world. 

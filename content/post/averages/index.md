@@ -26,31 +26,47 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: fbbf5e0b56c8ae58
+rmd_hash: 7ad42682eadc3e95
 
 ---
 
-Last month, I dusted off a training course that I first developed in 2018 to teach to a class of new hires at work. The content focuses on many types of *data disasters*[^1] that are often encountered when working with data -- from misunderstanding how data is structured and tools work to errors in causal inference and model building -- yet rarely taught in stats training.
+Last month, I dusted off a training course that I first developed in 2018 to teach to a class of new hires at work. The content focuses on many types of *data disasters*[^1] that are often encountered when working with data -- from misunderstanding how data is structured pr how tools are meant to work, to errors in causal interpretation and model building -- yet rarely taught in stats training.
 
-This year, however, the material felt a bit different, and it was not simply because (for now the second year) I was sitting alone in a room all afternoon rambling to myself and a Zoom screen about all the ways everything can go wrong.
+This year, however, the material felt a bit different, and it was not simply because (for the second year) I was sitting alone in a room all afternoon rambling to myself and a Zoom screen about all the ways everything can go wrong and how you really can't ever trust anything (in data, that is.)
 
-{{&lt; tweet 1305666403824021507 &gt;}}
+<blockquote class="twitter-tweet">
+<p lang="en" dir="ltr">
+Teaching an intro data analysis class tomorrow which means I'll be sitting alone in a room by myself for three hours and talking at my computer screen about how numbers can lie to you. Just another normal, healthy 2020 thing <a href="https://t.co/u6nKfLhaxj">pic.twitter.com/u6nKfLhaxj</a>
+</p>
+--- Emily Riederer (@EmilyRiederer) <a href="https://twitter.com/EmilyRiederer/status/1305666403824021507?ref_src=twsrc%5Etfw">September 15, 2020</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-This year, the material took on a whole new level of gravity. In a nutshell, as I walked through my taxonomy and examples of data disasters, one of my underlying message had always been that stats education focuses on the "complex" things (e.g. proving asymptotic convergence) but simple things can also be hard and important. However, as the pandemic has evolved over the last year and a half, more highly important data analysis has been done in the open than ever before, and much of it has unsurprisingly hit many of the snags one would when working with messy, inconsistent, ever-changing, observational data.
+This year, the material took on a whole new level of gravity. As I walked through my taxonomy and examples of data disasters, one of my underlying message had always been that stats education focuses on the "complex" things (e.g. proving asymptotic convergence) but simple things can also be hard and important. However, as the pandemic has evolved over the last two years, more highly important data processing has been done in the open and on the fly than ever before, and much of it has unsurprisingly hit many of the snags one would when working with messy, inconsistent, ever-changing, observational data.
 
-As I walked through the course, I found myself thinking about many pandemic-related examples for every "disasters" which all felt more urgent and timely than the industry-specific examples that I had concocted. In this post, I walk through just one such example of simple things that are hard. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, (possibly BI tools), independence assumptions, de Moivre's equation, and sampling bias.
+As I walked through the course, I found myself thinking about many pandemic-related examples for every "disasters" which all felt more urgent and timely than the industry-specific examples that I had concocted. In this post, I walk through just one such example of simple things that are hard. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, the definition of the average, sampling variability, independence assumptions, and selection bias.
 
 What happened?
 --------------
 
+A [local news article](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) explains that the seven-day test positivity rate was being calculated as the average of daily positivity rates. Instead, the methodology was changed to calculate a single rolling weekly rate:
+
 > "The change to the methodology is how we calculate the seven-day positivity rate for counties. In the past, similar to many states, we've added each day's positivity rate for seven days and divided by seven to obtain the week's positivity rate. Now we will add all of the positive tests for the week and divide by the total tests done that week to determine the week's positivity rate. This will help to minimize the effect that a high variability in the number of tests done each day can have on the week's overall positivity, especially for our smaller counties."
+
+That is, the decision was made to move from `avg( n_positive / n_tests )` to `sum( n_positive ) / sum(n_tests)`.
+
+While the article states that the change would not have historically changed any decision-making, this metric nontheless was tied to important decision making processes, thus raising the takes for its accuracy:
+
+> The changes could result in real-world differences for Hoosiers, because the state uses a county's positivity rate as one of the numbers to determine which restrictions that county will face. Those restrictions determine how many people may gather, among other items.
+
+At the outset, this may seem like a trivial change and the type of distinction one might not bother to make when throwing together a quick dashboard or report[^2] However, as we will examing step-by-step, this subtle mechanical difference actually carries with it a weight of statistical reasoning.
 
 What went wrong?
 ----------------
 
 ### What is the target?
 
-The first step to tracking a metric is defining the metric to track. This sounds obvious, but too often it is not. Metric design requires a lot of thought[^2] yet often glossed over even in important contexts such as medical research[^3]. In more complex problems, this will affect the research design and statistical methods we use to derive results, but in simpler cases like this, it can simply alter basic arithmetic.
+The first step to tracking a metric is defining the metric to track. This sounds obvious, but too often it is not. Metric design requires a lot of thought[^3] yet often glossed over even in important contexts such as medical research[^4]. In more complex problems, this will affect the research design and statistical methods we use to derive results, but in simpler cases like this, it can simply alter basic arithmetic.
 
 So, the problem here starts with the very definition of what we are trying to track:
 
@@ -111,7 +127,7 @@ And, alternatively, none of this matters if the number of tests are the same on 
 
 So, we probably used the wrong type of average for the question at hand, but we probably could have gotten away with it if the sample sizes across days were not substantially different. We say how the sample size affects the weighting, but can it cause other statistical problems?
 
-Suppose for a minute, that this is a binomial setup where each test has an equal probability of coming back positive (it does not). We can simulate a number of draws from binomial distributions of different sample sizes, compute the sample proportion of successes, and inspect the mean and variance. Below, we confirm what we would expect that small samples produce unbiased but high variance estimates[^4].
+Suppose for a minute, that this is a binomial setup where each test has an equal probability of coming back positive (it does not). We can simulate a number of draws from binomial distributions of different sample sizes, compute the sample proportion of successes, and inspect the mean and variance. Below, we confirm what we would expect that small samples produce unbiased but high variance estimates[^5].
 
 <div class="highlight">
 
@@ -122,8 +138,8 @@ Suppose for a minute, that this is a binomial setup where each test has an equal
 <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span>
 
-<span class='c'>#&gt; [1] 0.489 0.500 0.499</span>
-<span class='c'>#&gt; [1] 0.158 0.051 0.022</span>
+<span class='c'>#&gt; [1] 0.496 0.499 0.499</span>
+<span class='c'>#&gt; [1] 0.156 0.049 0.022</span>
 </code></pre>
 
 </div>
@@ -136,7 +152,7 @@ If staring at summary statistics is uninspiring, we can wrap our minds around th
 
 </div>
 
-So, days with smaller samples are most likely to take the most extreme values which could yank an average in one direction *or the other* ephemerally[^5]. This alone is a bad situation for a metric of interest; however, it can't be the full story. The initial article implies that the positivity rate was being *consistently overestimated*, that is, biased.
+So, days with smaller samples are most likely to take the most extreme values which could yank an average in one direction *or the other* ephemerally[^6]. This alone is a bad situation for a metric of interest; however, it can't be the full story. The initial article implies that the positivity rate was being *consistently overestimated*, that is, biased.
 
 ### Is sample size suggestive of a problem?
 
@@ -326,11 +342,13 @@ but low sample days based on real world are probably also a sign of a different 
 
 [^1]: Similar to the long-form writing project I'm working in the open over [here](https://data-disasters.netlify.app/)
 
-[^2]: One framework for approaching metric design is eloquently explored by Sean Taylor in this essay: <a href="https://medium.com/@seanjtaylor/designing-and-evaluating-metrics-5902ad6873bf" class="uri">https://medium.com/@seanjtaylor/designing-and-evaluating-metrics-5902ad6873bf</a>
+[^2]: In fact, I suspect there is a side story here about some common BI tools making the computation of the former metric significantly easier than the latter. But, that is not something I can substantiate, so I will not get on that soapbox.
 
-[^3]: This new study cites many examples of poorly defined estimands (think metrics) from the BMJ: <a href="https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-021-05644-4" class="uri">https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-021-05644-4</a>
+[^3]: One framework for approaching metric design is eloquently explored by Sean Taylor in this essay: <a href="https://medium.com/@seanjtaylor/designing-and-evaluating-metrics-5902ad6873bf" class="uri">https://medium.com/@seanjtaylor/designing-and-evaluating-metrics-5902ad6873bf</a>
 
-[^4]: We also know this with standard statistical results and formulas, but it's more fun to see it.
+[^4]: This new study cites many examples of poorly defined estimands (think metrics) from the BMJ: <a href="https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-021-05644-4" class="uri">https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-021-05644-4</a>
 
-[^5]: As discussed at length in this Scientific American article: <a href="https://www.americanscientist.org/article/the-most-dangerous-equation" class="uri">https://www.americanscientist.org/article/the-most-dangerous-equation</a>
+[^5]: We also know this with standard statistical results and formulas, but it's more fun to see it.
+
+[^6]: As discussed at length in this Scientific American article: <a href="https://www.americanscientist.org/article/the-most-dangerous-equation" class="uri">https://www.americanscientist.org/article/the-most-dangerous-equation</a>
 

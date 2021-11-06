@@ -1,13 +1,13 @@
 ---
 output: hugodown::md_document
-title: "Draft"
+title: "Simple things that are hard and important"
 subtitle: ""
-summary: ""
+summary: "How metric definitions, ambiguous calculations, sample sizes, and domain knowledge make calculating a humble average a formidable and thought-deserving task"
 authors: []
 tags: []
 categories: [data]
-date: 2021-09-27
-lastmod: 2021-09-27
+date: 2021-11-07
+lastmod: 2021-11-07
 featured: false
 draft: false
 aliases:
@@ -16,9 +16,9 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: ""
+  caption: "Screenshot from Indiana's COVID dashboard (taken 2021-11-06)"
   focal_point: ""
-  preview_only: true
+  preview_only: false
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -28,7 +28,7 @@ image:
 projects: [""]
 ---
 
-Last month, I dusted off a training course that I first developed in 2018 to teach to a class of new hires at work. The content focuses on many types of *data disasters*^[Similar to the long-form writing project I'm working in the open over [here](https://data-disasters.netlify.app/)] that are often encountered when working with data -- from misunderstanding how data is structured pr how tools are meant to work, to errors in causal interpretation and model building -- yet rarely taught in stats training. 
+Back in September, I dusted off a training course that I first developed in 2018 to teach to a class of new hires at work. The content focuses on many types of *data disasters*^[Similar to the long-form writing project I'm working in the open over [here](https://data-disasters.netlify.app/)] that are often encountered when working with data -- from misunderstanding how data is structured pr how tools are meant to work, to errors in causal interpretation and model building -- yet rarely taught in stats training. 
 
 This year, however, the material felt a bit different, and it was not simply because (for the second year) I was sitting alone in a room all afternoon rambling to myself and a Zoom screen about all the ways everything can go wrong and how you really can't ever trust anything (in data, that is.)
 
@@ -36,7 +36,7 @@ This year, however, the material felt a bit different, and it was not simply bec
 
 This year, the material took on a whole new level of gravity. As I walked through my taxonomy and examples of data disasters, one of my underlying message had always been that stats education focuses on the "complex" things (e.g. proving asymptotic convergence) but simple things can also be hard and important. However, as the pandemic has evolved over the last two years, more highly important data processing has been done in the open and on the fly than ever before, and much of it has unsurprisingly hit many of the snags one would when working with messy, inconsistent, ever-changing, observational data. 
 
-As I walked through the course, I found myself thinking about many pandemic-related examples for every "disasters" which all felt more urgent and timely than the industry-specific examples that I had concocted. In this post, I walk through just one such example of simple things that are hard. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, the definition of the average, sampling variability, independence assumptions, and selection bias.
+As I walked through the course, I found myself thinking about many pandemic-related examples for every "disasters" which all felt more urgent and timely than the industry-specific examples that I had concocted. In this post, I walk through just one such example of simple things that are hard. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, metric calculation, sampling variability, and selection bias.
 
 ## What happened?
 
@@ -50,7 +50,7 @@ While the article states that the change would not have historically changed any
 
 > The changes could result in real-world differences for Hoosiers, because the state uses a county's positivity rate as one of the numbers to determine which restrictions that county will face. Those restrictions determine how many people may gather, among other items.
 
-At the outset, this may seem like a trivial change and the type of distinction one might not bother to make when throwing together a quick dashboard or report^[In fact, I suspect there is a side story here about some common BI tools making the computation of the former metric significantly easier than the latter. But, that is not something I can substantiate, so I will not get on that soapbox.] However, as we will examing step-by-step, this subtle mechanical difference actually carries with it a weight of statistical reasoning. 
+At the outset, this may seem like a trivial change and the type of distinction one might not bother to make when throwing together a quick dashboard or report^[In fact, I suspect there is a side story here about some common BI tools making the computation of the former metric significantly easier than the latter. But, that is not something I can substantiate, so I will not get on that soapbox.] However, as we will examine step-by-step, this subtle mechanical difference actually carries with it a weight of statistical reasoning. 
 
 ## What went wrong?
 
@@ -62,17 +62,17 @@ So, the problem here starts with the very definition of what we are trying to tr
 
 > average proportion of positive test results over the past seven days
 
-Now, that seems pretty specific. An average of a proportion with a clear numerator and denominator over a defined time horizon. Easy, right? Not so fast. There's more nuance than meets the eye in how we calculate *averages* and what technically "happened" in the *last seven days*.
+Now, at first glance, that may seems pretty specific. An average of a proportion with a clear numerator and denominator over a defined time horizon. Easy, right? Not so fast. There's more nuance than meets the eye in how we calculate *averages* and what technically "happened" in the *last seven days*.
 
 ### Average over what?
 
-At some point in elementary school, we were probably all taught that you calculate an average by adding up a bunch of numbers and dividing the total by the number of numbers we started with. That's not *wrong*, but it's actually more of a special case than a general rule. 
+At some point in primary school, you were probably taught that you calculate an average by adding up a bunch of numbers and dividing the total by the number of numbers we started with. That's not *wrong*, but it's actually more of a special case than a general rule. 
 
 Later on, we might have learned about the *weighted average* as a separate concept. There, instead of `sum(x) / count(x)`, we might have learned another formula like `sum( x * weight(x) ) / sum(weight(x))`. Of course, this isn't so much an extension as an abstraction (where normal arithmetic averages are recreated when the weight is set to 1 for all values of the number in question.)
 
 So, ultimately, all averages are weighted averages whether we acknowledge it or not. That, in turn, suggests that whenever we define a metric as an *average*, the obligatory next question is "the average over what?"
 
-What I suspect happened in the case from Indiana, is that they were taking unweighted arithmetic average of the test positivity proportions for the last seven days. That is, they were using the *average of days* instead of the *average over tests*. 
+Going back to the case from Indiana, they were taking "unweighted" arithmetic average of the test positivity *proportions* instead of the propotion of the *average*. Put another way, they were taking the *average of days* instead of the *average over tests*. 
 
 To see the difference, suppose there are 50 tests on day 1 with 20% positive and 100 tests on day 2 with 10% positivity. Averaging over days gives up a value of 15% and over tests a value of 13.3%
 
@@ -81,25 +81,18 @@ To see the difference, suppose there are 50 tests on day 1 with 20% positive and
 (avg_of_test <- (10 + 10) / (50 + 100))
 ```
 
-It's worth nothing that what's happening here is also mathematically equivallent to comparing the average of the proportions instead of the proportions of sums.
+Alternatively, none of this matters if the number of tests are the same on both days because then our weights are constant and we are back to the flat arithmetic average over observations (which in this case are days). We can see this if we allow day 1 and day 2 to have a 20% and 10% rate, respectively, but assume 100 tests occured on each day. 
 
 ```{r results = "hold"}
-(avg_of_props <- (10/50 + 10/100) / 2)
-(props_of_sums <- (10 + 10) / (50 + 100))
-```
-
-And, alternatively, none of this matters if the number of tests are the same on both days because then our weights are constant and we are back to the flat arithmetic average over observations (days).
-
-```{r results = "hold"}
-(avg_of_props <- (20/100 + 10/100) / 2)
-(props_of_sums <- (20 + 10) / (100 + 100))
+(avg_of_days <- (20/100 + 10/100) / 2)
+(avg_of_test <- (20 + 10) / (100 + 100))
 ```
 
 ### Does sample size cause problems?
 
-So, we probably used the wrong type of average for the question at hand, but we probably could have gotten away with it if the sample sizes across days were not substantially different. We say how the sample size affects the weighting, but can it cause other statistical problems? 
+So, we probably used the wrong type of average for the question at hand, but we probably could have gotten away with it if the sample sizes across days were not substantially different. Sample size clearly affects the weighting, but what other statistical issues does it cause? 
 
-Suppose for a minute, that this is a binomial setup where each test has an equal probability of coming back positive (it does not). We can simulate a number of draws from binomial distributions of different sample sizes, compute the sample proportion of successes, and inspect the mean and variance. Below, we confirm what we would expect that small samples produce unbiased but high variance estimates^[We also know this with standard statistical results and formulas, but it's more fun to see it.].
+Suppose for a minute, that this is a binomial setup where each test has an equal probability of coming back positive (if you're thinking "But it does not" -- don't worry, we're getting there). We can simulate a number of draws from binomial distributions of different sample sizes, compute the sample proportion of successes, and inspect the mean and variance. Below, we confirm what we would expect that small samples produce unbiased but high variance estimates^[We also know this with standard statistical results and formulas, but it's more fun to see it.].
 
 ```{r results = "hold"}
 p <- 0.5
@@ -110,177 +103,21 @@ vapply(samples, FUN = function(x) round(mean(x), 3), FUN.VALUE = numeric(1))
 vapply(samples, FUN = function(x) round(sd(x), 3), FUN.VALUE = numeric(1))
 ```
 
-If staring at summary statistics is uninspiring, we can wrap our minds around the extend of the difference with a plot.
+As we would expect, we see the means observed with a sample size of 10, 100, or 500 are roughly the same but smaller sample sizes produce a much wider distribution of values. 
 
-```{r echo = FALSE}
-library(ggplot2)
+So, days with smaller samples are most likely to take the most extreme values which could yank an average in one direction *or the other* ephemerally^[As discussed at length in this Scientific American article: https://www.americanscientist.org/article/the-most-dangerous-equation]. This alone is a bad situation for a metric of interest; however, despite the higher variance, small sample sizes will not induce *bias*. That is, we will be correct "on average" and small sample days are no more likely to be extreme in one direction or the other. 
 
-df <- data.frame(
-  s = unlist(lapply(size, FUN = function(x) rep(x,n))), 
-  x = unlist(samples))
+### Does sample size correlate with a problem? (On domain knowledge and bias)
 
-ggplot(data = df) +
-  aes(x = x, col = as.character(s)) +
-  geom_density() +
-  geom_vline(xintercept = p, col = 'darkgrey', linetype = 2) +
-  labs(
-    title = "Sampling Distribution for p = 0.5",
-    col = "Sample Size"
-  ) +
-  scale_x_continuous(breaks = seq(0, 1, 0.1), labels = seq(0, 1, 0.1)) +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    legend.position = "bottom"
-  )
-```
+The vagaries of sample size may not independently be causing this problem, but they do raise a few broader issues. First, "unweighted" arithmetic averages make the most sense when we can invoke statistics' favorite assumptions of "independent and identically distributed" and seek to use average to remove noise from the data.
 
-So, days with smaller samples are most likely to take the most extreme values which could yank an average in one direction *or the other* ephemerally^[As discussed at length in this Scientific American article: https://www.americanscientist.org/article/the-most-dangerous-equation]. This alone is a bad situation for a metric of interest; however, it can't be the full story. The initial article implies that the positivity rate was being *consistently overestimated*, that is, biased.
+However, this is where our domain knowledge of the problem comes to bear. Early in the pandemic, testing was hard to come by and testing delays were massive. Tests were often restricted in settings for those who were severely ill with *something* and, thus, more likely to be positive (e.g. those showing up at hospitals). It was particularly likely that commercial or government testing sites might tend to be more available on weekdays and less so on the weekends. So, lower-volume test days are likely correlated to days where the true positive rate *of the differentially-selected population being tested* was higher. 
 
-### Is sample size suggestive of a problem?
+In this environment, daily test rates are not identical and independently distributed. Instead, high test rates are positively correlated with low-volume test days, and low volume test days are too heavily weighted in day-averaged test positivity metrics. 
 
-The vagaries of sample size may not independently be causing this problem, but they do raise a few broader issues. First, unweighted arithmetic averages make the most sense when we can make statistics' favorite assumptions of "independent and identically distributed". If, in fact, we see large variances in sample size, that would suggest this is not the case. 
+## What went right?
 
-
-
-
-
-```{r results = "hold"}
-avg_of_ratios <- (10/100 + 90/100) / 2
-
-ratio_of_sums <- (10 + 90) / (100 + 100)
-
-avg_of_ratios == ratio_of_sums
-
-avg_of_ratios_uneq <- (10/100 + 180 / 200) / 2
-
-ratio_of_sums_uneq <- (10 + 180) / (100 + 200)
-
-avg_of_ratios_uneq == ratio_of_sums_uneq
-
-weightavg_of_ratios_uneq <- (100/300)*(10/100) + (200/300)*(180/200)
-
-ratio_of_sums_uneq == weightavg_of_ratios_uneq
-```
-
-```{r results = "hold"}
-df1 <- data.frame(
-  numer = c( 10,  90),
-  denom = c(100, 100)
-)
-
-with(df1, mean(numer)/mean(denom))
-with(df1, mean(numer / denom))
-```
-
-```{r results = "hold"}
-df2 <- data.frame(
-  numer = c( 10,  90*2),
-  denom = c(100, 100*2)
-)
-
-with(df2, mean(numer)/mean(denom))
-with(df2, mean(numer / denom))
-```
-
-
-## A sidenote on BI tools
-
-## Independence assumptions
-
-defining estimand forces us to think about what are we even doing here? 
-
-average can be for denoising or smoothing
-
-implicit assumption of iid if using for denoising; otherwise it's not just noise you're canceling out
-
-other time, you may not care if you are just going to treat everything the same anyway
-
-## Sample Size 
-
-if data is from same distribution, this could increase variance but shouldn't effect mean
-
-Recall that the standard deviation of sample proportion is $\sqrt(p*(1-p)/n)$
-
-link to discussions of sample size and different types of averages
-
-```{r}
-set.seed(123)
-
-# define simulation parameters ----
-## n: total draws from binomial distribution
-## p: proportion of successes
-p <- 0.5
-n <- 1000
-
-# sample from binomials of different size ----
-s010 <- rbinom(n,  10, p) /  10
-s100 <- rbinom(n, 100, p) / 100
-s500 <- rbinom(n, 500, p) / 500
-
-# set results as dataframe for inspection ----
-df <- data.frame(
-  s = rep(c(10, 100, 500), each = n),
-  x = c(s010, s100, s500)
-)
-```
-
-
-```{r}
-p <- 0.5
-n <- 1000
-size <- c(10, 100, 500)
-samples <- lapply(size, FUN = function(x) rbinom(n, x, p) / x)
-vapply(samples, function(x) round(mean(x), 3), numeric(1))
-vapply(samples, function(x) round(sd(x), 3), numeric(1))
-```
-
-
-```{r}
-aggregate(df$x, by = list(df$s), FUN = mean)
-aggregate(df$x, by = list(df$s), FUN = sd)
-```
-
-
-```{r}
-library(ggplot2)
-
-ggplot(data = df) +
-  aes(x = x, col = as.character(s)) +
-  geom_density() +
-  geom_vline(xintercept = p, col = 'darkgrey', linetype = 2) +
-  labs(
-    title = "Sampling Distribution for p = 0.5",
-    col = "Sample Size"
-  ) +
-  scale_x_continuous(breaks = seq(0, 1, 0.1), labels = seq(0, 1, 0.1)) +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    legend.position = "bottom"
-  )
-```
-
-```{r}
-p <- 0.5
-n <- c(rep(100, 2), rep(1000, 7))
-est <- lapply(n, FUN = function(x) rbinom(100, size = x, prob = p) / x)
-```
-
-
-## Bias
-
-## Conclusion
-
-
-
-
-
-then back to the data for why it matters. 
-
-
-
-but low sample days based on real world are probably also a sign of a different distribution (only very urgent cases get tested?) 
-
-
+It's never easy to say you're wrong, and if you particularly dislike admitting to being wrong, working in data will be rather painful. You will be wrong quite frequently. If you don't like being wrong, you can probably also appreciate how significantly not fun it must be to hold a press conference or write a press release about being wrong. However, the best way to be *right* is to never stop questioning your own methods or looking for ways to change or impprove.
 
 
 

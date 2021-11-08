@@ -1,24 +1,24 @@
 ---
 output: hugodown::md_document
-title: "Draft"
+title: "Why machine learning thinks I should stop eating vegetables"
 subtitle: ""
-summary: ""
+summary: "A personal experience with data products gone wrong"
 authors: []
-tags: [rstats, workflow]
-categories: []
-date: 2020-05-14
-lastmod: 2020-05-14
+tags: []
+categories: [data-disasters]
+date: 2021-11-10
+lastmod: 2021-11-10
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: ""
+  caption: "Application screenshot"
   focal_point: ""
-  preview_only: true
+  preview_only: false
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -27,3 +27,106 @@ image:
 #   Otherwise, set `projects = []`.
 projects: [""]
 ---
+
+The collapse of [Zillow Offers](https://www.nytimes.com/2021/11/02/business/zillow-q3-earnings-home-flipping-ibuying.html) last week reignited the dialogue about good and bad uses of machine learning in industry. Low-value or counterproductive applications are all too common, and they can pose a range of risks from financial loss (in the case of Zillow) to consumer harm. This discourse inspired me to brush off a half-written draft I've had for a while about a pandemic-era personal experience with bad and potentially harmful (but not to me specifically) machine learning.
+
+In this post, I will briefly overview some unexpected "automated advice" that a fitness app began to give me and my best guess as the underlying cause. This serves as just one more data point in the ever-growing corpus of cautionary tales of machine learning use cases.
+
+## Background 
+
+personal data collection during the pandemic
+
+did it with increasing laziness and disinterest
+
+two key findings:
+- never trust self report data
+
+## What happened? 
+
+I started putting some of the same stuff all the time because I'm lazy
+
+My app started telling me to not each vegetables
+
+![](bean.JPG)
+
+![](cauli.JPG)
+
+## What caused it?
+
+First, I really don't know
+
+Couldn't be "correlation" because of ZERO VARIANCE
+
+Pattern mining?
+
+### A digression on metrics
+
+That checks out if use a very naive interestingness metric
+
+support: frequency(X) / total observations
+
+confidence: support(X and Y) / support(X)
+
+lift: support(x and y) / support(x) * support(y)
+
+### A demo
+
+```{r}
+library(arules)
+
+# support: frequency(X) / n
+# confidence: support(x and y) / support(x)
+# lift: support(x and y) / (support(x) * support(y))
+
+basket <-
+  list(
+    c("beans", "hi"),
+    c("beans", "hi"),
+    c("beans", "hi"),
+    c("beans", "hi"),
+    c("beans", "hi"),
+    c("beans", "lo"),
+    c("beans", "lo"),
+    c("beans", "lo"),
+    c("beans", "lo"),
+    c("beans", "lo")
+  )
+
+# correlation? ----
+trans_df <- data.frame(
+  beans = rep(1, 5),
+  total = c(runif(5, 1.1, 1.5), runif(5, 0.7, 1))
+)
+with(trans_df, cor(beans, total))
+
+# association rules ----
+trans <- as(basket, "transactions")
+dim(trans)
+itemLabels(trans)
+summary(trans)
+image(trans)
+
+rules <- apriori(trans,
+                 parameter = list(support = 0.5, confidence = 0.5),
+                 appearance = list(rhs = "hi"))
+inspect(rules)
+```
+
+## Key Takeaways
+
+Do out-of-the-box algorithms work?
+Maybe kind of but probably not?
+Need to think about what you are doing! 
+
+Optimization is a fallacy
+Optimizing for whom? For what outcome? 
+Same with metrics -- what value judgements are doing into those?
+
+Would system work better if I wasn't a lazy and disengaged user?
+Probably, but don't assume data quality you don't have
+
+Should ML be giving automated health and diet advice at all?
+Similar concerns with diet websites/content served to ED patients
+
+
+

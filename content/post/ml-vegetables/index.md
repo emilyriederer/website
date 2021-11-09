@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 3c4f33228b7194bc
+rmd_hash: b84e2734fb6f144c
 
 ---
 
@@ -200,6 +200,8 @@ Do out-of-the-box algorithms work? Maybe kind of but probably not? Need to think
 Optimization is a fallacy Optimizing for whom? For what outcome? Same with metrics -- what value judgements are doing into those?
 
 Would system work better if I wasn't a lazy and disengaged user? Probably, but don't assume data quality you don't have
+
+Does the problem even make sense? Higher days would tend to be more anomalous (birthdays, Superbowls) Is this even a useful metric if it could be done? (Not causal so how would you act on it?)
 
 Should ML be giving automated health and diet advice at all? Similar concerns with diet websites/content served to ED patients
 

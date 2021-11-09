@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Why machine learning thinks I should stop eating vegetables"
 subtitle: ""
-summary: "A personal experience with data products gone wrong"
+summary: "A personal encounter with data products gone wrong"
 authors: []
 tags: []
 categories: [data-disasters]
@@ -16,9 +16,9 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Application screenshot"
+  caption: ""
   focal_point: ""
-  preview_only: false
+  preview_only: true
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b84e2734fb6f144c
+rmd_hash: 9ed4c2803b686382
 
 ---
 
@@ -37,31 +37,30 @@ In this post, I will briefly overview some unexpected "automated advice" that a 
 Background
 ----------
 
-personal data collection during the pandemic
+Early on in the pandemic, I started to engage in some personal data collection, including using a running app, a nutrition app, and a time-tracking app. This was motivated in equal if not greater part by giving my fingers something to do tapping away at different applications rather than envisioning any specific project or usage for said data. However, there were two unexpected benefits.
 
-did it with increasing laziness and disinterest
+First, it gave me an entirely new level of appreciation for what unreliable narrators individuals (like me!) are with self-reported data. Personal manual data entry is exceedingly uninteresting. I had zero incentive to lie -- no one would ever see this data but me! -- but nevertheless my reporting quality quickly devolved. Specifically, working with the nutrition app was incredibly boring so I started taking easy "shortcuts" which eroded any semblance of data quality. As an example that will become quite relevant shortly, it was far easier to copy the same thing from day-to-day than look up different foods. As a result, foods became metonyms for one another; any vegetable I ate was "encoded" as green beans and cauliflower because those had ended up on this list one day and I just kept copying them. Specifically, the important thing to know is that I had a few items logged *every single day in the same quantities*.
 
-two key findings: - never trust self report data
-
-What happened?
---------------
-
-I started putting some of the same stuff all the time because I'm lazy
-
-My app started telling me to not each vegetables
+Second, and related to the first, I came to learn that the app I was using was attempting to apply some sort of "intelligence" (by which, we cannot emphasize enough, means only automation) to make recommendations based on my sketchy inputs. Most curiously, on many occasions, the app seemed convinced that I should stop eating vegetables and warned of a "Negative pattern detected":
 
 ![](bean.JPG)
 
 ![](cauli.JPG)
 
+Upon tapping these curious warnings and venturing down the rabbit hole, it explained "We've noticed that on days you incorporate {food}, your total calories tend to be higher".
+
+![](featured.JPG)
+
+Uhh... okay?
+
 What caused it?
 ---------------
 
-First, I really don't know
+Naturally, I became intrigued was sort of algorithm-gone-wrong was convinced my life would be better off without vegetables. Of course, I cannot ever know the exact technology underlying this feature, but there were some intriguing clues.
 
-Couldn't be "correlation" because of ZERO VARIANCE
+I first thought about the most naive way possible that one might seek to identify such relationships. My first thought was somehow correlating the amount of different foods with total daily calories. This seemed like a reasonable culprit since correlation comes up by or before Chapter 3 in introductory statistics and is perhaps best known for masquerading as causation. However, my sloppy, lazy data collection helped rule out this quickly because I knew that there was **zero variance** in the amounts or incidences of these vegetables.
 
-Pattern mining?
+This fact of zero variance made me suspect that the actual quantities of the targetted items were not a factor in the method used. That is, it seemed likely that the approach being used was the result of some type of categorical data analysis. My next guess was that the suggestions were the result of [association rules](https://en.wikipedia.org/wiki/Association_rule_learning). ARs are notoriously sensitive to their evaluation metrics (which guides what type of patterns are considered "interesting") so this seemed like a likely culprit.
 
 ### A digression on metrics
 
@@ -90,104 +89,40 @@ lift: support(x and y) / support(x) \* support(y)
 <span class='c'>#&gt; </span>
 <span class='c'>#&gt;     abbreviate, write</span>
 
-<span class='c'># support: frequency(X) / n</span>
-<span class='c'># confidence: support(x and y) / support(x)</span>
-<span class='c'># lift: support(x and y) / (support(x) * support(y))</span>
-
-<span class='nv'>basket</span> <span class='o'>&lt;-</span>
+<span class='c'># create fake observations -----</span>
+<span class='nv'>log</span> <span class='o'>&lt;-</span>
   <span class='nf'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='o'>(</span>
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
-    <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"beans"</span>, <span class='s'>"lo"</span><span class='o'>)</span>
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"a"</span>, <span class='s'>"z"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"b"</span>, <span class='s'>"z"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"c"</span>, <span class='s'>"z"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"d"</span>, <span class='s'>"z"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"e"</span>, <span class='s'>"z"</span>, <span class='s'>"hi"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"f"</span>, <span class='s'>"w"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"g"</span>, <span class='s'>"w"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"h"</span>, <span class='s'>"w"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"i"</span>, <span class='s'>"w"</span>, <span class='s'>"lo"</span><span class='o'>)</span>,
+  <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='s'>"x"</span>, <span class='s'>"j"</span>, <span class='s'>"w"</span>, <span class='s'>"lo"</span><span class='o'>)</span>
   <span class='o'>)</span>
 
-<span class='c'># correlation? ----</span>
-<span class='nv'>trans_df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>
-  beans <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='o'>(</span><span class='m'>1</span>, <span class='m'>5</span><span class='o'>)</span>,
-  total <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/pkg/arules/man/combine.html'>c</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='o'>(</span><span class='m'>5</span>, <span class='m'>1.1</span>, <span class='m'>1.5</span><span class='o'>)</span>, <span class='nf'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='o'>(</span><span class='m'>5</span>, <span class='m'>0.7</span>, <span class='m'>1</span><span class='o'>)</span><span class='o'>)</span>
-<span class='o'>)</span>
-<span class='nf'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='o'>(</span><span class='nv'>trans_df</span>, <span class='nf'><a href='https://rdrr.io/r/stats/cor.html'>cor</a></span><span class='o'>(</span><span class='nv'>beans</span>, <span class='nv'>total</span><span class='o'>)</span><span class='o'>)</span>
+<span class='c'># convert to arules-specific transaction class ----</span>
+<span class='nv'>log_trans</span> <span class='o'>&lt;-</span> <span class='nf'>as</span><span class='o'>(</span><span class='nv'>log</span>, <span class='s'>"transactions"</span><span class='o'>)</span>
+<span class='nf'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='o'>(</span><span class='nv'>log_trans</span><span class='o'>)</span>
 
-<span class='c'>#&gt; Warning in cor(beans, total): the standard deviation is zero</span>
+<span class='c'>#&gt; [1] 10 15</span>
 
-<span class='c'>#&gt; [1] NA</span>
-
-<span class='c'># association rules ----</span>
-<span class='nv'>trans</span> <span class='o'>&lt;-</span> <span class='nf'>as</span><span class='o'>(</span><span class='nv'>basket</span>, <span class='s'>"transactions"</span><span class='o'>)</span>
-<span class='nf'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span><span class='o'>(</span><span class='nv'>trans</span><span class='o'>)</span>
-
-<span class='c'>#&gt; [1] 10  3</span>
-
-<span class='nf'><a href='https://rdrr.io/pkg/arules/man/itemMatrix-class.html'>itemLabels</a></span><span class='o'>(</span><span class='nv'>trans</span><span class='o'>)</span>
-
-<span class='c'>#&gt; [1] "beans" "hi"    "lo"</span>
-
-<span class='nf'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='o'>(</span><span class='nv'>trans</span><span class='o'>)</span>
-
-<span class='c'>#&gt; transactions as itemMatrix in sparse format with</span>
-<span class='c'>#&gt;  10 rows (elements/itemsets/transactions) and</span>
-<span class='c'>#&gt;  3 columns (items) and a density of 0.6666667 </span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; most frequent items:</span>
-<span class='c'>#&gt;   beans      hi      lo (Other) </span>
-<span class='c'>#&gt;      10       5       5       0 </span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; element (itemset/transaction) length distribution:</span>
-<span class='c'>#&gt; sizes</span>
-<span class='c'>#&gt;  2 </span>
-<span class='c'>#&gt; 10 </span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
-<span class='c'>#&gt;       2       2       2       2       2       2 </span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; includes extended item information - examples:</span>
-<span class='c'>#&gt;   labels</span>
-<span class='c'>#&gt; 1  beans</span>
-<span class='c'>#&gt; 2     hi</span>
-<span class='c'>#&gt; 3     lo</span>
-
-<span class='nf'><a href='https://rdrr.io/pkg/arules/man/image.html'>image</a></span><span class='o'>(</span><span class='nv'>trans</span><span class='o'>)</span>
-
-</code></pre>
-<img src="figs/unnamed-chunk-1-1.png" width="700px" style="display: block; margin: auto;" />
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>rules</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/arules/man/apriori.html'>apriori</a></span><span class='o'>(</span><span class='nv'>trans</span>,
-                 parameter <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='o'>(</span>support <span class='o'>=</span> <span class='m'>0.5</span>, confidence <span class='o'>=</span> <span class='m'>0.5</span><span class='o'>)</span>,
-                 appearance <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='o'>(</span>rhs <span class='o'>=</span> <span class='s'>"hi"</span><span class='o'>)</span><span class='o'>)</span>
-
-<span class='c'>#&gt; Apriori</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; Parameter specification:</span>
-<span class='c'>#&gt;  confidence minval smax arem  aval originalSupport maxtime support minlen</span>
-<span class='c'>#&gt;         0.5    0.1    1 none FALSE            TRUE       5     0.5      1</span>
-<span class='c'>#&gt;  maxlen target  ext</span>
-<span class='c'>#&gt;      10  rules TRUE</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; Algorithmic control:</span>
-<span class='c'>#&gt;  filter tree heap memopt load sort verbose</span>
-<span class='c'>#&gt;     0.1 TRUE TRUE  FALSE TRUE    2    TRUE</span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; Absolute minimum support count: 5 </span>
-<span class='c'>#&gt; </span>
-<span class='c'>#&gt; set item appearances ...[1 item(s)] done [0.00s].</span>
-<span class='c'>#&gt; set transactions ...[3 item(s), 10 transaction(s)] done [0.00s].</span>
-<span class='c'>#&gt; sorting and recoding items ... [3 item(s)] done [0.00s].</span>
-<span class='c'>#&gt; creating transaction tree ... done [0.00s].</span>
-<span class='c'>#&gt; checking subsets of size 1 2 done [0.00s].</span>
-<span class='c'>#&gt; writing ... [2 rule(s)] done [0.00s].</span>
-<span class='c'>#&gt; creating S4 object  ... done [0.00s].</span>
-
+<span class='c'># learn association rules ----</span>
+<span class='nv'>rules</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/pkg/arules/man/apriori.html'>apriori</a></span><span class='o'>(</span><span class='nv'>log_trans</span>,
+                 parameter  <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='o'>(</span>support <span class='o'>=</span> <span class='m'>0.5</span>, confidence <span class='o'>=</span> <span class='m'>0.5</span><span class='o'>)</span>,
+                 appearance <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='o'>(</span>rhs <span class='o'>=</span> <span class='s'>"hi"</span><span class='o'>)</span>,
+                 control    <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='o'>(</span>verbose <span class='o'>=</span> <span class='kc'>FALSE</span><span class='o'>)</span>
+                 <span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/pkg/arules/man/inspect.html'>inspect</a></span><span class='o'>(</span><span class='nv'>rules</span><span class='o'>)</span>
 
-<span class='c'>#&gt;     lhs        rhs  support confidence coverage lift count</span>
-<span class='c'>#&gt; [1] {}      =&gt; {hi} 0.5     0.5        1        1    5    </span>
-<span class='c'>#&gt; [2] {beans} =&gt; {hi} 0.5     0.5        1        1    5</span>
+<span class='c'>#&gt;     lhs      rhs  support confidence coverage lift count</span>
+<span class='c'>#&gt; [1] {}    =&gt; {hi} 0.5     0.5        1.0      1    5    </span>
+<span class='c'>#&gt; [2] {z}   =&gt; {hi} 0.5     1.0        0.5      2    5    </span>
+<span class='c'>#&gt; [3] {x}   =&gt; {hi} 0.5     0.5        1.0      1    5    </span>
+<span class='c'>#&gt; [4] {x,z} =&gt; {hi} 0.5     1.0        0.5      2    5</span>
 </code></pre>
 
 </div>

@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Why machine learning thinks I should stop eating vegetables"
 subtitle: ""
-summary: "A personal experience with data products gone wrong"
+summary: "A personal encounter with data products gone wrong"
 authors: []
 tags: []
 categories: [data-disasters]
@@ -16,9 +16,9 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Application screenshot"
+  caption: ""
   focal_point: ""
-  preview_only: false
+  preview_only: true
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -34,32 +34,33 @@ In this post, I will briefly overview some unexpected "automated advice" that a 
 
 ## Background 
 
-personal data collection during the pandemic
+Early on in the pandemic, I started to engage in some personal data collection, including using a running app, a nutrition app, and a time-tracking app. This was motivated in equal if not greater part by giving my fingers something to do tapping away at different applications rather than envisioning any specific project or usage for said data. However, there were two unexpected benefits. 
 
-did it with increasing laziness and disinterest
+First, it gave me an entirely new level of appreciation for what unreliable narrators individuals (like me!) are with self-reported data. Personal manual data entry is exceedingly uninteresting. I had zero incentive to lie -- no one would ever see this data but me! -- but nevertheless my reporting quality quickly devolved. Specifically, working with the nutrition app was incredibly boring so I started taking easy "shortcuts" which eroded any semblance of data quality. As an example that will become quite relevant shortly, it was far easier to copy the same thing from day-to-day than look up different foods. As a result, foods became metonyms for one another; any vegetable I ate was "encoded" as green beans and cauliflower because those had ended up on this list one day and I just kept copying them. Specifically, the important thing to know is that I had a few items logged *every single day in the same quantities*. 
 
-two key findings:
-- never trust self report data
-
-## What happened? 
-
-I started putting some of the same stuff all the time because I'm lazy
-
-My app started telling me to not each vegetables
+Second, and related to the first, I came to learn that the app I was using was attempting to apply some sort of "intelligence" (by which, we cannot emphasize enough, means only automation) to make recommendations based on my sketchy inputs. Most curiously, on many occasions, the app seemed convinced that I should stop eating vegetables and warned of a "Negative pattern detected":
 
 ![](bean.JPG)
 
 ![](cauli.JPG)
 
+Upon tapping these curious warnings and venturing down the rabbit hole, it explained "We've noticed that on days you incorporate {food}, your total calories tend to be higher".
+
+![](featured.JPG)
+
+Uhh... okay?
+
 ## What caused it?
 
-First, I really don't know
+Naturally, I became intrigued was sort of algorithm-gone-wrong was convinced my life would be better off without vegetables. Of course, I cannot ever know the exact technology underlying this feature, but there were some intriguing clues. 
 
-Couldn't be "correlation" because of ZERO VARIANCE
+I first thought about the most naive way possible that one might seek to identify such relationships. My first thought was somehow correlating the amount of different foods with total daily calories. This seemed like a reasonable culprit since correlation comes up by or before Chapter 3 in introductory statistics and is perhaps best known for masquerading as causation. However, my sloppy, lazy data collection helped rule out this quickly because I knew that there was **zero variance** in the amounts or incidences of these vegetables. 
 
-Pattern mining?
+This fact of zero variance made me suspect that the actual quantities of the targetted items were not a factor in the method used. That is, it seemed likely that the approach being used was the result of some type of categorical data analysis. My next guess was that the suggestions were the result of [association rules](https://en.wikipedia.org/wiki/Association_rule_learning). ARs are notoriously sensitive to their evaluation metrics (which guides what type of patterns are considered "interesting") so this seemed like a likely culprit.
 
 ### A digression on metrics
+
+
 
 That checks out if use a very naive interestingness metric
 
@@ -71,46 +72,38 @@ lift: support(x and y) / support(x) * support(y)
 
 ### A demo
 
+
 ```{r}
 library(arules)
 
-# support: frequency(X) / n
-# confidence: support(x and y) / support(x)
-# lift: support(x and y) / (support(x) * support(y))
-
-basket <-
+# create fake observations -----
+log <-
   list(
-    c("beans", "hi"),
-    c("beans", "hi"),
-    c("beans", "hi"),
-    c("beans", "hi"),
-    c("beans", "hi"),
-    c("beans", "lo"),
-    c("beans", "lo"),
-    c("beans", "lo"),
-    c("beans", "lo"),
-    c("beans", "lo")
+  c("x", "a", "z", "hi"),
+  c("x", "b", "z", "hi"),
+  c("x", "c", "z", "hi"),
+  c("x", "d", "z", "hi"),
+  c("x", "e", "z", "hi"),
+  c("x", "f", "w", "lo"),
+  c("x", "g", "w", "lo"),
+  c("x", "h", "w", "lo"),
+  c("x", "i", "w", "lo"),
+  c("x", "j", "w", "lo")
   )
 
-# correlation? ----
-trans_df <- data.frame(
-  beans = rep(1, 5),
-  total = c(runif(5, 1.1, 1.5), runif(5, 0.7, 1))
-)
-with(trans_df, cor(beans, total))
+# convert to arules-specific transaction class ----
+log_trans <- as(log, "transactions")
+dim(log_trans)
 
-# association rules ----
-trans <- as(basket, "transactions")
-dim(trans)
-itemLabels(trans)
-summary(trans)
-image(trans)
-
-rules <- apriori(trans,
-                 parameter = list(support = 0.5, confidence = 0.5),
-                 appearance = list(rhs = "hi"))
+# learn association rules ----
+rules <- apriori(log_trans,
+                 parameter  = list(support = 0.5, confidence = 0.5),
+                 appearance = list(rhs = "hi"),
+                 control    = list(verbose = FALSE)
+                 )
 inspect(rules)
 ```
+
 
 ## Key Takeaways
 

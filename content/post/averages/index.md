@@ -5,11 +5,11 @@ subtitle: ""
 summary: "How metric definitions, ambiguous calculations, sample sizes, and domain knowledge make calculating a humble average a formidable and thought-deserving task"
 authors: []
 tags: []
-categories: [data]
-date: 2021-11-07
-lastmod: 2021-11-07
+categories: [data-disasters]
+date: 2021-11-13
+lastmod: 2021-11-13
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: fa23665531858129
+rmd_hash: c5a4832555e42295
 
 ---
 
@@ -125,8 +125,8 @@ Suppose for a minute, that this is a binomial setup where each test has an equal
 <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span>
 <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span>
 
-<span class='c'>#&gt; [1] 0.506 0.499 0.500</span>
-<span class='c'>#&gt; [1] 0.155 0.050 0.022</span>
+<span class='c'>#&gt; [1] 0.504 0.503 0.500</span>
+<span class='c'>#&gt; [1] 0.158 0.052 0.023</span>
 </code></pre>
 
 </div>

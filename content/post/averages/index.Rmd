@@ -6,10 +6,10 @@ summary: "How metric definitions, ambiguous calculations, sample sizes, and doma
 authors: []
 tags: []
 categories: [data-disasters]
-date: 2021-11-07
-lastmod: 2021-11-07
+date: 2021-11-13
+lastmod: 2021-11-13
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image

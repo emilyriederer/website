@@ -5,7 +5,7 @@ subtitle: ""
 summary: "How metric definitions, ambiguous calculations, sample sizes, and domain knowledge make calculating a humble average a formidable and thought-deserving task"
 authors: []
 tags: []
-categories: [data]
+categories: [data-disasters]
 date: 2021-11-07
 lastmod: 2021-11-07
 featured: false

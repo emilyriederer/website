@@ -28,4 +28,102 @@ image:
 projects: [""]
 ---
 
+There comes a point in every data persons life 
 
+## Cases for and against
+
+**Case for:**
+
+- *Some checks can be more rigorous by group.* Consider a recency check (i.e. that the maximum date represented in the data is appropriately close to the present.) If the data loads from multiple sources (e.g. customer acquisitons from web and mobile perhaps logging to different source systems), the maximum value of the field could pass the check if any one source loaded, but unless the data is grouped in such a way that reflects different data sources and *each* group's maximum date is checked, stale data could go undetected.
+- *Some types of checks can only be expressed by group.* Consider a check for consecutive data values. If a table that measures some sort of user engagements, there might be fields for the `USER_ID` and `MONTHS_SINCE_ACQUISITION`. A month counter will most certainly *not* be strictly increasing across the entire dataset but absolutely should be monotonic within each user.
+- *Some checks are more semantically intuitive by group.* Consider a uniqueness check for the same example as above. The month counter is also not unique across the whole table but could be checked for uniqueness within each user. Group semantics would not be required to accomplish this; a simple `USER_ID x MONTHS_SINCE_ACQUISITION` composite variable could be produced and checked for uniqueness. However, it feels cumbersome and less semantically meaningful to derive additional fields just to fully check the properties of existing fields.
+
+**Case against:**
+
+- *Grouped checks are more computational expensive.* Partitioning and grouping can make data check operations more expensive by disabling certain computational shortcuts^[For example, the maximum of a set of numbers is the maximum of the maximums of the subsets. Thus, if my data is distributed, I can find the max by comparing only summary statistics from the distributed subsets instead of pulling all of the raw data back together.] and requiring more total data to be retained. This is particularly true if the data is indexed or partitioned along different dimensions than the groups used for checks. However, in many cases it could be a better use of time to more rigorously test recently loaded data as opposed to (or in conjunction with) running higher-level checks across larger swaths of data.
+- *Some grouped checks can be achieved in other ways.* This is really the same as the third bullet point above. We can make composite variables or use split-apply-combine approaches, but this implies grouped operations are far lesser than first-class citizens.
+
+## Survey
+
+[dbtutils](https://github.com/dbt-labs/dbt-utils) 
+
+8 out of 14
+
+- equal_rowcount **BY GROUP**
+- equality
+- expression_is_true 
+- recency       **BY GROUP**
+- at_least_one  **BY GROUP**
+- not_constant  **BY GROUP**
+- cardinality_equality  **BY GROUP**
+- unique_where  **BY GROUP**
+- not_null_where  
+- not_null_proportion **BY GROUP**
+- relationships_where
+- mutually_exclusive_ranges
+- unique_combination_of_columns **BY GROUP** (maybe - more for semantics than an actual coding difference)
+- accepted_range
+
+[Great Expectations](https://docs.greatexpectations.io/docs/reference/glossary_of_expectations)
+
+15 out of 37
+
+- expect_column_values_to_be_unique   **BY GROUP** (for semantics)
+- expect_column_values_to_not_be_null  
+- expect_column_values_to_be_null    
+- expect_column_values_to_be_of_type   
+- expect_column_values_to_be_in_type_list
+- expect_column_values_to_be_in_set
+- expect_column_values_to_not_be_in_set
+- expect_column_values_to_be_between      
+- expect_column_values_to_be_increasing   **BY GROUP**
+- expect_column_values_to_be_decreasing   **BY GROUP**
+- expect_column_value_lengths_to_be_between
+- expect_column_value_lengths_to_equal
+- expect_column_values_to_match_regex
+- expect_column_values_to_not_match_regex
+- expect_column_values_to_match_regex_list
+- expect_column_values_to_not_match_regex_list
+- expect_column_values_to_match_like_pattern
+- expect_column_values_to_not_match_like_pattern
+- expect_column_values_to_match_like_pattern_list
+- expect_column_values_to_not_match_like_pattern_list 
+- expect_column_values_to_match_strftime_format
+- expect_column_values_to_be_dateutil_parseable
+- expect_column_values_to_be_json_parseable
+- expect_column_values_to_match_json_schema
+- expect_column_distinct_values_to_be_in_set
+- expect_column_distinct_values_to_contain_set       **BY GROUP**
+- expect_column_distinct_values_to_equal_set        **BY GROUP**
+- expect_column_mean_to_be_between                 **BY GROUP**
+- expect_column_median_to_be_between               **BY GROUP**
+- expect_column_quantile_values_to_be_between      **BY GROUP**
+- expect_column_stdev_to_be_between               **BY GROUP**
+- expect_column_unique_value_count_to_be_between          **BY GROUP**
+- expect_column_proportion_of_unique_values_to_be_between  **BY GROUP**
+- expect_column_most_common_value_to_be_in_set  **BY GROUP**
+- expect_column_max_to_be_between               **BY GROUP**
+- expect_column_min_to_be_between               **BY GROUP**
+- expect_column_sum_to_be_between               **BY GROUP**
+
+[Monte Carlo](https://docs.getmontecarlo.com/docs/field-health-metrics)
+
+15 out of 17
+
+- Pct NUll  
+- Pct Unique
+- Pct Zero  
+- Pct Negative  
+- Min 
+- p20
+- p40
+- p60
+- p80
+- Mean
+- Std
+- Max
+- Pct Whitespace
+- Pct Integer
+- Pct "Null"/"None"
+- Pct Float
+- Pct UUID

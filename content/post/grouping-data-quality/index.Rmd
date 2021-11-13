@@ -28,7 +28,8 @@ image:
 projects: [""]
 ---
 
-There comes a point in every data persons life 
+
+
 
 ## Cases for and against
 

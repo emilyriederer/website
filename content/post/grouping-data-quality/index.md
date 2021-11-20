@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: a6cd04b6e4c1993d
+rmd_hash: 15948adad35f1c95
 
 ---
 
@@ -58,9 +58,9 @@ Given that this post is, to some extent, a feature request across all data quali
 
 **Grouped checks are more computational expensive.** Partitioning and grouping can make data check operations more expensive by disabling certain computational shortcuts[^3] and requiring more total data to be retained. This is particularly true if the data is indexed or partitioned along different dimensions than the groups used for checks. The extra time required to run more fine-grained checks could become intractable or at least unappealing, particularly in an interactive or continuous integration context. However, in many cases it could be a better use of time to more rigorously test recently loaded data as opposed to (or in conjunction with) running higher-level checks across larger swaths of data.
 
-**Some grouped checks can be achieved in other ways.** This is really the same argument as the third point discussed above. Some (but not all) of these checks can be mocked by creating composite variables or, in the case of `Great Expectation`'s python-based API, writing custom code to partition data before applying checks[^4]. However, there solutions seem to defy part of the benefits of these tools: semantically meaningful checks wrapped in readable syntax and ready for use out-of-the-box. This also implies that grouped operations are far less than first-class citizens. This also limits the ability to make use of some of the excellent functionality these tools offer for documenting data quality checks in metadata and reporting on their outcomes.
+**Some grouped checks can be achieved in other ways.** This is really the same argument as the third point discussed above. Some (but not all) of these checks can be mocked by creating composite variables, using other built-in features[^4], or, in the case of `Great Expectation`'s python-based API, writing custom code to partition data before applying checks[^5]. However, there solutions seem to defy part of the benefits of these tools: semantically meaningful checks wrapped in readable syntax and ready for use out-of-the-box. This also implies that grouped operations are far less than first-class citizens. This also limits the ability to make use of some of the excellent functionality these tools offer for documenting data quality checks in metadata and reporting on their outcomes.
 
-**Not doing grouped checks at all.** Perhaps grouped data checks seem excessive. After all, data quality checks do not, perhaps, aim to guarantee every field is 100% correct. Rather, they are higher-level metrics which aim to catch signals of deeper issues. My counterargument is largely based in the first use case listed above. Without testing data at the right level of granularity, checks could almost do more harm than good if they promote a false sense of data quality by masking issues.
+**Grouped data check might seem excessive.** After all, data quality checks do not, perhaps, aim to guarantee every field is 100% correct. Rather, they are higher-level metrics which aim to catch signals of deeper issues. My counterargument is largely based in the first use case listed above. Without testing data at the right level of granularity, checks could almost do more harm than good if they promote a false sense of data quality by masking issues.
 
 **"But we monitor our data with machine learning."** There's a fair amount of work currently (not necessarily with the tools that I've named) with using machine learning and anomaly detection approaches to detect data quality issues. Some might argue that these advanced approaches lessen the need for heavily tailor, user-specified data checks. Personally, I struggle to agree with that. I believe domain context can go a long way to solving data issues and is often worth the investment.
 
@@ -74,6 +74,8 @@ There's no such thing as a free lunch or a free feature enhancement. My point is
 **API bloat makes tools less navigable.** Any new feature has to be documented by developers and comprehended by users. Having too many "first-class citizen" features can lead to features being ignored, unknown, or misused. It's easy to point to any one feature in isolation and claim it is important; it's much harder to stare at a full backlog and decide where the benefits are worth the cost.
 
 **Incremental functionality adds more overhead.** Every new feature demands careful programming and testing. Beyond that, there's a substantial mental tax in thinking through how that feature needs to interact with existing functionality while, at the same time, preserving backwards compatibility.
+
+**Every feature built means a different one isn't.** As a software user, it's easy to have a great idea for a feature that should absolutely be added. That's a far different challenge than that faced by the developers and maintainers who must prioritize a rich backlog full of competing priorities.
 
 Survey of available tools
 -------------------------
@@ -165,5 +167,7 @@ Any of Monte Carlo's checks might be more sensitive to detecting changes with su
 
 [^3]: For example, the maximum of a set of numbers is the maximum of the maximums of the subsets. Thus, if my data is distributed, I can find the max by comparing only summary statistics from the distributed subsets instead of pulling all of the raw data back together.
 
-[^4]: This is less possible for tools like `dbt`/`dbt-utils` where tests are defined by SQL scripts. In this set-up, separate, similar testing macros would have to be defined.
+[^4]: For example, Great Expectations does offer conditional expectations which can be executed on manually-specified subsets of data. This could be a tractable solution for applying data checks to a small number of categorical variables, but less so for large or ill-defined categories like user IDs. More here: <a href="https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html" class="uri">https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html</a>
+
+[^5]: This is less possible for tools like `dbt`/`dbt-utils` where tests are defined by SQL scripts. In this set-up, separate, similar testing macros would have to be defined.
 

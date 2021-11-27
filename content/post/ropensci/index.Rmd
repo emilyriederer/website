@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Notes of leadership lessons from rOpenSci"
 subtitle: ""
-summary: "Building structures for success, delegating judiciously, and knowing your priorities"
+summary: "Building structures for success, defining clear roles, and knowing your priorities"
 authors: []
 tags: [rstats, notes]
 categories: [rstats, notes]
@@ -72,7 +72,7 @@ Finally, rOpenSci helps editors, reviewers, and authors weigh priorities correct
 
 There is no *requirement* to submit to rOpenSci, so the organization leads with influence and a shared sense of purpose as opposed to any formal type of power. However, this also suggests that there is some theoretical balance or tipping point wherein if the requirements of rOpenSci became too great (in terms of time, effort, or creative constraints), package developers would not submit to the review process and the whole effort would fall apart. 
 
-This highlight a contrast with my previous praise of standards: adding too many standards or requirements can scare people away. rOpenSci gracefully balances this line as well by helping editors and reviewers understand their place, priortize advocating for changes or updates that *really* matter, but not forcing authors to defer to some third party's internal definition of what's "good". (And providing them an excellent, secure forum to discuss on its Slack channel). 
+This highlight a contrast with my previous praise of standards: adding too many standards or requirements can scare people away. rOpenSci gracefully balances this line as well by helping editors and reviewers understand their place, priortize advocating for changes or updates that *really* matter, but not forcing authors to defer to some third party's internal definition of what's "good". (And providing them an excellent, secure forum to discuss on its Slack channel). Ultimately, this helps **give individuals autonomy and creative control** while still ensuring the collecting success of the credibility of rOpenSci's corpus of packages.
 
 For example, in my first review with rOpenSci, I differed in perspective from the author on the need for certain package dependecies. I was able to share my suggestions, allow him to take or discard what he saw fit, and then confirm with other more experiences reviewers that the package met the bar. Just because the way the author implemented his functionality was not the same way I might have (out of an infinite number of possible options) did not mean it was good or bad or a "make or break" moment for the tool. 
 

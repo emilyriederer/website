@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Make grouping a first-class citizen in data quality checks"
 subtitle: ""
-summary: "Advocating for a small tweak that could add a lot of value in emerging data quality tools"
+summary: "Which of these numbers doesn’t belong? -1, 0, 1, NA. You can't judge data quality without data context, so our tools should enable as much context as possible."
 authors: []
 tags: [data]
 categories: [data]
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 6de2024e25461046
+rmd_hash: 7bf09489c6bea0b9
 
 ---
 

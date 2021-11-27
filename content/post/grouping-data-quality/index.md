@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 7bf09489c6bea0b9
+rmd_hash: 69d64571858a8de2
 
 ---
 
@@ -213,13 +213,13 @@ Alternatives Considered
 
 Given that this post is, to some extent, a feature request across all data quality tools ever, it's only polite to discuss downsides and alternative solutions that I considered. Clearly, finer-grained checks incur a greater computational cost and could, in some cases, be achieved via other means.
 
-**Grouped checks are more computational expensive.** Partitioning and grouping can make data check operations more expensive by disabling certain computational shortcuts[^6] and requiring more total data to be retained. This is particularly true if the data is indexed or partitioned along different dimensions than the groups used for checks. The extra time required to run more fine-grained checks could become intractable or at least unappealing, particularly in an interactive or continuous integration context. However, in many cases it could be a better use of time to more rigorously test recently loaded data as opposed to (or in conjunction with) running higher-level checks across larger swaths of data.
-
-**Some grouped checks can be achieved in other ways.** This is really the same argument as the third point discussed above. Some (but not all) of these checks can be mocked by creating composite variables, using other built-in features[^7], or, in the case of `Great Expectation`'s python-based API, writing custom code to partition data before applying checks[^8]. However, there solutions seem to defy part of the benefits of these tools: semantically meaningful checks wrapped in readable syntax and ready for use out-of-the-box. This also implies that grouped operations are far less than first-class citizens. This also limits the ability to make use of some of the excellent functionality these tools offer for documenting data quality checks in metadata and reporting on their outcomes.
-
 **Grouped data check might seem excessive.** After all, data quality checks do not, perhaps, aim to guarantee every field is 100% correct. Rather, they are higher-level metrics which aim to catch signals of deeper issues. My counterargument is largely based in the first use case listed above. Without testing data at the right level of granularity, checks could almost do more harm than good if they promote a false sense of data quality by masking issues.
 
-**"But we monitor our data with machine learning."** There's a fair amount of work currently (not necessarily with the tools that I've named) with using machine learning and anomaly detection approaches to detect data quality issues. Some might argue that these advanced approaches lessen the need for heavily tailor, user-specified data checks. Personally, I struggle to agree with that. I believe domain context can go a long way to solving data issues and is often worth the investment.
+**Not all grains of data are equally likely to break.** Taking the previous point into account, we likely cannot check everything, so we ought to focus our attention on some combination of the most "important" errors and the most "likely" errors. In the subway example, turnstile-level failures are likely because each individual turnstile is a sensor that is independently involved in the *data collection process* and can break in its own unique ways. However, for something like a clickstream for different users on a website, the data collection process is centralized, so it would be less like (and infeasible to check) for individual customer-level data to break in dramatically different ways.
+
+**High-risk grouped data is possibly ungrouped further upstream.** Following the logic that grouped data is more dangerous if groups denote units responsible for their own data collection, in theory this data is being transmitted separately at some point in the pipeline. Thus, in some cases it could be checked before it is grouped. However, we cannot always get infinitely far upstream in the data pipeline as some pieces may be outside of our control or produced atomically by a third-party platform.
+
+**Some grouped checks can be achieved in other ways.** Some (but not all) of these checks can be mocked by creating composite variables, using other built-in features[^6], or writing custom checks [^7]. However, there solutions seem to defy part of the benefits of these tools: semantically meaningful checks wrapped in readable syntax and ready for use out-of-the-box. This also implies that grouped operations are far less than first-class citizens. This also limits the ability to make use of some of the excellent functionality these tools offer for documenting data quality checks in metadata and reporting on their outcomes.
 
 I also considered the possibility that this is a niche, personal need moreso than a general one because I work with a *lot* of panel data. However, I generally believe *most* data is nested in some way. I can at least confirm that I've not completely alone in this desire with a peak at GitHub issue feature requests in different data quality tools. For example, three stale stale GitHub issues on the `Great Expectations` repo ([1](https://github.com/great-expectations/great_expectations/issues/351), [2](https://github.com/great-expectations/great_expectations/issues/402), [3](https://github.com/great-expectations/great_expectations/issues/373)) request similar functionality.
 
@@ -227,6 +227,8 @@ Downsides
 ---------
 
 There's no such thing as a free lunch or a free feature enhancement. My point is in no way to criticize existing data quality tools that do not have this functionality. Designing any tool is a process of trade-offs, and it's only fair to discuss the downsides. These issues are exacerbated further when adding "just one more thing" to mature, heavily used tools as opposed to developing new ones.
+
+**Grouped checks are more computational expensive.** Partitioning and grouping can make data check operations more expensive by disabling certain computational shortcuts[^8] and requiring more total data to be retained. This is particularly true if the data is indexed or partitioned along different dimensions than the groups used for checks. The extra time required to run more fine-grained checks could become intractable or at least unappealing, particularly in an interactive or continuous integration context. However, in many cases it could be a better use of time to more rigorously test recently loaded data as opposed to (or in conjunction with) running higher-level checks across larger swaths of data.
 
 **API bloat makes tools less navigable.** Any new feature has to be documented by developers and comprehended by users. Having too many "first-class citizen" features can lead to features being ignored, unknown, or misused. It's easy to point to any one feature in isolation and claim it is important; it's much harder to stare at a full backlog and decide where the benefits are worth the cost.
 
@@ -371,9 +373,9 @@ Code Appendix
 
 [^5]: Transformations should probably never assume this. Any real ETL process using this data would like have to account for incompleteness in an automated fashion because it really is not a rare event. Again, we are simplifying here for the sake of example
 
-[^6]: For example, the maximum of a set of numbers is the maximum of the maximums of the subsets. Thus, if my data is distributed, I can find the max by comparing only summary statistics from the distributed subsets instead of pulling all of the raw data back together.
+[^6]: For example, Great Expectations does offer conditional expectations which can be executed on manually-specified subsets of data. This could be a tractable solution for applying data checks to a small number of categorical variables, but less so for large or ill-defined categories like user IDs. More here: <a href="https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html" class="uri">https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html</a>
 
-[^7]: For example, Great Expectations does offer conditional expectations which can be executed on manually-specified subsets of data. This could be a tractable solution for applying data checks to a small number of categorical variables, but less so for large or ill-defined categories like user IDs. More here: <a href="https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html" class="uri">https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html</a>
+[^7]: Like, in the case of `Great Expectation`'s python-based API, writing custom code to partition data before applying checks, or, in the case of `dbt`/`dbt-utils` writing a custom macro.
 
-[^8]: This is less possible for tools like `dbt`/`dbt-utils` where tests are defined by SQL scripts. In this set-up, separate, similar testing macros would have to be defined.
+[^8]: For example, the maximum of a set of numbers is the maximum of the maximums of the subsets. Thus, if my data is distributed, I can find the max by comparing only summary statistics from the distributed subsets instead of pulling all of the raw data back together.
 

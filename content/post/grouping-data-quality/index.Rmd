@@ -1,0 +1,291 @@
+---
+output: hugodown::md_document
+title: "Make grouping a first-class citizen in data quality checks"
+subtitle: ""
+summary: "Which of these numbers doesn’t belong? -1, 0, 1, NA. You can't judge data quality without data context, so our tools should enable as much context as possible."
+authors: []
+tags: [data]
+categories: [data]
+date: 2021-11-27
+lastmod: 2021-11-27
+featured: false
+draft: false
+aliases:
+
+# Featured image
+# To use, add an image named `featured.jpg/png` to your page's folder.
+# Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
+image:
+  caption: "Photo credit to [Greyson Joralemon](https://unsplash.com/@greysonjoralemon) on Unsplash"
+  focal_point: ""
+  preview_only: false
+
+# Projects (optional).
+#   Associate this post with one or more of your projects.
+#   Simply enter your project's folder or file name without extension.
+#   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
+#   Otherwise, set `projects = []`.
+projects: [""]
+---
+
+Which of these numbers doesn’t belong? -1, 0, 1, NA.
+
+It may be hard to tell. If the data in question should be non-negative, -1 is clearly wrong; if it should be complete, the NA is problematic; if it represents the signs to be used in summation, 0 is questionable. In short, there is no data quality without data context. 
+
+The past few years have seen an explosion in different solutions for monitoring in-production data quality. These tools, including software like `dbt` and `Great Expectations` as well as platforms like `Monte Carlo`, bring a more DevOps flavor to data production with important functionality like automated testing *within* pipelines (not just at the end), expressive and configurable semantics for common data checks, and more.
+
+However, despite all these features, I notice a common gap across the landscape which may limit the ability of these tools to encode richer domain context and detect common classes of data failures. I previously wrote about the importance of [validating data based on its data generating process](https://emilyriederer.netlify.app/post/data-error-gen/) -- both along the technical and conceptual dimensions. Following this logic, an important and lacking functionality^[With the exception of `pointblank` which kindly entertained an issue I opened on this topic: https://github.com/rich-iannone/pointblank/issues/300] across the data quality monitoring landscape, is the ability to readily apply checks separately to groups of data. On a quick survey, I count about 
+8/14 `dbt` tests (from the add-on [dbt-utils](https://github.com/dbt-labs/dbt-utils) package), 
+15/37 [Great Expectations](https://docs.greatexpectations.io/docs/reference/glossary_of_expectations) column tests, and 
+most all of the [Monte Carlo](https://docs.getmontecarlo.com/docs/field-health-metrics) field health metrics that would be improved with first-class grouping functionality. (Lists at the bottom of the post.) 
+
+Group-based checks can be important for fully articulating good "business rules" against which to assess data quality. For example, groups could reflect either computationally-relevant dimensions of the ETL process (e.g. data loaded from different sources) or semantically-relevant dimensions of the real-world process that our data captures (e.g. repeated measures pertaining to many individual customers, patients, product lines, etc.)
+
+In this post, I make my case for why grouping should be a first-class citizen in data quality tooling.
+
+## Use Cases
+
+There are three main use-cases for enabling easy data quality checks by group: checks that can only be expressed by group, checks that can be more rigorous by group, and checks that are more semantically intuitive by group. 
+
+**Some checks can be more rigorous by group.** Consider a recency check (i.e. that the maximum date represented in the data is appropriately close to the present.) If the data loads from multiple sources (e.g. customer acquisitions from web and mobile perhaps logging to different source systems), the maximum value of the field could pass the check if any one source loaded, but unless the data is grouped in such a way that reflects different data sources and *each* group's maximum date is checked, stale data could go undetected.
+
+**Some types of checks can only be expressed by group.** Consider a check for consecutive data values. If a table that measures some sort of user engagements, there might be fields for the `USER_ID` and `MONTHS_SINCE_ACQUISITION`. A month counter will most certainly *not* be strictly increasing across the entire dataset but absolutely should be monotonic within each user.
+
+**Some checks are more semantically intuitive by group.** Consider a uniqueness check for the same example as above. The month counter is also not unique across the whole table but could be checked for uniqueness within each user. Group semantics would not be required to accomplish this; a simple `USER_ID x MONTHS_SINCE_ACQUISITION` composite variable could be produced and checked for uniqueness. However, it feels cumbersome and less semantically meaningful to derive additional fields just to fully check the properties of existing fields. (But for the other two categories, this alone would not justify adding such new features.)
+
+These categories demonstrate the specific use cases for grouped data checks. However, there are also soft benefits. 
+
+Most prevalent, having group-based checks be first class citizens opens up a new [**pit of success**](https://english.stackexchange.com/questions/77535/what-does-falling-into-the-pit-of-success-mean)^[The "pit of success" is the idea that well-designed tools can help nudge people to do the "right" thing by default because its also the easiest. I first learned of it in a talk by Hadley Wickham, and it is originally attributed to Microsoft program manage Rico Mariani.]. If you believe, as do I, that this is a often a fundamentally important aspect of confirming data quality and not getting "false promises" (as in the first case where non-grouped checks are less rigorous), configuring checks this way should be as close to zero-friction as possible.
+
+## Demo: NYC turnstile data
+
+### Context
+
+To better motivate this need, we will look at a real-world example. For this, I turn to New York City's [subway turnstile data](http://web.mta.info/developers/turnstile.html) which I can always count on to have plenty of data quality quirks (which, to be clear, I do not say as a criticism. There's nothing unexpected about this in real-world "data as residue" data.) 
+
+Specifically, we'll pull down data extracts for roughly the first quarter of 2020 (published on Jan 11 - April 11, corresponding to weeks ending Jan 10 - April 10.)^[Code for this pull is at the bottom of the post.]
+
+```{r data-pull, echo = FALSE, eval = FALSE}
+# data source: http://web.mta.info/developers/turnstile.html
+library(ggplot2)
+library(readr)
+
+# define read function with schema ----
+read_data <- function(url) {
+  
+  readr::read_csv(url,
+                  col_names = TRUE,
+                  col_types =
+                    cols(
+                      `C/A` = col_character(),
+                      UNIT = col_character(),
+                      SCP = col_character(),
+                      STATION = col_character(),
+                      LINENAME = col_character(),
+                      DIVISION = col_character(),
+                      DATE = col_date(format = "%m/%d/%Y"),
+                      TIME = col_time(format = ""),
+                      DESC = col_character(),
+                      ENTRIES = col_integer(),
+                      EXITS = col_integer()
+                    ))
+  
+}
+
+# ridership data ----
+dates <- seq.Date(from = as.Date('2020-01-11'), to =, as.Date('2020-04-11'), by = '7 days')
+dates_str <- format(dates, format = '%y%m%d')
+dates_url <- sprintf('http://web.mta.info/developers/data/nyct/turnstile/turnstile_%s.txt', dates_str)
+datasets <- lapply(dates_url, FUN = read_data)
+full_data <- do.call(rbind, datasets)
+full_data <- full_data[full_data$DESC == "REGULAR",]
+names(full_data)[1] <- "CA"
+```
+
+```{r eval = FALSE, echo = FALSE}
+saveRDS(full_data, "full_data.rds")
+```
+
+```{r echo = FALSE}
+full_data <- readRDS("full_data.rds")
+```
+
+This data contains `r nrow(full_data)` records, corresponding to one unique record per unique control area (`CA`), turnstile unit (`UNIT`), and individual turnstile device (`SCP`) at internals of four hours of the day.
+
+```{r message = FALSE, warning = FALSE}
+library(dplyr)
+nrow(full_data)
+nrow(distinct(full_data, CA, UNIT, SCP, DATE, TIME))
+```
+
+Because this is raw turnstile data, the values for `ENTRIES` and `EXITS` may not be what one first expects. These fields contain the *cumulative number of turns of the turnstile* since it was last zeroed-out. Thus, to get the actual number of *incremental* entries during a given time period, one must take the difference between the current and previous number of entries *at the turnstile level*. Thus, missing or corrupted values^[This can happen for many reasons including turnstile maintenance or replacement. My goal in this post is not to go into all of the nuances of this particular dataset, of which much has already been written, so I'm simplifying somewhat to keep it as a tractable motivating example.] could cascade in unpredictable ways throughout the transformation process. 
+
+Looking at the data for a single turnstile unit makes the way this data is encoded more clear:
+
+```{r}
+full_data %>%
+  filter(CA == "A002", 
+         UNIT == "R051", 
+         SCP == "02-00-00", 
+         DATE == "2020-01-04") %>%
+  arrange(TIME) %>%
+  select(TIME, ENTRIES, EXITS)
+```
+
+### Quality checks
+
+So how does this map to the use cases above?
+
+First, lets consider checks that are **more rigorous by group**. One example of this is checking for completeness of the range of data.
+
+Looking at the aggregate level, the data appears complete. The minimum data is the correct start date for the week ending Jan 10 and the maximum date is the correct end date for the week ending April 10.
+
+```{r}
+summarize(full_data,
+          min(DATE),
+          max(DATE))
+```
+
+This check might provide a false sense of security.
+
+However, what happens if we repeat this check at the actual grain of records which we *need* to be complete and subsequent calculations probably assume^[Transformations should probably never assume this. Any real ETL process using this data would like have to account for incompleteness in an automated fashion because it really is not a rare event. Again, we are simplifying here for the sake of example] are complete? We find many individual units whose data does not appear appropriately recent. 
+
+```{r}
+full_data %>%
+  group_by(CA, UNIT, SCP) %>%
+  summarize(MAX = max(DATE)) %>%
+  filter(MAX != "2020-04-10")
+```
+
+Next, consider checks that are **only expressible by group**. One example of this is a monotonicity (value always increasing) check. 
+
+For example, `ENTRIES` is certainly *not* monotonically increasing at the row level. Each individual turnstile device is counting up according to its own usage. However, in an ideal world, these fields should be monotonic over time at the level of individual devices. (Spoiler alert: due to the maintenance, malfunction, and maxing-out scenarios mentioned above, it's not.) Thus, this type of check is only possible at the grouped level.
+
+```{r}
+full_data %>%
+  group_by(CA, UNIT, SCP) %>%
+  arrange(DATE, TIME) %>%
+  mutate(LAG_ENTRIES = lag(ENTRIES)) %>%
+  filter(ENTRIES < LAG_ENTRIES, DATE > '2020-01-25') %>%
+  select(CA, UNIT, SCP, DATE, TIME, ENTRIES, LAG_ENTRIES) %>%
+  arrange(ENTRIES - LAG_ENTRIES)
+```
+
+## Alternatives Considered
+
+Given that this post is, to some extent, a feature request across all data quality tools ever, it's only polite to discuss downsides and alternative solutions that I considered. Clearly, finer-grained checks incur a greater computational cost and could, in some cases, be achieved via other means. 
+
+**Grouped data check might seem excessive.** After all, data quality checks do not, perhaps, aim to guarantee every field is 100% correct. Rather, they are higher-level metrics which aim to catch signals of deeper issues. My counterargument is largely based in the first use case listed above. Without testing data at the right level of granularity, checks could almost do more harm than good if they promote a false sense of data quality by masking issues.
+
+**Not all grains of data are equally likely to break.** Taking the previous point into account, we likely cannot check everything, so we ought to focus our attention on some combination of the most "important" errors and the most "likely" errors. In the subway example, turnstile-level failures are likely because each individual turnstile is a sensor that is independently involved in the *data collection process* and can break in its own unique ways. However, for something like a clickstream for different users on a website, the data collection process is centralized, so it would be less like (and infeasible to check) for individual customer-level data to break in dramatically different ways.
+
+**High-risk grouped data is possibly ungrouped further upstream.** Following the logic that grouped data is more dangerous if groups denote units responsible for their own data collection, in theory this data is being transmitted separately at some point in the pipeline. Thus, in some cases it could be checked before it is grouped. However, we cannot always get infinitely far upstream in the data pipeline as some pieces may be outside of our control or produced atomically by a third-party platform.
+
+**Some grouped checks can be achieved in other ways.** Some (but not all) of these checks can be mocked by creating composite variables, using other built-in features^[For example, Great Expectations does offer conditional expectations which can be executed on manually-specified subsets of data. This could be a tractable solution for applying data checks to a small number of categorical variables, but less so for large or ill-defined categories like user IDs. More here: https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html], or writing custom checks ^[Like, in the case of `Great Expectation`'s python-based API, writing custom code to partition data before applying checks, or, in the case of `dbt`/`dbt-utils` writing a custom macro.]. However, there solutions seem to defy part of the benefits of these tools: semantically meaningful checks wrapped in readable syntax and ready for use out-of-the-box. This also implies that grouped operations are far less than first-class citizens. This also limits the ability to make use of some of the excellent functionality these tools offer for documenting data quality checks in metadata and reporting on their outcomes.
+
+I also considered the possibility that this is a niche, personal need moreso than a general one because I work with a *lot* of panel data. However, I generally believe *most* data is nested in some way. I can at least confirm that I've not completely alone in this desire with a peak at GitHub issue feature requests in different data quality tools. For example, three stale stale GitHub issues on the `Great Expectations` repo ([1](https://github.com/great-expectations/great_expectations/issues/351), [2](https://github.com/great-expectations/great_expectations/issues/402), [3](https://github.com/great-expectations/great_expectations/issues/373)) request similar functionality.
+
+## Downsides
+
+There's no such thing as a free lunch or a free feature enhancement. My point is in no way to criticize existing data quality tools that do not have this functionality. Designing any tool is a process of trade-offs, and it's only fair to discuss the downsides. These issues are exacerbated further when adding "just one more thing" to mature, heavily used tools as opposed to developing new ones. 
+
+**Grouped checks are more computational expensive.** Partitioning and grouping can make data check operations more expensive by disabling certain computational shortcuts^[For example, the maximum of a set of numbers is the maximum of the maximums of the subsets. Thus, if my data is distributed, I can find the max by comparing only summary statistics from the distributed subsets instead of pulling all of the raw data back together.] and requiring more total data to be retained. This is particularly true if the data is indexed or partitioned along different dimensions than the groups used for checks. The extra time required to run more fine-grained checks could become intractable or at least unappealing, particularly in an interactive or continuous integration context. However, in many cases it could be a better use of time to more rigorously test recently loaded data as opposed to (or in conjunction with) running higher-level checks across larger swaths of data.
+
+**API bloat makes tools less navigable.** Any new feature has to be documented by developers and comprehended by users. Having too many "first-class citizen" features can lead to features being ignored, unknown, or misused. It's easy to point to any one feature in isolation and claim it is important; it's much harder to stare at a full backlog and decide where the benefits are worth the cost.
+
+**Incremental functionality adds more overhead.** Every new feature demands careful programming and testing. Beyond that, there's a substantial mental tax in thinking through how that feature needs to interact with existing functionality while, at the same time, preserving backwards compatibility. 
+
+**Every feature built means a different one isn't.** As a software user, it's easy to have a great idea for a feature that should absolutely be added. That's a far different challenge than that faced by the developers and maintainers who must prioritize a rich backlog full of competing priorities.
+
+## Survey of available tools
+
+My goal is in no way to critique any of the amazing, feature-rich data quality tools available today. However, to further illustrate my point, I pulled down key data checks from a few prominent packages to assess how many of their tests would be potentially enhanced with the ability to provided grouping parameters. Below are lists for `dbt-utils`, `Great Expectations`, and `Monte Carlo` with relevant tests *in bold*. 
+
+### dbt-utils (8 / 14)
+
+
+- **equal_rowcount**
+- equality
+- expression_is_true 
+- **recency**     
+- **at_least_one**
+- **not_constant**
+- **cardinality_equality**
+- **unique_where**
+- not_null_where  
+- **not_null_proportion**
+- relationships_where
+- mutually_exclusive_ranges
+- **unique_combination_of_columns** (*but less important - only for semantics*)
+- accepted_range
+
+### Great Expectations (15 / 37)
+
+- **expect_column_values_to_be_unique** (*but less important - only for semantics*)
+- expect_column_values_to_not_be_null  
+- expect_column_values_to_be_null    
+- expect_column_values_to_be_of_type   
+- expect_column_values_to_be_in_type_list
+- expect_column_values_to_be_in_set
+- expect_column_values_to_not_be_in_set
+- expect_column_values_to_be_between      
+- **expect_column_values_to_be_increasing**
+- **expect_column_values_to_be_decreasing**
+- expect_column_value_lengths_to_be_between
+- expect_column_value_lengths_to_equal
+- expect_column_values_to_match_regex
+- expect_column_values_to_not_match_regex
+- expect_column_values_to_match_regex_list
+- expect_column_values_to_not_match_regex_list
+- expect_column_values_to_match_like_pattern
+- expect_column_values_to_not_match_like_pattern
+- expect_column_values_to_match_like_pattern_list
+- expect_column_values_to_not_match_like_pattern_list 
+- expect_column_values_to_match_strftime_format
+- expect_column_values_to_be_dateutil_parseable
+- expect_column_values_to_be_json_parseable
+- expect_column_values_to_match_json_schema
+- expect_column_distinct_values_to_be_in_set
+- **expect_column_distinct_values_to_contain_set**
+- **expect_column_distinct_values_to_equal_set**
+- **expect_column_mean_to_be_between**
+- **expect_column_median_to_be_between**
+- **expect_column_quantile_values_to_be_between**
+- **expect_column_stdev_to_be_between**
+- **expect_column_unique_value_count_to_be_between**
+- **expect_column_proportion_of_unique_values_to_be_between**
+- **expect_column_most_common_value_to_be_in_set**
+- **expect_column_max_to_be_between**
+- **expect_column_min_to_be_between**
+- **expect_column_sum_to_be_between**
+
+### Monte Carlo (All)
+
+Any of Monte Carlo's checks might be more sensitive to detecting changes with subgrouping. Since these "health metrics" tend to represent distributional properties, it can be useful to ensure that "good groups" aren't pulling down the average value and masking errors in "bad groups".
+
+- Pct NUll  
+- Pct Unique
+- Pct Zero  
+- Pct Negative  
+- Min 
+- p20
+- p40
+- p60
+- p80
+- Mean
+- Std
+- Max
+- Pct Whitespace
+- Pct Integer
+- Pct "Null"/"None"
+- Pct Float
+- Pct UUID
+
+## Code Appendix 
+
+```{r eval = FALSE}
+<<data-pull>>
+```
+
+
+

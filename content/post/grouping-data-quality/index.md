@@ -1,13 +1,13 @@
 ---
 output: hugodown::md_document
-title: "Make grouping a first class citizen in data quality checks"
+title: "Make grouping a first-class citizen in data quality checks"
 subtitle: ""
 summary: "Advocating for a small tweak that could add a lot of value in emerging data quality tools"
 authors: []
 tags: [data]
 categories: [data]
-date: 2021-11-15
-lastmod: 2021-11-15
+date: 2021-11-27
+lastmod: 2021-11-27
 featured: false
 draft: false
 aliases:
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 0d8b73b68cf42de5
+rmd_hash: 6de2024e25461046
 
 ---
 
@@ -40,7 +40,7 @@ However, despite all these features, I notice a common gap across the landscape 
 
 Group-based checks can be important for fully articulating good "business rules" against which to assess data quality. For example, groups could reflect either computationally-relevant dimensions of the ETL process (e.g. data loaded from different sources) or semantically-relevant dimensions of the real-world process that our data captures (e.g. repeated measures pertaining to many individual customers, patients, product lines, etc.)
 
-In this post, I make a brief plea for why grouping should be a first-class citizen in data quality tooling.
+In this post, I make my case for why grouping should be a first-class citizen in data quality tooling.
 
 Use Cases
 ---------
@@ -67,42 +67,6 @@ To better motivate this need, we will look at a real-world example. For this, I 
 Specifically, we'll pull down data extracts for roughly the first quarter of 2020 (published on Jan 11 - April 11, corresponding to weeks ending Jan 10 - April 10.)[^3]
 
 <div class="highlight">
-
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='c'># data source: http://web.mta.info/developers/turnstile.html</span>
-<span class='kr'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='o'>(</span><span class='nv'><a href='http://ggplot2.tidyverse.org'>ggplot2</a></span><span class='o'>)</span>
-<span class='kr'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='o'>(</span><span class='nv'><a href='http://readr.tidyverse.org'>readr</a></span><span class='o'>)</span>
-
-<span class='c'># define read function with schema ----</span>
-<span class='nv'>read_data</span> <span class='o'>&lt;-</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>url</span><span class='o'>)</span> <span class='o'>{</span>
-  
-  <span class='nf'>readr</span><span class='nf'>::</span><span class='nf'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='o'>(</span><span class='nv'>url</span>,
-                  col_names <span class='o'>=</span> <span class='kc'>TRUE</span>,
-                  col_types <span class='o'>=</span>
-                    <span class='nf'><a href='https://readr.tidyverse.org/reference/cols.html'>cols</a></span><span class='o'>(</span>
-                      `C/A` <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_character</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      UNIT <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_character</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      SCP <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_character</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      STATION <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_character</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      LINENAME <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_character</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      DIVISION <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_character</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      DATE <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_datetime.html'>col_date</a></span><span class='o'>(</span>format <span class='o'>=</span> <span class='s'>"%m/%d/%Y"</span><span class='o'>)</span>,
-                      TIME <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_datetime.html'>col_time</a></span><span class='o'>(</span>format <span class='o'>=</span> <span class='s'>""</span><span class='o'>)</span>,
-                      DESC <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_character</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      ENTRIES <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_integer</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      EXITS <span class='o'>=</span> <span class='nf'><a href='https://readr.tidyverse.org/reference/parse_atomic.html'>col_integer</a></span><span class='o'>(</span><span class='o'>)</span>
-                    <span class='o'>)</span><span class='o'>)</span>
-  
-<span class='o'>}</span>
-
-<span class='c'># ridership data ----</span>
-<span class='nv'>dates</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/seq.Date.html'>seq.Date</a></span><span class='o'>(</span>from <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>'2020-01-11'</span><span class='o'>)</span>, to <span class='o'>=</span>, <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>'2020-04-11'</span><span class='o'>)</span>, by <span class='o'>=</span> <span class='s'>'7 days'</span><span class='o'>)</span>
-<span class='nv'>dates_str</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/format.html'>format</a></span><span class='o'>(</span><span class='nv'>dates</span>, format <span class='o'>=</span> <span class='s'>'%y%m%d'</span><span class='o'>)</span>
-<span class='nv'>dates_url</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/sprintf.html'>sprintf</a></span><span class='o'>(</span><span class='s'>'http://web.mta.info/developers/data/nyct/turnstile/turnstile_%s.txt'</span>, <span class='nv'>dates_str</span><span class='o'>)</span>
-<span class='nv'>datasets</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='o'>(</span><span class='nv'>dates_url</span>, FUN <span class='o'>=</span> <span class='nv'>read_data</span><span class='o'>)</span>
-<span class='nv'>full_data</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/do.call.html'>do.call</a></span><span class='o'>(</span><span class='nv'>rbind</span>, <span class='nv'>datasets</span><span class='o'>)</span>
-<span class='nv'>full_data</span> <span class='o'>&lt;-</span> <span class='nv'>full_data</span><span class='o'>[</span><span class='nv'>full_data</span><span class='o'>$</span><span class='nv'>DESC</span> <span class='o'>==</span> <span class='s'>"REGULAR"</span>,<span class='o'>]</span>
-<span class='nf'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='o'>(</span><span class='nv'>full_data</span><span class='o'>)</span><span class='o'>[</span><span class='m'>1</span><span class='o'>]</span> <span class='o'>&lt;-</span> <span class='s'>"CA"</span>
-</code></pre>
 
 </div>
 
@@ -131,6 +95,8 @@ This data contains 2869965 records, corresponding to one unique record per uniqu
 </div>
 
 Because this is raw turnstile data, the values for `ENTRIES` and `EXITS` may not be what one first expects. These fields contain the *cumulative number of turns of the turnstile* since it was last zeroed-out. Thus, to get the actual number of *incremental* entries during a given time period, one must take the difference between the current and previous number of entries *at the turnstile level*. Thus, missing or corrupted values[^4] could cascade in unpredictable ways throughout the transformation process.
+
+Looking at the data for a single turnstile unit makes the way this data is encoded more clear:
 
 <div class="highlight">
 
@@ -255,7 +221,7 @@ Given that this post is, to some extent, a feature request across all data quali
 
 **"But we monitor our data with machine learning."** There's a fair amount of work currently (not necessarily with the tools that I've named) with using machine learning and anomaly detection approaches to detect data quality issues. Some might argue that these advanced approaches lessen the need for heavily tailor, user-specified data checks. Personally, I struggle to agree with that. I believe domain context can go a long way to solving data issues and is often worth the investment.
 
-I also considered the possibility that this is a niche, personal need moreso than a general one because I work with a *lot* of panel data. However, I generally believe *most* data is nested in something, somehow than is not. I substantiated this a bit with a peak at GitHub issue feature requests in different data quality tools. For example, three stale stale GitHub issues on the `Great Expectations` repo ([1](https://github.com/great-expectations/great_expectations/issues/351), [2](https://github.com/great-expectations/great_expectations/issues/402), [3](https://github.com/great-expectations/great_expectations/issues/373)) request similar functionality.
+I also considered the possibility that this is a niche, personal need moreso than a general one because I work with a *lot* of panel data. However, I generally believe *most* data is nested in some way. I can at least confirm that I've not completely alone in this desire with a peak at GitHub issue feature requests in different data quality tools. For example, three stale stale GitHub issues on the `Great Expectations` repo ([1](https://github.com/great-expectations/great_expectations/issues/351), [2](https://github.com/great-expectations/great_expectations/issues/402), [3](https://github.com/great-expectations/great_expectations/issues/373)) request similar functionality.
 
 Downsides
 ---------

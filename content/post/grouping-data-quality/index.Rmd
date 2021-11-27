@@ -1,13 +1,13 @@
 ---
 output: hugodown::md_document
-title: "Make grouping a first class citizen in data quality checks"
+title: "Make grouping a first-class citizen in data quality checks"
 subtitle: ""
 summary: "Advocating for a small tweak that could add a lot of value in emerging data quality tools"
 authors: []
 tags: [data]
 categories: [data]
-date: 2021-11-15
-lastmod: 2021-11-15
+date: 2021-11-27
+lastmod: 2021-11-27
 featured: false
 draft: false
 aliases:
@@ -41,7 +41,7 @@ most all of the [Monte Carlo](https://docs.getmontecarlo.com/docs/field-health-m
 
 Group-based checks can be important for fully articulating good "business rules" against which to assess data quality. For example, groups could reflect either computationally-relevant dimensions of the ETL process (e.g. data loaded from different sources) or semantically-relevant dimensions of the real-world process that our data captures (e.g. repeated measures pertaining to many individual customers, patients, product lines, etc.)
 
-In this post, I make a brief plea for why grouping should be a first-class citizen in data quality tooling.
+In this post, I make my case for why grouping should be a first-class citizen in data quality tooling.
 
 ## Use Cases
 
@@ -65,7 +65,7 @@ To better motivate this need, we will look at a real-world example. For this, I 
 
 Specifically, we'll pull down data extracts for roughly the first quarter of 2020 (published on Jan 11 - April 11, corresponding to weeks ending Jan 10 - April 10.)^[Code for this pull is at the bottom of the post.]
 
-```{r data-pull, eval = FALSE}
+```{r data-pull, echo = FALSE, eval = FALSE}
 # data source: http://web.mta.info/developers/turnstile.html
 library(ggplot2)
 library(readr)
@@ -119,6 +119,8 @@ nrow(distinct(full_data, CA, UNIT, SCP, DATE, TIME))
 ```
 
 Because this is raw turnstile data, the values for `ENTRIES` and `EXITS` may not be what one first expects. These fields contain the *cumulative number of turns of the turnstile* since it was last zeroed-out. Thus, to get the actual number of *incremental* entries during a given time period, one must take the difference between the current and previous number of entries *at the turnstile level*. Thus, missing or corrupted values^[This can happen for many reasons including turnstile maintenance or replacement. My goal in this post is not to go into all of the nuances of this particular dataset, of which much has already been written, so I'm simplifying somewhat to keep it as a tractable motivating example.] could cascade in unpredictable ways throughout the transformation process. 
+
+Looking at the data for a single turnstile unit makes the way this data is encoded more clear:
 
 ```{r}
 full_data %>%
@@ -181,7 +183,7 @@ Given that this post is, to some extent, a feature request across all data quali
 
 **"But we monitor our data with machine learning."** There's a fair amount of work currently (not necessarily with the tools that I've named) with using machine learning and anomaly detection approaches to detect data quality issues. Some might argue that these advanced approaches lessen the need for heavily tailor, user-specified data checks. Personally, I struggle to agree with that. I believe domain context can go a long way to solving data issues and is often worth the investment. 
 
-I also considered the possibility that this is a niche, personal need moreso than a general one because I work with a *lot* of panel data. However, I generally believe *most* data is nested in something, somehow than is not. I substantiated this a bit with a peak at GitHub issue feature requests in different data quality tools. For example, three stale stale GitHub issues on the `Great Expectations` repo ([1](https://github.com/great-expectations/great_expectations/issues/351), [2](https://github.com/great-expectations/great_expectations/issues/402), [3](https://github.com/great-expectations/great_expectations/issues/373)) request similar functionality.
+I also considered the possibility that this is a niche, personal need moreso than a general one because I work with a *lot* of panel data. However, I generally believe *most* data is nested in some way. I can at least confirm that I've not completely alone in this desire with a peak at GitHub issue feature requests in different data quality tools. For example, three stale stale GitHub issues on the `Great Expectations` repo ([1](https://github.com/great-expectations/great_expectations/issues/351), [2](https://github.com/great-expectations/great_expectations/issues/402), [3](https://github.com/great-expectations/great_expectations/issues/373)) request similar functionality.
 
 ## Downsides
 

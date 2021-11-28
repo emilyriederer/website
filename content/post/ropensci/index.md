@@ -26,49 +26,57 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: cab43f894c80cbf7
+rmd_hash: 9e96b6a75f95a4ce
 
 ---
 
 In October, I was honored to take a role on the [rOpenSci editorial board](https://ropensci.org/blog/2021/10/12/editors2021/). [rOpenSci](https://ropensci.org/about/) provides infrastructure, process, and community to facilitate open and reproducible scientific research enabled by the sharing of reusable software. The centerpiece of their efforts is the robust [Software Peer Review](https://ropensci.org/software-review/) program which marshals a vast community of volunteer reviewers to prospective packages for onboarding to the rOpenSci ecosystem and provides a "transparent, constructive, non adversarial and open review process".
 
-I don't recall when I first learned about rOpenSci, but I have always been hugely impressed by their efforts. On a tactical level, their drive to help facilitate the development and maintenance of reusable tools for scientists served as a role model for my thinking about development of analytical tools in industry. More holistically, their pristine process that engage and coordinate so many volunteers to make high-impact but time-boxed contributions demonstrates a managerial acumen to which I can only inspire. (And, for both these practical and philosophical aspects, there is no better resource than the excellent book [rOpenSci Packages: Development, Maintenance, and Peer Review](https://devguide.ropensci.org/).)
+I don't recall when I first learned about rOpenSci, but I have always been hugely impressed by their efforts. On a tactical level, their support of the development and maintenance of reusable scientific tools served as a role model for my thinking about developing analytical tools in industry. More holistically, their pristine process that mobilize so many volunteers to make high-impact but time-boxed contributions demonstrates a managerial acumen to which I can only inspire. (And, for both these practical and philosophical aspects, there is no better resource than the excellent book [rOpenSci Packages: Development, Maintenance, and Peer Review](https://devguide.ropensci.org/).)
 
 Upon joining the editorial team, I wrote a few words for the rOpenSci blog attempting to describe what the organization meant to me:
 
 > I had the great fortune of stumbling upon rOpenSci relatively early in my career as an R programmer, and it's not an exaggeration to say that this organization has had one of the single largest impacts on my career. rOpenSci's meticulous documentation helped me to embrace best practices in my development work. Perhaps even more impactful is how watching rOpenSci work shaped my perspective on community building, leadership, and teamwork. I have always admired the well-oiled machine that rOpenSci has created -- sustaining massive value with limited individual overhead by clearly defining expectations, providing opinionated infrastructure, and cultivating a phenomenal community. I'm thrilled to be taking a formal role in an organization that has had such an impact on me.
 
-In this post, I want to expand on the leadership lessons I first learned from observing rOpenSci that have deeply influenced my own definitions of what constitutes good leadership and management. Specifically, I'll explore three key areas:
+In this post, I want to expand three lessons from rOpenSci which influenced my own definitions of what constitutes good leadership and management:
 
 -   building structures for people to succeed
 -   defining clear roles and responsibilities
 -   knowing your value stack to avoid micromanaging
 
-The exact way these principles are instrumented may vary greatly from place-to-place, but rOpenSci serves as a potent case study of what can be achieved when you get them right.
+The exact way these principles are instrumented may vary by circumstance, but rOpenSci serves as a potent case study of what can be achieved when you get them right.
 
 Building structures for success
 -------------------------------
 
-An unfortunate thing about language, is two people rarely mean the same thing conversationally. We can talk about "code quality" or "file structure" or "good documentation" all day long, but the physical manifestations of those things could look very different to you and I. This ambiguity can cause chaos when you try to aggregate many individuals' definitions of these things into a coherent whole.
+An unfortunate thing about human language is that two people rarely mean the same thing conversationally. We can talk about "code quality" or "file structure" or "good documentation" all day long, but the physical manifestations of those things could look very different to you and I. This ambiguity can cause chaos when you try to aggregate many individuals' definitions of these things into a coherent whole.
 
 Put more simply **standards drive innovation** and have good standards and the right layer of abstraction is critical to success.
 
-With R package development, we benefit by the extent that some standards are already built-in. R packages are defined by a highly prescriptive file structure that eliminate uncertainty around how to save artifacts, and the automated checks provide a lower bound for package quality.
+With R package development, we benefit by the extent that some standards are already built-in. R packages are defined by a highly prescriptive file structure that eliminate uncertainty around how to save artifacts, and the automated checks provide a lower bound for package quality. However, rOpenSci goes much further. Every step of the review process includes extremely thoughtful and well-defined processes and expectations.
 
-However, rOpenSci goes much further. Every step of the review process includes extremely thoughtful and well-defined processes and expectations. Processes, though, are only as effective as their adoption. For this, **adherence is made easy** through the savvy usage of **checklists**, **templates**, and **automation** to operationalize the clearly defined expectations. These tools serve two functions: they both disambiguate what the desired outcomes are and eliminate unnecessary effort in delivering those outcomes.
+Processes, however, are only as effective as their adoption. For this, **adherence is made easy through the savvy usage of checklists, templates, and automation** to operationalize these processes. These tools serve two purposes: they disambiguate the desired outcomes and eliminate unnecessary effort in delivering those outcomes.
 
-Wherever possible, templates help participants effectively communicate and share information effectively, such as the [many possible templates](https://github.com/ropensci/software-review/issues/new/choose) for opening a software review or pre-submission inquiry. Similarly, the amazing \[review bot\] by Maëlle Salmon and Mark Padgham "automates the busy" of running automated checks (but, unlike a traditional CI tool, deferring the review of subjective test results to the author, editor, and reviewer to interpret) and managing rote processes like tagging reviewers or changing tags on the [software-review GitHub issues](https://github.com/ropensci/software-review).
+Wherever possible, templates help participants effectively communicate and share information effectively, such as the [GitHub issue templates](https://github.com/ropensci/software-review/issues/new/choose) for opening a software review or pre-submission inquiry. Similarly, the amazing [review bot](https://ropensci.org/commcalls/dec2021-automation/) "automates the busywork" of running automated checks (but, unlike a traditional CI tool, deferring the review of subjective test results to the author, editor, and reviewer to interpret) and manages rote processes like tagging reviewers, updating the review database, and changing GitHub issue labels that denote progress of a software review.
+
+Beyond rOpenSci, a good organization can create structures for success with dependable ceremonies and well-defined processes supported by good templates and tools. For example, Caitlin Hudon wrote about how her data team uses a standard [data intake form](https://caitlinhudon.com/2020/09/16/data-intake-form/) to collect and prioritize requests from the business. In turn, this has driven a lot of my person interest in [enterprise analytical tooling](https://emilyriederer.netlify.app/post/team-of-packages/) as a vehicle for delivering a lot of this standardization and automation inside an organization.
 
 Defining clear roles and responsibilities
 -----------------------------------------
 
-These clearly defined expectations are especially critical since rOpenSci marshals such a vast number of people. 18 new packages have been approved so far in 2021, and each requires interaction from at least five people[^1] Altogether, that's over 100 people in the course of a year contributing discrete bursts of energy and attention in an incredibly noisy and distracting world.
+These clearly defined expectations are especially critical since rOpenSci marshals such a vast number of people. 18 new packages have been approved so far in 2021, and each requires interaction from at least five people[^1] Altogether, that's over 100 people in the course of a year contributing discrete bursts of energy and attention in our incredibly noisy and distracting world.
 
 In some settings, this could be the recipe for utter chaos. However, rOpenSci makes it **easy to commit** with clear, time-boxed opportunities and **easy to deliver** with clear guides for authors, editors, and reviewers in their [book](https://devguide.ropensci.org/index.html).
 
-These chapters help each party understand very clearly what is expected of them with a mix of guidelines, mentions of relevant tools and resources (e.g. packages authors can use to help them develop, tools editors can use to check quality, links to past versions, etc.), and plenty of tips and examples thanks to the transparency of the open review process. Together they help first-timers **onboard easily** to perform any of the roles with minimal manual training and intervention (but, I cannot emphasize enough, supported by an excellent and welcoming community if they have questions), **keep up with changes** by serving as a single-source-of-truth and living documentation for evolving best practices, and **continually raise the bar** by capturing tribal knowledge and passing best practices to future performers.
+These chapters help each party understand very clearly what is expected of them by providing guidelines, resources (e.g. relevant tolls and packages), and tip and examples from past experiences (thanks to the transparency of the open review process). Together they help first-timers **onboard easily** to perform any of the roles with minimal manual training and intervention (but, I cannot emphasize enough, supported by an excellent and welcoming community if they have questions), **keep up with changes** by serving as a single-source-of-truth and living documentation for evolving best practices, and **continually raise the bar** by capturing tribal knowledge and passing best practices to future performers.
 
-A less obvious benefit of these defintions is also the way that they **avoid conflict**. By explicitly defining what each role *is*, it is implicitly defined what each role *is not*. As an editor, I know I should be focusing on different things than when I was a reviewer, which puts both my and reviewers time to best use and **avoids duplicate effort or conflicting feedback** to authors.
+Such definitions also help ensure that you **find the right opportunities for the right people**. rOpenSci organizes volunteer reviewers in an AirTable database which is searchable by different domains and areas of expertise. Its easier to trust people to succeed when you know precisely what's asked of them, and similarly its easier for volunteers to *believe* that they can succeed when they understand how their skills map to the problem at hand. When I first applied to be a reviewer, I was not even sure if I was qualified since I lack scientific domain expertise. However, my first package review request (from Maëlle) gave me confidence by explaining what in my profile made me well-suited for the job at hand.
+
+Similarly, I would argue that the clarity of thought in terms of what is required also has helped enable the "structures for success" that I discuss above. The better that tasks are understood, it is easier to build decision-support tools with the right level of abstraction that facilitate instead of impeding human judgement.
+
+Finally, a less obvious benefit of these definitions is also the way that they **avoid conflict**. By explicitly defining what each role *is*, it is implicitly defined what each role *is not*. As an editor, I know I should be focusing on different things than when I was a reviewer, which puts both my and reviewers time to best use and **avoids duplicate effort or conflicting feedback** to authors.
+
+Beyond rOpenSci, clear role definitions similarly help ensure that the right work gets done (exactly once -- not zero times, not three times), to empower people to step up to a new challenge, and to take more ownership of their own lane by understanding the bounds of their "sandbox" to play in.
 
 Knowing your value stack
 ------------------------
@@ -79,7 +87,9 @@ There is no *requirement* to submit to rOpenSci, so the organization leads with 
 
 This highlight a contrast with my previous praise of standards: adding too many standards or requirements can scare people away. rOpenSci gracefully balances this line as well by helping editors and reviewers understand their place, priortize advocating for changes or updates that *really* matter, but not forcing authors to defer to some third party's internal definition of what's "good". (And providing them an excellent, secure forum to discuss on its Slack channel). Ultimately, this helps **give individuals autonomy and creative control** while still ensuring the collecting success of the credibility of rOpenSci's corpus of packages.
 
-For example, in my first review with rOpenSci, I differed in perspective from the author on the need for certain package dependecies. I was able to share my suggestions, allow him to take or discard what he saw fit, and then confirm with other more experiences reviewers that the package met the bar. Just because the way the author implemented his functionality was not the same way I might have (out of an infinite number of possible options) did not mean it was good or bad or a "make or break" moment for the tool.
+For example, in my first review with rOpenSci, I differed in perspective from the author on the need for certain package dependencies. I was able to share my suggestions, allow him to take or discard what he saw fit, and then confirm with other more experiences reviewers that the package met the bar. Just because the way the author implemented his functionality was not the same way I might have (out of an infinite number of possible options) did not mean it was good or bad or a "make or break" moment for the tool.
+
+Beyond rOpenSci, this skill is incredibly important for leading any sort of a team. Knowing what's nonnegotiable helps you form clearer requests, and acknowledging what is subjects helps avoid micromanagement.
 
 [^1]: The editor-in-chief, editor, at least one author, and two reviewers -- not to mention potential discussions among the editors or between editors and other potential reviewers.
 

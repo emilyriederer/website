@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 318c8c923c9ab102
+rmd_hash: 062c578014bdb304
 
 ---
 
@@ -89,7 +89,7 @@ This highlight a contrast with my previous praise of standards: adding too many 
 
 For example, in my first review with rOpenSci, I differed in perspective from the author on the need for certain package dependencies. I was able to share my suggestions, allow him to take or discard what he saw fit, and then confirm with other more experiences reviewers that the package met the bar. Just because the way the author implemented his functionality was not the same way I might have (out of an infinite number of possible options) did not mean it was good or bad or a "make or break" moment for the tool.
 
-Beyond rOpenSci, this skill is incredibly important for leading any sort of a team. Knowing what's nonnegotiable helps you form clearer requests, and acknowledging what is subjects helps avoid micromanagement.
+Beyond rOpenSci, this skill is incredibly important for leading any sort of a team. Knowing what's nonnegotiable helps you form clearer requests, and acknowledging what is subjective helps avoid micromanagement.
 
 [^1]: Much has been written about the difference between management and leadership. I conflate them a bit here since the lessons I discuss reflect element of both.
 

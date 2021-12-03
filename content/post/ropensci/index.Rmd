@@ -1,13 +1,13 @@
 ---
 output: hugodown::md_document
-title: "Notes of leadership lessons from rOpenSci"
+title: "Notes on leadership lessons from rOpenSci"
 subtitle: ""
 summary: "Building structures for success, defining clear roles, and knowing your priorities"
 authors: []
 tags: [rstats, notes]
 categories: [rstats, notes]
-date: 2021-12-01
-lastmod: 2021-12-01
+date: 2021-12-08
+lastmod: 2021-12-08
 featured: false
 draft: false
 aliases:

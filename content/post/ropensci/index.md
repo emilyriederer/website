@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 3ec772a2f9e58b24
+rmd_hash: 8be45679093cfcda
 
 ---
 
@@ -51,9 +51,7 @@ Building structures for success
 
 Human language is ambiguous. Too many projects go off couse when collaborators understand the same words differently. We can talk about relatively foundational concepts like "code quality" or "file structure" or "good documentation" all day long, but the physical manifestations of those things could look very different to you and I. This ambiguity can create chaos when you try to coordinate contributions from many individuals' definitions to form a coherent result.
 
-Put more simply **standards drive innovation** and have good standards and the right layer of abstraction is critical to success.
-
-R package development already benefits by the extent to which standards are already built-in. R packages are defined by a highly prescriptive file structure that eliminate uncertainty around how to save artifacts, and automated package checks provide a lower bound for package quality. However, rOpenSci goes much further. Every step of the review process includes extremely thoughtful and well-defined processes and expectations.
+Put more simply **standards drive innovation** and have good standards and the right layer of abstraction is critical to success. R package development already benefits by the extent to which standards are already built-in. R packages are defined by a highly prescriptive file structure that eliminate uncertainty around how to save artifacts, and automated package checks provide a lower bound for package quality. However, rOpenSci goes much further. Every step of the review process includes extremely thoughtful and well-defined processes and expectations.
 
 Processes, however, are only as effective as their adoption. For this, **adherence is made easy through the savvy usage of checklists, templates, and automation** to operationalize these processes. These tools serve two purposes: they disambiguate the desired outcomes and eliminate unnecessary effort in delivering those outcomes.
 

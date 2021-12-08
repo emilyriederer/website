@@ -54,7 +54,7 @@ Processes, however, are only as effective as their adoption. For this, **adheren
 
 Wherever possible, templates help participants effectively communicate and share information effectively, such as the [GitHub issue templates](https://github.com/ropensci/software-review/issues/new/choose) to initiative a software review or pre-submission inquiry. Similarly, the amazing [review bot](https://ropensci.org/commcalls/dec2021-automation/) "automates the busywork" of running automated checks (but, unlike a traditional CI tool, deferring the review of subjective test results to the author, editor, and reviewer to interpret) and manages rote processes like tagging reviewers, updating the review database, and changing GitHub issue labels that denote progress of a software review.
 
-Beyond rOpenSci, a good organization can create structures for success with dependable ceremonies and well-defined processes supported by good templates and tools. For example, Caitlin Hudon wrote about how her data team uses a standard [data intake form](https://caitlinhudon.com/2020/09/16/data-intake-form/) to collect and prioritize requests from the business. In turn, this has driven a lot of my person interest in [enterprise analytical tooling](https://emilyriederer.netlify.app/post/team-of-packages/) as a vehicle for delivering a lot of this standardization and automation inside an organization. 
+Beyond rOpenSci, a good organization can create structures for success with dependable ceremonies and well-defined processes. At the same time, processes add overhead, so making them as painless as possible, or even actively pleasant, with thoughtful tools and templates can help enable teams. 
 
 ## Defining clear roles and responsibilities
 

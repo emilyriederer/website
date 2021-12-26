@@ -88,7 +88,7 @@ A `css` chunk adds CSS code used to animate the snowflake divs. This is taken ne
 ```
 ````
 
-For more tips on writing CSS for R Markown, check out my [post](https://deploy-preview-38--emilyriederer.netlify.app/post/rmarkdown-css-tips/) on finding the right selectors.
+For more tips on writing CSS for R Markown, check out my [post](/post/rmarkdown-css-tips/) on finding the right selectors.
 
 ## Conditional chunk evaluation
 

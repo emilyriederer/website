@@ -1,6 +1,6 @@
 ---
 output: hugodown::md_document
-title: "Using Databases with Shiny"
+title: "Using databases with Shiny"
 subtitle: ""
 summary: "Key issues when adding persistent storage to a Shiny application, featuring {golem} app development and Digital Ocean serving"
 authors: []
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: ba029450ee1811be
+rmd_hash: e26e93cb5d141a3e
 
 ---
 
@@ -249,7 +249,7 @@ To accomplish this, I wrapped my database connection in a custom `db_con()` func
     <span class='nf'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span><span class='o'>(</span> <span class='kr'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='o'>(</span><span class='s'><a href='https://rsqlite.r-dbi.org'>"RSQLite"</a></span>, quietly <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> <span class='o'>)</span>
     <span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='o'>(</span><span class='o'>)</span>, <span class='s'>":memory:"</span><span class='o'>)</span>
     <span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='m'>1</span>, y <span class='o'>=</span> <span class='s'>"a"</span>, z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>"2022-01-01"</span><span class='o'>)</span><span class='o'>)</span>
-    <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbWriteTable.html'>dbWriteTable</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='s'>"hist_spec"</span>, <span class='nv'>df</span><span class='o'>)</span>
+    <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbWriteTable.html'>dbWriteTable</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='s'>"my_data"</span>, <span class='nv'>df</span><span class='o'>)</span>
     
   <span class='o'>}</span>
   

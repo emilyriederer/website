@@ -1,6 +1,6 @@
 ---
 output: hugodown::md_document
-title: "Using Databases with Shiny"
+title: "Using databases with Shiny"
 subtitle: ""
 summary: "Key issues when adding persistent storage to a Shiny application, featuring {golem} app development and Digital Ocean serving"
 authors: []
@@ -223,7 +223,7 @@ db_con <- function(prod = golem::app_prod()) {
     stopifnot( require("RSQLite", quietly = TRUE) )
     con <- DBI::dbConnect(SQLite(), ":memory:")
     df <- data.frame(x = 1, y = "a", z = as.Date("2022-01-01"))
-    DBI::dbWriteTable(con, "hist_spec", df)
+    DBI::dbWriteTable(con, "my_data", df)
     
   }
   

@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: e26e93cb5d141a3e
+rmd_hash: 51cae3cb37ce6dd8
 
 ---
 
@@ -34,7 +34,7 @@ Shiny apps are R's answer to building interface-driven applications that help ex
 
 This creates a need for **persistent storage** in your Shiny application, as opposed to the ephemeral in-memory of basic Shiny applications that "forget" the data that they generated as soon as the application is stopped.
 
-Relational databases are a classic form of persistent storage for web applications. Many analysts may be familiar with *querying* relational databases to retrieve data, but *managing* a database for use with a web application is slightly more complex. You'll find yourself needing to define tables, secure data, and manage connections.
+Relational databases are a classic form of persistent storage for web applications. Many analysts may be familiar with *querying* relational databases to retrieve data, but *managing* a database for use with a web application is slightly more complex. You'll find yourself needing to define tables, secure data, and manage connections. More importantly, you might worry about what things that you do not know you should be worrying about.
 
 This post provides some tips, call-outs, and solutions for using a relational database for persistent storage with Shiny. In my case, I rely on a Shiny app built with the [`golem` framework](https://thinkr-open.github.io/golem/) and served on the Digital Ocean App platform.
 
@@ -54,11 +54,13 @@ General information on working with databases with R is included on RStudio's [e
 
 ### Creating a database
 
-To create a database for my application, I simply went to:
+To create a database for my application in DigitalOcean, I simply went to:
 
 `Settings > Add Component > Database`
 
-At the time on writing, I was able to add a 1GB Dev Database for /\$7 / month. For a more mature product, one can add or switch to a production-ready Managed Database.
+This creates a fully-managed Postgres databases so you do not have to thing a ton about the underlying set-up or configuration.
+
+At the time on writing, I was able to add a 1GB Dev Database for /\$7 / month. For new users, DigitalOcean offers a generous number of free credits for use in the first 60 days. For a more mature product, one can add or switch to a production-ready Managed Database.
 
 After a few minutes, the database has launched and its Connection Parameters are provided, which look something like this:
 
@@ -70,6 +72,8 @@ After a few minutes, the database has launched and its Connection Parameters are
     sslmode  : require
 
 By default, the Dev Database registers your application as a Trusted Source, meaning that only traffic from the application can attempt to access the database. As the [documentation](https://docs.digitalocean.com/products/databases/postgresql/how-to/secure/#firewalls) explains, this type of firewall improves security by preventing against brute-force password or denial-of-service attacks from the outside.
+
+*Note: If you just want to experiment with databases and Shiny but aren't using an in-production, served application, you can mostly skip this step and use the "Dev" approach that is discuss in "Dev versus Prod" subsection of "Key Issues" below.*
 
 ### Connecting to the database
 
@@ -143,6 +147,8 @@ I was using the [`golem` framework](https://thinkr-open.github.io/golem/) for my
 The custom `db_con()` function contains *roughly* the [`DBI::dbConnect()`](https://dbi.r-dbi.org/reference/dbConnect.html) code we saw above, but I turned it into a function to incorporate some added complexity which I will describe shortly.
 
 Most of the rest of my application uses Shiny modules, and this connection object and initial data pull can be seamless passed into either.
+
+To see similar code in a full app, check out Colin Fay's [`golemqlite`](https://github.com/ColinFay/golemexamples/blob/master/golemqlite/R/app_server.R#L7) project on Github.
 
 ### CRUD operations
 

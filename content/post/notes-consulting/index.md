@@ -1,0 +1,89 @@
+---
+output: hugodown::md_document
+# Documentation: https://sourcethemes.com/academic/docs/managing-content/
+
+title: 'Notes on ad hoc analytics consulting'
+subtitle: ""
+summary: "A few lessons learned on setting yourself and your clients up for success"
+authors: []
+tags: [notes]
+categories: [notes]
+date: 2022-08-21
+lastmod: 2022-08-21
+featured: false
+draft: false
+
+# Featured image
+# To use, add an image named `featured.jpg/png` to your page's folder.
+# Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
+image:
+  caption: "Photo by [Glenn Carstens-Peters](https://unsplash.com/@glenncarstenspeters) on Unsplash"
+  focal_point: ""
+  preview_only: false
+rmd_hash: 944237a0b6b3e0a7
+
+---
+
+## Getting started
+
+### Protect your information
+
+Consulting work involves getting paid. This also means it generally can involve sharing sensitive information like (in the US) your Social Security Number for tax purposes and a bank account for ACH payments. Regardless how trustworthy your counterpart is, sharing this information can be risky. To protect your information, you may consider:
+
+-   [Getting an EIN](https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online) which is essentially an alternative IRS-provided identifier similar to your SSN which you can use for tax purposes
+-   Making a separate checking account solely to receive payment
+
+If you plan to do a lot of consulting, you could go one step further and consider creating your own LLC (Limited Liability Corporation). Since I (so far) have only done sporadic work, I have not taken this step.
+
+## Deciding to take a gig
+
+### Can you take this work?
+
+Timeframe / availability / hours needed + Can you play with timezones to meet outside of your workday? Flexibility? Asynch? Company approval
+
+### Do you want to take this work?
+
+Are you excited? What will you learn? + New industry, type of data, feature of tool
+
+What can be frustrating? + Tech environment (security, platforms, tools) + Proj mgmt software + Access (web based, virtual machine, different computer) + Current state of the stack and tech debt (don't assume just because of skills they are looking for)
+
+What are the tradeoffs? + Remember not to kill the joy by taking on too many projects. Not everything has to be a gig! Sometimes, for your long-run career, "investing in yourself" by learning new skills will be more enjoyable and more beneficial to your long-term success. Consulting projects tend to help you exploit your current knowledge versus explore completely new areas. This is great if you are looking to sharpen your expertise but not if you're eager to expand your breadth.
+
+### What are the risks of taking this work?
+
+Read the contract!
+
+### Red Flags
+
+-   Read the contract
+
+## Scoping out a project
+
+### Understanding the ask
+
+Design documents // questions + tangible examples -- your words do NOT mean the same thing (industry and tech SME) Desired level of autonomy
+
+### Understanding your role in delivering the ask
+
+Humility SME versys performer
+
+### Estimating time and expense
+
+Estimate time generously and be specific about what you are including and what conditions would have to be true for that to work Be explicit what rate should include Be explicit how much work requires "sign off" or prioritization
+
+Things will take longer than in your experience: + 0 to 1 on domain knowledge + 0 to 1 on tech stack + Testing / documentation + Dealing with existing tech debt or lack of docs
+
+## Establishing norms
+
+### Before
+
+### During
+
+## Establishing your meta-workflow
+
+As an analytics consultant, you likely understand the value of good computational and analytical workflows. Perhaps you know all shortcuts of your favorite IDE, have a favorite git branching strategy, and know your go-to package for data validation. However, as an independent consultant, you may be surprised by the relatively high overhead to "meta-work" and project administration.
+
+log time meticulously whether or not partner asks (good practice, confidence)
+
+templates for: + logging time + making invoices + getting feedback
+

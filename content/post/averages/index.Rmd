@@ -6,10 +6,10 @@ summary: "How metric definitions, ambiguous calculations, sample sizes, and doma
 authors: []
 tags: []
 categories: [data-disasters]
-date: 2021-11-07
-lastmod: 2021-11-07
+date: 2021-08-21
+lastmod: 2021-08-21
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -28,15 +28,15 @@ image:
 projects: [""]
 ---
 
-Back in September, I dusted off a training course that I first developed in 2018 to teach to a class of new hires at work. The content focuses on many types of *data disasters*^[Similar to the long-form writing project I'm working in the open over [here](https://data-disasters.netlify.app/)] that are often encountered when working with data -- from misunderstanding how data is structured pr how tools are meant to work, to errors in causal interpretation and model building -- yet rarely taught in stats training. 
+Once again this year, I'm dusting off a training course that I first developed in 2018 to teach to our incoming class of ~200 new direct-from-college analysts at work. The content focuses on many types of *data disasters*^[Similar to the long-form writing project I'm *very* slowly working in the open over [here](https://data-disasters.com/)] that are often encountered when working with data -- from misunderstanding how data is structured pr how tools are meant to work, to errors in causal interpretation and model building -- yet rarely taught in stats training. 
 
-This year, however, the material felt a bit different, and it was not simply because (for the second year) I was sitting alone in a room all afternoon rambling to myself and a Zoom screen about all the ways everything can go wrong and how you really can't ever trust anything (in data, that is.)
+The past few years, however, the material felt a bit different, and it was not simply because I'm sitting alone in a room all afternoon rambling to myself and a Zoom screen about all the ways everything can go wrong and how you really can't ever trust anything (in data, that is.)
 
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Teaching an intro data analysis class tomorrow which means I’ll be sitting alone in a room by myself for three hours and talking at my computer screen about how numbers can lie to you. Just another normal, healthy 2020 thing <a href="https://t.co/u6nKfLhaxj">pic.twitter.com/u6nKfLhaxj</a></p>&mdash; Emily Riederer (@EmilyRiederer) <a href="https://twitter.com/EmilyRiederer/status/1305666403824021507?ref_src=twsrc%5Etfw">September 15, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-This year, the material took on a whole new level of gravity. As I walked through my taxonomy and examples of data disasters, one of my underlying message had always been that stats education focuses on the "complex" things (e.g. proving asymptotic convergence) but simple things can also be hard and important. However, as the pandemic has evolved over the last two years, more highly important data processing has been done in the open and on the fly than ever before, and much of it has unsurprisingly hit many of the snags one would when working with messy, inconsistent, ever-changing, observational data. 
+Walking through my taxonomy and examples of data disasters, one of my underlying message had always been that stats education focuses on the "complex" things (e.g. proving asymptotic convergence) but simple things can also be hard and important. However, as the pandemic played out over the last few years, more highly important data processing has been done in the open and on the fly than ever before, and much of it has unsurprisingly hit many of the snags one would when working with messy, inconsistent, ever-changing, observational data. 
 
-As I walked through the course, I found myself thinking about many pandemic-related examples for every "disasters" which all felt more urgent and timely than the industry-specific examples that I had concocted. In this post, I walk through just one such example of simple things that are hard. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, metric calculation, sampling variability, and selection bias.
+As I review my course, I find myself thinking about many pandemic-related examples for every "disasters" which all feel more urgent and timely than the industry-specific examples that I have concocted. In this post, I walk through just one such example of simple things that are hard but important. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, metric calculation, sampling variability, and systemic error.
 
 ## What happened?
 
@@ -107,7 +107,7 @@ As we would expect, we see the means observed with a sample size of 10, 100, or 
 
 So, days with smaller samples are most likely to take the most extreme values which could yank an average in one direction *or the other* ephemerally^[As discussed at length in this Scientific American article: https://www.americanscientist.org/article/the-most-dangerous-equation]. This alone is a bad situation for a metric of interest; however, despite the higher variance, small sample sizes will not induce *bias*. That is, we will be correct "on average" and small sample days are no more likely to be extreme in one direction or the other. 
 
-### Does sample size correlate with a problem? (On domain knowledge and bias)
+### Does sample size variation suggest a different problem? (On domain knowledge and bias)
 
 The vagaries of sample size may not independently be causing this problem, but they do raise a few broader issues. First, "unweighted" arithmetic averages make the most sense when we can invoke statistics' favorite assumptions of "independent and identically distributed" and seek to use average to remove noise from the data.
 
@@ -117,7 +117,7 @@ In this environment, daily test rates are not identical and independently distri
 
 ## What went right?
 
-It's never easy to say you're wrong, and if you particularly dislike admitting to being wrong, working in data will be rather painful. You will be wrong quite frequently. If you don't like being wrong, you can probably also appreciate how significantly not fun it must be to hold a press conference or write a press release about being wrong. However, the best way to be *right* is to never stop questioning your own methods or looking for ways to change or impprove.
+It's never easy to say you're wrong, and if you particularly dislike admitting to being wrong, working in data will be rather painful. You will be wrong quite frequently. If you don't like being wrong, you can probably also appreciate how significantly not fun it must be to hold a press conference or write a press release about being wrong. However, the best way to be *right* is to never stop questioning your own methods or looking for ways to change or improve.
 
 
 

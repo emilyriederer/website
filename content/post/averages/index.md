@@ -5,11 +5,11 @@ subtitle: ""
 summary: "How metric definitions, ambiguous calculations, sample sizes, and domain knowledge make calculating a humble average a formidable and thought-deserving task"
 authors: []
 tags: []
-categories: [data]
-date: 2021-11-07
-lastmod: 2021-11-07
+categories: [data-disasters]
+date: 2021-08-21
+lastmod: 2021-08-21
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -26,13 +26,13 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: fa23665531858129
+rmd_hash: 6b919cff7a682d51
 
 ---
 
-Back in September, I dusted off a training course that I first developed in 2018 to teach to a class of new hires at work. The content focuses on many types of *data disasters*[^1] that are often encountered when working with data -- from misunderstanding how data is structured pr how tools are meant to work, to errors in causal interpretation and model building -- yet rarely taught in stats training.
+Once again this year, I'm dusting off a training course that I first developed in 2018 to teach to our incoming class of \~200 new direct-from-college analysts at work. The content focuses on many types of *data disasters*[^1] that are often encountered when working with data -- from misunderstanding how data is structured pr how tools are meant to work, to errors in causal interpretation and model building -- yet rarely taught in stats training.
 
-This year, however, the material felt a bit different, and it was not simply because (for the second year) I was sitting alone in a room all afternoon rambling to myself and a Zoom screen about all the ways everything can go wrong and how you really can't ever trust anything (in data, that is.)
+The past few years, however, the material felt a bit different, and it was not simply because I'm sitting alone in a room all afternoon rambling to myself and a Zoom screen about all the ways everything can go wrong and how you really can't ever trust anything (in data, that is.)
 
 <blockquote class="twitter-tweet">
 <p lang="en" dir="ltr">
@@ -42,12 +42,11 @@ Teaching an intro data analysis class tomorrow which means I'll be sitting alone
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-This year, the material took on a whole new level of gravity. As I walked through my taxonomy and examples of data disasters, one of my underlying message had always been that stats education focuses on the "complex" things (e.g. proving asymptotic convergence) but simple things can also be hard and important. However, as the pandemic has evolved over the last two years, more highly important data processing has been done in the open and on the fly than ever before, and much of it has unsurprisingly hit many of the snags one would when working with messy, inconsistent, ever-changing, observational data.
+Walking through my taxonomy and examples of data disasters, one of my underlying message had always been that stats education focuses on the "complex" things (e.g. proving asymptotic convergence) but simple things can also be hard and important. However, as the pandemic played out over the last few years, more highly important data processing has been done in the open and on the fly than ever before, and much of it has unsurprisingly hit many of the snags one would when working with messy, inconsistent, ever-changing, observational data.
 
-As I walked through the course, I found myself thinking about many pandemic-related examples for every "disasters" which all felt more urgent and timely than the industry-specific examples that I had concocted. In this post, I walk through just one such example of simple things that are hard. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, metric calculation, sampling variability, and selection bias.
+As I review my course, I find myself thinking about many pandemic-related examples for every "disasters" which all feel more urgent and timely than the industry-specific examples that I have concocted. In this post, I walk through just one such example of simple things that are hard but important. This is the story of a [simple average informing public health policy in Indiana](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) and what it illustrates about imprecise estimands, metric calculation, sampling variability, and systemic error.
 
-What happened?
---------------
+## What happened?
 
 A [local news article](https://www.indystar.com/story/news/health/2020/12/23/covid-indiana-positivity-rate-error-corrected-dec-30/4013741001/) explains that the seven-day test positivity rate was being calculated as the average of daily positivity rates. Instead, the methodology was changed to calculate a single rolling weekly rate:
 
@@ -61,8 +60,7 @@ While the article states that the change would not have historically changed any
 
 At the outset, this may seem like a trivial change and the type of distinction one might not bother to make when throwing together a quick dashboard or report[^2] However, as we will examine step-by-step, this subtle mechanical difference actually carries with it a weight of statistical reasoning.
 
-What went wrong?
-----------------
+## What went wrong?
 
 ### What is the target?
 
@@ -88,12 +86,11 @@ To see the difference, suppose there are 50 tests on day 1 with 20% positive and
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='o'>(</span><span class='nv'>avg_of_days</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>10</span><span class='o'>/</span><span class='m'>50</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>/</span><span class='m'>100</span><span class='o'>)</span> <span class='o'>/</span> <span class='m'>2</span><span class='o'>)</span>
-<span class='o'>(</span><span class='nv'>avg_of_test</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>10</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>)</span> <span class='o'>/</span> <span class='o'>(</span><span class='m'>50</span> <span class='o'>+</span> <span class='m'>100</span><span class='o'>)</span><span class='o'>)</span>
-
-<span class='c'>#&gt; [1] 0.15</span>
-<span class='c'>#&gt; [1] 0.1333333</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='o'>(</span><span class='nv'>avg_of_days</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>10</span><span class='o'>/</span><span class='m'>50</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>/</span><span class='m'>100</span><span class='o'>)</span> <span class='o'>/</span> <span class='m'>2</span><span class='o'>)</span></span>
+<span><span class='o'>(</span><span class='nv'>avg_of_test</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>10</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>)</span> <span class='o'>/</span> <span class='o'>(</span><span class='m'>50</span> <span class='o'>+</span> <span class='m'>100</span><span class='o'>)</span><span class='o'>)</span></span>
+<span><span class='c'>#&gt; [1] 0.15</span></span>
+<span><span class='c'>#&gt; [1] 0.1333333</span></span>
+<span></span></code></pre>
 
 </div>
 
@@ -101,12 +98,11 @@ Alternatively, none of this matters if the number of tests are the same on both 
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='o'>(</span><span class='nv'>avg_of_days</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>20</span><span class='o'>/</span><span class='m'>100</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>/</span><span class='m'>100</span><span class='o'>)</span> <span class='o'>/</span> <span class='m'>2</span><span class='o'>)</span>
-<span class='o'>(</span><span class='nv'>avg_of_test</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>20</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>)</span> <span class='o'>/</span> <span class='o'>(</span><span class='m'>100</span> <span class='o'>+</span> <span class='m'>100</span><span class='o'>)</span><span class='o'>)</span>
-
-<span class='c'>#&gt; [1] 0.15</span>
-<span class='c'>#&gt; [1] 0.15</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='o'>(</span><span class='nv'>avg_of_days</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>20</span><span class='o'>/</span><span class='m'>100</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>/</span><span class='m'>100</span><span class='o'>)</span> <span class='o'>/</span> <span class='m'>2</span><span class='o'>)</span></span>
+<span><span class='o'>(</span><span class='nv'>avg_of_test</span> <span class='o'>&lt;-</span> <span class='o'>(</span><span class='m'>20</span> <span class='o'>+</span> <span class='m'>10</span><span class='o'>)</span> <span class='o'>/</span> <span class='o'>(</span><span class='m'>100</span> <span class='o'>+</span> <span class='m'>100</span><span class='o'>)</span><span class='o'>)</span></span>
+<span><span class='c'>#&gt; [1] 0.15</span></span>
+<span><span class='c'>#&gt; [1] 0.15</span></span>
+<span></span></code></pre>
 
 </div>
 
@@ -118,16 +114,15 @@ Suppose for a minute, that this is a binomial setup where each test has an equal
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>p</span> <span class='o'>&lt;-</span> <span class='m'>0.5</span>
-<span class='nv'>n</span> <span class='o'>&lt;-</span> <span class='m'>1000</span>
-<span class='nv'>size</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='m'>10</span>, <span class='m'>100</span>, <span class='m'>500</span><span class='o'>)</span>
-<span class='nv'>samples</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='o'>(</span><span class='nv'>size</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='o'>(</span><span class='nv'>n</span>, <span class='nv'>x</span>, <span class='nv'>p</span><span class='o'>)</span> <span class='o'>/</span> <span class='nv'>x</span><span class='o'>)</span>
-<span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span>
-<span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span>
-
-<span class='c'>#&gt; [1] 0.506 0.499 0.500</span>
-<span class='c'>#&gt; [1] 0.155 0.050 0.022</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>p</span> <span class='o'>&lt;-</span> <span class='m'>0.5</span></span>
+<span><span class='nv'>n</span> <span class='o'>&lt;-</span> <span class='m'>1000</span></span>
+<span><span class='nv'>size</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='m'>10</span>, <span class='m'>100</span>, <span class='m'>500</span><span class='o'>)</span></span>
+<span><span class='nv'>samples</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='o'>(</span><span class='nv'>size</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span><span class='o'>(</span><span class='nv'>n</span>, <span class='nv'>x</span>, <span class='nv'>p</span><span class='o'>)</span> <span class='o'>/</span> <span class='nv'>x</span><span class='o'>)</span></span>
+<span><span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span></span>
+<span><span class='nf'><a href='https://rdrr.io/r/base/lapply.html'>vapply</a></span><span class='o'>(</span><span class='nv'>samples</span>, FUN <span class='o'>=</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span> <span class='nf'><a href='https://rdrr.io/r/base/Round.html'>round</a></span><span class='o'>(</span><span class='nf'><a href='https://rdrr.io/r/stats/sd.html'>sd</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span>, <span class='m'>3</span><span class='o'>)</span>, FUN.VALUE <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='o'>(</span><span class='m'>1</span><span class='o'>)</span><span class='o'>)</span></span>
+<span><span class='c'>#&gt; [1] 0.502 0.500 0.500</span></span>
+<span><span class='c'>#&gt; [1] 0.164 0.050 0.023</span></span>
+<span></span></code></pre>
 
 </div>
 
@@ -135,7 +130,7 @@ As we would expect, we see the means observed with a sample size of 10, 100, or 
 
 So, days with smaller samples are most likely to take the most extreme values which could yank an average in one direction *or the other* ephemerally[^6]. This alone is a bad situation for a metric of interest; however, despite the higher variance, small sample sizes will not induce *bias*. That is, we will be correct "on average" and small sample days are no more likely to be extreme in one direction or the other.
 
-### Does sample size correlate with a problem? (On domain knowledge and bias)
+### Does sample size variation suggest a different problem? (On domain knowledge and bias)
 
 The vagaries of sample size may not independently be causing this problem, but they do raise a few broader issues. First, "unweighted" arithmetic averages make the most sense when we can invoke statistics' favorite assumptions of "independent and identically distributed" and seek to use average to remove noise from the data.
 
@@ -143,20 +138,19 @@ However, this is where our domain knowledge of the problem comes to bear. Early 
 
 In this environment, daily test rates are not identical and independently distributed. Instead, high test rates are positively correlated with low-volume test days, and low volume test days are too heavily weighted in day-averaged test positivity metrics.
 
-What went right?
-----------------
+## What went right?
 
-It's never easy to say you're wrong, and if you particularly dislike admitting to being wrong, working in data will be rather painful. You will be wrong quite frequently. If you don't like being wrong, you can probably also appreciate how significantly not fun it must be to hold a press conference or write a press release about being wrong. However, the best way to be *right* is to never stop questioning your own methods or looking for ways to change or impprove.
+It's never easy to say you're wrong, and if you particularly dislike admitting to being wrong, working in data will be rather painful. You will be wrong quite frequently. If you don't like being wrong, you can probably also appreciate how significantly not fun it must be to hold a press conference or write a press release about being wrong. However, the best way to be *right* is to never stop questioning your own methods or looking for ways to change or improve.
 
-[^1]: Similar to the long-form writing project I'm working in the open over [here](https://data-disasters.netlify.app/)
+[^1]: Similar to the long-form writing project I'm *very* slowly working in the open over [here](https://data-disasters.com/)
 
 [^2]: In fact, I suspect there is a side story here about some common BI tools making the computation of the former metric significantly easier than the latter. But, that is not something I can substantiate, so I will not get on that soapbox.
 
-[^3]: One framework for approaching metric design is eloquently explored by Sean Taylor in this essay: <a href="https://medium.com/@seanjtaylor/designing-and-evaluating-metrics-5902ad6873bf" class="uri">https://medium.com/@seanjtaylor/designing-and-evaluating-metrics-5902ad6873bf</a>
+[^3]: One framework for approaching metric design is eloquently explored by Sean Taylor in this essay: <https://medium.com/@seanjtaylor/designing-and-evaluating-metrics-5902ad6873bf>
 
-[^4]: This new study cites many examples of poorly defined estimands (think metrics) from the BMJ: <a href="https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-021-05644-4" class="uri">https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-021-05644-4</a>
+[^4]: This new study cites many examples of poorly defined estimands (think metrics) from the BMJ: <https://trialsjournal.biomedcentral.com/articles/10.1186/s13063-021-05644-4>
 
 [^5]: We also know this with standard statistical results and formulas, but it's more fun to see it.
 
-[^6]: As discussed at length in this Scientific American article: <a href="https://www.americanscientist.org/article/the-most-dangerous-equation" class="uri">https://www.americanscientist.org/article/the-most-dangerous-equation</a>
+[^6]: As discussed at length in this Scientific American article: <https://www.americanscientist.org/article/the-most-dangerous-equation>
 

@@ -9,7 +9,7 @@ categories: [rstats, pkgdev, workflow]
 date: 2022-08-14
 lastmod: 2022-08-14
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image

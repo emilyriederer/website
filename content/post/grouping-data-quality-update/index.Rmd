@@ -1,6 +1,6 @@
 ---
 output: hugodown::md_document
-title: "Follow up: Grouped data quality checks in dbt-utils"
+title: "Follow up: PR for grouped data quality checks merged to dbt-utils"
 subtitle: ""
 summary: ""
 authors: []

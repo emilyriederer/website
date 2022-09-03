@@ -1,11 +1,11 @@
 ---
 output: hugodown::md_document
-title: "Follow up: Grouped data quality checks in dbt-utils"
+title: "Follow up: PR for grouped data quality checks merged to dbt-utils"
 subtitle: ""
 summary: ""
 authors: []
-tags: [data, changelog]
-categories: [data, changelog]
+tags: [data, changelog, dbt]
+categories: [data, changelog, dbt]
 date: 2022-08-26
 lastmod: 2022-08-26
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 748707788d878431
+rmd_hash: 955b63821a9a8aa7
 
 ---
 

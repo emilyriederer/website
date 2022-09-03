@@ -9,7 +9,7 @@ categories: []
 date: 2022-09-03
 lastmod: 2022-09-03
 featured: false
-draft: true
+draft: false
 aliases:
 
 # Featured image
@@ -26,9 +26,21 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b3002a1cede62a78
+rmd_hash: 2bf169cc49decf22
 
 ---
 
+Interoperability work: + Posit + dbt python models + arrow
 
+Big picture really powerful; however not just a technical problem but a cultural one
+
+Reasonable defaults change by language
+
+## Data Storage (R vs Python)
+
+## Null Handling (R vs SQL)
+
+## Logistic Regression (R vs python)
+
+## Conclusion
 

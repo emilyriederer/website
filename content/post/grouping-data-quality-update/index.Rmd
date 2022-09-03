@@ -1,8 +1,8 @@
 ---
 output: hugodown::md_document
-title: "Follow up: PR for grouped data quality checks merged to dbt-utils"
+title: "Update: grouped data quality check PR merged to dbt-utils"
 subtitle: ""
-summary: ""
+summary: "After a prior post on the merits of grouped data quality checks, I demo my newly merged implementation for dbt"
 authors: []
 tags: [data, changelog, dbt]
 categories: [data, changelog, dbt]

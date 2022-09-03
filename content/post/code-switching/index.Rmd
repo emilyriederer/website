@@ -43,4 +43,6 @@ Reasonable defaults change by language
 
 ## Logistic Regression (R vs python)
 
+## Feature Importance (R vs Spark)
+
 ## Conclusion

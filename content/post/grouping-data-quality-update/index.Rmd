@@ -4,8 +4,8 @@ title: "Follow up: Grouped data quality checks in dbt-utils"
 subtitle: ""
 summary: ""
 authors: []
-tags: [data, changelog]
-categories: [data, changelog]
+tags: [data, changelog, dbt]
+categories: [data, changelog, dbt]
 date: 2022-08-26
 lastmod: 2022-08-26
 featured: false

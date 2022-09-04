@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: a98a7ef757f7b462
+rmd_hash: 74c644410267d069
 
 ---
 
@@ -94,18 +94,17 @@ print(y)
 
 R defaults to NA for column SQL allows Python: numpy disallows, but works in pandas agg
 
-<div class="highlight">
-
+<div class='highlight'>
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>x</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='m'>1</span>,<span class='m'>2</span>,<span class='kc'>NA</span><span class='o'>)</span></span>
 <span><span class='nf'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span></span>
 <span><span class='c'>#&gt; [1] NA</span></span>
 <span></span><span><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='nv'>x</span><span class='o'>)</span></span>
 <span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='o'>(</span><span class='nv'>df</span>, x <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span><span class='o'>)</span></span>
-<span><span class='c'>#&gt;    x</span></span>
-<span><span class='c'>#&gt; 1 NA</span></span>
-<span></span></code></pre>
+</code></pre>
 
-</div>
+|   x |
+|----:|
+|  NA |
 
 <div class="highlight">
 
@@ -148,22 +147,24 @@ df.agg({'x': ['sum']})
 
 No one allows its
 
-<div class="highlight">
-
+<div class='highlight'>
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='o'>(</span><span class='nv'>df</span>, z <span class='o'>=</span> <span class='nv'>x</span><span class='o'>-</span><span class='nv'>y</span><span class='o'>)</span></span>
-<span><span class='c'>#&gt;    x  z</span></span>
-<span><span class='c'>#&gt; 1  1  0</span></span>
-<span><span class='c'>#&gt; 2  2  0</span></span>
-<span><span class='c'>#&gt; 3 NA NA</span></span>
-<span></span><span><span class='nv'>df</span><span class='o'>$</span><span class='nv'>z</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='o'>(</span><span class='nv'>df</span>, <span class='nv'>x</span><span class='o'>-</span><span class='nv'>y</span><span class='o'>)</span></span>
-<span><span class='nv'>df</span></span>
-<span><span class='c'>#&gt;    x  z</span></span>
-<span><span class='c'>#&gt; 1  1  0</span></span>
-<span><span class='c'>#&gt; 2  2  0</span></span>
-<span><span class='c'>#&gt; 3 NA NA</span></span>
-<span></span></code></pre>
+</code></pre>
 
-</div>
+|   x |   z |
+|----:|----:|
+|   1 |   0 |
+|   2 |   0 |
+|  NA |  NA |
+
+<span class="nv">df</span> </code>
+</pre>
+
+|   x |   z |
+|----:|----:|
+|   1 |   0 |
+|   2 |   0 |
+|  NA |  NA |
 
 <div class="highlight">
 
@@ -218,19 +219,20 @@ from
 
 </div>
 
-<div class="highlight">
-
+<div class='highlight'>
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nf'><a href='https://rdrr.io/r/base/merge.html'>merge</a></span><span class='o'>(</span><span class='nv'>df1</span>, <span class='nv'>df2</span>, by <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='s'>"A"</span>, <span class='s'>"B"</span><span class='o'>)</span><span class='o'>)</span></span>
 <span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>inner_join</a></span><span class='o'>(</span><span class='nv'>df1</span>, <span class='nv'>df2</span>, by <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='s'>"A"</span>, <span class='s'>"B"</span><span class='o'>)</span><span class='o'>)</span></span>
 <span><span class='c'># merge(df1, df2, by = c("A","B"), incomparables = NA)</span></span>
 <span><span class='c'># dplyr::inner_join(df1, df2, by = c("A", "B"), na_matches = "never")</span></span>
-<span><span class='c'>#&gt;   A  B    X     Y</span></span>
-<span><span class='c'>#&gt; 1 1 NA TRUE FALSE</span></span>
-<span><span class='c'>#&gt;   A  B    X     Y</span></span>
-<span><span class='c'>#&gt; 1 1 NA TRUE FALSE</span></span>
-<span></span></code></pre>
+</code></pre>
 
-</div>
+|   A | B   | X    | Y     |
+|----:|:----|:-----|:------|
+|   1 | NA  | TRUE | FALSE |
+
+|   A | B   | X    | Y     |
+|----:|:----|:-----|:------|
+|   1 | NA  | TRUE | FALSE |
 
 <div class="highlight">
 
@@ -271,12 +273,18 @@ where B != 1
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>df1</span><span class='o'>[</span><span class='nv'>df1</span><span class='o'>$</span><span class='nv'>B</span> <span class='o'>!=</span> <span class='m'>1</span>,<span class='o'>]</span></span>
-<span><span class='c'>#&gt;     A  B  X</span></span>
-<span><span class='c'>#&gt; NA NA NA NA</span></span>
-<span></span><span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='o'>(</span><span class='nv'>df1</span>, <span class='nv'>B</span> <span class='o'>!=</span> <span class='m'>1</span><span class='o'>)</span></span>
-<span><span class='c'>#&gt; [1] A B X</span></span>
-<span><span class='c'>#&gt; &lt;0 rows&gt; (or 0-length row.names)</span></span>
-<span></span></code></pre>
+</code></pre>
+
+|     |   A | B   | X   |
+|:----|----:|:----|:----|
+| NA  |  NA | NA  | NA  |
+
+</code>
+</pre>
+
+ A\|B \|X \|
+
+\|--:\|:--\|:--\|
 
 </div>
 
@@ -319,9 +327,9 @@ order by 1
 
 | store\_id | avg(amt\_spend) | sum(amt\_spend) / count(amt\_spend) | sum(amt\_spend) / count(1) |
 |--------:|------------:|----------------------------:|---------------------:|
-|        NA |        99.62559 |                            99.62559 |                   66.41706 |
-|         1 |        99.84692 |                            99.84692 |                   99.84692 |
-|         2 |       101.38162 |                           101.38162 |                  101.38162 |
+|        NA |       100.01360 |                           100.01360 |                   66.67573 |
+|         1 |        99.54544 |                            99.54544 |                   99.54544 |
+|         2 |       100.43765 |                           100.43765 |                  100.43765 |
 
 </div>
 
@@ -345,12 +353,12 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |   99.56916 |          NA |
-|         2 |     1 |  101.83405 |   10.046981 |
-|         1 |     2 |  100.28270 |    9.951460 |
-|         2 |     2 |  101.09183 |    9.948691 |
-|         1 |     3 |   99.68889 |    9.985896 |
-|         2 |     3 |  101.21898 |   10.052744 |
+|         1 |     1 |  100.42447 |          NA |
+|         2 |     1 |  100.40317 |    9.951985 |
+|         1 |     2 |   98.80412 |   10.052713 |
+|         2 |     2 |  100.14649 |   10.130757 |
+|         1 |     3 |   99.40774 |    9.842270 |
+|         2 |     3 |  100.76328 |    9.878809 |
 
 </div>
 
@@ -372,15 +380,15 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |   99.56916 |          NA |
-|         2 |     1 |  101.83405 |   10.046981 |
-|        NA |     1 |   99.17681 |    9.864515 |
-|         1 |     2 |  100.28270 |    9.951460 |
-|         2 |     2 |  101.09183 |    9.948691 |
-|        NA |     2 |  100.07437 |    9.953494 |
-|         1 |     3 |   99.68889 |    9.985896 |
-|         2 |     3 |  101.21898 |   10.052744 |
-|        NA |     3 |         NA |    9.954749 |
+|         1 |     1 |  100.42447 |          NA |
+|         2 |     1 |  100.40317 |    9.951985 |
+|        NA |     1 |   99.04718 |   10.030175 |
+|         1 |     2 |   98.80412 |   10.052713 |
+|         2 |     2 |  100.14649 |   10.130757 |
+|        NA |     2 |  100.98002 |   10.024178 |
+|         1 |     3 |   99.40774 |    9.842270 |
+|         2 |     3 |  100.76328 |    9.878809 |
+|        NA |     3 |         NA |    9.806780 |
 
 </div>
 
@@ -404,9 +412,9 @@ order by 1
 
 | month | net\_spend |
 |------:|-----------:|
-|     1 |   181.0994 |
-|     2 |   271.5953 |
-|     3 |   180.8692 |
+|     1 |   179.4682 |
+|     2 |   269.7230 |
+|     3 |   180.4499 |
 
 </div>
 
@@ -430,15 +438,15 @@ from
 
 | month | amt\_spend | amt\_return | net\_spend |
 |------:|-----------:|------------:|-----------:|
-|     1 |   99.56916 |          NA |         NA |
-|     1 |  101.83405 |   10.046981 |   91.78707 |
-|     1 |   99.17681 |    9.864515 |   89.31230 |
-|     2 |  100.28270 |    9.951460 |   90.33124 |
-|     2 |  101.09183 |    9.948691 |   91.14314 |
-|     2 |  100.07437 |    9.953494 |   90.12087 |
-|     3 |   99.68889 |    9.985896 |   89.70300 |
-|     3 |  101.21898 |   10.052744 |   91.16624 |
-|     3 |         NA |    9.954749 |         NA |
+|     1 |  100.42447 |          NA |         NA |
+|     1 |  100.40317 |    9.951985 |   90.45119 |
+|     1 |   99.04718 |   10.030175 |   89.01700 |
+|     2 |   98.80412 |   10.052713 |   88.75140 |
+|     2 |  100.14649 |   10.130757 |   90.01573 |
+|     2 |  100.98002 |   10.024178 |   90.95584 |
+|     3 |   99.40774 |    9.842270 |   89.56547 |
+|     3 |  100.76328 |    9.878809 |   90.88447 |
+|     3 |         NA |    9.806780 |         NA |
 
 </div>
 
@@ -462,9 +470,9 @@ order by 1
 
 | month | net\_spend |
 |------:|-----------:|
-|     1 |   280.6685 |
-|     2 |   271.5953 |
-|     3 |   170.9145 |
+|     1 |   279.8927 |
+|     2 |   269.7230 |
+|     3 |   170.6432 |
 
 </div>
 

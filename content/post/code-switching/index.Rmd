@@ -28,6 +28,14 @@ image:
 projects: [""]
 ---
 
+```{r echo = FALSE}
+custom_print <- function(x) {
+  paste(knitr::kable(x, format = "markdown"), collapse = "\n")
+}
+knitr::opts_knit$set(sql.print = custom_print)
+```
+
+
 Interoperability work:
 + Posit
 + dbt python models

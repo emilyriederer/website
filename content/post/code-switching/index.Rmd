@@ -30,7 +30,7 @@ projects: [""]
 
 ```{r echo = FALSE}
 knit_print.data.frame = function(x, ...) {
-  res = paste(c("", "", knitr::kable(x)), collapse = "\n")
+  res = paste(c("", "", knitr::kable(x, format = "markdown")), collapse = "\n")
   knitr::asis_output(res)
 }
 

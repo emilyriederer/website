@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 483e0cdbeed28aed
+rmd_hash: e25f3ad3e682cdd0
 
 ---
 
@@ -74,14 +74,14 @@ Consider two tables in a retailer's database. The `spend` table reports total sa
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='c'>#&gt;   STORE_ID MONTH AMT_SPEND</span></span>
-<span><span class='c'>#&gt; 1        1     1 100.10138</span></span>
-<span><span class='c'>#&gt; 2        2     1 100.38362</span></span>
-<span><span class='c'>#&gt; 3       NA     1  99.29203</span></span>
-<span><span class='c'>#&gt; 4        1     2 100.31819</span></span>
-<span><span class='c'>#&gt; 5        2     2 100.31699</span></span>
-<span><span class='c'>#&gt; 6       NA     2  99.13101</span></span>
-<span><span class='c'>#&gt; 7        1     3 100.72458</span></span>
-<span><span class='c'>#&gt; 8        2     3 100.11672</span></span>
+<span><span class='c'>#&gt; 1        1     1  99.23958</span></span>
+<span><span class='c'>#&gt; 2        2     1 101.20548</span></span>
+<span><span class='c'>#&gt; 3       NA     1 101.85683</span></span>
+<span><span class='c'>#&gt; 4        1     2 100.42267</span></span>
+<span><span class='c'>#&gt; 5        2     2 100.70428</span></span>
+<span><span class='c'>#&gt; 6       NA     2  99.35768</span></span>
+<span><span class='c'>#&gt; 7        1     3  98.60262</span></span>
+<span><span class='c'>#&gt; 8        2     3 100.08304</span></span>
 <span><span class='c'>#&gt; 9       NA     3        NA</span></span>
 <span></span></code></pre>
 
@@ -93,14 +93,14 @@ Similarly, the `returns` table reports returned sales at the same grain.
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='c'>#&gt;   STORE_ID MONTH AMT_RETURN</span></span>
 <span><span class='c'>#&gt; 1        1     1         NA</span></span>
-<span><span class='c'>#&gt; 2        2     1  10.007182</span></span>
-<span><span class='c'>#&gt; 3       NA     1  10.011537</span></span>
-<span><span class='c'>#&gt; 4        1     2   9.935336</span></span>
-<span><span class='c'>#&gt; 5        2     2  10.033244</span></span>
-<span><span class='c'>#&gt; 6       NA     2   9.888867</span></span>
-<span><span class='c'>#&gt; 7        1     3  10.043771</span></span>
-<span><span class='c'>#&gt; 8        2     3   9.928700</span></span>
-<span><span class='c'>#&gt; 9       NA     3   9.944019</span></span>
+<span><span class='c'>#&gt; 2        2     1   9.893137</span></span>
+<span><span class='c'>#&gt; 3       NA     1  10.112644</span></span>
+<span><span class='c'>#&gt; 4        1     2   9.917785</span></span>
+<span><span class='c'>#&gt; 5        2     2  10.057277</span></span>
+<span><span class='c'>#&gt; 6       NA     2   9.793871</span></span>
+<span><span class='c'>#&gt; 7        1     3  10.170668</span></span>
+<span><span class='c'>#&gt; 8        2     3   9.861069</span></span>
+<span><span class='c'>#&gt; 9       NA     3  10.021262</span></span>
 <span></span></code></pre>
 
 </div>
@@ -123,9 +123,9 @@ order by 1
 
 | store\_id | avg(amt\_spend) |
 |----------:|----------------:|
-|        NA |        99.21152 |
-|         1 |       100.38138 |
-|         2 |       100.27244 |
+|        NA |       100.60726 |
+|         1 |        99.42162 |
+|         2 |       100.66427 |
 
 </div>
 
@@ -156,9 +156,9 @@ order by 1
 
 | store\_id |    wrong1 |    wrong2 |    right1 |    right2 |
 |----------:|----------:|----------:|----------:|----------:|
-|        NA |  99.21152 |  99.21152 |  66.14101 |  66.14101 |
-|         1 | 100.38138 | 100.38138 | 100.38138 | 100.38138 |
-|         2 | 100.27244 | 100.27244 | 100.27244 | 100.27244 |
+|        NA | 100.60726 | 100.60726 |  67.07151 |  67.07151 |
+|         1 |  99.42162 |  99.42162 |  99.42162 |  99.42162 |
+|         2 | 100.66427 | 100.66427 | 100.66427 | 100.66427 |
 
 </div>
 
@@ -184,12 +184,12 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |   100.1014 |          NA |
-|         2 |     1 |   100.3836 |   10.007182 |
-|         1 |     2 |   100.3182 |    9.935336 |
-|         2 |     2 |   100.3170 |   10.033245 |
-|         1 |     3 |   100.7246 |   10.043771 |
-|         2 |     3 |   100.1167 |    9.928700 |
+|         1 |     1 |   99.23958 |          NA |
+|         2 |     1 |  101.20548 |    9.893137 |
+|         1 |     2 |  100.42267 |    9.917785 |
+|         2 |     2 |  100.70428 |   10.057277 |
+|         1 |     3 |   98.60262 |   10.170668 |
+|         2 |     3 |  100.08304 |    9.861069 |
 
 </div>
 
@@ -217,15 +217,15 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |  100.10138 |          NA |
-|         2 |     1 |  100.38362 |   10.007182 |
-|        NA |     1 |   99.29202 |   10.011537 |
-|         1 |     2 |  100.31819 |    9.935336 |
-|         2 |     2 |  100.31699 |   10.033245 |
-|        NA |     2 |   99.13101 |    9.888867 |
-|         1 |     3 |  100.72458 |   10.043771 |
-|         2 |     3 |  100.11672 |    9.928700 |
-|        NA |     3 |         NA |    9.944019 |
+|         1 |     1 |   99.23958 |          NA |
+|         2 |     1 |  101.20548 |    9.893137 |
+|        NA |     1 |  101.85683 |   10.112644 |
+|         1 |     2 |  100.42267 |    9.917785 |
+|         2 |     2 |  100.70428 |   10.057277 |
+|        NA |     2 |   99.35768 |    9.793871 |
+|         1 |     3 |   98.60262 |   10.170668 |
+|         2 |     3 |  100.08304 |    9.861069 |
+|        NA |     3 |         NA |   10.021262 |
 
 </div>
 
@@ -251,9 +251,9 @@ order by 1
 
 | month | net\_spend |
 |------:|-----------:|
-|     1 |   179.6569 |
-|     2 |   269.9087 |
-|     3 |   180.8688 |
+|     1 |   183.0565 |
+|     2 |   270.7157 |
+|     3 |   178.6539 |
 
 </div>
 
@@ -280,15 +280,15 @@ from
 
 | month | store\_id | amt\_spend | amt\_return | net\_spend |
 |------:|----------:|-----------:|------------:|-----------:|
-|     1 |         1 |  100.10138 |          NA |         NA |
-|     1 |         2 |  100.38362 |   10.007182 |   90.37644 |
-|     1 |        NA |   99.29202 |   10.011537 |   89.28049 |
-|     2 |         1 |  100.31819 |    9.935336 |   90.38286 |
-|     2 |         2 |  100.31699 |   10.033245 |   90.28375 |
-|     2 |        NA |   99.13101 |    9.888867 |   89.24215 |
-|     3 |         1 |  100.72458 |   10.043771 |   90.68081 |
-|     3 |         2 |  100.11672 |    9.928700 |   90.18802 |
-|     3 |        NA |         NA |    9.944019 |         NA |
+|     1 |         1 |   99.23958 |          NA |         NA |
+|     1 |         2 |  101.20548 |    9.893137 |   91.31235 |
+|     1 |        NA |  101.85683 |   10.112644 |   91.74419 |
+|     2 |         1 |  100.42267 |    9.917785 |   90.50489 |
+|     2 |         2 |  100.70428 |   10.057277 |   90.64700 |
+|     2 |        NA |   99.35768 |    9.793871 |   89.56381 |
+|     3 |         1 |   98.60262 |   10.170668 |   88.43195 |
+|     3 |         2 |  100.08304 |    9.861069 |   90.22197 |
+|     3 |        NA |         NA |   10.021262 |         NA |
 
 </div>
 
@@ -315,9 +315,9 @@ order by 1
 
 | month |   right1 |   right2 |
 |------:|---------:|---------:|
-|     1 | 279.7583 | 279.7583 |
-|     2 | 269.9087 | 269.9087 |
-|     3 | 170.9248 | 170.9248 |
+|     1 | 282.2961 | 282.2961 |
+|     2 | 270.7157 | 270.7157 |
+|     3 | 168.6327 | 168.6327 |
 
 </div>
 
@@ -360,10 +360,11 @@ Built by and for statistician's, R is scandalized at the very idea of attempting
 <div class='highlight'>
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>x</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='m'>1</span>,<span class='m'>2</span>,<span class='kc'>NA</span><span class='o'>)</span></span>
 <span><span class='nf'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span></span>
-<span><span class='c'>#&gt; [1] NA</span></span>
-<span></span><span><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='nv'>x</span><span class='o'>)</span></span>
+<span></span>
+<span><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='nv'>x</span><span class='o'>)</span></span>
 <span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='o'>(</span><span class='nv'>df</span>, x <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='o'>(</span><span class='nv'>x</span><span class='o'>)</span><span class='o'>)</span></span>
-</code></pre>
+<span><span class='c'>#&gt; [1] NA</span></span>
+<span></span></code></pre>
 
 |   x |
 |----:|
@@ -379,15 +380,11 @@ x = [1,2,np.nan]
 y = [3,4,5]
 df = pd.DataFrame({'x':x,'y':y})
 sum(x)
-
-#> nan
-
 np.sum(x)
-
-#> nan
-
 df.agg({'x': ['sum']})
 
+#> nan
+#> nan
 #>        x
 #> sum  3.0
 </code></pre>
@@ -396,27 +393,9 @@ df.agg({'x': ['sum']})
 
 ### Transformation
 
-No one allows its
+All of SQL, R, and python return NA when `NA`s are used in atomic or rowwise transformations.
 
-<div class='highlight'>
-<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='m'>1</span>,<span class='m'>2</span>,<span class='kc'>NA</span><span class='o'>)</span>, y <span class='o'>=</span> <span class='m'>3</span><span class='o'>:</span><span class='m'>5</span><span class='o'>)</span></span>
-<span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='o'>(</span><span class='nv'>df</span>, z <span class='o'>=</span> <span class='nv'>x</span><span class='o'>-</span><span class='nv'>y</span><span class='o'>)</span></span>
-</code></pre>
-
-|   x |   y |   z |
-|----:|----:|----:|
-|   1 |   3 |  -2 |
-|   2 |   4 |  -2 |
-|  NA |   5 |  NA |
-
-<span class="nv">df</span> </code>
-</pre>
-
-|   x |   y |   z |
-|----:|----:|----:|
-|   1 |   3 |  -2 |
-|   2 |   4 |  -2 |
-|  NA |   5 |  NA |
+In SQL:
 
 <div class="highlight">
 
@@ -434,14 +413,36 @@ from tbl
 
 </div>
 
+In R:
+
+<div class='highlight'>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='o'>(</span><span class='m'>1</span>,<span class='m'>2</span>,<span class='kc'>NA</span><span class='o'>)</span>, y <span class='o'>=</span> <span class='m'>3</span><span class='o'>:</span><span class='m'>5</span><span class='o'>)</span></span>
+<span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='o'>(</span><span class='nv'>df</span>, z <span class='o'>=</span> <span class='nv'>x</span><span class='o'>-</span><span class='nv'>y</span><span class='o'>)</span></span>
+<span></span>
+<span><span class='nv'>df</span><span class='o'>$</span><span class='nv'>z</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/with.html'>with</a></span><span class='o'>(</span><span class='nv'>df</span>, <span class='nv'>x</span><span class='o'>-</span><span class='nv'>y</span><span class='o'>)</span></span>
+<span><span class='nv'>df</span></span>
+</code></pre>
+
+|   x |   y |   z |
+|----:|----:|----:|
+|   1 |   3 |  -2 |
+|   2 |   4 |  -2 |
+|  NA |   5 |  NA |
+
+|   x |   y |   z |
+|----:|----:|----:|
+|   1 |   3 |  -2 |
+|   2 |   4 |  -2 |
+|  NA |   5 |  NA |
+
+In python:
+
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'>np.array(x) - np.array(y)
-
-#> array([-2., -2., nan])
-
 df.assign(z = lambda d: d.x - d.y)
 
+#> array([-2., -2., nan])
 #>      x  y    z
 #> 0  1.0  3 -2.0
 #> 1  2.0  4 -2.0
@@ -451,6 +452,8 @@ df.assign(z = lambda d: d.x - d.y)
 </div>
 
 ### Joining
+
+The situation with joins may feel like the opposite of aggregation. Here, R and python's most popular data wrangling packages are more permissive than SQL.
 
 As we saw in the case study, SQL does not match on nulls.
 
@@ -536,6 +539,8 @@ pd.merge(df1, df2)
 
 `R` and `python`'s behavior here seems most surprising. One might expect joining to work the same as raw logical evaluation works. However, neither language "likes" null comparison in its raw form. Instead, the default behavior is intentionally altered in these higher-level joining functions.
 
+In R:
+
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='kc'>NA</span> <span class='o'>==</span> <span class='kc'>NA</span></span>
@@ -543,6 +548,8 @@ pd.merge(df1, df2)
 <span></span></code></pre>
 
 </div>
+
+In python:
 
 <div class="highlight">
 
@@ -555,11 +562,7 @@ pd.merge(df1, df2)
 
 ### Filtering
 
-SQL doesn't recognize
-
-Neither R nor dplyr give data back, but do so in different ways
-
-pandas does recognize
+Finally, both SQL and R drop null records used in filtering statements since comparisons with these values are incapable of returning a TRUE/FALSE value that is used to subset the rows. In python, however, pandas does preserve nulls in filter conditions.
 
 Using the same `tbl1` shown above, we can also confirm that SQL proactively drops nulls in where clauses where they cannot be readily compared to non-null values. This seems quite consistent with its behavior in the joining case.
 
@@ -583,14 +586,12 @@ Both base R and `dplyr` paradigms follow suit here.
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>df1</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>A <span class='o'>=</span> <span class='m'>1</span>, B <span class='o'>=</span> <span class='kc'>NA</span>, X <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span></span>
 <span><span class='nv'>df1</span><span class='o'>[</span><span class='nv'>df1</span><span class='o'>$</span><span class='nv'>B</span> <span class='o'>!=</span> <span class='m'>1</span>,<span class='o'>]</span></span>
+<span><span class='nf'>dplyr</span><span class='nf'>::</span><span class='nf'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='o'>(</span><span class='nv'>df1</span>, <span class='nv'>B</span> <span class='o'>!=</span> <span class='m'>1</span><span class='o'>)</span></span>
 </code></pre>
 
 |     |   A | B   | X   |
 |:----|----:|:----|:----|
 | NA  |  NA | NA  | NA  |
-
-</code>
-</pre>
 
  A\|B \|X \|
 
@@ -604,12 +605,10 @@ However, bucking the trend, multiple approaches to subsetting `pandas` data will
 
 <pre class='chroma'><code class='language-r' data-lang='r'>df1 = pd.DataFrame([[1, np.nan, True]], columns = ['A','B','X'])
 df1[df1.B != 1]
+df1.query('B != 1')
 
 #>    A   B     X
 #> 0  1 NaN  True
-
-df1.query('B != 1')
-
 #>    A   B     X
 #> 0  1 NaN  True
 </code></pre>

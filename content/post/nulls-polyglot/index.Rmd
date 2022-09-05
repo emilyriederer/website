@@ -265,7 +265,7 @@ from tbl
 
 Built by and for statistician's, R is scandalized at the very idea of attempting to do math with null columns. For aggregation functions, it returns `NA` as a form of protest should any entry of the vector provided be null. (This can be overridden with the `na.rm` parameter.)
 
-```{r}
+```{r results = 'hold'}
 x <- c(1,2,NA)
 sum(x)
 
@@ -275,7 +275,7 @@ dplyr::summarize(df, x = sum(x))
 
 When it comes to python, well, it depends. Base and `numpy` operations act more like R whereas `pandas` aggregation acts more like python.
 
-```{python}
+```{python results = 'hold'}
 import pandas as pd
 import numpy as np
 x = [1,2,np.nan]
@@ -288,9 +288,18 @@ df.agg({'x': ['sum']})
 
 ### Transformation
 
-No one allows its
+All of SQL, R, and python return NA when `NA`s are used in atomic or rowwise transformations.
 
-```{r}
+In SQL:
+
+```{sql, connection = con}
+select *, x-y as z
+from tbl
+```
+
+In R:
+
+```{r results = 'hold'}
 df <- data.frame(x = c(1,2,NA), y = 3:5)
 dplyr::mutate(df, z = x-y)
 
@@ -298,18 +307,16 @@ df$z <- with(df, x-y)
 df
 ```
 
-```{sql, connection = con}
-select *, x-y as z
-from tbl
-```
+In python:
 
-```{python}
+```{python results = 'hold'}
 np.array(x) - np.array(y)
 df.assign(z = lambda d: d.x - d.y)
 ```
 
-
 ### Joining 
+
+The situation with joins may feel like the opposite of aggregation. Here, R and python's most popular data wrangling packages are more permissive than SQL.
 
 As we saw in the case study, SQL does not match on nulls.
 
@@ -333,6 +340,7 @@ from
   tbl1.A = tbl2.A and 
   tbl1.B = tbl2.B
 ```
+
 In contrast, default behavior for base R's `merge` and `dplyr` *does match* on nulls. (Although, either behavior can be altered with the `incomparables` or `na_matches` arguments, respectively.)
 
 ```{r results = "hold"}
@@ -344,7 +352,7 @@ dplyr::inner_join(df1, df2, by = c("A", "B"))
 
 Similarly, `pandas` also matches on nulls for joining.
 
-```{python}
+```{python results = "hold"}
 import numpy as np
 import pandas as pd
 df1 = pd.DataFrame([[1, np.nan, True]], columns = ['A','B','X'])
@@ -354,9 +362,13 @@ pd.merge(df1, df2)
 
 `R` and `python`'s behavior here seems most surprising. One might expect joining to work the same as raw logical evaluation works. However, neither language "likes" null comparison in its raw form. Instead, the default behavior is intentionally altered in these higher-level joining functions.
 
+In R:
+
 ```{r}
 NA == NA
 ```
+
+In python:
 
 ```{python}
 np.nan == np.nan
@@ -364,11 +376,7 @@ np.nan == np.nan
 
 ### Filtering
 
-SQL doesn't recognize
-
-Neither R nor dplyr give data back, but do so in different ways
-
-pandas does recognize
+Finally, both SQL and R drop null records used in filtering statements since comparisons with these values are incapable of returning a TRUE/FALSE value that is used to subset the rows. In python, however, pandas does preserve nulls in filter conditions. 
 
 Using the same `tbl1` shown above, we can also confirm that SQL proactively drops nulls in where clauses where they cannot be readily compared to non-null values. This seems quite consistent with its behavior in the joining case.
 
@@ -377,9 +385,10 @@ select A, B, X
 from tbl1 
 where B != 1
 ```
+
 Both base R and `dplyr` paradigms follow suit here.
 
-```{r}
+```{r results = 'hold'}
 df1 <- data.frame(A = 1, B = NA, X = TRUE)
 df1[df1$B != 1,]
 dplyr::filter(df1, B != 1)
@@ -387,7 +396,7 @@ dplyr::filter(df1, B != 1)
 
 However, bucking the trend, multiple approaches to subsetting `pandas` data will not drop nulls in filtering comparisons.
 
-```{python}
+```{python results = 'hold'}
 df1 = pd.DataFrame([[1, np.nan, True]], columns = ['A','B','X'])
 df1[df1.B != 1]
 df1.query('B != 1')

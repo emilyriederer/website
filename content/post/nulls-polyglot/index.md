@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: ca6a8c73770e1217
+rmd_hash: 483e0cdbeed28aed
 
 ---
 
@@ -46,7 +46,11 @@ Language interoperability and different ways of enabling "polyglot" workflows ha
 
 As a general matter, these are all exciting advances with great potential to aid in different workflows *when used judiciously*. However, it also poses the question: what cognitive burdens do we alleviate and which do we add when our projects begin to leverage multiple languages?
 
+Despite common data analysis tools like SQL, R, and python being high-level languages with declarative interfaces (in the case of R's `tidyverse` and python's `pandas`), successful usage still requires understanding the underlying assumptions and operations of each tool. There is not such thing as a truly declarative language; only those that generally make decisions that the user likes well-enough to ask for the "what" and delegate the "how". These differences can emerge at many different levels: such as foundational issues like whether data structures are copied or modified in-place or broader design choices like default hyperparameters in machine learning libraries (e.g. python's `scikitlearn` notoriously uses regularized logistic regression as the default for logistic regression.) Somewhere along that spectrum lies the fickle issue of handling null values.
+
 In this post, I recap a quick case study of how incautious null handling risks data analysis validity. Then, taking a step back, I compare how R, python, and SQL behave differently when confront with null values and the implications for analysts switching between languages.
+
+## TLDR
 
 A summary of these different behaviors is provided below:
 
@@ -70,14 +74,14 @@ Consider two tables in a retailer's database. The `spend` table reports total sa
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='c'>#&gt;   STORE_ID MONTH AMT_SPEND</span></span>
-<span><span class='c'>#&gt; 1        1     1 100.72247</span></span>
-<span><span class='c'>#&gt; 2        2     1  99.14809</span></span>
-<span><span class='c'>#&gt; 3       NA     1 100.13906</span></span>
-<span><span class='c'>#&gt; 4        1     2  99.06847</span></span>
-<span><span class='c'>#&gt; 5        2     2 100.45664</span></span>
-<span><span class='c'>#&gt; 6       NA     2  99.58250</span></span>
-<span><span class='c'>#&gt; 7        1     3  99.21077</span></span>
-<span><span class='c'>#&gt; 8        2     3 101.70533</span></span>
+<span><span class='c'>#&gt; 1        1     1 100.10138</span></span>
+<span><span class='c'>#&gt; 2        2     1 100.38362</span></span>
+<span><span class='c'>#&gt; 3       NA     1  99.29203</span></span>
+<span><span class='c'>#&gt; 4        1     2 100.31819</span></span>
+<span><span class='c'>#&gt; 5        2     2 100.31699</span></span>
+<span><span class='c'>#&gt; 6       NA     2  99.13101</span></span>
+<span><span class='c'>#&gt; 7        1     3 100.72458</span></span>
+<span><span class='c'>#&gt; 8        2     3 100.11672</span></span>
 <span><span class='c'>#&gt; 9       NA     3        NA</span></span>
 <span></span></code></pre>
 
@@ -89,14 +93,14 @@ Similarly, the `returns` table reports returned sales at the same grain.
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='c'>#&gt;   STORE_ID MONTH AMT_RETURN</span></span>
 <span><span class='c'>#&gt; 1        1     1         NA</span></span>
-<span><span class='c'>#&gt; 2        2     1  10.044820</span></span>
-<span><span class='c'>#&gt; 3       NA     1  10.144207</span></span>
-<span><span class='c'>#&gt; 4        1     2  10.172516</span></span>
-<span><span class='c'>#&gt; 5        2     2  10.219208</span></span>
-<span><span class='c'>#&gt; 6       NA     2  10.095349</span></span>
-<span><span class='c'>#&gt; 7        1     3   9.974947</span></span>
-<span><span class='c'>#&gt; 8        2     3  10.072654</span></span>
-<span><span class='c'>#&gt; 9       NA     3   9.953221</span></span>
+<span><span class='c'>#&gt; 2        2     1  10.007182</span></span>
+<span><span class='c'>#&gt; 3       NA     1  10.011537</span></span>
+<span><span class='c'>#&gt; 4        1     2   9.935336</span></span>
+<span><span class='c'>#&gt; 5        2     2  10.033244</span></span>
+<span><span class='c'>#&gt; 6       NA     2   9.888867</span></span>
+<span><span class='c'>#&gt; 7        1     3  10.043771</span></span>
+<span><span class='c'>#&gt; 8        2     3   9.928700</span></span>
+<span><span class='c'>#&gt; 9       NA     3   9.944019</span></span>
 <span></span></code></pre>
 
 </div>
@@ -119,9 +123,9 @@ order by 1
 
 | store\_id | avg(amt\_spend) |
 |----------:|----------------:|
-|        NA |        99.86078 |
-|         1 |        99.66723 |
-|         2 |       100.43669 |
+|        NA |        99.21152 |
+|         1 |       100.38138 |
+|         2 |       100.27244 |
 
 </div>
 
@@ -152,9 +156,9 @@ order by 1
 
 | store\_id |    wrong1 |    wrong2 |    right1 |    right2 |
 |----------:|----------:|----------:|----------:|----------:|
-|        NA |  99.86078 |  99.86078 |  66.57385 |  66.57385 |
-|         1 |  99.66723 |  99.66723 |  99.66723 |  99.66723 |
-|         2 | 100.43669 | 100.43669 | 100.43669 | 100.43669 |
+|        NA |  99.21152 |  99.21152 |  66.14101 |  66.14101 |
+|         1 | 100.38138 | 100.38138 | 100.38138 | 100.38138 |
+|         2 | 100.27244 | 100.27244 | 100.27244 | 100.27244 |
 
 </div>
 
@@ -180,12 +184,12 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |  100.72247 |          NA |
-|         2 |     1 |   99.14809 |   10.044820 |
-|         1 |     2 |   99.06847 |   10.172516 |
-|         2 |     2 |  100.45664 |   10.219207 |
-|         1 |     3 |   99.21077 |    9.974947 |
-|         2 |     3 |  101.70533 |   10.072654 |
+|         1 |     1 |   100.1014 |          NA |
+|         2 |     1 |   100.3836 |   10.007182 |
+|         1 |     2 |   100.3182 |    9.935336 |
+|         2 |     2 |   100.3170 |   10.033245 |
+|         1 |     3 |   100.7246 |   10.043771 |
+|         2 |     3 |   100.1167 |    9.928700 |
 
 </div>
 
@@ -213,15 +217,15 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |  100.72247 |          NA |
-|         2 |     1 |   99.14809 |   10.044820 |
-|        NA |     1 |  100.13906 |   10.144207 |
-|         1 |     2 |   99.06847 |   10.172516 |
-|         2 |     2 |  100.45664 |   10.219207 |
-|        NA |     2 |   99.58250 |   10.095349 |
-|         1 |     3 |   99.21077 |    9.974947 |
-|         2 |     3 |  101.70533 |   10.072654 |
-|        NA |     3 |         NA |    9.953221 |
+|         1 |     1 |  100.10138 |          NA |
+|         2 |     1 |  100.38362 |   10.007182 |
+|        NA |     1 |   99.29202 |   10.011537 |
+|         1 |     2 |  100.31819 |    9.935336 |
+|         2 |     2 |  100.31699 |   10.033245 |
+|        NA |     2 |   99.13101 |    9.888867 |
+|         1 |     3 |  100.72458 |   10.043771 |
+|         2 |     3 |  100.11672 |    9.928700 |
+|        NA |     3 |         NA |    9.944019 |
 
 </div>
 
@@ -247,9 +251,9 @@ order by 1
 
 | month | net\_spend |
 |------:|-----------:|
-|     1 |   179.0981 |
-|     2 |   268.6205 |
-|     3 |   180.8685 |
+|     1 |   179.6569 |
+|     2 |   269.9087 |
+|     3 |   180.8688 |
 
 </div>
 
@@ -276,15 +280,15 @@ from
 
 | month | store\_id | amt\_spend | amt\_return | net\_spend |
 |------:|----------:|-----------:|------------:|-----------:|
-|     1 |         1 |  100.72247 |          NA |         NA |
-|     1 |         2 |   99.14809 |   10.044820 |   89.10327 |
-|     1 |        NA |  100.13906 |   10.144207 |   89.99485 |
-|     2 |         1 |   99.06847 |   10.172516 |   88.89595 |
-|     2 |         2 |  100.45664 |   10.219207 |   90.23743 |
-|     2 |        NA |   99.58250 |   10.095349 |   89.48715 |
-|     3 |         1 |   99.21077 |    9.974947 |   89.23582 |
-|     3 |         2 |  101.70533 |   10.072654 |   91.63268 |
-|     3 |        NA |         NA |    9.953221 |         NA |
+|     1 |         1 |  100.10138 |          NA |         NA |
+|     1 |         2 |  100.38362 |   10.007182 |   90.37644 |
+|     1 |        NA |   99.29202 |   10.011537 |   89.28049 |
+|     2 |         1 |  100.31819 |    9.935336 |   90.38286 |
+|     2 |         2 |  100.31699 |   10.033245 |   90.28375 |
+|     2 |        NA |   99.13101 |    9.888867 |   89.24215 |
+|     3 |         1 |  100.72458 |   10.043771 |   90.68081 |
+|     3 |         2 |  100.11672 |    9.928700 |   90.18802 |
+|     3 |        NA |         NA |    9.944019 |         NA |
 
 </div>
 
@@ -311,9 +315,9 @@ order by 1
 
 | month |   right1 |   right2 |
 |------:|---------:|---------:|
-|     1 | 279.8206 | 279.8206 |
-|     2 | 268.6205 | 268.6205 |
-|     3 | 170.9153 | 170.9153 |
+|     1 | 279.7583 | 279.7583 |
+|     2 | 269.9087 | 269.9087 |
+|     3 | 170.9248 | 170.9248 |
 
 </div>
 

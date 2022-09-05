@@ -65,7 +65,11 @@ Language interoperability and different ways of enabling "polyglot" workflows ha
 
 As a general matter, these are all exciting advances with great potential to aid in different workflows *when used judiciously*. However, it also poses the question: what cognitive burdens do we alleviate and which do we add when our projects begin to leverage multiple languages? 
 
+Despite common data analysis tools like SQL, R, and python being high-level languages with declarative interfaces (in the case of R's `tidyverse` and python's `pandas`), successful usage still requires understanding the underlying assumptions and operations of each tool. There is not such thing as a truly declarative language; only those that generally make decisions that the user likes well-enough to ask for the "what" and delegate the "how". These differences can emerge at many different levels: such as foundational issues like whether data structures are copied or modified in-place or broader design choices like default hyperparameters in machine learning libraries (e.g. python's `scikitlearn` notoriously uses regularized logistic regression as the default for logistic regression.) Somewhere along that spectrum lies the fickle issue of handling null values.
+
 In this post, I recap a quick case study of how incautious null handling risks data analysis validity. Then, taking a step back, I compare how R, python, and SQL behave differently when confront with null values and the implications for analysts switching between languages. 
+
+## TLDR
 
 A summary of these different behaviors is provided below:
 

@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: e25f3ad3e682cdd0
+rmd_hash: 67ef007d16e38f9c
 
 ---
 
@@ -74,14 +74,14 @@ Consider two tables in a retailer's database. The `spend` table reports total sa
 <div class="highlight">
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='c'>#&gt;   STORE_ID MONTH AMT_SPEND</span></span>
-<span><span class='c'>#&gt; 1        1     1  99.23958</span></span>
-<span><span class='c'>#&gt; 2        2     1 101.20548</span></span>
-<span><span class='c'>#&gt; 3       NA     1 101.85683</span></span>
-<span><span class='c'>#&gt; 4        1     2 100.42267</span></span>
-<span><span class='c'>#&gt; 5        2     2 100.70428</span></span>
-<span><span class='c'>#&gt; 6       NA     2  99.35768</span></span>
-<span><span class='c'>#&gt; 7        1     3  98.60262</span></span>
-<span><span class='c'>#&gt; 8        2     3 100.08304</span></span>
+<span><span class='c'>#&gt; 1        1     1  99.80583</span></span>
+<span><span class='c'>#&gt; 2        2     1 100.90027</span></span>
+<span><span class='c'>#&gt; 3       NA     1 100.37129</span></span>
+<span><span class='c'>#&gt; 4        1     2  99.57305</span></span>
+<span><span class='c'>#&gt; 5        2     2  99.02583</span></span>
+<span><span class='c'>#&gt; 6       NA     2 100.81439</span></span>
+<span><span class='c'>#&gt; 7        1     3  98.92842</span></span>
+<span><span class='c'>#&gt; 8        2     3  99.41093</span></span>
 <span><span class='c'>#&gt; 9       NA     3        NA</span></span>
 <span></span></code></pre>
 
@@ -93,14 +93,14 @@ Similarly, the `returns` table reports returned sales at the same grain.
 
 <pre class='chroma'><code class='language-r' data-lang='r'><span><span class='c'>#&gt;   STORE_ID MONTH AMT_RETURN</span></span>
 <span><span class='c'>#&gt; 1        1     1         NA</span></span>
-<span><span class='c'>#&gt; 2        2     1   9.893137</span></span>
-<span><span class='c'>#&gt; 3       NA     1  10.112644</span></span>
-<span><span class='c'>#&gt; 4        1     2   9.917785</span></span>
-<span><span class='c'>#&gt; 5        2     2  10.057277</span></span>
-<span><span class='c'>#&gt; 6       NA     2   9.793871</span></span>
-<span><span class='c'>#&gt; 7        1     3  10.170668</span></span>
-<span><span class='c'>#&gt; 8        2     3   9.861069</span></span>
-<span><span class='c'>#&gt; 9       NA     3  10.021262</span></span>
+<span><span class='c'>#&gt; 2        2     1  10.031146</span></span>
+<span><span class='c'>#&gt; 3       NA     1  10.016674</span></span>
+<span><span class='c'>#&gt; 4        1     2  10.032299</span></span>
+<span><span class='c'>#&gt; 5        2     2  10.034934</span></span>
+<span><span class='c'>#&gt; 6       NA     2   9.723547</span></span>
+<span><span class='c'>#&gt; 7        1     3  10.113336</span></span>
+<span><span class='c'>#&gt; 8        2     3  10.148012</span></span>
+<span><span class='c'>#&gt; 9       NA     3  10.168857</span></span>
 <span></span></code></pre>
 
 </div>
@@ -123,9 +123,9 @@ order by 1
 
 | store\_id | avg(amt\_spend) |
 |----------:|----------------:|
-|        NA |       100.60726 |
-|         1 |        99.42162 |
-|         2 |       100.66427 |
+|        NA |       100.59284 |
+|         1 |        99.43577 |
+|         2 |        99.77901 |
 
 </div>
 
@@ -154,11 +154,11 @@ order by 1
 
 </code></pre>
 
-| store\_id |    wrong1 |    wrong2 |    right1 |    right2 |
-|----------:|----------:|----------:|----------:|----------:|
-|        NA | 100.60726 | 100.60726 |  67.07151 |  67.07151 |
-|         1 |  99.42162 |  99.42162 |  99.42162 |  99.42162 |
-|         2 | 100.66427 | 100.66427 | 100.66427 | 100.66427 |
+| store\_id |    wrong1 |    wrong2 |   right1 |   right2 |
+|----------:|----------:|----------:|---------:|---------:|
+|        NA | 100.59284 | 100.59284 | 67.06189 | 67.06189 |
+|         1 |  99.43577 |  99.43577 | 99.43577 | 99.43577 |
+|         2 |  99.77901 |  99.77901 | 99.77901 | 99.77901 |
 
 </div>
 
@@ -184,12 +184,12 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |   99.23958 |          NA |
-|         2 |     1 |  101.20548 |    9.893137 |
-|         1 |     2 |  100.42267 |    9.917785 |
-|         2 |     2 |  100.70428 |   10.057277 |
-|         1 |     3 |   98.60262 |   10.170668 |
-|         2 |     3 |  100.08304 |    9.861069 |
+|         1 |     1 |   99.80583 |          NA |
+|         2 |     1 |  100.90027 |    10.03115 |
+|         1 |     2 |   99.57305 |    10.03230 |
+|         2 |     2 |   99.02583 |    10.03493 |
+|         1 |     3 |   98.92842 |    10.11334 |
+|         2 |     3 |   99.41093 |    10.14801 |
 
 </div>
 
@@ -217,15 +217,15 @@ from
 
 | STORE\_ID | MONTH | AMT\_SPEND | amt\_return |
 |----------:|------:|-----------:|------------:|
-|         1 |     1 |   99.23958 |          NA |
-|         2 |     1 |  101.20548 |    9.893137 |
-|        NA |     1 |  101.85683 |   10.112644 |
-|         1 |     2 |  100.42267 |    9.917785 |
-|         2 |     2 |  100.70428 |   10.057277 |
-|        NA |     2 |   99.35768 |    9.793871 |
-|         1 |     3 |   98.60262 |   10.170668 |
-|         2 |     3 |  100.08304 |    9.861069 |
-|        NA |     3 |         NA |   10.021262 |
+|         1 |     1 |   99.80583 |          NA |
+|         2 |     1 |  100.90027 |   10.031146 |
+|        NA |     1 |  100.37129 |   10.016674 |
+|         1 |     2 |   99.57305 |   10.032299 |
+|         2 |     2 |   99.02583 |   10.034934 |
+|        NA |     2 |  100.81439 |    9.723547 |
+|         1 |     3 |   98.92842 |   10.113336 |
+|         2 |     3 |   99.41093 |   10.148012 |
+|        NA |     3 |         NA |   10.168857 |
 
 </div>
 
@@ -251,9 +251,9 @@ order by 1
 
 | month | net\_spend |
 |------:|-----------:|
-|     1 |   183.0565 |
-|     2 |   270.7157 |
-|     3 |   178.6539 |
+|     1 |   181.2237 |
+|     2 |   269.6225 |
+|     3 |   178.0780 |
 
 </div>
 
@@ -280,15 +280,15 @@ from
 
 | month | store\_id | amt\_spend | amt\_return | net\_spend |
 |------:|----------:|-----------:|------------:|-----------:|
-|     1 |         1 |   99.23958 |          NA |         NA |
-|     1 |         2 |  101.20548 |    9.893137 |   91.31235 |
-|     1 |        NA |  101.85683 |   10.112644 |   91.74419 |
-|     2 |         1 |  100.42267 |    9.917785 |   90.50489 |
-|     2 |         2 |  100.70428 |   10.057277 |   90.64700 |
-|     2 |        NA |   99.35768 |    9.793871 |   89.56381 |
-|     3 |         1 |   98.60262 |   10.170668 |   88.43195 |
-|     3 |         2 |  100.08304 |    9.861069 |   90.22197 |
-|     3 |        NA |         NA |   10.021262 |         NA |
+|     1 |         1 |   99.80583 |          NA |         NA |
+|     1 |         2 |  100.90027 |   10.031146 |   90.86912 |
+|     1 |        NA |  100.37129 |   10.016674 |   90.35461 |
+|     2 |         1 |   99.57305 |   10.032299 |   89.54076 |
+|     2 |         2 |   99.02583 |   10.034934 |   88.99089 |
+|     2 |        NA |  100.81439 |    9.723547 |   91.09084 |
+|     3 |         1 |   98.92842 |   10.113336 |   88.81508 |
+|     3 |         2 |   99.41093 |   10.148012 |   89.26292 |
+|     3 |        NA |         NA |   10.168857 |         NA |
 
 </div>
 
@@ -315,9 +315,9 @@ order by 1
 
 | month |   right1 |   right2 |
 |------:|---------:|---------:|
-|     1 | 282.2961 | 282.2961 |
-|     2 | 270.7157 | 270.7157 |
-|     3 | 168.6327 | 168.6327 |
+|     1 | 281.0296 | 281.0296 |
+|     2 | 269.6225 | 269.6225 |
+|     3 | 167.9091 | 167.9091 |
 
 </div>
 
@@ -529,7 +529,7 @@ Similarly, `pandas` also matches on nulls for joining.
 import pandas as pd
 df1 = pd.DataFrame([[1, np.nan, True]], columns = ['A','B','X'])
 df2 = pd.DataFrame([[1, np.nan, False]], columns = ['A','B','Y'])
-pd.merge(df1, df2)
+pd.merge(df1, df2, on = ['A','B'])
 
 #>    A   B     X      Y
 #> 0  1 NaN  True  False

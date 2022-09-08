@@ -273,7 +273,7 @@ df <- data.frame(x = x)
 dplyr::summarize(df, x = sum(x))
 ```
 
-When it comes to python, well, it depends. Base and `numpy` operations act more like R whereas `pandas` aggregation acts more like python.
+When it comes to python, well, it depends. Base and `numpy` operations act more like R whereas `pandas` aggregation acts more like SQL.
 
 ```{python results = 'hold'}
 import pandas as pd

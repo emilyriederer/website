@@ -16,9 +16,9 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Photo credit to [Davide Ragusa](https://unsplash.com/@davideragusa) on Unsplash"
+  caption: ""
   focal_point: ""
-  preview_only: false
+  preview_only: true
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: e6f3a102330ab2ee
+rmd_hash: a08fa52d28eac516
 
 ---
 

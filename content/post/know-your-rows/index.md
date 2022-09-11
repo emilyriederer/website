@@ -2,7 +2,7 @@
 output: hugodown::md_document
 title: "Know, know, know your rows"
 subtitle: ""
-summary: ""
+summary: "Focusing on column-level defintions ignores, quite literally, an important dimension of the data documentation problem"
 authors: []
 tags: [sql, data]
 categories: [sql, data]
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 83f24b12ac3013f6
+rmd_hash: e6f3a102330ab2ee
 
 ---
 

@@ -28,6 +28,9 @@ image:
 projects: [""]
 ---
 
+
+
+
 Data discoverability and documentation are core challenges in the ever evolving data management stack. Like many other parts of the data stack, there has been an influx of start-ups (and VC funding) reenvisioning what a data catalog can be. The [Seattle Data Guy](https://seattledataguy.substack.com/p/cataloging-data-catalogs) recently catalogued the numerous catalogs themselves. However, despite the plethora of options (and I certainly haven't been able to survey most!), I notice an imbalance between the high-level of transparency they afford to documentation and lineage of *columns* versus the parsimonious information on *rows*.
 
 This is not a new trend. From the "olden" days of a flat-file "data dictionary", documenting the fields/columns/measures of a dataset has been the focus. It's widely known that data may not mean what we think, and yet analysts focus their attention on understanding columns and not "what makes a row". Recent tools, I suspect, exacerbate this trend because information about columns (e.g. column-level lineage) can largely be automatically derived by parsing a DAG and forklifting metadata from common data tools (e.g. Looker, dbt); however, understanding rows often requires "external" information about real-world business systems and processes.
@@ -43,21 +46,21 @@ In this post, I make a plea for more focus on documenting rows by outlining the 
 
 ## You don't know the intent
 
-I suspect row definitions may often have been ignored since, in theory, the definition of "what makes a row" is core to relational data modeling. In theory, each record in a table should correspond to one well-defined "entity" or "event" so perhaps table naming and and the data model itself seemed sufficient to document a record. However, in practice it's not that simple.
+Row definitions superficially seem less necessary since "what makes a row", in theory, corresponds to the very definition of the table in which the row lives in the relational model. In theory, each record represents a well-defined "entity" so table naming and the overall data model *imply* the definition of a row. In practice, it's not the simple. 
 
 Suppose that you're an analyst looking to analyze website login data to check for friction in the UX. You may find a promising table in your database called `login`s - huzzah! But what does that really mean?
 
 ![](login-log.png)
 
-A data engineering might have defined a "login" to be any of a wide-ranging number of events throughout the login process. Are "logins" login *attempts*? *Successes*? Further, what actually is an attempt? Did you have to pass a Captcha that you weren't a robot? Could you even attempt to login if you forgot your username or couldn't find the submit button?
+A data engineering might have defined (or, rather *instrumented*) a "login" to be any of a wide-ranging number of events throughout the login process. Are "logins" login *attempts*? *Successes*? Further, what actually is an attempt? Did you have to pass a Captcha that you weren't a robot? Could you even attempt to login if you forgot your username or couldn't find the submit button?
 
 Which of these events gets collected and recorded has a significant impact on subsequent data processing. 
-In a technical sense, no inclusion/exclusion decision here is *incorrect*, per se, but if the producers' choices don't match the consumers' understandings, it can lead to misleading results.
+In a technical sense, no inclusion/exclusion decision here is *incorrect*, per se, but if the producers' choices don't match the consumers' understandings, we will end up with misleading results.
 
-For example, an analyst might seek out a `logins` table in order to calculate the rate of successful website logins. 
-Reasonably enough, they might compute this rate as the sum of successful events over the total. 
+Consider calculating the rate of successful website logins. 
+Reasonably enough, an analyst might compute this rate as the sum of successful events over the total. 
 Now, suppose two users attempt to login to their account, and ultimately, one succeeds in accessing their private information and the other doesn't. 
-The analyst would probably hope to compute and report a 50% login success rate. However, depending on how the data is represented, they could quite easily compute nearly any value from 0% to 100%. 
+The analyst would probably hope to compute and report a 50% success rate. However, depending on how the data is represented, they could quite easily compute nearly any value from 0% to 100%. 
 
 As a thought experiment, we can consider what types of events might be logged: 
 
@@ -93,7 +96,7 @@ If the data is sourced from the order collection system, it should contain all o
 
 ![](featured.jpg)
 
-This discrepancy would not simply cause missing-at-random data. Given that many e-commerce companies offer "fast/free shipping if you spend more than \$X dollars", the same mechanism that would cause some orders to ship faster than others are confounded with the order's value. Thus, even the calculation of average spend metrics could be compromised.
+The source system for our records, then, sets our expectations on data latency and changes our definition of data completeness. Further, data sourced from more slowly updating systems (e.g. the shipping stage) might cause biased discrepancies and missing not-at-random data. Given that many e-commerce companies offer "fast/free shipping if you spend more than \$X dollars", the same mechanism that would cause some orders to ship faster than others are confounded with the order's value. Thus, even the calculation of average spend metrics could be compromised.
 
 ![](order-date.png)
 

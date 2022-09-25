@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 121df10d44f912b5
+rmd_hash: 8d5795031579682e
 
 ---
 
@@ -68,7 +68,7 @@ Beyond these files, analysis using this data could surely be enriched by additio
 
 Your mileage may vary based on your system RAM, but many run-of-the-mill consumer laptops might struggle to let R or python load all of this data into memory. Or, a SQL-focused analyst might yearn for a database to handle all these complex joins. So how can `DuckDB` assist?
 
-## DuckDB demo
+## DuckDB highlights
 
 To explain, we'll first level-set with a brief demo of some of the most relevant features of `DuckDB`.
 
@@ -117,12 +117,12 @@ While very useful, this is of course bulky to type. We may also set-up a persist
 ctas = "create or replace table sample as (select * from read_csv_auto('sample.csv'));"
 con.execute(ctas)
 
-#> <duckdb.DuckDBPyConnection object at 0x00000000321205B0>
+#> <duckdb.DuckDBPyConnection object at 0x00000000320C1FB0>
 
 cvas = "create or replace view sample_vw as (select * from read_csv_auto('sample.csv'));" 
 con.execute(cvas)
 
-#> <duckdb.DuckDBPyConnection object at 0x00000000321205B0>
+#> <duckdb.DuckDBPyConnection object at 0x00000000320C1FB0>
 
 con.close()
 </code></pre>
@@ -160,16 +160,16 @@ df2.head()
 
 </div>
 
-(Here, I focus just on the features we will use; not strictly the coolest or most important. I highly encourage taking a spin through the [docs](https://duckdb.org/docs/guides/python/sql_on_pandas)) for countless features not discussed -- like directly querying from or fetching to pandas and Arrow formats, an alternative relational API, etc.)
+(Here, I focus just on the features we will use; not strictly the coolest or most important. I highly encourage taking a spin through the [docs](https://duckdb.org/docs/guides/python/sql_on_pandas) for countless features not discussed -- like directly querying from or fetching to pandas and Arrow formats, an alternative relational API, etc.)
 
-## Data management patterns
+## Data management pattern
 
 With these features in mind, we return to the problem at hand. How can an analyst mimic the experience of having the infrastructure needed to do their work?
 
 One approach could look something like the following. As a one-time exercise someone would:
 
 1.  Download all relevant files
-2.  (Optionally) Convert large, static files to Parquet versus CSV: DuckDB handles both well, but Parquet has additional benefits including compression (for easier storage and sharing), additional metadata, columnar storage, and (when partitioned) the ability to optimize retrieval with pruning
+2.  (Optionally) Convert large, static files to Parquet versus CSV. DuckDB handles both well, but Parquet has some benefits that we'll discuss in the next section
 3.  Create a DuckDB database with references to the files as `view`s
 
 Then, any analyst wanting to interact with the data could:
@@ -177,7 +177,7 @@ Then, any analyst wanting to interact with the data could:
 1.  Interact with DuckDB as with any database connection
 2.  Whenever needed, re-download the files to the same name/directory to "refresh" the "database"
 
-The [nc-votes-duckdb](https://github.com/emilyriederer/nc-votes-duckdb) GitHub repo shows this flow in practice. If you want to follow along, you can click `Code > Create codespaces on master` and follow the more detailed instructions in the `README.md`.
+The [nc-votes-duckdb](https://github.com/emilyriederer/nc-votes-duckdb) GitHub repo shows this flow in practice. If you want to follow along, you can click `Code > Create codespaces on master` and follow the more detailed instructions in the `README.md` or at the bottom of this post.
 
 ### One-time set-up
 
@@ -220,7 +220,7 @@ with csv.open_csv(path_raw,
 
 (Notably: counties are rather imbalanced in size and not the most important geography in many election contexts. This is for example purpose only, but partitions should always be picked based on how you expect to use the data. )
 
-Once all the data in transformed, we can make "load" our DuckDB database with relative-path references to our data. Again, this step can be done through any DuckDB API or the command line. Below, I use python in the [etl/load-db.py](https://github.com/emilyriederer/nc-votes-duckdb/blob/master/etl/load-db.py) to create the `nc.duckdb` database and create references to my core datasets.
+Once all the data in transformed, we can "load" our DuckDB database with relative-path references to our data. Again, this step can be done through any DuckDB API or the command line. Below, I use python in the [etl/load-db.py](https://github.com/emilyriederer/nc-votes-duckdb/blob/master/etl/load-db.py) to create the `nc.duckdb` database and create references to the different datasets.
 
 <div class="highlight">
 
@@ -266,7 +266,7 @@ Similarly, other views could be defined as desired that query these views to do 
 
 Due to the decoupling of storage and compute, ongoing data management is nearly trivial. With this "infrastructure" set-up, analysts would need only to selectively redownload any changed datasets (in my project, using the `extract-.*.py` scripts as needed) to allow their queries to pull in the latest data.
 
-Specifically for this project, the early votes data is the only dataset that changes frequently. For ease-of-use, it could even be left in CSV format to make the download process even easier for any users.
+Big picture, that means that (after initial set-up) an analyst would have no more overhead "managing their database" than they would with a "typical" CSV-driven workflow. Specifically for this project, the early votes data is the only dataset that changes frequently. For ease-of-use, it could even be left in CSV format to make the download process even easier for any users.
 
 ## Data access patterns
 
@@ -309,4 +309,108 @@ DuckDB also works with open-source database IDEs like [DBeaver](https://dbeaver.
 ![](dbeaver-er.png)
 
 Notably **if you are using relative file paths in your view definitions, you have to launch DBeaver from your command line after moving into the appropriate working directory**. (Thanks to [Elliana May on Twitter](https://twitter.com/Mause_me/status/1571126401482510336?s=20&t=uYOnuHSjZcjkrbwYb0aXvA) for the pointer.) (In the terminal: `cd my/dir/path; dbeaver`)
+
+## Demo
+
+So can DuckDB help analysts wrangle the whole state of North Carolina with 8GB RAM? To find out, launch a GitHub Codespaces from the [nc-votes-duckdb](https://github.com/emilyriederer/nc-votes-duckdb) repo and see for yourself!
+
+1.  Launch on Codespaces
+
+2.  Set-up environment:
+
+<!-- -->
+
+    python3 -m venv venv
+    source venv/bin/activate
+    python3 -m pip install -r requirements.txt
+
+1.  Pull all raw data:
+
+<!-- -->
+
+    chmod +x etl/extract-all.sh
+    etl/extract-all.sh
+
+1.  Transform all raw data:
+
+<!-- -->
+
+    chmod +x etl/transform-all.sh
+    etl/transform-all.sh
+
+1.  Create duckdb database:
+
+<!-- -->
+
+    python etl/load-db.py
+
+1.  (Optional) Install duckdb CLI
+
+<!-- -->
+
+    chmod +x get-duckdb-cli.sh
+    ./get-duckdb-cli.sh
+
+1.  Run sample queries
+
+7a. Run sample queries in CLI
+
+Launch the CLI:
+
+    ./duckdb nc.duckdb
+    .timer on
+
+Try out some sample queries. For example, we might wonder how many past general elections that early voters have voted in before:
+
+    with voter_general as (
+    select early_vote.ncid, count(1) as n
+    from 
+      early_vote 
+      left join 
+      hist_gen 
+      on early_vote.ncid = hist_gen.ncid 
+    group by 1)
+    select n, count(1) as freq
+    from voter_general
+    group by 1
+    order by 1
+    ;
+
+And, this question is more interesting if we join on registration data to learn how many prior general elections each voter was eligible to vote in:
+
+    with voter_general as (
+    select 
+      early_vote.ncid, 
+      extract('year' from register.registr_dt) as register_year, 
+      count(1) as n
+    from 
+      early_vote 
+      left join 
+      hist_gen 
+      on early_vote.ncid = hist_gen.ncid 
+      left join
+      register
+      on early_vote.ncid = register.ncid
+    group by 1,2)
+    select
+      n, 
+      case 
+      when register_year < 2012 then 'Pre-2012'
+      else register_year
+      end as register_year,
+      count(1) as freq
+    from voter_general
+    group by 1,2
+    order by 1,2
+    ;
+
+(Yes, of course *date* matters more than year here, etc. etc. This is purely to demonstrate `duckdb` not rigorous analysis!)
+
+7b. Run sample queries in python
+
+In python: See sample queries in `test-query.py` file
+
+1.  Exit `duckdb` (Ctrl + D)
+
+2.  Run `free` in the terminal to marvel at what 8GB of RAM can do!
 

@@ -66,7 +66,7 @@ Beyond these files, analysis using this data could surely be enriched by additio
 
 Your mileage may vary based on your system RAM, but many run-of-the-mill consumer laptops might struggle to let R or python load all of this data into memory. Or, a SQL-focused analyst might yearn for a database to handle all these complex joins. So how can `DuckDB` assist?
 
-## DuckDB key features
+## DuckDB demo
 
 To explain, we'll first level-set with a brief demo of some of the most relevant features of `DuckDB`. 
 
@@ -118,54 +118,138 @@ df1.head()
 df2.head()
 ```
 
+(Here, I focus just on the features we will use; not strictly the coolest or most important. I highly encourage taking a spin through the [docs](https://duckdb.org/docs/guides/python/sql_on_pandas)) for countless features not discussed -- like directly querying from or fetching to pandas and Arrow formats, an alternative relational API, etc.)
+
 ## Data management patterns
 
 With these features in mind, we return to the problem at hand. How can an analyst mimic the experience of having the infrastructure needed to do their work?
 
-One approach could look something like the following:
+One approach could look something like the following. As a one-time exercise someone would:
 
 1. Download all relevant files
-1. (Optionally) Convert large, static files to Parquet versus CSV: DuckDB handles both well, but Parquet has additional benefits of additional metadata, columnar storage, and (when partitioned) the ability to optimize retrieval with pruning
+1. (Optionally) Convert large, static files to Parquet versus CSV: DuckDB handles both well, but Parquet has additional benefits including compression (for easier storage and sharing), additional metadata, columnar storage, and (when partitioned) the ability to optimize retrieval with pruning
 1. Create a DuckDB database with references to the files as `view`s
-1. Interact with DuckDB as with any database connection needed
+
+Then, any analyst wanting to interact with the data could:
+
+1. Interact with DuckDB as with any database connection
 1. Whenever needed, re-download the files to the same name/directory to "refresh" the "database"
+
+The [nc-votes-duckdb](https://github.com/emilyriederer/nc-votes-duckdb) GitHub repo shows this flow in practice. If you want to follow along, you can click `Code > Create codespaces on master` and follow the more detailed instructions in the `README.md`. 
 
 ### One-time set-up
 
+The scripts for the first set of steps are in the `etl` subdirectory. The e-step (extract) isn't all that interesting -- just some basic python scripts for downloading files from the internet, unzipping, and moving them around. These land the raw data in the `data/raw` subdirectory.
 
+Data transformation mostly involves converting large CSVs to Parquet format (and dropping personally-identifying fields from the data on principle). As mentioned above, this step is optional but has some benefits. First, if one person is "configuring" a database for many analysts, Parquet compression makes files smaller for storage and sharing. Second, at query-time Parquet is:
+
++ More reliably structured with a well-defined schema
++ Faster to retrieve due to columnar storage
++ Able to be pruned by a savvy database optimizer (when appropriately partitioned by columns relevant to common query patterns)
+
+[Conversion from CSV to Parquet](https://duckdb.org/docs/guides/import/parquet_export) itself can be done with DuckDB. However, as of writing, I don't believe that writing to a Hive-partitioned dataset is possible, so for this step, I used `pyarrow`, the python interface to [Apache Arrow](https://arrow.apache.org/) (another promising, memory-conserving data processing framework.)
+
+This snippet from [etl/transform-register.py](https://raw.githubusercontent.com/emilyriederer/nc-votes-duckdb/master/etl/transform-register.py) demonstrates streaming a CSV by chunk and writing it out to county-level partitions: 
+
+```{python eval = FALSE}
+# convert to hive-partitioned parquet
+if os.path.exists(path_temp):
+    shutil.rmtree(path_temp)
+
+with csv.open_csv(path_raw, 
+                  convert_options= opts_convr_reg, 
+                  parse_options = opts_parse,
+                  read_options = opts_read_reg) as reader:
+
+    for next_chunk in reader:
+        if next_chunk is None:
+            break
+        tbl = pa.Table.from_batches([next_chunk])
+        pq.write_to_dataset(
+                tbl,
+                root_path = path_temp,
+                use_dictionary = cols_reg_dict,
+                partition_cols= ['county_id']
+        )
+```
+
+(Notably: counties are rather imbalanced in size and not the most important geography in many election contexts. This is for example purpose only, but partitions should always be picked based on how you expect to use the data. )
+
+Once all the data in transformed, we can make "load" our DuckDB database with relative-path references to our data. Again, this step can be done through any DuckDB API or the command line. Below, I use python in the [etl/load-db.py](https://github.com/emilyriederer/nc-votes-duckdb/blob/master/etl/load-db.py) to create the `nc.duckdb` database and create references to my core datasets.
+
+```{python eval = FALSE}
+import duckdb
+import os
+
+# clean-up if already exists
+if os.path.exists('nc.duckdb'):
+  os.remove('nc.duckdb')
+
+# create new duckdb files 
+con = duckdb.connect('nc.duckdb')
+
+# generate SQL to register tables
+template = """
+  CREATE VIEW {view_name} as 
+  (select * from read_parquet('{path}'{opts}))
+  """
+data_dict = {
+  'early_vote': 'data/early_vt.parquet',
+  'hist_gen': 'data/history_general/*/*.parquet',
+  'hist_oth': 'data/history_other/*/*.parquet',
+  'register': 'data/register/*/*.parquet',
+  'cps_suppl': 'data/cps_suppl.parquet'
+}
+partitioned = ['hist_gen', 'hist_pri', 'register']
+
+for k,v in data_dict.items():
+
+  print("Loading {view_name} data...".format(view_name = k))
+  opt = ', HIVE_PARTITIONING=1' if k in partitioned else ''
+  cvas = template.format(view_name = k, path = v, opts = opt)
+  con.execute(cvas)
+
+con.close()
+```
+
+Similarly, other views could be defined as desired that query these views to do further data transformation.
 
 ### Ongoing usage
 
+Due to the decoupling of storage and compute, ongoing data management is nearly trivial. With this "infrastructure" set-up, analysts would need only to selectively redownload any changed datasets (in my project, using the `extract-.*.py` scripts as needed) to allow their queries to pull in the latest data.
 
+Specifically for this project, the early votes data is the only dataset that changes frequently. For ease-of-use, it could even be left in CSV format to make the download process even easier for any users. 
 
 ## Data access patterns
 
 With this set-up in place, analysts can then use their favorite tools to query the data.
 
-In python:
+### python
 
 ```{python eval = FALSE}
 import duckdb
-con = duckdb.connect('my-db.duckdb')
-df = con.execute('select * from my_tbl').fetchdf()
+con = duckdb.connect('nc.duckdb')
+df = con.execute('select count(1) from early_vote').fetchdf()
 con.close()
 ```
 
-In R:
+### R
 
 ```{r eval = FALSE}
 library(duckdb)
-con <- dbConnect( duckdb('my-db.duckdb') )
-df <- dbGetQuery('select * from my_tbl')
+con <- dbConnect( duckdb('nc.duckdb') )
+df <- dbGetQuery('select count(1) from early_vote')
 dbDisconnect(con, shutdown = TRUE)
 ```
 
-On the CLI:
+### CLI
 
 ```
 duckdb my-db.duckdb
-> select * from my_tbl
+> select count(1) from early_vote
 ```
+
+### SQL IDE (DBeaver)
 
 DuckDB also works with open-source database IDEs like [DBeaver](https://dbeaver.com/) for the full, "traditional" database experience. The [DuckDB website](https://duckdb.org/docs/guides/sql_editors/dbeaver) gives full set-up instructions. With DBeaver, analysts get the "full" database experience with navigable access to table schemas and metadata.
 
@@ -174,8 +258,6 @@ DuckDB also works with open-source database IDEs like [DBeaver](https://dbeaver.
 ![](dbeaver-er.png)
 
 
-Notably **if you are using relative file paths in your view definitions, there is one additional step**. (Thanks to [Elliana May on Twitter](https://twitter.com/Mause_me/status/1571126401482510336?s=20&t=uYOnuHSjZcjkrbwYb0aXvA) for the pointer.) For DBeaver to find the underlying data, it must be launched from the appropriate working directory from the command line. (`cd my/dir/path; dbeaver`)
-
-## Extensions
+Notably **if you are using relative file paths in your view definitions, you have to launch DBeaver from your command line after moving into the appropriate working directory**. (Thanks to [Elliana May on Twitter](https://twitter.com/Mause_me/status/1571126401482510336?s=20&t=uYOnuHSjZcjkrbwYb0aXvA) for the pointer.) (In the terminal: `cd my/dir/path; dbeaver`)
 
 

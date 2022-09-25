@@ -26,13 +26,13 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 6c59a4c4acac91da
+rmd_hash: c0b017d2292995f4
 
 ---
 
-There comes a time in every analyst's life when data becomes too big for their laptop's RAM. While open-source tools like R, SQL, and python have made "team of one" data analysts ever more powerful, analysts abilities to derive value from their skillsets are highly interdependent with the tools at their disposal.
+There comes a time in every analyst's life when data becomes too big for their laptop's RAM. While open-source tools like R, python, and SQL have made "team of one" data analysts ever more powerful, analysts abilities to derive value from their skillsets are highly interdependent with the tools at their disposal.
 
-For R and python, the sheer size of datasets becomes a limiting factor; for a SQL-focused analyst, the existence of a database is prerequisite, as the gap between "democratized" SQL *querying* skills and data engineering and database management skills is not insignificant. The ever-increasing number of managed cloud services (from data warehouses, containers, hosted IDEs and notebooks) offer a trendy and effective solution. However, budget constraints, technical know-how, security concerns, or tight-timelines can all be headwinds to adoption.
+For R and python, the size of datasets becomes a limiting factor to local processing; for a SQL-focused analyst, the existence of a database is prerequisite, as the gap between "democratized" SQL *querying* skills and data engineering and database management skills is not insignificant. The ever-increasing number of managed cloud services (from data warehouses, containers, hosted IDEs and notebooks) offer a trendy and effective solution. However, budget constraints, technical know-how, security concerns, or tight-timelines can all be headwinds to adoption.
 
 So what's an analyst to do when they have the knowledge and tools but not the infrastructure to tackle their problem?
 
@@ -56,7 +56,7 @@ North Carolina (which began accepting ballots in early September for the upcomin
 -   NC voter registration file from [NCSBE](https://www.ncsbe.gov/results-data) (\~9M records, will be static for this cycle once registration closes in October)
 -   NC 10-year voter history file from [NCSBE](https://www.ncsbe.gov/results-data) (\~22M records, static)
 
-All of these files are released as Zipped full-population (as opposed to delta) CSV files.
+All of these files are released as zipped full-population (as opposed to delta) CSV files.
 
 One can imagine that this data is of great interest to campaign staff, political scientists, pollsters, and run-of-the-mill political junkies and prognosticators.
 
@@ -113,15 +113,16 @@ While very useful, this is of course bulky to type. We may also set-up a persist
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'>import duckdb
-con = duckdb.connect('sample-db.duckdb')
-con.execute("create or replace table sample as (select * from read_csv_auto('sample.csv'));")
+<pre class='chroma'><code class='language-r' data-lang='r'>con = duckdb.connect('sample-db.duckdb')
+ctas = "create or replace table sample as (select * from read_csv_auto('sample.csv'));"
+con.execute(ctas)
 
-#> <duckdb.DuckDBPyConnection object at 0x000000003210D070>
+#> <duckdb.DuckDBPyConnection object at 0x00000000321113F0>
 
-con.execute("create or replace view sample_vw as (select * from read_csv_auto('sample.csv'));")
+cvas = "create or replace view sample_vw as (select * from read_csv_auto('sample.csv'));" 
+con.execute(cvas)
 
-#> <duckdb.DuckDBPyConnection object at 0x000000003210D070>
+#> <duckdb.DuckDBPyConnection object at 0x00000000321113F0>
 
 con.close()
 </code></pre>
@@ -132,16 +133,7 @@ Now, suppose the data in `sample.csv` changes (now with 4 rows versus 3).
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'>import pandas as pd
-df = pd.DataFrame({'a':[1,2,3,4], 'b':[4,5,6,7], 'c':[7,8,9,10]})
-df.head()
-
-#>    a  b   c
-#> 0  1  4   7
-#> 1  2  5   8
-#> 2  3  6   9
-#> 3  4  7  10
-
+<pre class='chroma'><code class='language-r' data-lang='r'>df = pd.DataFrame({'a':[1,2,3,4], 'b':[4,5,6,7], 'c':[7,8,9,10]})
 df.to_csv('sample.csv', index = False)
 </code></pre>
 
@@ -151,8 +143,7 @@ Our table stored the data directly within the database ("disconnected" from the 
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'>import duckdb
-con = duckdb.connect('sample-db.duckdb')
+<pre class='chroma'><code class='language-r' data-lang='r'>con = duckdb.connect('sample-db.duckdb')
 df1 = con.execute("select count(1) from sample").fetchdf()
 df2 = con.execute("select count(1) from sample_vw").fetchdf()
 con.close()
@@ -169,17 +160,23 @@ df2.head()
 
 </div>
 
-## Usage patterns
+## Data management patterns
 
 With these features in mind, we return to the problem at hand. How can an analyst mimic the experience of having the infrastructure needed to do their work?
 
-One approach is
+One approach could look something like the following:
+
+1.  Download all relevant files
+2.  (Optionally) Convert large, static files to Parquet versus CSV: DuckDB handles both well, but Parquet has additional benefits of additional metadata, columnar storage, and (when partitioned) the ability to optimize retrieval with pruning
+3.  Create a DuckDB database with references to the files as `view`s
+4.  Interact with DuckDB as with any database connection needed
+5.  Whenever needed, re-download the files to the same name/directory to "refresh" the "database"
 
 ### One-time set-up
 
 ### Ongoing usage
 
-## Querying patterns
+## Data access patterns
 
 With this set-up in place, analysts can then use their favorite tools to query the data.
 
@@ -211,7 +208,13 @@ On the CLI:
     duckdb my-db.duckdb
     > select * from my_tbl
 
-We already saw an example of interacting with a
+DuckDB also works with open-source database IDEs like [DBeaver](https://dbeaver.com/) for the full, "traditional" database experience. The [DuckDB website](https://duckdb.org/docs/guides/sql_editors/dbeaver) gives full set-up instructions. With DBeaver, analysts get the "full" database experience with navigable access to table schemas and metadata.
 
-## Refresh
+![](dbeaver-query.png)
+
+![](dbeaver-er.png)
+
+Notably **if you are using relative file paths in your view definitions, there is one additional step**. (Thanks to [Elliana May on Twitter](https://twitter.com/Mause_me/status/1571126401482510336?s=20&t=uYOnuHSjZcjkrbwYb0aXvA) for the pointer.) For DBeaver to find the underlying data, it must be launched from the appropriate working directory from the command line. (`cd my/dir/path; dbeaver`)
+
+## Extensions
 

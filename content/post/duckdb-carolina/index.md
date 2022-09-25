@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 8d5795031579682e
+rmd_hash: e7851873424ee870
 
 ---
 
@@ -44,6 +44,8 @@ So what's an analyst to do when they have the knowledge and tools but not the in
 -   **No loading required**: Can read external CSV and Parquet files *and* can smartly exploit Hive-partitioned Parquet datasets in optimization
 -   **Expressive SQL**: Provides semantic sugar for analytical SQL uses with clauses like `except` and `group by all` (see blog [here](https://DuckDB.org/2022/05/04/friendlier-sql.html))
 
+This combination of features can empower analysts to use what they have and what they know to ease into the processing of much larger datasets.
+
 In this post, I'll walk through a scrappy, minimum-viable setup for analysts using `DuckDB`, motivated by the [North Carolina State Board of Election](https://www.ncsbe.gov/results-data)'s rich voter data. Those interested can follow along in [this repo](https://github.com/emilyriederer/nc-votes-DuckDB) and put it to the test by launching a free 8GB RAM GitHub Codespaces.
 
 This is very much *not* a demonstration of best practices of anything. It's also not a technical benchmarking of the speed and capabilities of `DuckDB` versus alternatives. (That ground is well-trod. If interested, see [a head-to-head to pandas](https://DuckDB.org/2021/05/14/sql-on-pandas.html) or [a matrix of comparisons across database alternatives](https://benchmark.clickhouse.com/).) If anything, it is perhaps a "user experience benchmark", or a description of a minimum-viable set-up to help analysts use what they know to do what they need to do.
@@ -53,12 +55,12 @@ This is very much *not* a demonstration of best practices of anything. It's also
 North Carolina (which began accepting ballots in early September for the upcoming November midterm elections) offers a rich collection of voter data, including daily-updating information on the current election, full voter registration data, and ten years of voting history.
 
 -   NC 2022 midterm early vote data from [NCSBE](https://www.ncsbe.gov/results-data) (\~6K records as-of 9/23 and growing fast!)
--   NC voter registration file from [NCSBE](https://www.ncsbe.gov/results-data) (\~9M records, will be static for this cycle once registration closes in October)
--   NC 10-year voter history file from [NCSBE](https://www.ncsbe.gov/results-data) (\~22M records, static)
+-   NC voter registration file from [NCSBE](https://www.ncsbe.gov/results-data) (\~9M records / 3.7G unzipped, will be static for this cycle once registration closes in October)
+-   NC 10-year voter history file from [NCSBE](https://www.ncsbe.gov/results-data) (\~22M records / 5G unzipped, static)
 
 All of these files are released as zipped full-population (as opposed to delta) CSV files.
 
-One can imagine that this data is of great interest to campaign staff, political scientists, pollsters, and run-of-the-mill political junkies and prognosticators.
+One can imagine that this data is of great interest to campaign staff, political scientists, pollsters, and run-of-the-mill political junkies and prognosticators. However, the file sizes of registration and history data, which is critical for predicting turnout and detecting divergent trends, could be prohibitive.
 
 Beyond these files, analysis using this data could surely be enriched by additional third-party sources such as:
 
@@ -66,7 +68,9 @@ Beyond these files, analysis using this data could surely be enriched by additio
 -   County-level past election results from [MIT Election Lab via Harvard Dataverse](https://dataverse.harvard.edu/file.xhtml?fileId=6104822&version=10.0)
 -   Countless other data sources either from the US Census, public or internal campaign polls, organization-specific mobilizaton efforts, etc.
 
-Your mileage may vary based on your system RAM, but many run-of-the-mill consumer laptops might struggle to let R or python load all of this data into memory. Or, a SQL-focused analyst might yearn for a database to handle all these complex joins. So how can `DuckDB` assist?
+Your mileage may vary based on your system RAM, but many run-of-the-mill consumer laptops might struggle to let R or python load all of this data into memory. Or, a SQL-focused analyst might yearn for a database to handle all these complex joins.
+
+So how can `DuckDB` assist?
 
 ## DuckDB highlights
 
@@ -117,12 +121,12 @@ While very useful, this is of course bulky to type. We may also set-up a persist
 ctas = "create or replace table sample as (select * from read_csv_auto('sample.csv'));"
 con.execute(ctas)
 
-#> <duckdb.DuckDBPyConnection object at 0x00000000320C1FB0>
+#> <duckdb.DuckDBPyConnection object at 0x0000000032103670>
 
 cvas = "create or replace view sample_vw as (select * from read_csv_auto('sample.csv'));" 
 con.execute(cvas)
 
-#> <duckdb.DuckDBPyConnection object at 0x00000000320C1FB0>
+#> <duckdb.DuckDBPyConnection object at 0x0000000032103670>
 
 con.close()
 </code></pre>
@@ -310,7 +314,7 @@ DuckDB also works with open-source database IDEs like [DBeaver](https://dbeaver.
 
 Notably **if you are using relative file paths in your view definitions, you have to launch DBeaver from your command line after moving into the appropriate working directory**. (Thanks to [Elliana May on Twitter](https://twitter.com/Mause_me/status/1571126401482510336?s=20&t=uYOnuHSjZcjkrbwYb0aXvA) for the pointer.) (In the terminal: `cd my/dir/path; dbeaver`)
 
-## Demo
+## Codespaces Demo
 
 So can DuckDB help analysts wrangle the whole state of North Carolina with 8GB RAM? To find out, launch a GitHub Codespaces from the [nc-votes-duckdb](https://github.com/emilyriederer/nc-votes-duckdb) repo and see for yourself!
 
@@ -359,6 +363,8 @@ Launch the CLI:
 
     ./duckdb nc.duckdb
     .timer on
+
+(Note: you can exit CLI with Ctrl+D)
 
 Try out some sample queries. For example, we might wonder how many past general elections that early voters have voted in before:
 
@@ -410,7 +416,5 @@ And, this question is more interesting if we join on registration data to learn 
 
 In python: See sample queries in `test-query.py` file
 
-1.  Exit `duckdb` (Ctrl + D)
-
-2.  Run `free` in the terminal to marvel at what 8GB of RAM can do!
+1.  Run `free` in the terminal to marvel at what 8GB of RAM can do!
 

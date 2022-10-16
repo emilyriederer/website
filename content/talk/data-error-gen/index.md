@@ -23,8 +23,6 @@ featured: false
 image:
   caption: 'Different forms of missingness'
   focal_point: Right
-
-url_video: ""
 url_slides: "slides.pdf"
 
 # Projects (optional).

@@ -24,7 +24,6 @@ image:
   caption: 'Different forms of missingness'
   focal_point: Right
 
-links:
 url_video: ""
 url_slides: "slides.pdf"
 

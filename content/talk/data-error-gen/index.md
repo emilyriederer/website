@@ -1,5 +1,5 @@
 ---
-title: "Data (error) Generating Process""
+title: "Data (error) Generating Process"
 event: Airbyte move(data) | CANSII | DataFold Meetup
 
 location: Airbyte move(data) | CANSII | DataFold Meetup

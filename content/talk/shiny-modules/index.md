@@ -1,7 +1,7 @@
 ---
 title: "Taking Flight with Shiny: a Modules-First Approach"
 event: Appsilon ShinyConf 2023
-location: Virtual
+location: Appsilon ShinyConf 2023
 
 summary: An argument for the individual and organization-wiide benefits of teaching new developers Shiny with a modules-first paradigm
 

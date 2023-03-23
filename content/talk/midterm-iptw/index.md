@@ -1,7 +1,7 @@
 ---
 title: "Evaluation without Experimentation"
 event: Data for Progress Data Engineering Open Mic
-location: Virtual
+location: Data for Progress Data Engineering Open Mic
 
 summary: An introduction to inverse propensity of treatment weighting for program evaluation with applications to Two Million Texans' relational organizing campaign during the 2022 midterms
 

@@ -5,7 +5,7 @@ subtitle: ""
 summary: "Cross-post from guest post on Airbyte's developer blog"
 authors: []
 tags: [data, workflow]
-categories: []
+categories: [data, workflow]
 date: 2023-03-22
 lastmod: 2023-03-22
 featured: false

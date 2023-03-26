@@ -5,7 +5,7 @@ subtitle: ""
 summary: "Cross-post from guest post on Airbyte's developer blog"
 authors: []
 tags: [data, workflow]
-categories: []
+categories: [data, workflow]
 date: 2023-03-22
 lastmod: 2023-03-22
 featured: false
@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 1799883db7f5424c
+rmd_hash: d46421c378c21396
 
 ---
 

@@ -28,7 +28,7 @@ links:
   icon_pack: fab
   name: Follow
   url: https://twitter.com/appsilon
-url_video: ""
+url_video: "https://www.youtube.com/watch?v=F6I_jXPWFBk&list=PLexAKolMzPcriOdeLwoMxQOyHRnMguEv4"
 url_slides: "slides.pdf"
 
 # Projects (optional).

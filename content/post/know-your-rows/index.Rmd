@@ -6,8 +6,8 @@ summary: "Focusing on column-level defintions ignores, quite literally, an impor
 authors: []
 tags: [sql, data]
 categories: [sql, data]
-date: 2022-09-12
-lastmod: 2022-09-12
+date: 2023-05-23
+lastmod: 2023-05-23
 featured: false
 draft: false
 aliases:
@@ -28,6 +28,9 @@ image:
 projects: [""]
 ---
 
+When we think about data documentation, like a trusty data dictionary, we tend to think about documenting the columns. Too often, data goes completely undocumented, so we're grateful when we can find simple metadata like expected data types and definitions of each of the fields. 
+
+It's even more rare to 
 
 
 
@@ -42,7 +45,7 @@ In this post, I make a plea for more focus on documenting rows by outlining the 
 3. You don't know what changes a record
 4. You don't know row-based performance optimizations
 
-(Note that 1-2 are general data points whereas 3-4 are specific to working with databases)
+(Note that 1-2 are general points whereas 3-4 are more specific to working with databases)
 
 ## You don't know the intent
 

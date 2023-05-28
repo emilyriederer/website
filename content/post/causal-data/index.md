@@ -8,7 +8,7 @@ tags: [causal, data]
 categories: [causal, data]
 date: 2023-05-30
 lastmod: 2023-05-30
-featured: true
+featured: false
 draft: false
 aliases:
 
@@ -16,7 +16,7 @@ aliases:
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
-  caption: "Mnemonic illustrations of CI methods, made with [Excalidraw](https://excalidraw.com/)"
+  caption: "Data strategy motivated by causal methods"
   focal_point: ""
   preview_only: false
 
@@ -26,9 +26,9 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b6a2940056a4619c
+rmd_hash: a25e62b8bc85977b
 
 ---
 
-zzz
+Post of [Causal Design Patterns](/post/causal-design-patters)
 

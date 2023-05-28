@@ -28,4 +28,14 @@ image:
 projects: [""]
 ---
 
-Post of [Causal Design Patterns](/post/causal-design-patters)
+Post of [Causal Design Patterns](/post/causal-design-patterns)
+
+![why-not-experiment.png]
+
+![industry-advantages.png]
+
+![patterns-and-variation.png]
+
+![featured.png]
+
+

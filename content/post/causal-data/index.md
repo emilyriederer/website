@@ -26,9 +26,17 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: a25e62b8bc85977b
+rmd_hash: 6a32fd172ff3e1ba
 
 ---
 
-Post of [Causal Design Patterns](/post/causal-design-patters)
+Post of [Causal Design Patterns](/post/causal-design-patterns)
+
+\[why-not-experiment.png\]
+
+\[industry-advantages.png\]
+
+\[patterns-and-variation.png\]
+
+\[featured.png\]
 

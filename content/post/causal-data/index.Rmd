@@ -96,7 +96,7 @@ Beyond those "typical" sources of customer data, our past customer strategies cr
 
 This means that we need to *treat metadata as first-class data* and ensure that it is extracted from operational source systems, structured in a machine-readable format, and preserved in analytical data stores along with our customer data.
 
-Furthermore, even *mistakes* in executing past strategies may become "natural experiments" to help businesses understand scenarios that they might never have prioirtized for testing. So, machine-readable incident logs and impacted populations can be useful as well.
+The importance of "metadata as data" extends beyond business-as-usual organization strategies. We can also fuel future causal inference with better metadata management of past formal experiments and execution errors. As discussed above, formal experiments may represent a substantial *investment* in company resources so the data collected from them should be regarded as an *asset*. Beyond their utility for one-time reads and decisions, experiment designs and results should be carefully catalogued along with the assigned treatment group and the randomization criteria. This can support future *observational* analysis of past experiments, including generalizing and transporting results to different populations. Furthermore, even *mistakes* in executing past strategies may become "natural experiments" to help businesses understand scenarios that they might never have prioritized for testing. So, machine-readable incident logs and impacted populations can be useful as well.
 
 **Knowledge Management**
 

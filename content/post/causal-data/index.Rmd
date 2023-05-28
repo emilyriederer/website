@@ -28,6 +28,8 @@ image:
 projects: [""]
 ---
 
+*This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the [talk details](/talk/causal-design-patterns) for more content.*
+
 Post of [Causal Design Patterns](/post/causal-design-patterns)
 
 ![why-not-experiment.png]

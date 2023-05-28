@@ -18,7 +18,7 @@ aliases:
 image:
   caption: "Data strategy motivated by causal methods"
   focal_point: ""
-  preview_only: false
+  preview_only: true
 
 # Projects (optional).
 #   Associate this post with one or more of your projects.
@@ -29,6 +29,10 @@ projects: [""]
 ---
 
 *This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the [talk details](/talk/causal-design-patterns) for more content.*
+
+Techniques of observational causal inference are becoming increasingly popular in industry as a complement to experimentation. Causal methods offer the promise of accelerating measurement agendas or opening the possibility to estimate quantities that were previously un-measurable. However, if executed without careful attention to their assumptions and limitations, they can lead to spurious conclusions.
+
+In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods. Examining the implicit assumptions in common causal design patterns motivates the types of proactive enterprise information management that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today.
 
 ## Why industry needs causal inference
 
@@ -53,15 +57,51 @@ My previous post on [causal design patterns](/post/causal-design-patterns) outli
 - **Difference in Differences**: 
   + Exploits variation between *behavior over time* of treated and untreated *groups*
   + Assumes that the treatment assignment is unrelated to expected future outcomes and that the treatment is well-isolated to the treatment group
+  
+Notably, the assumptions mentioned above are largely untestable statistically (e.g. not like testing for normality or multicolinearity) but rely on knowledge of past strategies and policies that guided differential treatment in historical data.^[There are some exceptions to this like placebo tests, bunching checks, etc.]
 
 ## Industry's unique advantages deploying causal inference
 
-
 ![](industry-advantages.png)
+
+Many causal methods originated in fields like epidemiology, economics, political science, and other social sciences. In such fields, direct experimentation is often impossible and even first-hand data collection is less common. Often, researchers may have to rely on pre-existing data sources like censuses, surveys, and administrative data (e.g. electronic health records). 
+
+Despite the lineage of these methods, industry has many advantages over traditional research fields in using them because each company controls the entire "universe" in which its customers exist. This should in theory provide a distinct advantage when collecting each of the three "ingredients" that causal methods use to replace randomization:
+
+- **Variation**: We control customer engagement strategies through methods like customer segmentation or models. Subsequent customer treatments are completely known to us but inherently have some arbitrary, judgmental component to exploit
+- **Data**: We tend to be able to collect more measurements of our customers both as a snapshot (more variety in fields) and longitudinally (more observations over time) that can be brought into our analyses to control for confounders. (Note this absolutely does *not* mean that we should simply "dump in" all the data we have; in causal inference, controlling for some variables such as colliders is counterproductive)
+- **Context**: We tend to know how past strategies were set-up, how they looked to individuals involved, and *why* those decisions were made. This can be critical in reasoning whether our assumptions hold
+
+However, to convert this theoretical benefit to a practical one requires information management.
 
 ## Data management for causal inference
 
 ![](featured.png)
+
+While all causal methods will be enhanced with better enterprise information management, it's easiest to see the motivation by thinking back to specific examples. Causal inference can benefit from better data, metadata, and knowledge management. These are illustrated by propensity score weighting, regression discontinuity, and diff-in-diff respectively.
+
+**Integrated Data Management**
+
+Earlier, we posited that one advantage that industry has over academia for causal inference is access to richer historical data sources as a higher level of resolution (more measures per individual at more time points). A rich set of customer measures is critical for stratification and propensity score weighting where we attempt to control for selection on observables by balancing populations along dimensions that might be common causes of treatment assignment and outcome. (And, we may also wish to control for other unrelated sources of variation that effect only the outcome to develop more precise estimates.)
+
+However, this is only true if customer data is proactively *collected, cleaned, and harmonized* across sources in the true spirit of a customer 360 view. Enterprises may collect data about customers from many different operational systems -- for example, demographic information provided at registration, digital data on their logins and web activity, campaign data on attempted customer touchpoints and engagement, behavioral or fulfillment data on purchases / subscription renewals / etc. Any of these sources could be useful "observables" that help close confounding pathways in our analyses. 
+
+TO make this data useful and accessible for analysis, it must be *proactively integrated* into a common source like a data warehouse, *well-documented* to help future users understand the nuances of each system, *harmonized* so fields have standard definitions (e.g. common definitions of an "account" and a "customer"), and *unified* by using techniques like entity resolution to ensure all sources share common identifiers so that they can be merged for analysis.
+
+**Metadata Management**
+
+However, our past customer strategies create data beyond the data directly generated by our customers. Metadata about past campaigns such as precise business logic on the different treatments offered (e.g. if sending customers a discount, what algorithmically determined the amount?), the campaign targeting and segmentation (e.g. What historical behaviors were used to segments customers? Was treatment determined by a predictive model?), and launch timing can all be critical to clearly identifying those sources of variation that we wish to exploit. For example, we might know that we once ran an re-engagement campaign to attempt the nudge interaction from customers who didn't log-in to a website for some amount of time, but knowing whether that campaign was targeting customers >30 days inactive or >45 days inactive impacts our ability to analyze it with a regression discontinuity. 
+
+This means that we need to *treat metadata as first-class data* and ensure that it is extracted from operational source systems, structured in a machine-readable format, and preserved in analytical data stores along with our customer data.
+
+Furthermore, even *mistakes* in executing past strategies may become "natural experiments" to help businesses understand scenarios that they might never have prioirtized for testing. So, machine-readable incident logs and impacted populations can be useful as well.
+
+**Knowledge Management**
+
+Of course, not *all* information can be condensed into a nice, machine-readable spreadsheet. Methods like difference-in-differences illustrate how conceptual context can also help us battle-test assumptions like whether the decision-to-treat could have spilled over into the control population or been influenced by an anticipated change in the future outcome. This is the one area where industry may sometimes *lag* social sciences in information since some population-level treatments like a state law or local ordinance often have documented histories through the legislative process, news coverage, and historical knowledge about their implementation.
+
+Industry can catch up on knowledge management by documenting and preserving in a centralized knowledge repository key information about strategic decisions undertaken, the motivating factors, and the anticipated customer experience. Such documents are inevitably created when working on new projects through memos ad decks intended to communicate the business case, intent, and expected customer experience. However, proactively figuring out how to *organize and index* this information through a classification system and *democratize access* through centralized knowledge repositories is critical to giving future users entree to this tribal knowledge.
+
 
 
 

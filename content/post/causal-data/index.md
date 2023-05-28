@@ -26,15 +26,17 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: cc4d172eadc503cd
+rmd_hash: f0dfa7097275c026
 
 ---
 
 *This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the [talk details](/talk/causal-design-patterns) for more content.*
 
-Techniques of observational causal inference are becoming increasingly popular in industry as a complement to experimentation. Causal methods offer the promise of accelerating measurement agendas or opening the possibility to estimate quantities that were previously un-measurable. They typically do so by allowing analysts to extract causal insights from "found" data (e.g. observational data collected without specific intent) versus experimentally collected data. However, if executed without careful attention to their assumptions and limitations, they can lead to spurious conclusions.
+Techniques of observational causal inference are becoming increasingly popular in industry as a complement to experimentation. Causal methods offer the promise of accelerating measurement agendas and facilitating the estimation of previously un-measurable targets by allowing analysts to extract causal insights from "found" data (e.g. observational data collected without specific intent). However, if executed without careful attention to their assumptions and limitations, they can lead to spurious conclusions.
 
-In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods. Examining the implicit assumptions in common causal design patterns motivates the types of proactive enterprise information management that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today. By casting an intentionally wide net on what information we observationally collect, we increase the likelihood that the future "found" data will have what those analysts need to succeed.
+Both experimental and observational methods attempt to address the **fundamental problem of causal inference**: that is, the fact that for a given treatment of interest, we can never "see" the *individual-level outcome* both for the case when an individual received a treatment and a counterfactual scenario in which *for the same individual in the exact same context* that treatment was withheld. Some literature casts this as a "missing data" problem.[^1] Counterfactual data is uncollectable; however, this fundamental missingness can be partially mitigated by diligent collection of *other* types of quantitative and qualitative information to control for confounding[^2] and interrogate assumptions.
+
+In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods due to industry's (theoretically) superior ability to observe and capture relevant supplemental data and context. Examining the implicit assumptions in common [causal design patterns](/post/causal-design-patterns) motivates the types of proactive enterprise information management -- including data, metadata, and knowledge management -- that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today. By casting an intentionally wide net on what information we observationally collect, we increase the likelihood that the future "found" data will have what those analysts need to succeed.
 
 ## Why industry needs causal inference
 
@@ -60,7 +62,7 @@ My previous post on [causal design patterns](/post/causal-design-patterns) outli
     -   Exploits variation between *behavior over time* of treated and untreated *groups*
     -   Assumes that the treatment assignment is unrelated to expected future outcomes and that the treatment is well-isolated to the treatment group
 
-Notably, the assumptions mentioned above are largely untestable statistically (e.g. not like testing for normality or multicolinearity) but rely on knowledge of past strategies and policies that guided differential treatment in historical data.[^1]
+Notably, the assumptions mentioned above are largely untestable statistically (e.g. not like testing for normality or multicolinearity) but rely on knowledge of past strategies and policies that guided differential treatment in historical data.[^3]
 
 ## Industry's unique advantages deploying causal inference
 
@@ -104,5 +106,9 @@ Of course, not *all* information can be condensed into a nice, machine-readable 
 
 Industry can catch up on knowledge management by documenting and preserving in a centralized knowledge repository key information about strategic decisions undertaken, the motivating factors, and the anticipated customer experience. Such documents are inevitably created when working on new projects through memos ad decks intended to communicate the business case, intent, and expected customer experience. However, proactively figuring out how to *organize and index* this information through a classification system and *democratize access* through centralized knowledge repositories is critical to giving future users entree to this tribal knowledge.
 
-[^1]: There are some exceptions to this like placebo tests, bunching checks, etc.
+[^1]: For example, see <https://arxiv.org/abs/1710.10251>
+
+[^2]: If you've heard of 'selection on observables' in causal literature, richer data means observables!
+
+[^3]: There are some exceptions to this like placebo tests, bunching checks, etc.
 

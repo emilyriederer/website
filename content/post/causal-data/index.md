@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: f0dfa7097275c026
+rmd_hash: 589eb38b60735e25
 
 ---
 
@@ -73,7 +73,7 @@ Many causal methods originated in fields like epidemiology, economics, political
 Despite the lineage of these methods, industry has many advantages over traditional research fields in using them because each company controls the entire "universe" in which its customers exist. This should in theory provide a distinct advantage when collecting each of the three "ingredients" that causal methods use to replace randomization:
 
 -   **Variation**: We control customer engagement strategies through methods like customer segmentation or models. Subsequent customer treatments are completely known to us but inherently have some arbitrary, judgmental component to exploit
--   **Data**: We tend to be able to collect more measurements of our customers both as a snapshot (more variety in fields) and longitudinally (more observations over time) that can be brought into our analyses to control for confounders. (Note this absolutely does *not* mean that we should simply "dump in" all the data we have; in causal inference, controlling for some variables such as colliders is counterproductive)
+-   **Data**: We tend to be able to collect more measurements of our customers both as a snapshot (more variety in fields) and longitudinally (more observations over time) that can be brought into our analyses to control for confounders[^4], reduce other sources of variation in our estimate, and have additional 'out of time' data left over to conduct forms of validation like placebo tests
 -   **Context**: We tend to know how past strategies were set-up, how they looked to individuals involved, and *why* those decisions were made. This can be critical in reasoning whether our assumptions hold
 
 However, to convert this theoretical benefit to a practical one requires information management.
@@ -111,4 +111,6 @@ Industry can catch up on knowledge management by documenting and preserving in a
 [^2]: If you've heard of 'selection on observables' in causal literature, richer data means observables!
 
 [^3]: There are some exceptions to this like placebo tests, bunching checks, etc.
+
+[^4]: Notable, the availability of more data absolutely does *not* mean that we should simply "dump in" all the data we have. Controlling for certain variables like colliders is counterproductive.
 

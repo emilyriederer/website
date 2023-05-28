@@ -26,15 +26,19 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: f5392294885682a2
+rmd_hash: b9958f2df16054a4
 
 ---
 
 *This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the [talk details](/talk/causal-design-patterns) for more content.*
 
+## Why industry needs causal inference
+
 Industry data science tends to highly value the role of A/B testing and experimentation. However, there are many situations where experimentation is not an optimal approach to learning. Experiments can be infeasible if we worry about the ethics or reputational risk of offering disparate customer treatments; they may be impractical in situations that are hard to randomize or avoid spillover effects; they can be costly to run and configure either in direct or opportunity costs; and, finally, they can just be *slow* if we wish to measure complex and long-term impacts on customer behaviors (e.g. retention, lifetime value).
 
 ![](why-not-experiment.png)
+
+## What causal methods require
 
 These limitations are one of the reasons why observational causal inference is gaining increasing popularity in industry. Methods of observational causal inference allows us to estimate treatment effects without randomized controlled experimentation by using existing historical data. At the highest level, these methods work by replacing *randomization* with strategies to exploit other forms of *semi-random variation* in historical exposures of a population to a treatment. Since this semi-random *variation* could be susceptible to confounding, observational methods supplement variation with *additional data* to control for other observable sources of bias in our estimates and *contextual assumptions* about the data generating process.
 
@@ -46,7 +50,11 @@ My previous post on [causal design patterns](/post/causal-design-patterns) outli
 
 ![](patterns-and-variation.png)
 
+## Industry's unique advantages deploying causal inference
+
 ![](industry-advantages.png)
+
+## Data management for causal inference
 
 ![](featured.png)
 

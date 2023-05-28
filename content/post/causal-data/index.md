@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: b9958f2df16054a4
+rmd_hash: ef233b054b038932
 
 ---
 
@@ -34,21 +34,27 @@ rmd_hash: b9958f2df16054a4
 
 ## Why industry needs causal inference
 
-Industry data science tends to highly value the role of A/B testing and experimentation. However, there are many situations where experimentation is not an optimal approach to learning. Experiments can be infeasible if we worry about the ethics or reputational risk of offering disparate customer treatments; they may be impractical in situations that are hard to randomize or avoid spillover effects; they can be costly to run and configure either in direct or opportunity costs; and, finally, they can just be *slow* if we wish to measure complex and long-term impacts on customer behaviors (e.g. retention, lifetime value).
-
 ![](why-not-experiment.png)
 
+Industry data science tends to highly value the role of A/B testing and experimentation. However, there are many situations where experimentation is not an optimal approach to learning. Experiments can be infeasible if we worry about the ethics or reputational risk of offering disparate customer treatments; they may be impractical in situations that are hard to randomize or avoid spillover effects; they can be costly to run and configure either in direct or opportunity costs; and, finally, they can just be *slow* if we wish to measure complex and long-term impacts on customer behaviors (e.g. retention, lifetime value).
+
 ## What causal methods require
+
+![](patterns-and-variation.png)
 
 These limitations are one of the reasons why observational causal inference is gaining increasing popularity in industry. Methods of observational causal inference allows us to estimate treatment effects without randomized controlled experimentation by using existing historical data. At the highest level, these methods work by replacing *randomization* with strategies to exploit other forms of *semi-random variation* in historical exposures of a population to a treatment. Since this semi-random *variation* could be susceptible to confounding, observational methods supplement variation with *additional data* to control for other observable sources of bias in our estimates and *contextual assumptions* about the data generating process.
 
 My previous post on [causal design patterns](/post/causal-design-patterns) outlines a number of foundational causal methods, but I'll briefly recap to emphasize the different ways that sources of variation, data, and context are used:
 
 -   **Stratification and Inverse Propensity Score Weighting**:
+    -   Exploits "similar" populations of treated and untreated individuals
+    -   Assumes we can observe and control for common causes of the treatment and the outcome
 -   **Regression Discontinuity**:
+    -   Exploits a sharp, semi-arbitrary cut-off between treated and untreated individuals
+    -   Assumes that the outcome is continuous with respect to the assigment variable and the assignment mechanism is unknown to individuals (to avoid self-selection)
 -   **Difference in Differences**:
-
-![](patterns-and-variation.png)
+    -   Exploits variation between *behavior over time* of treated and untreated *groups*
+    -   Assumes that the treatment assignment is unrelated to expected future outcomes and that the treatment is well-isolated to the treatment group
 
 ## Industry's unique advantages deploying causal inference
 

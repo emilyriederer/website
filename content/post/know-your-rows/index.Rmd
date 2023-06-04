@@ -2,12 +2,12 @@
 output: hugodown::md_document
 title: "Know, know, know your rows"
 subtitle: ""
-summary: "Focusing on column-level defintions ignores, quite literally, an important dimension of the data documentation problem"
+summary: "Understanding data models - plaguing junior analysts since forever, saving data jobs from automation since 2023"
 authors: []
 tags: [sql, data]
 categories: [sql, data]
-date: 2023-05-23
-lastmod: 2023-05-23
+date: 2023-06-05
+lastmod: 2023-06-05
 featured: false
 draft: false
 aliases:
@@ -28,28 +28,22 @@ image:
 projects: [""]
 ---
 
-When we think about data documentation, like a trusty data dictionary, we tend to think about documenting the columns. Too often, data goes completely undocumented, so we're grateful when we can find simple metadata like expected data types and definitions of each of the fields. 
+Data practitioners -- from engineers, scientists, and analysts -- tend to focus on the *columns* or variables in a table. The column-centric mindset permeates everything from columnar databases and file formats (e.g. Parquet), columnar focus in data documentation (e.g. defining fields, showing column lineage), and applications (e.g. enhancing metric definitions and feature engineering). The extent of column supremacy is perhaps best illustrated in the many modern data documentation and discovery tools which allow for rich column metadata but have done relatively little to structure one's understanding of the upstream real-world systems generating rows. 
 
-It's even more rare to 
+However, often many misconceptions lurk in understanding the grain of a table. That is: do you really know your rows? It's not uncommon for junior analysts will blindly start querying a table without fully realizing that:
 
-
-
-Data discoverability and documentation are core challenges in the ever evolving data management stack. Like many other parts of the data stack, there has been an influx of start-ups (and VC funding) reenvisioning what a data catalog can be. The [Seattle Data Guy](https://seattledataguy.substack.com/p/cataloging-data-catalogs) recently catalogued the numerous catalogs themselves. However, despite the plethora of options (and I certainly haven't been able to survey most!), I notice an imbalance between the high-level of transparency they afford to documentation and lineage of *columns* versus the parsimonious information on *rows*.
-
-This is not a new trend. From the "olden" days of a flat-file "data dictionary", documenting the fields/columns/measures of a dataset has been the focus. It's widely known that data may not mean what we think, and yet analysts focus their attention on understanding columns and not "what makes a row". Recent tools, I suspect, exacerbate this trend because information about columns (e.g. column-level lineage) can largely be automatically derived by parsing a DAG and forklifting metadata from common data tools (e.g. Looker, dbt); however, understanding rows often requires "external" information about real-world business systems and processes.
-
-In this post, I make a plea for more focus on documenting rows by outlining the many things analysts don't know about their rows:
-
-1. You don't know the intent
-2. You don't know what triggers an event
+1. You don't know the intent of a record
+2. You don't know what triggers a record
 3. You don't know what changes a record
-4. You don't know row-based performance optimizations
+4. You don't know row-based performance optimization
 
-(Note that 1-2 are general points whereas 3-4 are more specific to working with databases)
+This has been on my mind lately in the wake of ChatGPT and related LLM tools promising to automate SQL query generation. Analysis can so easily go wrong when the base population obtained is not appropriately "fit for purpose" to the core analytical question. While misunderstanding rows may be the bane of junior analysts, this illustrates one of many sources of nuances and higher-level reasoning in crafting accurate data queries which I suspect will leave it a task for humans not machines for a long time to come. 
+
+In this post, we'll examine a few case studies of what we often neglect to interrogate about our rows and how it can affect our analysis results. 
 
 ## You don't know the intent
 
-Row definitions superficially seem less necessary since "what makes a row", in theory, corresponds to the very definition of the table in which the row lives in the relational model. In theory, each record represents a well-defined "entity" so table naming and the overall data model *imply* the definition of a row. In practice, it's not the simple. 
+Row definitions can seem superficially obvious since "what makes a row", in theory, corresponds to the very definition of the table in which the row lives in the relational model. In theory, each record represents a well-defined "entity" so table naming and the overall data model *imply* the definition of a row. In practice, it's not the simple. 
 
 Suppose that you're an analyst looking to analyze website login data to check for friction in the UX. You may find a promising table in your database called `login`s - huzzah! But what does that really mean?
 
@@ -91,15 +85,13 @@ kable(df, caption = "Success rate naively computed under different data collecti
 
 ## 2. You don't know what triggers events
 
-Even if you know the intent of a row is supposed to mean, without understanding the real-world process that generates that row, we cannot reason about data completeness or potential biases.
+Even if you know the intent of a row is supposed to mean, without understanding the real-world process that generates that row, we cannot reason about *when* that row will be logged which introduces risks of incomplete and potentially  biased data.
 
 Suppose an e-commerce analyst is trying to analyze total revenues based on an `orders` table. An order might be fairly well-defined and widely agreed upon: a customer completed a checkout flow and paid for a specific set of items to be provided by the company. However, depending what upstream *system* this data is sourced from, the data might have different biases.
 
-If the data is sourced from the order collection system, it should contain all orders for a given date fairly rapidly. However, if order data is sourced from a payment processing system that only bills customers once items are shipped, not all orders *placed* on a given data would populate in the table at the same time. (The third case illustrated below is discussed in the next section.)
+If the data is sourced from the order collection system, it should contain all orders for a given date fairly rapidly. However, if order data is sourced from a payment processing system that only bills customers once items are shipped, not all orders *placed* on a given data would populate in the table at the same time. (The third case illustrated below is discussed in the next section.) The source system for our records, then, sets our expectations on data latency and changes our definition of data completeness. It might be a fool's errand to report "sales from the last four hours" from an order fulfillment table.
 
-![](featured.jpg)
-
-The source system for our records, then, sets our expectations on data latency and changes our definition of data completeness. Further, data sourced from more slowly updating systems (e.g. the shipping stage) might cause biased discrepancies and missing not-at-random data. Given that many e-commerce companies offer "fast/free shipping if you spend more than \$X dollars", the same mechanism that would cause some orders to ship faster than others are confounded with the order's value. Thus, even the calculation of average spend metrics could be compromised.
+Further, data sourced from more slowly updating systems (e.g. the shipping stage) might cause biased discrepancies and missing not-at-random data. For example, consider that many e-commerce companies offer "fast/free shipping if you spend more than \$X dollars", the same mechanism that would cause some orders to ship faster than others are confounded with the order's value. Thus, even the calculation of average spend metrics could be compromised when, for a given order date, records for higher value orders appear more expediently than low value orders.
 
 ![](order-date.png)
 
@@ -108,7 +100,10 @@ The source system for our records, then, sets our expectations on data latency a
 It's also possible to know what causes a row to enter into a table but misunderstand what can cause an existing record to *change*. Consider if the `orders` table above is intended to track orders throughout their fulfillment process. Then the table might be organized in a few different ways:
 
 - An event log: 1 record for each order x processing-step (e.g. separate records for order-placed, order-shipped, etc.)
+- An single event type: 1 record when the order is placed *or* shipped, depending on how that event was defined
 - An updating record: 1 record per order with a changing `order_status` field 
+
+![](featured.jpg)
 
 Naturally, the different grains of this table have different implications for computing something as simple as a count of orders in a given period (to avoid double-counting) and understanding if historical records are able to change in a subsequent analysis.
 

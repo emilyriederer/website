@@ -27,7 +27,7 @@ links:
 - icon: twitter
   icon_pack: fab
   name: Follow
-url_video: ""
+url_video: "https://www.youtube.com/watch?v=0kDjkTB2yZ0"
 url_slides: "slides.pdf"
 
 # Projects (optional).

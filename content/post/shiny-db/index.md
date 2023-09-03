@@ -26,7 +26,7 @@ image:
 #   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
 #   Otherwise, set `projects = []`.
 projects: [""]
-rmd_hash: 51cae3cb37ce6dd8
+rmd_hash: 952502831718661d
 
 ---
 
@@ -38,17 +38,15 @@ Relational databases are a classic form of persistent storage for web applicatio
 
 This post provides some tips, call-outs, and solutions for using a relational database for persistent storage with Shiny. In my case, I rely on a Shiny app built with the [`golem` framework](https://thinkr-open.github.io/golem/) and served on the Digital Ocean App platform.
 
-Databases & Options for Storage
--------------------------------
+## Databases & Options for Storage
 
 Dean Attali's [blog post on persistent storage](https://deanattali.com/blog/shiny-persistent-data-storage/) compares a range of options for persistent storage including databases, S3 buckets, Google Drive, and more.
 
-For my application, I anticipated the need to store and retrieve sizable amounts of structured data, so using a relational database seemed like a good option. Since I was hosting my application on [Digital Ocean App Platform](https://m.do.co/c/4a8a67985453), I could create a [managed Postgres database](https://www.digitalocean.com/products/managed-databases/) with just a few button clicks. As I share in the "Key Issues" section, this solution offers some significant benefits in terms of security.
+For my application, I anticipated the need to store and retrieve sizable amounts of structured data, so using a relational database seemed like a good option. Since I was hosting my application on [Digital Ocean App Platform](https://m.do.co/c/6c5fdc198503), I could create a [managed Postgres database](https://www.digitalocean.com/products/managed-databases/) with just a few button clicks. As I share in the "Key Issues" section, this solution offers some significant benefits in terms of security.
 
 For more information on different options for hosting Shiny apps and some insight into why I chose Digital Ocean, check out Peter Solymos' excellent blog on [Hosting Data Apps](https://hosting.analythium.io/).
 
-Talking to your database through Shiny
---------------------------------------
+## Talking to your database through Shiny
 
 General information on working with databases with R is included on RStudio's [excellent website](https://db.rstudio.com/). Below, I focus on a few topics specific to databases with Shiny, Shiny apps built in the `{golem}` framework, and Shiny apps served on Digital Ocean in particular.
 
@@ -81,13 +79,12 @@ We can use the connection parameters provided to connect to the database using R
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      host   <span class='o'>=</span> <span class='s'>"aabc.b.db.ondigitalocean.com"</span>,
-                      dbname <span class='o'>=</span> <span class='s'>"db"</span>,
-                      user      <span class='o'>=</span> <span class='s'>"db"</span>,
-                      password  <span class='o'>=</span> <span class='s'>"abc123"</span>,
-                      port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,</span>
+<span>                      host   <span class='o'>=</span> <span class='s'>"aabc.b.db.ondigitalocean.com"</span>,</span>
+<span>                      dbname <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                      user      <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                      password  <span class='o'>=</span> <span class='s'>"abc123"</span>,</span>
+<span>                      port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span></span></code></pre>
 
 </div>
 
@@ -103,9 +100,8 @@ Fortunately, you can also define a table using R's `DBI` package. First, create 
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='m'>1</span>, y <span class='o'>=</span> <span class='s'>"a"</span>, z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>"2022-01-01"</span><span class='o'>)</span><span class='o'>)</span>
-<span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbCreateTable.html'>dbCreateTable</a></span><span class='o'>(</span><span class='nv'>con</span>, name <span class='o'>=</span> <span class='s'>"my_data"</span>, fields <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='o'>(</span><span class='nv'>df</span>, <span class='m'>0</span><span class='o'>)</span><span class='o'>)</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='m'>1</span>, y <span class='o'>=</span> <span class='s'>"a"</span>, z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>"2022-01-01"</span><span class='o'>)</span><span class='o'>)</span></span>
+<span><span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbCreateTable.html'>dbCreateTable</a></span><span class='o'>(</span><span class='nv'>con</span>, name <span class='o'>=</span> <span class='s'>"my_data"</span>, fields <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='o'>(</span><span class='nv'>df</span>, <span class='m'>0</span><span class='o'>)</span><span class='o'>)</span></span></code></pre>
 
 </div>
 
@@ -113,18 +109,15 @@ To prove that this works, I show a "round trip" of the data using an in-memory S
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>con_lite</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RSQLite</span><span class='nf'>::</span><span class='nf'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='o'>(</span><span class='o'>)</span>, <span class='s'>":memory:"</span><span class='o'>)</span>
-<span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='m'>1</span>, y <span class='o'>=</span> <span class='s'>"a"</span>, z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>"2022-01-01"</span><span class='o'>)</span><span class='o'>)</span>
-<span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbCreateTable.html'>dbCreateTable</a></span><span class='o'>(</span><span class='nv'>con_lite</span>, name <span class='o'>=</span> <span class='s'>"my_data"</span>, fields <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='o'>(</span><span class='nv'>df</span>, <span class='m'>0</span><span class='o'>)</span><span class='o'>)</span>
-<span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbListTables.html'>dbListTables</a></span><span class='o'>(</span><span class='nv'>con_lite</span><span class='o'>)</span>
-
-<span class='c'>#&gt; [1] "my_data"</span>
-
-<span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbReadTable.html'>dbReadTable</a></span><span class='o'>(</span><span class='nv'>con_lite</span>, <span class='s'>"my_data"</span><span class='o'>)</span>
-
-<span class='c'>#&gt; [1] x y z</span>
-<span class='c'>#&gt; &lt;0 rows&gt; (or 0-length row.names)</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>con_lite</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RSQLite</span><span class='nf'>::</span><span class='nf'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='o'>(</span><span class='o'>)</span>, <span class='s'>":memory:"</span><span class='o'>)</span></span>
+<span><span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='m'>1</span>, y <span class='o'>=</span> <span class='s'>"a"</span>, z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>"2022-01-01"</span><span class='o'>)</span><span class='o'>)</span></span>
+<span><span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbCreateTable.html'>dbCreateTable</a></span><span class='o'>(</span><span class='nv'>con_lite</span>, name <span class='o'>=</span> <span class='s'>"my_data"</span>, fields <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='o'>(</span><span class='nv'>df</span>, <span class='m'>0</span><span class='o'>)</span><span class='o'>)</span></span>
+<span><span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbListTables.html'>dbListTables</a></span><span class='o'>(</span><span class='nv'>con_lite</span><span class='o'>)</span></span>
+<span><span class='c'>#&gt; [1] "my_data"</span></span>
+<span></span><span><span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbReadTable.html'>dbReadTable</a></span><span class='o'>(</span><span class='nv'>con_lite</span>, <span class='s'>"my_data"</span><span class='o'>)</span></span>
+<span><span class='c'>#&gt; [1] x y z</span></span>
+<span><span class='c'>#&gt; &lt;0 rows&gt; (or 0-length row.names)</span></span>
+<span></span></code></pre>
 
 </div>
 
@@ -138,9 +131,8 @@ I was using the [`golem` framework](https://thinkr-open.github.io/golem/) for my
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>db_con</span><span class='o'>(</span><span class='o'>)</span>
-<span class='nv'>tbl_init</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbReadTable.html'>dbReadTable</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='s'>"my_data"</span><span class='o'>)</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>db_con</span><span class='o'>(</span><span class='o'>)</span></span>
+<span><span class='nv'>tbl_init</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbReadTable.html'>dbReadTable</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='s'>"my_data"</span><span class='o'>)</span></span></code></pre>
 
 </div>
 
@@ -163,8 +155,7 @@ In short:
 
 Some cautions on the second piece are included in the "Key Issues" section.
 
-Key Issues
-----------
+## Key Issues
 
 Adding a permanent data store to your application can open up a lot of exciting new functionality. However, it may create some challenges that your typical data analyst or Shiny developer has not faced before. In this last section, I highlight a few key issues that you should be aware of and provide some recommendations.
 
@@ -182,13 +173,12 @@ Previously, I demonstrated how to connect to a database from R like this:
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      host   <span class='o'>=</span> <span class='s'>"aabc.b.db.ondigitalocean.com"</span>,
-                      dbname <span class='o'>=</span> <span class='s'>"db"</span>,
-                      user      <span class='o'>=</span> <span class='s'>"db"</span>,
-                      password  <span class='o'>=</span> <span class='s'>"abc123"</span>,
-                      port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,</span>
+<span>                      host   <span class='o'>=</span> <span class='s'>"aabc.b.db.ondigitalocean.com"</span>,</span>
+<span>                      dbname <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                      user      <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                      password  <span class='o'>=</span> <span class='s'>"abc123"</span>,</span>
+<span>                      port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span></span></code></pre>
 
 </div>
 
@@ -196,13 +186,12 @@ However, you should never ever put your password in plaintext like this. Instead
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,
-                      host   <span class='o'>=</span> <span class='s'>"aabc.b.db.ondigitalocean.com"</span>,
-                      dbname <span class='o'>=</span> <span class='s'>"db"</span>,
-                      user      <span class='o'>=</span> <span class='s'>"db"</span>,
-                      password  <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='o'>(</span><span class='s'>"DB_PASS"</span><span class='o'>)</span>,
-                      port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,</span>
+<span>                      host   <span class='o'>=</span> <span class='s'>"aabc.b.db.ondigitalocean.com"</span>,</span>
+<span>                      dbname <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                      user      <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                      password  <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='o'>(</span><span class='s'>"DB_PASS"</span><span class='o'>)</span>,</span>
+<span>                      port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span></span></code></pre>
 
 </div>
 
@@ -239,30 +228,29 @@ To accomplish this, I wrapped my database connection in a custom `db_con()` func
 
 <div class="highlight">
 
-<pre class='chroma'><code class='language-r' data-lang='r'><span class='nv'>db_con</span> <span class='o'>&lt;-</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>prod</span> <span class='o'>=</span> <span class='nf'>golem</span><span class='nf'>::</span><span class='nf'><a href='https://rdrr.io/pkg/golem/man/prod.html'>app_prod</a></span><span class='o'>(</span><span class='o'>)</span><span class='o'>)</span> <span class='o'>{</span>
-  
-  <span class='kr'>if</span> <span class='o'>(</span><span class='nv'>prod</span><span class='o'>)</span> <span class='o'>{</span>
-    
-    <span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,
-                          host   <span class='o'>=</span> <span class='s'>"abc.b.db.ondigitalocean.com"</span>,
-                          dbname <span class='o'>=</span> <span class='s'>"db"</span>,
-                          user      <span class='o'>=</span> <span class='s'>"db"</span>,
-                          password  <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='o'>(</span><span class='s'>"DB_PASS"</span><span class='o'>)</span>,
-                          port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span>
-    
-  <span class='o'>}</span> <span class='kr'>else</span> <span class='o'>{</span>
-    
-    <span class='nf'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span><span class='o'>(</span> <span class='kr'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='o'>(</span><span class='s'><a href='https://rsqlite.r-dbi.org'>"RSQLite"</a></span>, quietly <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> <span class='o'>)</span>
-    <span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='o'>(</span><span class='o'>)</span>, <span class='s'>":memory:"</span><span class='o'>)</span>
-    <span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='m'>1</span>, y <span class='o'>=</span> <span class='s'>"a"</span>, z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>"2022-01-01"</span><span class='o'>)</span><span class='o'>)</span>
-    <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbWriteTable.html'>dbWriteTable</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='s'>"my_data"</span>, <span class='nv'>df</span><span class='o'>)</span>
-    
-  <span class='o'>}</span>
-  
-  <span class='kr'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='o'>(</span><span class='nv'>con</span><span class='o'>)</span>
-  
-<span class='o'>}</span>
-</code></pre>
+<pre class='chroma'><code class='language-r' data-lang='r'><span><span class='nv'>db_con</span> <span class='o'>&lt;-</span> <span class='kr'>function</span><span class='o'>(</span><span class='nv'>prod</span> <span class='o'>=</span> <span class='nf'>golem</span><span class='nf'>::</span><span class='nf'><a href='https://rdrr.io/pkg/golem/man/prod.html'>app_prod</a></span><span class='o'>(</span><span class='o'>)</span><span class='o'>)</span> <span class='o'>{</span></span>
+<span>  </span>
+<span>  <span class='kr'>if</span> <span class='o'>(</span><span class='nv'>prod</span><span class='o'>)</span> <span class='o'>{</span></span>
+<span>    </span>
+<span>    <span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'>RPostgres</span><span class='nf'>::</span><span class='nf'><a href='https://rpostgres.r-dbi.org/reference/Postgres.html'>Postgres</a></span><span class='o'>(</span><span class='o'>)</span>,</span>
+<span>                          host   <span class='o'>=</span> <span class='s'>"abc.b.db.ondigitalocean.com"</span>,</span>
+<span>                          dbname <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                          user      <span class='o'>=</span> <span class='s'>"db"</span>,</span>
+<span>                          password  <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/Sys.getenv.html'>Sys.getenv</a></span><span class='o'>(</span><span class='s'>"DB_PASS"</span><span class='o'>)</span>,</span>
+<span>                          port     <span class='o'>=</span> <span class='m'>25060</span><span class='o'>)</span></span>
+<span>    </span>
+<span>  <span class='o'>}</span> <span class='kr'>else</span> <span class='o'>{</span></span>
+<span>    </span>
+<span>    <span class='nf'><a href='https://rdrr.io/r/base/stopifnot.html'>stopifnot</a></span><span class='o'>(</span> <span class='kr'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='o'>(</span><span class='s'><a href='https://rsqlite.r-dbi.org'>"RSQLite"</a></span>, quietly <span class='o'>=</span> <span class='kc'>TRUE</span><span class='o'>)</span> <span class='o'>)</span></span>
+<span>    <span class='nv'>con</span> <span class='o'>&lt;-</span> <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span><span class='o'>(</span><span class='nf'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span><span class='o'>(</span><span class='o'>)</span>, <span class='s'>":memory:"</span><span class='o'>)</span></span>
+<span>    <span class='nv'>df</span> <span class='o'>&lt;-</span> <span class='nf'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='o'>(</span>x <span class='o'>=</span> <span class='m'>1</span>, y <span class='o'>=</span> <span class='s'>"a"</span>, z <span class='o'>=</span> <span class='nf'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='o'>(</span><span class='s'>"2022-01-01"</span><span class='o'>)</span><span class='o'>)</span></span>
+<span>    <span class='nf'>DBI</span><span class='nf'>::</span><span class='nf'><a href='https://dbi.r-dbi.org/reference/dbWriteTable.html'>dbWriteTable</a></span><span class='o'>(</span><span class='nv'>con</span>, <span class='s'>"my_data"</span>, <span class='nv'>df</span><span class='o'>)</span></span>
+<span>    </span>
+<span>  <span class='o'>}</span></span>
+<span>  </span>
+<span>  <span class='kr'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='o'>(</span><span class='nv'>con</span><span class='o'>)</span></span>
+<span>  </span>
+<span><span class='o'>}</span></span></code></pre>
 
 </div>
 

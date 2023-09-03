@@ -40,7 +40,7 @@ This post provides some tips, call-outs, and solutions for using a relational da
 
 Dean Attali's [blog post on persistent storage](https://deanattali.com/blog/shiny-persistent-data-storage/) compares a range of options for persistent storage including databases, S3 buckets, Google Drive, and more. 
 
-For my application, I anticipated the need to store and retrieve sizable amounts of structured data, so using a relational database seemed like a good option. Since I was hosting my application on [Digital Ocean App Platform](https://m.do.co/c/4a8a67985453), I could create a [managed Postgres database](https://www.digitalocean.com/products/managed-databases/) with just a few button clicks. As I share in the "Key Issues" section, this solution offers some significant benefits in terms of security.  
+For my application, I anticipated the need to store and retrieve sizable amounts of structured data, so using a relational database seemed like a good option. Since I was hosting my application on [Digital Ocean App Platform](https://m.do.co/c/6c5fdc198503), I could create a [managed Postgres database](https://www.digitalocean.com/products/managed-databases/) with just a few button clicks. As I share in the "Key Issues" section, this solution offers some significant benefits in terms of security.  
 
 For more information on different options for hosting Shiny apps and some insight into why I chose Digital Ocean, check out Peter Solymos' excellent blog on [Hosting Data Apps](https://hosting.analythium.io/). 
 

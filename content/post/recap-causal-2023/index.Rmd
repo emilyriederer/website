@@ -1,0 +1,45 @@
+---
+output: hugodown::md_document
+title: "Big ideas from the 2023 Causal Data Science Meeting"
+subtitle: ""
+summary: "Highlights and links to select talks"
+authors: []
+tags: [causal]
+categories: [causal]
+date: 2023-11-18
+lastmod: 2023-11-18
+featured: false
+draft: false
+aliases:
+
+# Featured image
+# To use, add an image named `featured.jpg/png` to your page's folder.
+# Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
+image:
+  caption: ""
+  focal_point: ""
+  preview_only: true
+
+# Projects (optional).
+#   Associate this post with one or more of your projects.
+#   Simply enter your project's folder or file name without extension.
+#   E.g. `projects = ["internal-project"]` references `content/project/deep-learning/index.md`.
+#   Otherwise, set `projects = []`.
+projects: [""]
+---
+
+Last week, I enjoyed attending parts of the annual virtual [Causal Data Science Meeting](https://www.causalscience.org/) organized by researchers from Maastricht University, Netherlands, and Copenhagen Business School, Denmark. This has been one of my favorite virtual events since the first iteration in 2020, and I find it consistently highlights the best of the causal research community: brining together industry and academia with concise talks that are at once thought-provoking, theoretically well-grounded, yet thoroughly pragmatic.
+
+While I could not join the entire event (running in CET time, some sessions fit snuggly between my first cup of coffee and first work meeting of the day in CST), this year's conference did not disappoint! Below, I share a sampling with five "big ideas" from the sessions. 
+
+1. **What's the current "gold standard" of causal ML methods in industry?** [Dima Goldenberg](https://www.linkedin.com/in/dimgold/https://www.linkedin.com/in/dimgold/) presented a great case study on heterogeneous uplift modeling at Booking.com. (While I couldn't find the exact slides or paper, you can get a flavor of Booking's work in experimentation and causal inference from their excellent [tech blog](https://blog.booking.com/#datascience) )
+
+2. **How does causal evidence add value?** [Robert Kubinec](https://www.linkedin.com/in/robert-kubinec-9191a9a/) conceptualized a measurable spectrum of descriptive to causal studies based on entropy. This framework broadens the aperture to think about how both quantitative and qualitative evidence can come together to form causal conclusions. ([Preprint](https://osf.io/preprints/socarxiv/a492b/))
+
+3. **But how do we know the methods work?** Causal methods are notoriously hard to validate since, by definition, we lack a ground truth against which to compare our estimate. To validate new methods, Lingjie Shen and coauthors presented one approach with their new [`RCTrep` R package] (https://github.com/duolajiang/RCTrep) which can be used to compare outcomes between real-world data (RWD) and randomized control trial data (RCT).
+
+4. **And what do we do when they can't get all the way there?** [Carlos Fernández-Loría](https://www.linkedin.com/in/ferlocar/) and [Jorge Loría](https://www.linkedin.com/in/jorge-lor%C3%ADa/) talk on "Causal Scoring" explores how we can accept and make use of "causal ranking" or "causal classification" even when we do not believe we can generate fully credible, calibrated causal estimates. By defining which type of estimand is really necessary for a specific use case, they show how one can tailor their modeling approach and broaden the range of applications. ([Preprint](https://arxiv.org/abs/2206.12532))
+
+5. **Finally, do the best methods that correctly accrue causal evidence and validate *matter*?** [Ron Berman](https://www.linkedin.com/in/ronberman/) and Anya Shchetkina tackled this question in their paper about when correctly modeling uplift heterogeneity does and doesn't matter. They decomposed potential causes using real-world marketing and public health examples and presented a methodology for identifying when uplift-based personalization makes a business impact (I couldn't find pre-print, but they also presented at MIT's CODE this week, so hopefully there will be a video soon!)
+
+One of the joys of the causal DS community's mindset is the inherent focus on impact and pragmatism, and this year's conference continued to deliver in that vein. I'm marking my calendar (and setting my 4AM alarm!) for next year already.

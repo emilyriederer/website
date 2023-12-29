@@ -8,8 +8,8 @@ summary: "Exploring emerging tools that help R users feel at home (Image credit:
 authors: []
 tags: [rtats, python]
 categories: [rtats, python]
-date: 2023-12-30
-lastmod: 2023-12-30
+date: 2023-12-29
+lastmod: 2023-12-29
 featured: false
 draft: false
 
@@ -20,7 +20,7 @@ draft: false
 projects: [""]
 ---
 
-2023 saw continued innovation in data science language interoperability. Ongoing innovations in Arrow (a language-agnostic in-memory standard for data storage), growing adoption of Quarto (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney joining Posit (the language-agnostic rebranding of RStudio) all emphasized the investment in and importance of agility between different programming languages and paradigms.
+Data science language interoperability was a theme on 2023. Ongoing innovations in Arrow (a language-agnostic in-memory standard for data storage), growing adoption of Quarto (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney joining Posit (the language-agnostic rebranding of RStudio) all emphasized the investment in and importance of agility between different programming languages and paradigms.
 
 Despite these advances in system interoperability, individual practitioners may struggle to achieve personal interoperability and to become true polyglots. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not "fit", writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it's "feel" from the ground up. 
 

@@ -4,7 +4,7 @@ output: hugodown::md_document
 
 title: "Python Rgonomics"
 subtitle: ""
-summary: "Exploring emerging tools that help R users feel at home"
+summary: "Exploring emerging tools that help R users feel at home (Image credit: Allison Horst)"
 authors: []
 tags: [rtats, python]
 categories: [rtats, python]
@@ -16,10 +16,8 @@ draft: false
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
-image:
-  caption: "Photo credit to the inimitable [Allison Horst](https://allisonhorst.com/)"
-  focal_point: ""
-  preview_only: false
+  
+projects: [""]
 ---
 
 2023 saw continued innovation in data science language interoperability. Ongoing innovations in Arrow (a language-agnostic in-memory standard for data storage), growing adoption of Quarto (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney joining Posit (the language-agnostic rebranding of RStudio) all emphasized the investment in and importance of agility between different programming languages and paradigms.

@@ -13,20 +13,25 @@ lastmod: 2023-12-29
 featured: false
 draft: false
 
+image:
+  caption: "Image credit to [Allison Horst](https://allisonhorst.com/)"
+  focal_point: ""
+  preview_only: false
+
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
   
 projects: [""]
-rmd_hash: 59a674cb3f6bdf88
+rmd_hash: c9de9557e68e5de1
 
 ---
 
-Data science language interoperability was a theme on 2023. Ongoing innovations in Arrow (a language-agnostic in-memory standard for data storage), growing adoption of Quarto (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney joining Posit (the language-agnostic rebranding of RStudio) all emphasized the investment in and importance of agility between different programming languages and paradigms.
+Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in [Arrow](https://arrow.apache.org/) (a language-agnostic in-memory standard for data storage), growing adoption of [Quarto](https://quarto.org/) (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney [joining Posit](https://posit.co/blog/welcome-wes/) (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.
 
-Despite these advances in system interoperability, individual practitioners may struggle to achieve personal interoperability and to become true polyglots. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not "fit", writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it's "feel" from the ground up.
+Despite these advances in *technical* interoperability, individual developers will always face more friction than state-of-the-art tools when moving between languages. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just *feel* good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not "fit", writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it's "feel" from the ground up.
 
-Fortunately, some of the best *ideas* have begun to blend between languages, as well. This has not only enriched previously isolated communities, but it also makes it easier for developers to take their advanced skillsets with them by into a new language without having to abandon their intuition of what feels good. For any R users who aim to upskill in python in 2024, recent tools and versions of old favorites have made strides in converging the R and python data science stacks. In this post, I will overview some recommended tools that are both truly pythonic while capturing the comfort and familiarity of some favorite R packages of the `tidyverse` variety.[^1]
+Fortunately, some of these higher-level paradigms have begun to bleed across languages, enriching previously isolated tribes with the and enabling developers to take their advanced skillsets with them across languages. For any R users who aim to upskill in python in 2024, recent tools and versions of old favorites have made strides in converging the R and python data science stacks. In this post, I will overview some recommended tools that are both truly pythonic while capturing the comfort and familiarity of some favorite R packages of the `tidyverse` variety.[^1]
 
 ## What this post is not
 
@@ -47,7 +52,9 @@ The tools I highlight below tend to have two competing features:
 -   They have aspects of their workflow and ergonomics that should feel very comfortable to users of favored R tools
 -   They should be independently accepted, successful, and well-maintained python projects with the true pythonic spirit
 
-The former is important because otherwise there's nothing tailored about these recommendations; the latter is important so users actually engage with the python language and community instead of dabbling around in its more peripheral edges. In short, these two principles *exclude* tools that are direct ports between languages with that as their sole or main benefit. For example, `siuba` and `plotnine` were written with the direct intent of . While they have seen some success and adoption, these more niche tools may tend to lack in the pace of development, community support, prior art, StackOverflow questions, blog posts, conference talks, discussions, others to collaborate with, cache in a portfolio, etc.
+The former is important because otherwise there's nothing tailored about these recommendations; the latter is important so users actually engage with the python language and community instead of dabbling around in its more peripheral edges. In short, these two principles *exclude* tools that are direct ports between languages with that as their sole or main benefit.[^2]
+
+For example, `siuba` and `plotnine` were written with the direct intent of mirroring R syntax. They have seen some success and adoption, but more niche tools come with liabilities. With smaller user-bases, they tend to lack in the pace of development, community support, prior art, StackOverflow questions, blog posts, conference talks, discussions, others to collaborate with, cache in a portfolio, etc. Instead of enjoying the ergonomics of an old language or embracing the challenge of learning a new one, ports can sometimes force developers to invest energy into a "secret third thing" of learning tools that isolate them from both communities and facing inevitable snags by themselves.
 
 When in Rome, do as the Romans do -- but if you're coming from the U.S. that doesn't mean you can't bring a universal adapter that can help charge your devices in European outlets.
 
@@ -81,8 +88,13 @@ To preview these recommendations:
 
 The first hurdle is often getting started -- both in terms of installing the tools you'll need and getting into a comfortable IDE to run them.
 
--   **Installation**: R keeps installation simple; there's one way to do it so you do and it's done. But before python converts can `print("hello world")`, they face a range of options (system Python, Python installer UI, Anaconda, Miniconda, etc.) each with its own kinks. These decisions are made harder in Python since projects tend to have stronger dependencies of the language, requiring one to switch between versions. For both of these reasons, I favor the [`pyenv`](https://github.com/pyenv/pyenv) (or `pyenv-win` for those on Windows) for easily managing python installation(s) from the command line. While the installation process of `pyenv` may be *technically* different, it's similar in that it "just works".
--   **Integrated Development Environment**: Once R is install, R users are typically off to the races with the intuitive RStudio IDE which helps them get immediately hands-on with the REPL. With the UI divided into quadrants, users can write an R script, run it to see results in the console, conceptualize what the program "knows" with the variable explorer, and navigate files through a file explorer. Once again, python is not lacking in IDE options, but users are confronted with yet another decision point before they even get started. Pycharm, Sublime, Spyder, Eclipse, Atom, Neovim, oh my! I find that [VS Code](https://code.visualstudio.com/docs/languages/python) offers the best functionality. It's rich extension ecosystem also means that most major tools (e.g. Quarto, git, linters and stylers, etc.) have nice UI add-ons so, like RStudio, your platform is as best tailored as possible for your workflow
+-   **Installation**: R keeps installation simple; there's one way to do it so you do and it's done. But before python converts can `print("hello world")`, they face a range of options (system Python, Python installer UI, Anaconda, Miniconda, etc.) each with its own kinks. These decisions are made harder in Python since projects tend to have stronger dependencies of the language, requiring one to switch between versions. For both of these reasons, I favor the [`pyenv`](https://github.com/pyenv/pyenv) (or `pyenv-win` for those on Windows) for easily managing python installation(s) from the command line. While the installation process of `pyenv` may be *technically* different, it's similar in that it "just works" with just a few commands:
+    -   `pyenv install --list`: To see what python versions are available to install
+    -   `pyenv install <version number>`: To install a specific version
+    -   `pyenv versions`: To see what python versions are installed on your system
+    -   `pyenv global <version number>`: The set one python version as a global default
+    -   `pyenv local <version number>`: The set a python version to be used within a specific directory/project
+-   **Integrated Development Environment**: Once R is install, R users are typically off to the races with the intuitive RStudio IDE which helps them get immediately hands-on with the REPL. With the UI divided into quadrants, users can write an R script, run it to see results in the console, conceptualize what the program "knows" with the variable explorer, and navigate files through a file explorer. Once again, python is not lacking in IDE options, but users are confronted with yet another decision point before they even get started. Pycharm, Sublime, Spyder, Eclipse, Atom, Neovim, oh my! I find that [VS Code](https://code.visualstudio.com/docs/languages/python) offers the best functionality. It's rich extension ecosystem also means that most major tools (e.g. Quarto, git, linters and stylers, etc.) have nice add-ons so, like RStudio, you can customize your platform to perform many side-tasks in plaintext or with the support of extra UI components.[^3]
 
 ### For data analysis
 
@@ -113,4 +125,8 @@ A few more tools may be helpful and familiar to *some* R users who tend towards 
 Each recommendation here itself could be its own tutorial or post. In particular, I hope to showcase the Rgonomics of `polars`, `seaborn`, and `great_tables` in future posts.
 
 [^1]: Of course, languages have their own subcultures too. The `tidyverse` and `data.table` parts of the R world tend to favor different semantics and ergonomics. This post caters more to the former.
+
+[^2]: There is no doubt a place for language ports, especially for earlier stage project where no native language-specific standard exists. For example, I like Karandeep Singh's lab work on [a tidyverse for Julia](https://github.com/TidierOrg/Tidier.jl) and maintain my own [`dbtplyr`](https://github.com/emilyriederer/dbtplyr) package to port `dplyr`'s select helpers to `dbt`
+
+[^3]:  If anything, the one challenge of VS Code is the sheer number of set up options, but to start out, you can see these excellent tutorials from Rami Krispin on recommended [python](https://github.com/RamiKrispin/vscode-python) and [R](https://github.com/RamiKrispin/vscode-python) configurations
 

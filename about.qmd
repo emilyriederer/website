@@ -1,0 +1,28 @@
+---
+title: "About"
+image: profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/emilyriederer
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com/in/emilyriederer
+    - icon: github
+      text: Github
+      href: https://github.com/emilyriederer
+    - icon: mastodon
+      text: Mastondon
+      href: https://mastodon.social/@emilyriederer
+comments: false
+---
+
+I'm passionate about working on problems throughout the data space -- from strategy and analytics, modeling and data science, and upstream data infrastructure development. I currently work at Capital One where I've led teams across those domains, including initiatives to develop better fit-for-purpose models and to reimagine our analytical infrastructure with innersource tools. 
+
+Currently, I’m most energized by problems related to reproducible research and analytical tooling, data management and metric/feature innovation, and causal inference. In my free time, I enjoy working on open source and pro-bono projects, reviewing (50+!) book proposals for CRC Press, and serving on the editorial board of rOpenSci.
+
+Previously, I earned degrees in Mathematics and Mathematical Decision Sciences (Stats / OR) at UNC Chapel Hill. At Carolina, I was a research assistant in the Department of Statistics & Operations Research and focused on testing the impact of Emergency Department patient flow strategies using discrete event simulation.
+
+When I’m not crunching numbers, I enjoy reading, running and weightlifting, and watching college basketball (Go Tar Heels!)

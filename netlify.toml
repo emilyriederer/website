@@ -1,0 +1,41 @@
+[[redirects]]
+  from = "/tags/rstats/index.xml"
+  to = "/index-rstats.xml"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tags/python/index.xml"
+  to = "/index-python.xml"
+  status = 301
+  force = true
+  
+[[redirects]]
+  from = "/tags/sql/index.xml"
+  to = "/index-sql.xml"
+  status = 301
+  force = true
+  
+[[redirects]]
+  from = "/tags/dbt/index.xml"
+  to = "/index-dbt.xml"
+  status = 301
+  force = true
+  
+[[redirects]]
+  from = "/tags/data/index.xml"
+  to = "/index-data.xml"
+  status = 301
+  force = true
+  
+[[redirects]]
+  from = "/tags/rmarkdown/index.xml"
+  to = "/index-rmarkdown.xml"
+  status = 301
+  force = true
+  
+[[redirects]]
+  from = "/tags/causal/index.xml"
+  to = "/index-causal.xml"
+  status = 301
+  force = true

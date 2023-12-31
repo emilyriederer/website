@@ -1,0 +1,134 @@
+---
+title: "Welcome!"
+toc: true
+toc-title: "What's on my mind?"
+listing:
+  - id: post-top
+    type: default
+    contents:
+      - "post/causal-design-patterns/*.qmd"
+      - "post/column-name-contracts/*.qmd"
+      - "post/team-of-packages/*.qmd"
+      - "post/rmarkdown-driven-development/*.qmd"
+    page-size: 4
+    grid-columns: 4
+    fields: &fields [image, date, title, description, categories]
+  - id: post-recent
+    type: default
+    contents: 
+      - "post"
+      - "!post/*.qmd"
+    page-size: 4
+    grid-columns: 4
+    fields: *fields
+    date-format: iso
+    sort: "date desc"
+    feed: 
+      categories: [data, rstats, python, dbt, sql, rmarkdown]
+  - id: talk-top
+    type: default
+    contents: 
+      - "talk/causal-design-patterns/*.qmd"
+      - "talk/dbtplyr/*.qmd"
+      - "talk/organization/*.qmd"
+      - "talk/rmarkdown-driven-development/*.qmd"
+    page-size: 4
+    grid-columns: 4
+    fields: *fields
+    sort: "date desc"
+  - id: talk-recent
+    type: default
+    contents: 
+      - "talk"
+      - "!talk/*.qmd"    
+    page-size: 4
+    grid-columns: 4
+    fields: *fields
+    sort: "date desc"
+  - id: publication
+    type: default
+    contents: 
+      - "publication"
+      - "!publication/*.qmd"    
+    page-size: 4
+    grid-columns: 4
+    fields: *fields
+    sort: "date desc"
+page-layout: full
+title-block-banner: jumbotron.jpg
+comments: false
+---
+
+<style>
+.quarto-title-banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+@media screen and (min-width: 800px) {
+.quarto-title-banner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+  background-size: contain;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding: 100px 200px;
+}
+}
+
+.quarto-title {
+  color: white !important;
+}
+
+</style>
+
+## Posts
+
+::: {.panel-tabset}
+
+### Recent
+
+::: {#post-recent}
+:::
+
+### Favorites
+
+::: {#post-top}
+:::
+
+:::
+
+[Go to All Posts &rarr;](post/index.html)
+
+## Talks
+
+::: {.panel-tabset}
+
+### Recent
+
+::: {#talk-recent}
+:::
+
+### Favorites
+
+::: {#talk-top}
+:::
+
+:::
+
+[Go to All Talks &rarr;](talk/index.html)
+
+## Publications 
+
+::: {.panel-tabset}
+
+###
+
+::: {#publication}
+:::
+
+:::
+
+[Go to All Publications &rarr;](publication/index.html)

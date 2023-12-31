@@ -1,0 +1,6 @@
+id,cd_county,cd_state,nm_county,nm_state,n_case_actl,n_death_actl,n_case_pred_07,n_hosp_pred_07,n_death_pred_07,n_case_pred_14,n_hosp_pred_14,n_death_pred_14,n_case_pred_21,n_hosp_pred_21,n_death_pred_21,n_case_pred_28,n_hosp_pred_28,n_death_pred_28,dt_county,dt_county_hpsa,prop_county_hpsa,ind_county_hpsa
+2021-08-15 01001,01001,01,Autauga County,Alabama,8025,114,1900,1355,8,1634,1537,9,1426,1561,9,1260,1492,8,2021-08-15,,,0
+2021-01-02 01001,01001,01,Autauga County,Alabama,4268,50,2323,2215,29,1768,1942,26,1434,1625,22,1214,1333,18,2021-01-02,,,0
+2021-06-07 01001,01001,01,Autauga County,Alabama,7206,113,758,514,14,483,466,13,308,425,12,196,385,10,2021-06-07,,,0
+2020-11-24 01001,01001,01,Autauga County,Alabama,2661,39,2668,1253,14,2939,1375,15,3200,1510,17,3461,1652,18,2020-11-24,,,0
+2021-08-22 01001,01001,01,Autauga County,Alabama,8311,115,1833,2429,13,1680,2740,14,1561,2871,14,1461,2877,14,2021-08-22,,,0

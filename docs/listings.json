@@ -1,0 +1,160 @@
+[
+  {
+    "listing": "/talk/index.html",
+    "items": [
+      "/talk/dbtplyr/index.html",
+      "/talk/midterm-email/index.html",
+      "/talk/causal-design-patterns/index.html",
+      "/talk/meetup-datafold/index.html",
+      "/talk/meetup-posit/index.html",
+      "/talk/midterm-iptw/index.html",
+      "/talk/shiny-modules/index.html",
+      "/talk/data-error-gen/index.html",
+      "/talk/pod-tdep-colnames/index.html",
+      "/talk/meetup-stat447/index.html",
+      "/talk/col-names-contract/index.html",
+      "/talk/organization/index.html",
+      "/talk/projmgr/index.html",
+      "/talk/rmarkdown-driven-development/index.html",
+      "/talk/ent-pkg-design/index.html",
+      "/talk/tidycf/index.html"
+    ]
+  },
+  {
+    "listing": "/publication/index.html",
+    "items": [
+      "/publication/causal-language/index.html",
+      "/publication/data-eng-97-things/index.html",
+      "/publication/rmarkdown-cookbook/index.html"
+    ]
+  },
+  {
+    "listing": "/post/index.html",
+    "items": [
+      "/post/py-rgo/index.html",
+      "/post/recap-causal-2023/index.html",
+      "/post/causal-data/index.html",
+      "/post/abstraction-airbyte/index.html",
+      "/post/abstraction-extraction/index.html",
+      "/post/duckdb-carolina/index.html",
+      "/post/nulls-polyglot/index.html",
+      "/post/grouping-data-quality-update/index.html",
+      "/post/shiny-db/index.html",
+      "/post/snow/index.html",
+      "/post/grouping-data-quality/index.html",
+      "/post/ml-vegetables/index.html",
+      "/post/convo-dbt-update/index.html",
+      "/post/data-valid-lightweight/index.html",
+      "/post/sql-r-flow/index.html",
+      "/post/data-error-gen/index.html",
+      "/post/states-scraping-automation/index.html",
+      "/post/convo-dbt/index.html",
+      "/post/causal-design-patterns/index.html",
+      "/post/resource-roundup-causal/index.html",
+      "/post/team-of-packages/index.html",
+      "/post/sql-generation/index.html",
+      "/post/convo-intro/index.html",
+      "/post/sticker-driven-maintenance/index.html",
+      "/post/crosstalk/index.html",
+      "/post/column-name-contracts/index.html",
+      "/post/shiny-modules/index.html",
+      "/post/latent-lasting-documentation/index.html",
+      "/post/rmarkdown-css-tips/index.html",
+      "/post/projmgr/index.html",
+      "/post/rmddd-tech-appendix/index.html",
+      "/post/resource-roundup-r-industry/index.html",
+      "/post/resource-roundup-reproducible-research/index.html",
+      "/post/rtistic/index.html",
+      "/post/supporting-speakers/index.html",
+      "/post/rmarkdown-driven-development/index.html",
+      "/post/writing-a-tech-talk/index.html"
+    ]
+  },
+  {
+    "listing": "/index.html",
+    "items": [
+      "/post/team-of-packages/index.html",
+      "/post/causal-design-patterns/index.html",
+      "/post/column-name-contracts/index.html",
+      "/post/rmarkdown-driven-development/index.html",
+      "/post/py-rgo/index.html",
+      "/post/recap-causal-2023/index.html",
+      "/post/causal-data/index.html",
+      "/post/abstraction-airbyte/index.html",
+      "/post/abstraction-extraction/index.html",
+      "/post/duckdb-carolina/index.html",
+      "/post/nulls-polyglot/index.html",
+      "/post/grouping-data-quality-update/index.html",
+      "/post/shiny-db/index.html",
+      "/post/snow/index.html",
+      "/post/grouping-data-quality/index.html",
+      "/post/ml-vegetables/index.html",
+      "/post/convo-dbt-update/index.html",
+      "/post/data-valid-lightweight/index.html",
+      "/post/sql-r-flow/index.html",
+      "/post/data-error-gen/index.html",
+      "/post/states-scraping-automation/index.html",
+      "/post/convo-dbt/index.html",
+      "/post/resource-roundup-causal/index.html",
+      "/post/sql-generation/index.html",
+      "/post/convo-intro/index.html",
+      "/post/sticker-driven-maintenance/index.html",
+      "/post/crosstalk/index.html",
+      "/post/shiny-modules/index.html",
+      "/post/latent-lasting-documentation/index.html",
+      "/post/rmarkdown-css-tips/index.html",
+      "/post/projmgr/index.html",
+      "/post/rmddd-tech-appendix/index.html",
+      "/post/resource-roundup-r-industry/index.html",
+      "/post/resource-roundup-reproducible-research/index.html",
+      "/post/rtistic/index.html",
+      "/post/supporting-speakers/index.html",
+      "/post/writing-a-tech-talk/index.html",
+      "/talk/dbtplyr/index.html",
+      "/talk/causal-design-patterns/index.html",
+      "/talk/organization/index.html",
+      "/talk/rmarkdown-driven-development/index.html",
+      "/talk/midterm-email/index.html",
+      "/talk/meetup-datafold/index.html",
+      "/talk/meetup-posit/index.html",
+      "/talk/midterm-iptw/index.html",
+      "/talk/shiny-modules/index.html",
+      "/talk/data-error-gen/index.html",
+      "/talk/pod-tdep-colnames/index.html",
+      "/talk/meetup-stat447/index.html",
+      "/talk/col-names-contract/index.html",
+      "/talk/projmgr/index.html",
+      "/talk/ent-pkg-design/index.html",
+      "/talk/tidycf/index.html",
+      "/publication/causal-language/index.html",
+      "/publication/data-eng-97-things/index.html",
+      "/publication/rmarkdown-cookbook/index.html"
+    ]
+  },
+  {
+    "listing": "/post/featured.html",
+    "items": [
+      "/post/causal-design-patterns/index.html",
+      "/post/team-of-packages/index.html",
+      "/post/column-name-contracts/index.html",
+      "/post/rmarkdown-driven-development/index.html"
+    ]
+  },
+  {
+    "listing": "/talk/featured.html",
+    "items": [
+      "/talk/dbtplyr/index.html",
+      "/talk/causal-design-patterns/index.html",
+      "/talk/organization/index.html",
+      "/talk/rmarkdown-driven-development/index.html"
+    ]
+  },
+  {
+    "listing": "/project/index.html",
+    "items": [
+      "/project/dbtplyr/index.html",
+      "/project/rtistic/index.html",
+      "/project/projmgr/index.html"
+    ]
+  }
+]

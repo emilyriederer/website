@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Emily Riederer</title>
+<link>https://emilyriederer.github.io/publication/index.html</link>
+<atom:link href="https://emilyriederer.github.io/publication/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.3.450</generator>
+<lastBuildDate>Sat, 19 Nov 2022 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Causal and Associational Language in Observational Health Research: A Systematic Evaluation</title>
+  <dc:creator>Noah Haber, et al</dc:creator>
+  <link>https://emilyriederer.github.io/publication/causal-language/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<p>We estimated the degree to which language used in the high-profile medical/public health/epidemiology literature implied causality using language linking exposures to outcomes and action recommendations; examined disconnects between language and recommendations; identified the most common linking phrases; and estimated how strongly linking phrases imply causality. We searched for and screened 1,170 articles from 18 high-profile journals (65 per journal) published from 2010-2019. Based on written framing and systematic guidance, 3 reviewers rated the degree of causality implied in abstracts and full text for exposure/outcome linking language and action recommendations. Reviewers rated the causal implication of exposure/outcome linking language as none (no causal implication) in 13.8%, weak in 34.2%, moderate in 33.2%, and strong in 18.7% of abstracts. The implied causality of action recommendations was higher than the implied causality of linking sentences for 44.5% or commensurate for 40.3% of articles. The most common linking word in abstracts was “associate” (45.7%). Reviewers’ ratings of linking word roots were highly heterogeneous; over half of reviewers rated “association” as having at least some causal implication. This research undercuts the assumption that avoiding “causal” words leads to clarity of interpretation in medical research.</p>
+
+
+
+ ]]></description>
+  <category>causal</category>
+  <guid>https://emilyriederer.github.io/publication/causal-language/index.html</guid>
+  <pubDate>Sat, 19 Nov 2022 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.github.io/publication/causal-language/featured.jpeg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>97 Things Every Data Engineer Should Know: Collective Wisdom from the Experts</title>
+  <dc:creator>Tobias Macey</dc:creator>
+  <link>https://emilyriederer.github.io/publication/data-eng-97-things/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<p>I contributed six chapters to the book:</p>
+<ul>
+<li><strong>Develop communities - not just code</strong>: On building developing communities along with code bases and empowering versus patronizing your data product’s customers</li>
+<li><strong>Give data products a front-end with latent documentation</strong>: On low effort practices for improving data documentation and usability</li>
+<li><strong>There’s no such thing as data quality</strong>: On the value of data “fit for purpose”</li>
+<li><strong>The many meanings of missingness</strong>: On causes and consequences of null field encoding</li>
+<li><strong>Column names as contracts</strong>: On embedding metadata and performance “contracts” in column names</li>
+<li><strong>Data validation needs more than summary statistics</strong>: On the importance of context-informed data validation</li>
+</ul>
+
+
+
+ ]]></description>
+  <category>data</category>
+  <guid>https://emilyriederer.github.io/publication/data-eng-97-things/index.html</guid>
+  <pubDate>Sun, 01 Aug 2021 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.github.io/publication/data-eng-97-things/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>R Markdown Cookbook</title>
+  <link>https://emilyriederer.github.io/publication/rmarkdown-cookbook/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+ ]]></description>
+  <category>rmarkdown</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.github.io/publication/rmarkdown-cookbook/index.html</guid>
+  <pubDate>Tue, 01 Sep 2020 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.github.io/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
+</item>
+</channel>
+</rss>

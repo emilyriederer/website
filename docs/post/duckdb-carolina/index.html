@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2022-09-25">
+<meta name="description" content="Out-of-memory processing of North Carolina’s voter file with DuckDB and Apache Arrow">
+
+<title>Goin’ to Carolina in my mind (or on my hard drive) | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="Goin’ to Carolina in my mind (or on my hard drive) | Emily Riederer">
+<meta name="twitter:description" content="Out-of-memory processing of North Carolina’s voter file with DuckDB and Apache Arrow">
+<meta name="twitter:image" content="https://emilyriederer.github.io/post/duckdb-carolina/featured.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html" rel="" target="">
+ <span class="dropdown-text">Top</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../talk/index.html" rel="" target="">
+ <span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Goin’ to Carolina in my mind (or on my hard drive)</h1>
+                  <div>
+        <div class="description">
+          Out-of-memory processing of North Carolina’s voter file with DuckDB and Apache Arrow
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">data</div>
+                <div class="quarto-category">sql</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 25, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#motivation-north-carolina-election-data" id="toc-motivation-north-carolina-election-data" class="nav-link active" data-scroll-target="#motivation-north-carolina-election-data">Motivation: North Carolina election data</a></li>
+  <li><a href="#duckdb-highlights" id="toc-duckdb-highlights" class="nav-link" data-scroll-target="#duckdb-highlights">DuckDB highlights</a></li>
+  <li><a href="#data-management-pattern" id="toc-data-management-pattern" class="nav-link" data-scroll-target="#data-management-pattern">Data management pattern</a>
+  <ul class="collapse">
+  <li><a href="#one-time-set-up" id="toc-one-time-set-up" class="nav-link" data-scroll-target="#one-time-set-up">One-time set-up</a></li>
+  <li><a href="#ongoing-usage" id="toc-ongoing-usage" class="nav-link" data-scroll-target="#ongoing-usage">Ongoing usage</a></li>
+  </ul></li>
+  <li><a href="#data-access-patterns" id="toc-data-access-patterns" class="nav-link" data-scroll-target="#data-access-patterns">Data access patterns</a>
+  <ul class="collapse">
+  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">python</a></li>
+  <li><a href="#r" id="toc-r" class="nav-link" data-scroll-target="#r">R</a></li>
+  <li><a href="#cli" id="toc-cli" class="nav-link" data-scroll-target="#cli">CLI</a></li>
+  <li><a href="#sql-ide-dbeaver" id="toc-sql-ide-dbeaver" class="nav-link" data-scroll-target="#sql-ide-dbeaver">SQL IDE (DBeaver)</a></li>
+  </ul></li>
+  <li><a href="#codespaces-demo" id="toc-codespaces-demo" class="nav-link" data-scroll-target="#codespaces-demo">Codespaces Demo</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="featured.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Photo Credit to <a href="https://unsplash.com/@element5digital">Element5 Digital</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>There comes a time in every analyst’s life when data becomes too big for their laptop’s RAM. While open-source tools like R, python, and SQL have made “team of one” data analysts ever more powerful, analysts abilities to derive value from their skillsets are highly interdependent with the tools at their disposal.</p>
+<p>For R and python, the size of datasets becomes a limiting factor to local processing; for a SQL-focused analyst, the existence of a database is prerequisite, as the gap between “democratized” SQL <em>querying</em> skills and data engineering and database management skills is not insignificant. The ever-increasing number of managed cloud services (from data warehouses, containers, hosted IDEs and notebooks) offer a trendy and effective solution. However, budget constraints, technical know-how, security concerns, or tight-timelines can all be headwinds to adoption.</p>
+<p>So what’s an analyst to do when they have the knowledge and tools but not the infrastructure to tackle their problem?</p>
+<p><a href="https://DuckDB.org/"><code>DuckDB</code></a> is quickly gaining popularity as a solution to some of these problems. DuckDB is a no-dependency, serverless database management system that can help parse massive amounts of data out-of-memory via familiar SQL, python, and R APIs. Key features include:</p>
+<ul>
+<li><strong>Easy set-up</strong>: Easily installed as an executable or embedded within R or python packages</li>
+<li><strong>Columnar storage</strong>: For efficient retrieval and vectorized computation in analytics settings</li>
+<li><strong>No installation or infrastructure required</strong>: Runs seamlessly on a local machine launched from an executable</li>
+<li><strong>No loading required</strong>: Can read external CSV and Parquet files <em>and</em> can smartly exploit Hive-partitioned Parquet datasets in optimization</li>
+<li><strong>Expressive SQL</strong>: Provides semantic sugar for analytical SQL uses with clauses like <code>except</code> and <code>group by all</code> (see blog <a href="https://DuckDB.org/2022/05/04/friendlier-sql.html">here</a>)</li>
+</ul>
+<p>This combination of features can empower analysts to use what they have and what they know to ease into the processing of much larger datasets.</p>
+<p>In this post, I’ll walk through a scrappy, minimum-viable setup for analysts using <code>DuckDB</code>, motivated by the <a href="https://www.ncsbe.gov/results-data">North Carolina State Board of Election</a>’s rich voter data. Those interested can follow along in <a href="https://github.com/emilyriederer/nc-votes-DuckDB">this repo</a> and put it to the test by launching a free 8GB RAM GitHub Codespaces.</p>
+<p>This is very much <em>not</em> a demonstration of best practices of anything. It’s also not a technical benchmarking of the speed and capabilities of <code>DuckDB</code> versus alternatives. (That ground is well-trod. If interested, see <a href="https://DuckDB.org/2021/05/14/sql-on-pandas.html">a head-to-head to pandas</a> or <a href="https://benchmark.clickhouse.com/">a matrix of comparisons across database alternatives</a>.) If anything, it is perhaps a “user experience benchmark”, or a description of a minimum-viable set-up to help analysts use what they know to do what they need to do.</p>
+<section id="motivation-north-carolina-election-data" class="level2">
+<h2 class="anchored" data-anchor-id="motivation-north-carolina-election-data">Motivation: North Carolina election data</h2>
+<p>North Carolina (which began accepting ballots in early September for the upcoming November midterm elections) offers a rich collection of voter data, including daily-updating information on the current election, full voter registration data, and ten years of voting history.</p>
+<ul>
+<li>NC 2022 midterm early vote data from <a href="https://www.ncsbe.gov/results-data">NCSBE</a> (~6K records as-of 9/23 and growing fast!)</li>
+<li>NC voter registration file from <a href="https://www.ncsbe.gov/results-data">NCSBE</a> (~9M records / 3.7G unzipped, will be static for this cycle once registration closes in October)</li>
+<li>NC 10-year voter history file from <a href="https://www.ncsbe.gov/results-data">NCSBE</a> (~22M records / 5G unzipped, static)</li>
+</ul>
+<p>All of these files are released as zipped full-population (as opposed to delta) CSV files.</p>
+<p>One can imagine that this data is of great interest to campaign staff, political scientists, pollsters, and run-of-the-mill political junkies and prognosticators. However, the file sizes of registration and history data, which is critical for predicting turnout and detecting divergent trends, could be prohibitive.</p>
+<p>Beyond these files, analysis using this data could surely be enriched by additional third-party sources such as:</p>
+<ul>
+<li>Current Population Survey 2022 November voting supplement from <a href="https://www.census.gov/data/datasets/time-series/demo/cps/cps-supp_cps-repwgt/cps-voting.html">US Census Bureau</a></li>
+<li>County-level past election results from <a href="https://dataverse.harvard.edu/file.xhtml?fileId=6104822&amp;version=10.0">MIT Election Lab via Harvard Dataverse</a></li>
+<li>Countless other data sources either from the US Census, public or internal campaign polls, organization-specific mobilizaton efforts, etc.</li>
+</ul>
+<p>Your mileage may vary based on your system RAM, but many run-of-the-mill consumer laptops might struggle to let R or python load all of this data into memory. Or, a SQL-focused analyst might yearn for a database to handle all these complex joins.</p>
+<p>So how can <code>DuckDB</code> assist?</p>
+</section>
+<section id="duckdb-highlights" class="level2">
+<h2 class="anchored" data-anchor-id="duckdb-highlights">DuckDB highlights</h2>
+<p>To explain, we’ll first level-set with a brief demo of some of the most relevant features of <code>DuckDB</code>.</p>
+<p>Suppose we have flat files of data, like a <code>sample.csv</code> (just many orders of magnitude larger!)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'a'</span>:[<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>], <span class="st">'b'</span>:[<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>], <span class="st">'c'</span>:[<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>]})</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   a  b  c
+0  1  4  7
+1  2  5  8
+2  3  6  9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df.to_csv(<span class="st">'sample.csv'</span>, index <span class="op">=</span> <span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>DuckDB</code> can directly infer it’s schema and read it in a SQL-like interface by using functions like <code>read_csv_auto()</code> in the <code>FROM</code> clause.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> duckdb</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> duckdb.<span class="ex">connect</span>()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> con.execute(<span class="st">"select * from read_csv_auto('sample.csv')"</span>).fetchdf()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   a  b  c
+0  1  4  7
+1  2  5  8
+2  3  6  9</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>con.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>While very useful, this is of course bulky to type. We may also set-up a persistent DuckDB database as a <code>.duckdb</code> file as save tables with CTAS statements, as with any normal relational database. Below, we create the <code>sample-db.duckdb</code> database and add one table and one view with our data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> duckdb.<span class="ex">connect</span>(<span class="st">'sample-db.duckdb'</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ctas <span class="op">=</span> <span class="st">"create or replace table sample as (select * from read_csv_auto('sample.csv'));"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>con.execute(ctas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;duckdb.DuckDBPyConnection object at 0x0000000030026F70&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cvas <span class="op">=</span> <span class="st">"create or replace view sample_vw as (select * from read_csv_auto('sample.csv'));"</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>con.execute(cvas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;duckdb.DuckDBPyConnection object at 0x0000000030026F70&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>con.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, suppose the data in <code>sample.csv</code> changes (now with 4 rows versus 3).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'a'</span>:[<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>], <span class="st">'b'</span>:[<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>], <span class="st">'c'</span>:[<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>]})</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df.to_csv(<span class="st">'sample.csv'</span>, index <span class="op">=</span> <span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our table stored the data directly within the database (“disconnected” from the file) so it remains the same as before whereas our view changed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> duckdb.<span class="ex">connect</span>(<span class="st">'sample-db.duckdb'</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df1 <span class="op">=</span> con.execute(<span class="st">"select count(1) from sample"</span>).fetchdf()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df2 <span class="op">=</span> con.execute(<span class="st">"select count(1) from sample_vw"</span>).fetchdf()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>con.close()</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>df1.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   count(1)
+0         3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df2.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   count(1)
+0         4</code></pre>
+</div>
+</div>
+<p>(Here, I focus just on the features we will use; not strictly the coolest or most important. I highly encourage taking a spin through the <a href="https://duckdb.org/docs/guides/python/sql_on_pandas">docs</a> for countless features not discussed – like directly querying from or fetching to pandas and Arrow formats, an alternative relational API, etc.)</p>
+</section>
+<section id="data-management-pattern" class="level2">
+<h2 class="anchored" data-anchor-id="data-management-pattern">Data management pattern</h2>
+<p>With these features in mind, we return to the problem at hand. How can an analyst mimic the experience of having the infrastructure needed to do their work?</p>
+<p>One approach could look something like the following. As a one-time exercise someone would:</p>
+<ol type="1">
+<li>Download all relevant files</li>
+<li>(Optionally) Convert large, static files to Parquet versus CSV. DuckDB handles both well, but Parquet has some benefits that we’ll discuss in the next section</li>
+<li>Create a DuckDB database with references to the files as <code>view</code>s</li>
+</ol>
+<p>Then, any analyst wanting to interact with the data could:</p>
+<ol type="1">
+<li>Interact with DuckDB as with any database connection</li>
+<li>Whenever needed, re-download the files to the same name/directory to “refresh” the “database”</li>
+</ol>
+<p>The <a href="https://github.com/emilyriederer/nc-votes-duckdb">nc-votes-duckdb</a> GitHub repo shows this flow in practice. If you want to follow along, you can click <code>Code &gt; Create codespaces on master</code> and follow the more detailed instructions in the <code>README.md</code> or at the bottom of this post.</p>
+<section id="one-time-set-up" class="level3">
+<h3 class="anchored" data-anchor-id="one-time-set-up">One-time set-up</h3>
+<p>The scripts for the first set of steps are in the <code>etl</code> subdirectory. The e-step (extract) isn’t all that interesting – just some basic python scripts for downloading files from the internet, unzipping, and moving them around. These land the raw data in the <code>data/raw</code> subdirectory.</p>
+<p>Data transformation mostly involves converting large CSVs to Parquet format (and dropping personally-identifying fields from the data on principle). As mentioned above, this step is optional but has some benefits. First, if one person is “configuring” a database for many analysts, Parquet compression makes files smaller for storage and sharing. Second, at query-time Parquet is:</p>
+<ul>
+<li>More reliably structured with a well-defined schema</li>
+<li>Faster to retrieve due to columnar storage</li>
+<li>Able to be pruned by a savvy database optimizer (when appropriately partitioned by columns relevant to common query patterns)</li>
+</ul>
+<p><a href="https://duckdb.org/docs/guides/import/parquet_export">Conversion from CSV to Parquet</a> itself can be done with DuckDB. However, as of writing, I don’t believe that writing to a Hive-partitioned dataset is possible, so for this step, I used <code>pyarrow</code>, the python interface to <a href="https://arrow.apache.org/">Apache Arrow</a> (another promising, memory-conserving data processing framework.)</p>
+<p>This snippet from <a href="https://raw.githubusercontent.com/emilyriederer/nc-votes-duckdb/master/etl/transform-register.py">etl/transform-register.py</a> demonstrates streaming a CSV by chunk and writing it out to county-level partitions:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to hive-partitioned parquet</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(path_temp):</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    shutil.rmtree(path_temp)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> csv.open_csv(path_raw, </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                  convert_options<span class="op">=</span> opts_convr_reg, </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                  parse_options <span class="op">=</span> opts_parse,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                  read_options <span class="op">=</span> opts_read_reg) <span class="im">as</span> reader:</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> next_chunk <span class="kw">in</span> reader:</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> next_chunk <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        tbl <span class="op">=</span> pa.Table.from_batches([next_chunk])</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        pq.write_to_dataset(</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>                tbl,</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>                root_path <span class="op">=</span> path_temp,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>                use_dictionary <span class="op">=</span> cols_reg_dict,</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>                partition_cols<span class="op">=</span> [<span class="st">'county_id'</span>]</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>(Notably: counties are rather imbalanced in size and not the most important geography in many election contexts. This is for example purpose only, but partitions should always be picked based on how you expect to use the data. )</p>
+<p>Once all the data in transformed, we can “load” our DuckDB database with relative-path references to our data. Again, this step can be done through any DuckDB API or the command line. Below, I use python in the <a href="https://github.com/emilyriederer/nc-votes-duckdb/blob/master/etl/load-db.py">etl/load-db.py</a> to create the <code>nc.duckdb</code> database and create references to the different datasets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> duckdb</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># clean-up if already exists</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(<span class="st">'nc.duckdb'</span>):</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  os.remove(<span class="st">'nc.duckdb'</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># create new duckdb files </span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> duckdb.<span class="ex">connect</span>(<span class="st">'nc.duckdb'</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co"># generate SQL to register tables</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>template <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="st">  CREATE VIEW </span><span class="sc">{view_name}</span><span class="st"> as </span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="st">  (select * from read_parquet('</span><span class="sc">{path}</span><span class="st">'</span><span class="sc">{opts}</span><span class="st">))</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="st">  """</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>data_dict <span class="op">=</span> {</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">'early_vote'</span>: <span class="st">'data/early_vt.parquet'</span>,</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">'hist_gen'</span>: <span class="st">'data/history_general/*/*.parquet'</span>,</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">'hist_oth'</span>: <span class="st">'data/history_other/*/*.parquet'</span>,</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">'register'</span>: <span class="st">'data/register/*/*.parquet'</span>,</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">'cps_suppl'</span>: <span class="st">'data/cps_suppl.parquet'</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>partitioned <span class="op">=</span> [<span class="st">'hist_gen'</span>, <span class="st">'hist_pri'</span>, <span class="st">'register'</span>]</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k,v <span class="kw">in</span> data_dict.items():</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">"Loading </span><span class="sc">{view_name}</span><span class="st"> data..."</span>.<span class="bu">format</span>(view_name <span class="op">=</span> k))</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  opt <span class="op">=</span> <span class="st">', HIVE_PARTITIONING=1'</span> <span class="cf">if</span> k <span class="kw">in</span> partitioned <span class="cf">else</span> <span class="st">''</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>  cvas <span class="op">=</span> template.<span class="bu">format</span>(view_name <span class="op">=</span> k, path <span class="op">=</span> v, opts <span class="op">=</span> opt)</span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>  con.execute(cvas)</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>con.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Similarly, other views could be defined as desired that query these views to do further data transformation.</p>
+</section>
+<section id="ongoing-usage" class="level3">
+<h3 class="anchored" data-anchor-id="ongoing-usage">Ongoing usage</h3>
+<p>Due to the decoupling of storage and compute, ongoing data management is nearly trivial. With this “infrastructure” set-up, analysts would need only to selectively redownload any changed datasets (in my project, using the <code>extract-.*.py</code> scripts as needed) to allow their queries to pull in the latest data.</p>
+<p>Big picture, that means that (after initial set-up) an analyst would have no more overhead “managing their database” than they would with a “typical” CSV-driven workflow. Specifically for this project, the early votes data is the only dataset that changes frequently. For ease-of-use, it could even be left in CSV format to make the download process even easier for any users.</p>
+</section>
+</section>
+<section id="data-access-patterns" class="level2">
+<h2 class="anchored" data-anchor-id="data-access-patterns">Data access patterns</h2>
+<p>With this set-up in place, analysts can then use their favorite tools to query the data.</p>
+<section id="python" class="level3">
+<h3 class="anchored" data-anchor-id="python">python</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> duckdb</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> duckdb.<span class="ex">connect</span>(<span class="st">'nc.duckdb'</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> con.execute(<span class="st">'select count(1) from early_vote'</span>).fetchdf()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>con.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="r" class="level3">
+<h3 class="anchored" data-anchor-id="r">R</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>( <span class="fu">duckdb</span>(<span class="st">'nc.duckdb'</span>) )</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">dbGetQuery</span>(<span class="st">'select count(1) from early_vote'</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con, <span class="at">shutdown =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cli" class="level3">
+<h3 class="anchored" data-anchor-id="cli">CLI</h3>
+<pre><code>duckdb my-db.duckdb
+&gt; select count(1) from early_vote</code></pre>
+</section>
+<section id="sql-ide-dbeaver" class="level3">
+<h3 class="anchored" data-anchor-id="sql-ide-dbeaver">SQL IDE (DBeaver)</h3>
+<p>DuckDB also works with open-source database IDEs like <a href="https://dbeaver.com/">DBeaver</a> for the full, “traditional” database experience. The <a href="https://duckdb.org/docs/guides/sql_editors/dbeaver">DuckDB website</a> gives full set-up instructions. With DBeaver, analysts get the “full” database experience with navigable access to table schemas and metadata.</p>
+<p><img src="dbeaver-query.png" class="img-fluid"></p>
+<p><img src="dbeaver-er.png" class="img-fluid"></p>
+<p>Notably <strong>if you are using relative file paths in your view definitions, you have to launch DBeaver from your command line after moving into the appropriate working directory</strong>. (Thanks to <a href="https://twitter.com/Mause_me/status/1571126401482510336?s=20&amp;t=uYOnuHSjZcjkrbwYb0aXvA">Elliana May on Twitter</a> for the pointer.) (In the terminal: <code>cd my/dir/path; dbeaver</code>)</p>
+</section>
+</section>
+<section id="codespaces-demo" class="level2">
+<h2 class="anchored" data-anchor-id="codespaces-demo">Codespaces Demo</h2>
+<p>So can DuckDB help analysts wrangle the whole state of North Carolina with 8GB RAM? To find out, launch a GitHub Codespaces from the <a href="https://github.com/emilyriederer/nc-votes-duckdb">nc-votes-duckdb</a> repo and see for yourself!</p>
+<ol type="1">
+<li><p>Launch on Codespaces</p></li>
+<li><p>Set-up environment:</p></li>
+</ol>
+<pre><code>python3 -m venv venv
+source venv/bin/activate
+python3 -m pip install -r requirements.txt</code></pre>
+<ol start="3" type="1">
+<li>Pull all raw data:</li>
+</ol>
+<pre><code>chmod +x etl/extract-all.sh
+etl/extract-all.sh</code></pre>
+<ol start="4" type="1">
+<li>Transform all raw data:</li>
+</ol>
+<pre><code>chmod +x etl/transform-all.sh
+etl/transform-all.sh</code></pre>
+<ol start="5" type="1">
+<li>Create duckdb database:</li>
+</ol>
+<pre><code>python etl/load-db.py</code></pre>
+<ol start="6" type="1">
+<li>(Optional) Install duckdb CLI</li>
+</ol>
+<pre><code>chmod +x get-duckdb-cli.sh
+./get-duckdb-cli.sh</code></pre>
+<ol start="7" type="1">
+<li>Run sample queries</li>
+</ol>
+<p>7a. Run sample queries in CLI</p>
+<p>Launch the CLI:</p>
+<pre><code>./duckdb nc.duckdb
+.timer on</code></pre>
+<p>(Note: you can exit CLI with Ctrl+D)</p>
+<p>Try out some sample queries. For example, we might wonder how many past general elections that early voters have voted in before:</p>
+<pre><code>with voter_general as (
+select early_vote.ncid, count(1) as n
+from 
+  early_vote 
+  left join 
+  hist_gen 
+  on early_vote.ncid = hist_gen.ncid 
+group by 1)
+select n, count(1) as freq
+from voter_general
+group by 1
+order by 1
+;</code></pre>
+<p>And, this question is more interesting if we join on registration data to learn how many prior general elections each voter was eligible to vote in:</p>
+<pre><code>with voter_general as (
+select 
+  early_vote.ncid, 
+  extract('year' from register.registr_dt) as register_year, 
+  count(1) as n
+from 
+  early_vote 
+  left join 
+  hist_gen 
+  on early_vote.ncid = hist_gen.ncid 
+  left join
+  register
+  on early_vote.ncid = register.ncid
+group by 1,2)
+select
+  n, 
+  case 
+  when register_year &lt; 2012 then 'Pre-2012'
+  else register_year
+  end as register_year,
+  count(1) as freq
+from voter_general
+group by 1,2
+order by 1,2
+;</code></pre>
+<p>(Yes, of course <em>date</em> matters more than year here, etc. etc. This is purely to demonstrate <code>duckdb</code> not rigorous analysis!)</p>
+<p>7b. Run sample queries in python</p>
+<p>In python: See sample queries in <code>test-query.py</code> file</p>
+<ol start="8" type="1">
+<li>Run <code>free</code> in the terminal to marvel at what 8GB of RAM can do!</li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left"><span class="faux-block"> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> Creative Commons CC BY 4.0</a></span><br>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><span class="faux-block">Made with and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at GitHub</a></span></div>
+  </div>
+</footer>
+
+
+
+</body></html>

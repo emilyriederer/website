@@ -1,0 +1,30 @@
+---
+title: "Posit Data Science Hangout"
+description: Each week, host Rachael Dempsey invites an accomplished data science leader to talk about their experience and answer questions from the audience. The discussion focuses mainly on the human elements of data science leadership. There’s no sales or marketing fluff, just great insights from inspiring professionals.
+location: Posit Data Science Hangout (2023)
+image: featured.png
+categories: [rstats, workflow]
+date: 2023-04-13
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=VUgoaNhE4u0) </span>    
+
+## Abstract 
+
+We were recently joined by Emily Riederer, Senior Manager - Customer Management Data Science & Analytics at Capital One. We discussed how a strong foundation in high-quality data infrastructure and reproducible tools sets the stage for innovation in modeling, causal inference, and analytics, and so much more.
+
+## Slides
+
+Not applicable - live conversation
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=VUgoaNhE4u0 >}}
+
+:::
+
+

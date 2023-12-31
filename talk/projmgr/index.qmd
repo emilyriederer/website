@@ -1,0 +1,39 @@
+---
+title: "projmgr: Managing the human dependencies of your project"
+description: A lightning talk on key features of the projmgr package which brings enables code-based planning and reporting workflows grounded in GitHub issues and milestones 
+location: UseR!2020
+image: featured.png
+categories: [workflow, rstats, pkgdev]
+date: 2020-07-06
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=8OfaIOICD20) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - A beginner's guide to Shiny modules](/post/shiny-modules/) </span>    
+
+## Abstract 
+
+Many tools (e.g. git, make, Docker) and R packages (e.g. packrat, renv) aim to eliminate pain and uncertainty from technical project management, resulting in well-engineered software and reproducible research. However, there is no analogous gold standard tool for managing the most time-consuming and unpredictable dependencies in our work: our fellow humans. 
+
+Communication with our collaborators and customers is often spread across email, Slack, GitHub, and sometimes third-party project management tools like Jira or Trello. Switching between these different software tools and frames of mind knocks analysts out of their flow and detracts from getting work done. 
+
+The projmgr R package offers a solution: an opinionated interface for conducting end-to-end project management through GitHub.Key features of this package include bulk generation of GitHub issues and milestones from a YAML project plan and automated creation of status updates with user-friendly text summaries and plots. 
+
+In this lightning talk, I demonstrate the key features of projmgr motivated by a range of use cases including updating stakeholders, monitoring KPIs, managing an analytics team, and organizing a hackathon.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=8OfaIOICD20 >}}
+
+:::
+

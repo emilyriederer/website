@@ -1,0 +1,27 @@
+---
+pagetitle: "Page Not Found | Emily Riederer"
+listing:
+  contents: 
+    - "post"
+    - "talk"
+    - "!post/*.qmd"
+    - "!talk/*.qmd"
+  sort: "date desc"
+  type: table
+  page-size: 10
+  sort-ui: true
+  filter-ui: true
+  fields: [date, title, description]
+page-layout: full
+title-block-banner: true
+---
+
+::: {.callout-warning}
+
+## Page not found!
+
+Looking for content from a post or talk? Try searching the table below or returning [home](index.html)
+
+Otherwise, comment below the table with the link you were *trying* to reach, and I'll point you in the right direction.
+:::
+

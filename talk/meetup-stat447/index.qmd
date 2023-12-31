@@ -1,0 +1,33 @@
+---
+title: "UIUC STAT447 (Data Science Programming) Guest Lecture"
+description: Discussing how to move from scripting to tool development, designing tools in enterprise, and navigating diverse data career paths
+location: University of Illinois Urbana Champaign (2021)
+image: featured.png
+categories: [rstats, workflow]
+date: 2021-11-17
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=Q-6Bm0ADXQg) </span>    
+
+## Abstract 
+
+In this talk, I pulled from themes in my work on R Markdown Driven Development, innersource analytical tooling, and data science career pathing to help students understand the connections between their classroom learnings and "real world" data science work
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=Q-6Bm0ADXQg >}}
+
+:::
+
+

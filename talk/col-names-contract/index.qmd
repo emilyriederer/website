@@ -1,0 +1,42 @@
+---
+title: "Column Names as Contracts"
+description: Exploring the benefits of using controlled vocabularies to encode metadata in column names, and demonstrations of implementing this approach with the `convo` R package or `dbt` extensions of SQL. 
+location: Toronto Data Workshop on Reproducibility (2021) | Good Tech Fest (2021) | LA R User Group (2022)
+image: featured.png
+categories: [data]
+date: 2021-02-26
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=BknQ0ZNkMNY) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Column Names as Contracts](/post/column-name-contracts/) </span>    
+
+## Abstract 
+
+Complex software systems make performance guarantees through documentation and unit tests, and they communicate these to users with conscientious interface design. However, published data tables exist in a gray area; they are static enough not to be considered a “service” or “software”, yet too raw to earn attentive user interface design. This ambiguity creates a disconnect between data producers and consumers and poses a risk for analytical correctness and reproducibility. 
+
+In this talk, I will explain how controlled vocabularies can be used to form contracts between data producers and data consumers. Explicitly embedding meaning in each component of variable names is a low-tech and low-friction approach which builds a shared understanding of how each field in the dataset is intended to work. 
+
+Doing so can offload the burden of data producers by facilitating automated data validation and metadata management. At the same time, data consumers benefit by a reduction in the cognitive load to remember names, a deeper understanding of variable encoding, and opportunities to more efficiently analyze the resulting dataset. 
+
+After discussing the theory of controlled vocabulary column-naming and related workflows, I illustrate how to implement these ideas at various stages in the data management lifecycle, either with the R package `convo` or with the SQL-based tool `dbt`.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=BknQ0ZNkMNY >}}
+
+:::
+
+
+
+

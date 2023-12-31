@@ -1,0 +1,30 @@
+---
+title: "The Data Engineering Podcast: Column Names as Contracts"
+description: Discussing how column names can serve as a light-weight alternative to data catalogs and contracts and how to implement this approach with dbtplyr
+location: The Data Engineering Podcast
+image: featured.PNG
+categories: [data]
+date: 2022-01-12
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-play'></i> [Pod](https://www.dataengineeringpodcast.com/controlled-vocabulary-with-dbtplyr-episode-252/) </span>    
+<span><i class="bi bi-download"></i>[Download MP3](tdep_col-name-contracts.mp3)</span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Column Names as Contracts](/post/column-name-contracts/) </span>    
+
+## Abstract 
+
+Communication and shared context are the hardest part of any data system. In recent years the focus has been on data catalogs as the means for documenting data assets, but those introduce a secondary system of record in order to find the necessary information. In this episode Emily Riederer shares her work to create a controlled vocabulary for managing the semantic elements of the data managed by her team and encoding it in the schema definitions in her data warehouse. She also explains how she created the dbtplyr package to simplify the work of creating and enforcing your own controlled vocabularies.
+
+## Listen
+
+<iframe src="https://player.fireside.fm/v2/fE6B9ALy+6SCH5nMW?theme=dark" width="740" height="200" frameborder="0" scrolling="no"></iframe>
+
+:::
+
+
+
+

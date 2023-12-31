@@ -1,0 +1,27 @@
+---
+title: projmgr
+description: R package providing project management interface to GitHub
+image: featured.png
+categories: [package]
+date: 2019-01-15
+---
+
+## Quick Links
+
+[GitHub Repo](https://github.com/emilyriederer/projmgr)    
+[GitHub Docs](https://emilyriederer.github.io/projmgr/index.html)    
+[CRAN](https://cran.r-project.org/package=projmgr)    
+[Related Talk](/talk/projmgr/)    
+[Related Post](/post/projmgr/)
+
+## Description
+
+`projmgr` is an R package which provides an opinionated interface to the GitHub v3 REST API with features focused on improving project management workflows. Many data scientists and software engineers commonly use GitHub for version control, storage, and distribution, and priorities are often motivated by GitHub features and bugs. For these reasons, using GitHub issues and milestones for project management offers numerous benefits over external project management tools like JIRA or Trello.
+
+Features include:
+
+- GET-ting and POST-ing issues and milestones to GitHub repositories
+- Bulk-uploading GitHub issues and milestones from custom YAML templates
+- Communicating progress through custom visualizations and HTML/CSS reports
+
+Please see package website for more details, including detailed walk-throughs of functionality and persona/use-case driven cookbooks.  

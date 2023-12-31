@@ -1,0 +1,31 @@
+---
+title: "Scaling Personalized Volunteer Emails"
+description: An overview of the data stack used to automate over 50,000 personalized emails to voter turnout volunteers using BigQuery, dbt, Census, and MailChimp   
+location: "Data for Progress Data Engineering Open Mic (Jun 2023)"
+image: featured.png
+categories: [data, elt]
+date: 2023-06-21
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://youtu.be/5UGUcgxTWTM) </span>    
+
+## Abstract 
+
+In this four-minute lightning talk, I explain how Two Million Texans used components of our existing data stack to provide personalized success metrics and action recommendations to over 5,000 volunteers in the lead up to the 2022 midterm elections. I briefly describe our pipeline and how we frontloaded key computational steps in BigQuery to circumvent limitations of downstream tools.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://youtu.be/5UGUcgxTWTM >}}
+
+:::

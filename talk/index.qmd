@@ -1,0 +1,18 @@
+---
+title: "Talks"
+listing:
+  contents: 
+  - "*/index.qmd"
+  sort: "date desc"
+  type: default
+  categories: true
+  fields: [image, date, title, description, categories, location]
+  page-size: 5
+  image-align: left
+  filter-ui: true
+page-layout: full
+title-block-banner: true
+comments: false
+---
+
+I enjoy sharing ideas, tools, and methods that excite me. Slides and videos from past conference talks are available and embedded in almost all of the posts below. Additional resources may be available upon request if not included online -- please don't hesitate to reach out!

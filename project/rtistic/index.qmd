@@ -1,0 +1,26 @@
+---
+title: Rtistic
+description: Hackathon-in-a-box templates for custom Rmd and ggplot2 themes
+image: featured.png
+categories: [package]
+date: 2019-05-04
+---
+
+## Quick Links
+
+[GitHub Repo](https://github.com/emilyriederer/Rtistic)    
+[Related Post](/post/rtistic/)
+
+## Description
+
+`Rtistic` is a [GitHub project template](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-template-repository) which provides a minimal wireframe R package. It is not intended to be installed but rather to serve as a starting point for individuals or groups (e.g. meet-ups, classrooms, workplaces) to collaboatively build out their own set of <code>ggplot2</code> themes and palettes and various RMarkown styles. 
+
+The repository contains many templates, scratchpads, and step-by-step instructions for a variety of styling options including customizing:
+
+- `ggplot2` with:
+  + color palettes
+  + themes
+- Rmarkdown with:
+  + CSS styles
+  + favicons
+  + footers with logos

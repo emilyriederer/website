@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2019-04-20">
+<meta name="description" content="A proposed workflow for methodically developing a good presentations">
+
+<title>Notes on preparing a tech talk | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="Notes on preparing a tech talk | Emily Riederer">
+<meta name="twitter:description" content="A proposed workflow for methodically developing a good presentations">
+<meta name="twitter:image" content="https://emilyriederer.github.io/post/writing-a-tech-talk/featured.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html" rel="" target="">
+ <span class="dropdown-text">Top</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../talk/index.html" rel="" target="">
+ <span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Notes on preparing a tech talk</h1>
+                  <div>
+        <div class="description">
+          A proposed workflow for methodically developing a good presentations
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">speaking</div>
+                <div class="quarto-category">notes</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 20, 2019</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#preparing-a-tech-talk" id="toc-preparing-a-tech-talk" class="nav-link active" data-scroll-target="#preparing-a-tech-talk">Preparing a Tech Talk</a>
+  <ul class="collapse">
+  <li><a href="#step-0-find-a-conference-find-a-topic-and-apply" id="toc-step-0-find-a-conference-find-a-topic-and-apply" class="nav-link" data-scroll-target="#step-0-find-a-conference-find-a-topic-and-apply">Step 0: Find a conference, find a topic, and apply!</a></li>
+  <li><a href="#step-1-decide-the-call-to-action" id="toc-step-1-decide-the-call-to-action" class="nav-link" data-scroll-target="#step-1-decide-the-call-to-action">Step 1: Decide the call to action</a></li>
+  <li><a href="#step-2-shape-the-story" id="toc-step-2-shape-the-story" class="nav-link" data-scroll-target="#step-2-shape-the-story">Step 2: Shape the story</a></li>
+  <li><a href="#step-3-test-the-talk" id="toc-step-3-test-the-talk" class="nav-link" data-scroll-target="#step-3-test-the-talk">Step 3: Test the talk</a></li>
+  <li><a href="#step-4-create-your-slides" id="toc-step-4-create-your-slides" class="nav-link" data-scroll-target="#step-4-create-your-slides">Step 4: Create your slides</a></li>
+  <li><a href="#step-5-practice" id="toc-step-5-practice" class="nav-link" data-scroll-target="#step-5-practice">Step 5: Practice</a></li>
+  <li><a href="#step-6-dont-overthink" id="toc-step-6-dont-overthink" class="nav-link" data-scroll-target="#step-6-dont-overthink">Step 6: Don’t Overthink!</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>As part of co-organizing <a href="https://chicago2019.satrdays.org/">satRday Chicago</a>, we wanted to offer a mentorship program for first-time speakers. To avoid totally putting the onus on our volunteer mentors, it seemed like it might be useful to break down the steps of writing and preparing for a tech talk into more modular stages where one can seek help. To that end, I wrote up the following advice to share with our speakers.</p>
+<p>I don’t pretend this is the only way to write a talk. I don’t pretend its the best way. I also don’t pretend I’m such an experienced speaker that I’m qualified to write a textbook on this topic. However, this is an approach I’ve found helpful and a structure that has helped me keep organized and stay productive through writer’s block or malaise. Just my two cents, and I’d love to hear yours, too!</p>
+<p>Thanks to <a href="https://twitter.com/patr1ck_mil">Patrick Miller</a> for providing some typos and edits in the original version of this piece which was shared via GitHub.</p>
+<section id="preparing-a-tech-talk" class="level2">
+<h2 class="anchored" data-anchor-id="preparing-a-tech-talk">Preparing a Tech Talk</h2>
+<p>There are countless ways to prepare a good tech talk.</p>
+<p>One particularly popular approach is to procrastinate, board a plane to your conference without a deck, and crank your deck out in a caffeine-induced rampage at the hotel.</p>
+<p>One incredibly reasonable alternative is to only apply to speak at a conference after you already have a full-fledged presentation ready and waiting. In theory, this approach likely decreases stress and preserves sanity. However, that’s all theoretical because, as far as I know, no one has ever tried it.</p>
+<p>This guide is for the people that fall in between – neither the black swan of preparation nor the majority of speakers that end up giving talks in a state of sheer panic and exhaustion. In particular, if you are giving your first tech talk or helping someone else give their, this guide will hopefully add some structure to the process. (Disclaimer: lack of panic and exhaustion not guaranteed even if you follow these steps.)</p>
+<p>Generally, I try to approach talk preparation in 5 main steps:</p>
+<ol type="1">
+<li>Decide your call to action</li>
+<li>Shape the story</li>
+<li>Test the talk</li>
+<li>Create the slides</li>
+<li>Practice</li>
+<li>Bonus: Don’t Overthink</li>
+</ol>
+<section id="step-0-find-a-conference-find-a-topic-and-apply" class="level3">
+<h3 class="anchored" data-anchor-id="step-0-find-a-conference-find-a-topic-and-apply">Step 0: Find a conference, find a topic, and apply!</h3>
+<p>Naturally, a prerequisite to giving a tech talk is to find a conference and write a proposal to speak on a certain topic. That’s an interesting topic in and of itself but out of the scope of this post. You can find many good resources for thinking of talk ideas and writing abstracts online.</p>
+<p>From here on, we will assume you’ve been accepted to speak at a conference – congratulations!</p>
+</section>
+<section id="step-1-decide-the-call-to-action" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-decide-the-call-to-action">Step 1: Decide the call to action</h3>
+<p>It’s shockingly easy to write a compelling abstract without fully understanding your own story. (It’s unfortunately easy to <em>give</em> a conference talk without ever understanding this.) Naturally, the first step is to figure out what your “call to action” should be.</p>
+<p>Don’t think you have a call to action? Every talk does! By “action”, I don’t mean you have to be asking your audience to <em>do</em> anything. But inherently, you are trying to get them to <em>think</em> about something differently, <em>wonder</em> about something, or want to <em>try</em> something. As a speaker, you are asking for their attention, and we all know that the value of attention is at an all-time high. What is it you want to do with this valuable resource?</p>
+<p>Remember that your audience will be listening to a <em>lot</em> of presentations over the course of the conference. Whether you give a 5 minute tech talk or an hour long keynote, imagine your goal to be making one single impression so compelling that they can still recall it when they wake up the next morning. Anything else is details that they can get by referring to your slides, searching online, or reaching out to you the presenter.</p>
+<p>Here are some possible calls to action for common types of R talks:</p>
+<ul>
+<li><strong>package demo</strong>: you should consider using package x to solve problems like y</li>
+<li><strong>tutorial</strong>: this is how you can use package x to solve problem y like y</li>
+<li><strong>case study</strong> <em>(e.g.&nbsp;“how my company uses R”)</em>: when teaching a / organizing b / hiring c / facing barrier d / etc., try tips x, y, and z</li>
+<li><strong>data analysis</strong>: you should consider using method x to solve problems like y <em>OR</em> when thinking about problem z, you should bear in mind the interesting insight q that I found</li>
+</ul>
+<p>This is not to say you cannot make more than one point. I’ve heard many successful talks along the lines of “five things to consider when designing an A/B test” or “three common mistakes when building random forests”. Your aim is still to encourage your audience to think about a problem differently whenever they next encounter it.</p>
+</section>
+<section id="step-2-shape-the-story" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-shape-the-story">Step 2: Shape the story</h3>
+<p>Once you know the main point you want to make, your temptation may be to start working on your slides. Please don’t. This temptation may be exacerbated by conference organizers asking for your slides ahead. Why not make the slides first and then you can always figure out what you want to say later, right? Please don’t.</p>
+<p>I say this piece rather passionately from personal experience. Slide making is one of the stickiest time investments in writing your presentation. Making slides too soon can result in many bad outcomes. If you decide to change the story later on, you might have to scrap hours of hard work on beautiful slides. Even worse, having slides may lock in your thinking so you resist change even as a better idea emerges.</p>
+<p>Instead of jumping straight into deck making, it is easier to plan a talk and seek feedback by first making a minimum viable product outline. Move from your call-to-action into a story by thinking of your talk piece-by-piece. I first tend to write “topic sentences” (thanks, SAT essay writing!) for each subpoint I want to make to tell my story. You should be able to read through these clearly and they alone should tell a logical story which ultimately emphasizes your call to action.</p>
+<p>After that, fill in sub-points or ideas you want to expand on to support each claim. As a general rule of thumb, I like to try to make no more than two or three supporting points for each topic sentence, but you mileage may vary. This depends quite a lot on the type of talk you’re giving.</p>
+<p>For example, here’s the beginning of an outline I wrote a few months ago about analytical communities of practice. Not everything below was kept in the final presentation. Some of its redundant, some of its tacky, some of it I’d be embarrassed to stand up and say in front of an audience, but regardless it was a way for me to organize my ideas:</p>
+<pre><code># What do we mean when we talk about community?
+
+We have the raw ingredients of a thriving community: a lot of people working to solve similar problems with a common set of constraints (e.g. governance) and opportunities
+
+However, we often don't act like a community and solve problems in silos
+
+Too often, we are missing the catalyst that brings a community to life
+
+# High-functioning communities drive outsized values 
+
+The whole is greater than the sum of the parts
+
+On the technical side, open source software is a clear example, with phenomenal tools and resources like R and python coming from open-source
+
+Alternatively / more rudimentary: looks at ants and bee communities; each work modularly and autonomously but ultimately create a whole greater than the sum of the parts
+
+# High-functioning community overcome barriers
+
+Specifically, {{Project Q}} is posing countless challenges as analysts are having to quickly learn new tools and systems just to do their BAU work.
+
+We also have finite FTE devoted to solving these problems
+
+While we are here to help and doing as much as we can, we can also be more successful if we help each other
+
+Examples:
+- {{Team X}} has more better infrastructure rating and is sharing methods / practices
+- {{Team Y}} will have advanced SME on {{System Z}} before {{Team X}}'s migration 
+
+# Our team seeks to deploy technology-driven solutions to solve human problems
+
+We want to make it easier to share:
+- Methods 
+- Code
+- Problem-Solving
+
+We are doing this with:
+- Packages (+ contribution; methodologies &amp; implementation on package websites)
+- Training / consulting (office hours)
+- Proactive knowledge capture (GitHub, Slack)
+
+# Rich communities require engagement
+
+The richness of communities comes from user engagement and community ownership. 
+This can mean many different things and require a range of levels of effort and investment. 
+We want to take some time today to thank some early engagers who exemplify how to get involved.</code></pre>
+</section>
+<section id="step-3-test-the-talk" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-test-the-talk">Step 3: Test the talk</h3>
+<p>You have a minimum-viable product talk, and what do we do with MVPs? You test them!</p>
+<p>Practice talking through your story at this stage. Assess (alone or with a practice audience member) if its <em>functional</em>. At minimum, it should be:</p>
+<ul>
+<li><strong>roughly right length</strong>: does your talk take up roughly the right amount of time? If anything, err on the short side. It’s much worse etiquette to run over (and risk taking up another speaker’s time) than under, and this leaves time for questions</li>
+<li><strong>motivated by your call to action</strong>: does the story consistency emphasize your key point? No matter how interesting some of your tangents may feel, don’t risk confusing your audience. Ruthlessly cut out things that aren’t relevant</li>
+<li><strong>coherent</strong>: do the different pieces of your story fit together?</li>
+<li><strong>comfortable</strong>: do you feel good talking through it? Does it feel natural?</li>
+</ul>
+<p>Iterate until you feel you have a good outline that meets all of the above criteria. As you practices at this stage, you’ll probably find yourself adjusting many of the subpoints. Ideally, as you get additional reps here, you can begin to incorporate more personal voice into your presentation. In subsequent iterations, consider whether your presentation:</p>
+<ul>
+<li><strong>is interesting</strong>: are you stating a series of facts or telling a story?</li>
+<li><strong>has voice</strong>: do you sound like you’re talking to a friend (ideally) or giving a closing argument in a trial?</li>
+<li><strong>feels authentic</strong>: do you feel like you’re playing a role or acting like yourself? You’ll have enough on your mind when presenting without learning how to act.</li>
+</ul>
+</section>
+<section id="step-4-create-your-slides" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-create-your-slides">Step 4: Create your slides</h3>
+<p>Now, finally, move towards creating your slides. There are many great books and resources already and creating impactful presentations, and I don’t pretend to have better (or as good of) advice as any of these. However, there are a few specific things I’ll call out about tech talks.</p>
+<p>Some things to consider at this stage:</p>
+<ul>
+<li><strong>let your story determine the number of slides you need</strong>: personally, I hate guidelines on “try to get through x slides per minute”. With some tech talks, you could easily spend a great deal of time walking through a single flowchart or example piece of code; other times you might simply want to flash up a bullet list, an impactful image, or a quote. I find it easiest to let my topic sentences guide when I should create a new slide instead of making arbitrary rules for myself.</li>
+<li><strong>paint a picture; don’t write a novel</strong>: in academic or professional settings, you may have created report-like presentations which can be read and comprehended in your absence. However, for tech talks don’t feel like you have to cram your whole story onto your slides. Slides are more of an illustration that help you speak to your points or provide concrete examples of concepts you’re discussion.</li>
+<li><strong>put branding at the beginning</strong>: don’t feel embarrassed with a little shameless self-promotion! Add social media handles (especially Twitter) to your title slide so conference members can opt to follow your are tweet about your talk. If you handle is hard to spell or remember, you can even consider putting them as footers on all of the slides.</li>
+<li><strong>convey your key point(s)</strong>: returning to the ideas of a “call to action” and to the potential for your slides to end up on social media, remember that clean, simple, and visually interesting slides can help emphasize a key point and potentially disseminate it to a wider audience.</li>
+<li><strong>don’t fall in love with your slides:</strong> similar to jokes and ideas, you may make some truly beautiful, awesome, epic slides that absolutely do <em>not</em> belong in your story. It’s hard but resist the urge to keep things because they look cool or because you worked hard on them</li>
+</ul>
+</section>
+<section id="step-5-practice" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-practice">Step 5: Practice</h3>
+<p>Practice, practice, practice! Different people clearly prefer different amounts of practice, so if you feel confident in your story, don’t practice until you are sick of hearing yourself talk and sick of thinking about your topic. That serves no one. But do practice until you feel like the story flows, like you know your transitions, and like you aren’t distracted while talking by wondering what’s coming next.</p>
+<p>It may feel weird, but it’s probably courteous to practice your first few iterations by yourself. On these reps, you will still be figuring out how you want to tell the story, so an audience won’t be able to give you much constructive feedback. It’s not the best use of their time and may just make you feel more stressed.</p>
+<p>In these early rounds, you might also consider recording yourself so you can play it back. This can help you perfect your phrasing and also notice things you don’t like in your tone, phrasing, etc. Some jokes may not sound as funny listening to them as they feel when saying them; sometimes things feel more fun to say than they are to hear.</p>
+<p>After a few of these practice rounds, practice in front of an audience. Everything will feel different. You might get self-conscious or start talking fast. Get your listener’s candid, honest feedback. Some of the best feedback I ever got was that I needed to stop “presenting” and just start talking as I would to another person. This made my presentation tons easier to give and far more palatable to listen to.</p>
+<p>Practice until you feel confident you know your story. Or until you’re bored or tired or other things come up in your life. You’ve got this thing.</p>
+</section>
+<section id="step-6-dont-overthink" class="level3">
+<h3 class="anchored" data-anchor-id="step-6-dont-overthink">Step 6: Don’t Overthink!</h3>
+<p>I cannot emphasize enough the extent to which all of these steps are in no way necessary to give a successful talk. Everyone has their own process, so don’t let any of this advice add make-work to your process. Also don’t stress out. Conference talks are not theatre; they are, at best, a genuine coming together of people eager to share ideas. The fact that you applied to speak because you have a story you want to tell means you’re already a long way there. My intent is only to give process and structure to anyone looking for some traction and a good way to get started.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left"><span class="faux-block"> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> Creative Commons CC BY 4.0</a></span><br>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><span class="faux-block">Made with and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at GitHub</a></span></div>
+  </div>
+</footer>
+
+
+
+</body></html>

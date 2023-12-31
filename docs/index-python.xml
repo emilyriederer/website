@@ -1,0 +1,2558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Emily Riederer</title>
+<link>https://emilyriederer.com/#category=python</link>
+<atom:link href="https://emilyriederer.com/index-python.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.4.510</generator>
+<lastBuildDate>Sat, 30 Dec 2023 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Python Rgonomics</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/py-rgo/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption>Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
+</figure>
+</div>
+<p>Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in <a href="https://arrow.apache.org/">Arrow</a> (a language-agnostic in-memory standard for data storage), growing adoption of <a href="https://quarto.org/">Quarto</a> (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney <a href="https://posit.co/blog/welcome-wes/">joining Posit</a> (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.</p>
+<p>Despite these advances in <em>technical</em> interoperability, individual developers will always face more friction than state-of-the-art tools when moving between languages. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just <em>feel</em> good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not “fit”, writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it’s “feel” from the ground up.</p>
+<p>Fortunately, some of these higher-level paradigms have begun to bleed across languages, enriching previously isolated tribes with the and enabling developers to take their advanced skillsets with them across languages. For any R users who aim to upskill in python in 2024, recent tools and versions of old favorites have made strides in converging the R and python data science stacks. In this post, I will overview some recommended tools that are both truly pythonic while capturing the comfort and familiarity of some favorite R packages of the <code>tidyverse</code> variety.<sup>1</sup></p>
+<section id="what-this-post-is-not" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-post-is-not">What this post is not</h2>
+<p>Just to be clear:</p>
+<ul>
+<li>This is not a post about why python is better than R so R users should switch all their work to python</li>
+<li>This is not a post about why R is better than python so R semantics and conventions should be forced into python</li>
+<li>This is not a post about why python <em>users</em> are better than R users so R users need coddling</li>
+<li>This is not a post about why R <em>users</em> are better than python users and have superior tastes for their toolkit</li>
+<li>This is not a post about why these python tools are the only good tools and others are bad tools</li>
+</ul>
+<p>If you told me you liked the New York’s Museum of Metropolitan Art, I might say that you might also like Chicago’s Art Institute. That doesn’t mean you should only go to the museum in Chicago or that you should never go to the Louvre in Paris. That’s not how recommendations (by human or recsys) work. This is an “opinionated” post in the sense that “I like this” and not opinionated in the sense that “you must do this”.</p>
+</section>
+<section id="on-picking-tools" class="level2">
+<h2 class="anchored" data-anchor-id="on-picking-tools">On picking tools</h2>
+<p>The tools I highlight below tend to have two competing features:</p>
+<ul>
+<li>They have aspects of their workflow and ergonomics that should feel very comfortable to users of favored R tools</li>
+<li>They should be independently accepted, successful, and well-maintained python projects with the true pythonic spirit</li>
+</ul>
+<p>The former is important because otherwise there’s nothing tailored about these recommendations; the latter is important so users actually engage with the python language and community instead of dabbling around in its more peripheral edges. In short, these two principles <em>exclude</em> tools that are direct ports between languages with that as their sole or main benefit.<sup>2</sup></p>
+<p>For example, <code>siuba</code> and <code>plotnine</code> were written with the direct intent of mirroring R syntax. They have seen some success and adoption, but more niche tools come with liabilities. With smaller user-bases, they tend to lack in the pace of development, community support, prior art, StackOverflow questions, blog posts, conference talks, discussions, others to collaborate with, cache in a portfolio, etc. Instead of enjoying the ergonomics of an old language or embracing the challenge of learning a new one, ports can sometimes force developers to invest energy into a “secret third thing” of learning tools that isolate them from both communities and facing inevitable snags by themselves.</p>
+<p>When in Rome, do as the Romans do – but if you’re coming from the U.S. that doesn’t mean you can’t bring a universal adapter that can help charge your devices in European outlets.</p>
+</section>
+<section id="the-stack" class="level2">
+<h2 class="anchored" data-anchor-id="the-stack">The stack</h2>
+<p>WIth that preamble out of the way, below are a few recommendations for the most ergonomic tools for getting set up, conducting core data analysis, and communication results.</p>
+<p>To preview these recommendations:</p>
+<p><strong>Set Up</strong></p>
+<ul>
+<li>Installation: <a href="https://github.com/pyenv/pyenv"><code>pyenv</code></a></li>
+<li>IDE: <a href="https://code.visualstudio.com/docs/languages/python">VS Code</a></li>
+</ul>
+<p><strong>Analysis</strong></p>
+<ul>
+<li>Wrangling: <a href="https://pola.rs/"><code>polars</code></a></li>
+<li>Visualization: <a href="https://seaborn.pydata.org/"><code>seaborn</code></a></li>
+</ul>
+<p><strong>Communication</strong></p>
+<ul>
+<li>Tables: <a href="https://posit-dev.github.io/great-tables/articles/intro.html">Great Tables</a></li>
+<li>Notebooks: <a href="https://quarto.org/">Quarto</a></li>
+</ul>
+<p><strong>Miscellaneous</strong></p>
+<ul>
+<li>Environment Management: <a href="https://pdm-project.org/latest/"><code>pdm</code></a></li>
+<li>Code Quality: <a href="https://docs.astral.sh/ruff/"><code>ruff</code></a></li>
+</ul>
+<section id="for-setting-up" class="level3">
+<h3 class="anchored" data-anchor-id="for-setting-up">For setting up</h3>
+<p>The first hurdle is often getting started – both in terms of installing the tools you’ll need and getting into a comfortable IDE to run them.</p>
+<ul>
+<li><strong>Installation</strong>: R keeps installation simple; there’s one way to do it so you do and it’s done. But before python converts can <code>print("hello world")</code>, they face a range of options (system Python, Python installer UI, Anaconda, Miniconda, etc.) each with its own kinks. These decisions are made harder in Python since projects tend to have stronger dependencies of the language, requiring one to switch between versions. For both of these reasons, I favor the <a href="https://github.com/pyenv/pyenv"><code>pyenv</code></a> (or <code>pyenv-win</code> for those on Windows) for easily managing python installation(s) from the command line. While the installation process of <code>pyenv</code> may be <em>technically</em> different, it’s similar in that it “just works” with just a few commands:
+<ul>
+<li><code>pyenv install --list</code>: To see what python versions are available to install</li>
+<li><code>pyenv install &lt;version number&gt;</code>: To install a specific version</li>
+<li><code>pyenv versions</code>: To see what python versions are installed on your system</li>
+<li><code>pyenv global &lt;version number&gt;</code>: The set one python version as a global default</li>
+<li><code>pyenv local &lt;version number&gt;</code>: The set a python version to be used within a specific directory/project</li>
+</ul></li>
+<li><strong>Integrated Development Environment</strong>: Once R is install, R users are typically off to the races with the intuitive RStudio IDE which helps them get immediately hands-on with the REPL. With the UI divided into quadrants, users can write an R script, run it to see results in the console, conceptualize what the program “knows” with the variable explorer, and navigate files through a file explorer. Once again, python is not lacking in IDE options, but users are confronted with yet another decision point before they even get started. Pycharm, Sublime, Spyder, Eclipse, Atom, Neovim, oh my! I find that <a href="https://code.visualstudio.com/docs/languages/python">VS Code</a> offers the best functionality. It’s rich extension ecosystem also means that most major tools (e.g.&nbsp;Quarto, git, linters and stylers, etc.) have nice add-ons so, like RStudio, you can customize your platform to perform many side-tasks in plaintext or with the support of extra UI components.<sup>3</sup></li>
+</ul>
+</section>
+<section id="for-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="for-data-analysis">For data analysis</h3>
+<p>As data practitioners know, we’ll spend most of our time on cleaning and wrangling. As such, R users may struggle particularly to abandon their favorite tools for exploratory data analysis like <code>dplyr</code> and <code>ggplot2</code>. Fans of those packages often appreciate how their functional paradigm helps achieve a “flow state”. Precise syntax may differ, but new developments in the python wrangling stack provide increasingly close analogs to some of these beloved Rgonomics.</p>
+<ul>
+<li><strong>Data Wrangling</strong>: Although <code>pandas</code> is undoubtedly the best-known wrangling tool in the python space, I believe the growing <a href="https://pola.rs/"><code>polars</code></a> project offers the best experience for a transitioning developer (along with other nice-to-have benefits like being dependency free and blazingly fast). <code>polars</code> may feel more natural and less error-prone to R users for may reasons:
+<ul>
+<li>it has more internal consistent (and similar to <code>dplyr</code>) syntax such as <code>select</code>, <code>filter</code>, etc. and has demonstrated that the project values a clean API (e.g.&nbsp;recently renaming <code>groupby</code> to <code>group_by</code>)</li>
+<li>it does not rely on the distinction between columns and indexes which can feel unintuitive and introduces a new set of concepts to learn</li>
+<li>it consistently returns copies of dataframes (while <code>pandas</code> sometimes alters in-place) so code is more idempotent and avoids a whole class of failure modes for new users</li>
+<li>it enables many of the same “advanced” wrangling workflows in <code>dplyr</code> with high-level, semantic code like making the transformation of multiple variables at once fast with <a href="https://docs.pola.rs/py-polars/html/reference/selectors.html">column selectors</a>, concisely expressing <a href="https://docs.pola.rs/user-guide/expressions/window/">window functions</a>, and working with nested data (or what <code>dplyr</code> calls “list columns”) with <a href="https://docs.pola.rs/user-guide/expressions/lists/">lists</a> and <a href="https://docs.pola.rs/user-guide/expressions/structs/">structs</a></li>
+<li>supporting users working with increasingly large data. Similar to <code>dplyr</code>’s many backends (e.g.&nbsp;<code>dbplyr</code>), <code>polars</code> can be used to write lazily-evaluated, optimized transformations and it’s syntax is reminiscent of <code>pyspark</code> should users ever need to switch between</li>
+</ul></li>
+<li><strong>Visualization</strong>: Even some of R’s critics will acknowledge the strength of <code>ggplot2</code> for visualization, both in terms of it’s intuitive and incremental API and the stunning graphics it can produce. <a href="https://seaborn.pydata.org/tutorial/objects_interface"><code>seaborn</code>’s object interface</a> seems to strike a great balance between offering a similar workflow (which <a href="https://seaborn.pydata.org/whatsnew/v0.12.0.html">cites <code>ggplot2</code> as an inspiration</a>) while bringing all the benefits of using an industry-standard tool</li>
+</ul>
+</section>
+<section id="for-communication" class="level3">
+<h3 class="anchored" data-anchor-id="for-communication">For communication</h3>
+<p>Historically, one possible dividing line between R and python has been framed as “python is good at working with computers, R is good at working with people”. While that is partially inspired by reductive takes that R is not production-grade, it is not without truth that the R’s academic roots spurred it to overinvest in a rich “communication stack” and translating analytical outputs into human-readable, publishable outputs. Here, too, the gaps have begun to close.</p>
+<ul>
+<li><strong>Tables</strong>: R has no shortage of packages for creating nicely formatted tables, an area that has historically lacked a bit in python both in workflow and outcomes. Barring strong competition from the native python space, the one “port” I am bullish about is the recently announced <a href="https://posit-dev.github.io/great-tables/articles/intro.html">Great Tables</a> package. This is a pythonic clone of R’s <code>gt</code> package. I’m more comfortable recommending this since it’s maintained by the same developer as the R version (to support long-term feature parity), backed by an institution not just an individual (to ensure it’s not a short-lived hobby project), and the design feels like it does a good job balancing R inspiration with pythonic practices</li>
+<li><strong>Computational notebooks</strong>: Jupyter Notebooks are widely used, widely critiqued parts of many python workflows. While the ability to mix markdown and code chunks. However, notebooks can introduce new types of bugs for the uninitiated; for example, they are hard to version control and easy to execute in the wrong environment. For those coming from the world of R Markdown, plaintext computational notebooks like <a href="https://quarto.org/">Quarto</a> may provide a more transparent development experience. While Quarto allows users to write in <code>.qmd</code> files which are more like their <code>.rmd</code> predecessors, its renderer can also handle Jupyter notebooks to enable collaboration across team members with different preferences</li>
+</ul>
+</section>
+<section id="miscellaneous" class="level3">
+<h3 class="anchored" data-anchor-id="miscellaneous">Miscellaneous</h3>
+<p>A few more tools may be helpful and familiar to <em>some</em> R users who tend towards the more “developer” versus “analyst” side of the spectrum. These, in my mind, have even more varied pros and cons, but I’ll leave them for consideration:</p>
+<ul>
+<li><strong>Environment Management</strong>: Joining the python world means never having to settle on an environment management tool for installing packages. There’s a truly overwhelming number of ways to manage project-level dependencies (<code>virtualenv</code>, <code>conda</code>, <code>piptools</code>, <code>pipenv</code>, <code>poetry</code>, and that doesn’t even scratch the surface) with different pros and cons and phenomenal amount of ink/pixels have been spilled over litigating these trade-offs. Putting all that aside, lately, I’ve been favoring <a href="https://pdm-project.org/latest/"><code>pdm</code></a> because it prioritizes features I care most about (auto-updating <code>pyproject.toml</code>, isolating dependencies from dependencies-of-dependencies, active development and error handling, mostly just works pretty undramatically)</li>
+<li><strong>Developer Tools</strong>: <a href="https://docs.astral.sh/ruff/"><code>ruff</code></a> provides a range of linting and styling options (think R’s <code>lintr</code> and <code>styler</code>) and provides a one-stop-shop over what can be an overwhelming number of atomic tools in this space (<code>isort</code>, <code>black</code>, <code>flake8</code>, etc.). <code>ruff</code> is super fast, has a nice VS Code extension, and, while this class of tools is generally considered more advanced, I think linters can be a fantastic “coach” for new users about best practices</li>
+</ul>
+</section>
+</section>
+<section id="more-to-come" class="level2">
+<h2 class="anchored" data-anchor-id="more-to-come">More to come!</h2>
+<p>Each recommendation here itself could be its own tutorial or post. In particular, I hope to showcase the Rgonomics of <code>polars</code>, <code>seaborn</code>, and <code>great_tables</code> in future posts.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><aside id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Of course, languages have their own subcultures too. The <code>tidyverse</code> and <code>data.table</code> parts of the R world tend to favor different semantics and ergonomics. This post caters more to the former.↩︎</p></li>
+<li id="fn2"><p>There is no doubt a place for language ports, especially for earlier stage project where no native language-specific standard exists. For example, I like Karandeep Singh’s lab work on <a href="https://github.com/TidierOrg/Tidier.jl">a tidyverse for Julia</a> and maintain my own <a href="https://github.com/emilyriederer/dbtplyr"><code>dbtplyr</code></a> package to port <code>dplyr</code>’s select helpers to <code>dbt</code>↩︎</p></li>
+<li id="fn3"><p> If anything, the one challenge of VS Code is the sheer number of set up options, but to start out, you can see these excellent tutorials from Rami Krispin on recommended <a href="https://github.com/RamiKrispin/vscode-python">python</a> and <a href="https://github.com/RamiKrispin/vscode-python">R</a> configurations ↩︎</p></li>
+</ol>
+</aside></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <guid>https://emilyriederer.com/post/py-rgo/</guid>
+  <pubDate>Sat, 30 Dec 2023 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Oh, I’m sure it’s probably nothing</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/nulls-polyglot/</link>
+  <description><![CDATA[ 
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@davideragusa">Davide Ragusa</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>Language interoperability and different ways of enabling “polyglot” workflows have seemed to take centerstage in the data world recently:</p>
+<ul>
+<li><a href="https://arrow.apache.org/">Apache Arrow</a> promises a language-independent memory format for interoperability, - <a href="https://www.rstudio.com/blog/rstudio-is-becoming-posit/">RStudio</a> its rebranding as Posit to cement their place as a leader in language-agnostic data tooling,</li>
+<li>RStudio simultaneously announced <a href="https://quarto.org/">Quarto</a> as an interoperable alternative to RMarkdown which will treat python, Julia, and JS as first-class citizens</li>
+<li>dbt has released its beta of <a href="https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models">python models</a> to extend is previously SQL-focused paradigm</li>
+</ul>
+<p>As a general matter, these are all exciting advances with great potential to aid in different workflows <em>when used judiciously</em>. However, it also poses the question: what cognitive burdens do we alleviate and which do we add when our projects begin to leverage multiple languages?</p>
+<p>Despite common data analysis tools like SQL, R, and python being high-level languages with declarative interfaces (in the case of R’s <code>tidyverse</code> and python’s <code>pandas</code>), successful usage still requires understanding the underlying assumptions and operations of each tool. There is not such thing as a truly declarative language; only those that generally make decisions that the user likes well-enough to ask for the “what” and delegate the “how”. These differences can emerge at many different levels: such as foundational issues like whether data structures are copied or modified in-place or broader design choices like default hyperparameters in machine learning libraries (e.g.&nbsp;python’s <code>scikitlearn</code> notoriously uses regularized logistic regression as the default for logistic regression.) Somewhere along that spectrum lies the fickle issue of handling null values.</p>
+<p>In this post, I recap a quick case study of how incautious null handling risks data analysis validity. Then, taking a step back, I compare how R, python, and SQL behave differently when confront with null values and the implications for analysts switching between languages.</p>
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>A summary of these different behaviors is provided below:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;"><strong>R</strong></th>
+<th style="text-align: center;"><strong>python</strong></th>
+<th style="text-align: center;"><strong>SQL</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><em>Column Aggregation</em></td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;">np: NA<br>pd: Value</td>
+<td style="text-align: center;">Value</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><em>Row-wise Transformation</em></td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;">NA</td>
+<td style="text-align: center;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><em>Joining</em></td>
+<td style="text-align: center;">Match by default</td>
+<td style="text-align: center;">Match</td>
+<td style="text-align: center;">No match</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><em>Filtering</em></td>
+<td style="text-align: center;">No match</td>
+<td style="text-align: center;">Match</td>
+<td style="text-align: center;">No match</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="case-study" class="level2">
+<h2 class="anchored" data-anchor-id="case-study">Case Study</h2>
+<p>Before comparing different languages, let’s walk through a brief case study to see all the way that “lurking” nulls can surprise a junior analyst in any one language and observe a few different “contours” of the problem space.</p>
+<p>Consider two tables in a retailer’s database. The <code>spend</code> table reports total sales by month and store identifier (null if online).</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  STORE_ID MONTH AMT_SPEND
+1        1     1 100.12011
+2        2     1 100.31441
+3       NA     1 100.40517
+4        1     2  99.67098
+5        2     2  98.39703
+6       NA     2  98.81231
+7        1     3 102.27124
+8        2     3 100.20843
+9       NA     3        NA</code></pre>
+</div>
+</div>
+<p>Similarly, the <code>returns</code> table reports returned sales at the same grain.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>  STORE_ID MONTH AMT_RETURN
+1        1     1         NA
+2        2     1   9.972159
+3       NA     1  10.071639
+4        1     2   9.798444
+5        2     2  10.254347
+6       NA     2   9.881071
+7        1     3  10.108880
+8        2     3   9.951398
+9       NA     3   9.849277</code></pre>
+</div>
+</div>
+<p>In both cases, nulls are used in the <code>'AMT_*'</code> fields to denote zeros for the respective <code>month x store_id</code> combinations`.</p>
+<p>To calculate something as simple as the average gross spend per store across months, an analyst might attempt to write:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> </span>
+<span id="cb3-2">  store_id, </span>
+<span id="cb3-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">avg</span>(amt_spend)</span>
+<span id="cb3-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> spend</span>
+<span id="cb3-5"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb3-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">store_id</th>
+<th style="text-align: right;">avg(amt_spend)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">99.60874</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.68744</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">99.63996</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>However, because SQL silently drops nulls in column aggregations, the online spend is not appropriately “penalized” for its lack of March spend. The averages across all three stores look nearly equal.</p>
+<p>Not only is this answer “wrong”, it can also be thought of as fundamentally changing the <strong>computand</strong> (a word I just made up. In statistics, we talk about estimands as “the conceptual thing we are trying to estimate with an estimator”. Here, we aren’t estimating anything – just computing. But, there’s still a concentual “thing we are trying to measure” and in this case, it’s our <em>tools</em> and not our <em>methods</em> that are imposing assumptions on that) to one that answers a fundamentally different question:</p>
+<p>Instead of measuring “average monthly spend in Q1 by store”, we’re measuring “averaging monthly spend in Q1 by store <em>conditional on</em> there being spend”.</p>
+<p>To obtain the correct result, one would write:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> </span>
+<span id="cb4-2">  store_id, </span>
+<span id="cb4-3">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-- wrong answers</span></span>
+<span id="cb4-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">avg</span>(amt_spend) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> wrong1,  </span>
+<span id="cb4-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(amt_spend) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">count</span>(amt_spend) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> wrong2,</span>
+<span id="cb4-6">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-- right answers</span></span>
+<span id="cb4-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(amt_spend) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">count</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> right1,</span>
+<span id="cb4-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">avg</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(amt_spend, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> right2</span>
+<span id="cb4-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> spend</span>
+<span id="cb4-10"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb4-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">store_id</th>
+<th style="text-align: right;">wrong1</th>
+<th style="text-align: right;">wrong2</th>
+<th style="text-align: right;">right1</th>
+<th style="text-align: right;">right2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">99.60874</td>
+<td style="text-align: right;">99.60874</td>
+<td style="text-align: right;">66.40583</td>
+<td style="text-align: right;">66.40583</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.68744</td>
+<td style="text-align: right;">100.68744</td>
+<td style="text-align: right;">100.68744</td>
+<td style="text-align: right;">100.68744</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">99.63996</td>
+<td style="text-align: right;">99.63996</td>
+<td style="text-align: right;">99.63996</td>
+<td style="text-align: right;">99.63996</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>With a better understand of gross sales, the analyst might next proceed to compute net sales.</p>
+<p>This first requires joining the <code>spend</code> and <code>returns</code> tables. Naively, they might attempt:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> </span>
+<span id="cb5-2">  spend.<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb5-3">  returns.amt_return</span>
+<span id="cb5-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> </span>
+<span id="cb5-5">  spend</span>
+<span id="cb5-6">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">join</span></span>
+<span id="cb5-7">  returns </span>
+<span id="cb5-8">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">on</span></span>
+<span id="cb5-9">  spend.store_id <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> returns.store_id <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">and</span></span>
+<span id="cb5-10">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span></span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">STORE_ID</th>
+<th style="text-align: right;">MONTH</th>
+<th style="text-align: right;">AMT_SPEND</th>
+<th style="text-align: right;">amt_return</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.12011</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.31441</td>
+<td style="text-align: right;">9.972159</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">99.67098</td>
+<td style="text-align: right;">9.798444</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">98.39703</td>
+<td style="text-align: right;">10.254347</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">102.27124</td>
+<td style="text-align: right;">10.108880</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">100.20843</td>
+<td style="text-align: right;">9.951398</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>However, this once again fails. Why? Although SQL handled nulls “permissively” when aggregating a column, it took a stricted stance when making the comparison on <code>spend.store_id = returns.store_id</code> in the join clause. SQL doesn’t recognize different nulls as equal. To the extent than null means “I dunno” versus “The field is not relevant to this observation”, it’s reasonable that SQL should find it hard to decide whether two “I dunno”s are equal.</p>
+<p>Once again, this isn’t a “random” or inconsequential error. Continuing to use this corrupted dataset changes the computand from “net sales by month” to “net sales by month at physical retail locations”.</p>
+<p>To remedy this, we can force <code>store_id</code> to take on a value:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span></span>
+<span id="cb6-2">  spend.<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb6-3">  returns.amt_return</span>
+<span id="cb6-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> </span>
+<span id="cb6-5">  spend</span>
+<span id="cb6-6">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">join</span></span>
+<span id="cb6-7">  returns </span>
+<span id="cb6-8">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">on</span></span>
+<span id="cb6-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(spend.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">and</span></span>
+<span id="cb6-10">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span></span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">STORE_ID</th>
+<th style="text-align: right;">MONTH</th>
+<th style="text-align: right;">AMT_SPEND</th>
+<th style="text-align: right;">amt_return</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.12011</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.31441</td>
+<td style="text-align: right;">9.972159</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.40517</td>
+<td style="text-align: right;">10.071639</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">99.67098</td>
+<td style="text-align: right;">9.798444</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">98.39703</td>
+<td style="text-align: right;">10.254347</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">98.81231</td>
+<td style="text-align: right;">9.881071</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">102.27124</td>
+<td style="text-align: right;">10.108880</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">100.20843</td>
+<td style="text-align: right;">9.951398</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">9.849277</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>And next we proceed with computing sales by month net of returns across all stores:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span></span>
+<span id="cb7-2">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span>, </span>
+<span id="cb7-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(amt_spend <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> amt_return) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> net_spend</span>
+<span id="cb7-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> </span>
+<span id="cb7-5">  spend</span>
+<span id="cb7-6">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">join</span></span>
+<span id="cb7-7">  returns </span>
+<span id="cb7-8">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">on</span></span>
+<span id="cb7-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(spend.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">and</span></span>
+<span id="cb7-10">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span></span>
+<span id="cb7-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb7-12"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">month</th>
+<th style="text-align: right;">net_spend</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">180.6758</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">266.9465</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">182.4194</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>However, by now, you should not be surprised that this result is also incorrect. If we inspect the sequence of computations, we realize that SQL is also stricter in its null handing in <em>rowwise computations</em> than <em>column-wise aggregations</em>. The subtraction of <code>amt_spend</code> and <code>amt_return</code> obliterates the total when either is null. So, we fail to include the gross spend at Store 1 in January simply because there were no returns (and vice versa for Internet sales in March).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span></span>
+<span id="cb8-2">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span>, </span>
+<span id="cb8-3">  spend.store_id,</span>
+<span id="cb8-4">  amt_spend,</span>
+<span id="cb8-5">  amt_return,</span>
+<span id="cb8-6">  amt_spend <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> amt_return <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> net_spend</span>
+<span id="cb8-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> </span>
+<span id="cb8-8">  spend</span>
+<span id="cb8-9">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">join</span></span>
+<span id="cb8-10">  returns </span>
+<span id="cb8-11">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">on</span></span>
+<span id="cb8-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(spend.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">and</span></span>
+<span id="cb8-13">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span></span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">month</th>
+<th style="text-align: right;">store_id</th>
+<th style="text-align: right;">amt_spend</th>
+<th style="text-align: right;">amt_return</th>
+<th style="text-align: right;">net_spend</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">100.12011</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">100.31441</td>
+<td style="text-align: right;">9.972159</td>
+<td style="text-align: right;">90.34225</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">100.40517</td>
+<td style="text-align: right;">10.071639</td>
+<td style="text-align: right;">90.33353</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">99.67098</td>
+<td style="text-align: right;">9.798444</td>
+<td style="text-align: right;">89.87254</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">98.39703</td>
+<td style="text-align: right;">10.254347</td>
+<td style="text-align: right;">88.14268</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">98.81231</td>
+<td style="text-align: right;">9.881071</td>
+<td style="text-align: right;">88.93124</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">102.27124</td>
+<td style="text-align: right;">10.108880</td>
+<td style="text-align: right;">92.16236</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">100.20843</td>
+<td style="text-align: right;">9.951398</td>
+<td style="text-align: right;">90.25704</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">9.849277</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A few ways to get the correct answer are shown below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span></span>
+<span id="cb9-2">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span>, </span>
+<span id="cb9-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(amt_spend,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(amt_return,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> right1,</span>
+<span id="cb9-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(amt_spend) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(amt_return) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> right2</span>
+<span id="cb9-5"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> </span>
+<span id="cb9-6">  spend</span>
+<span id="cb9-7">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">join</span></span>
+<span id="cb9-8">  returns </span>
+<span id="cb9-9">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">on</span></span>
+<span id="cb9-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(spend.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">and</span></span>
+<span id="cb9-11">  spend.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">month</span></span>
+<span id="cb9-12"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb9-13"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">month</th>
+<th style="text-align: right;">right1</th>
+<th style="text-align: right;">right2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">280.7959</td>
+<td style="text-align: right;">280.7959</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">266.9465</td>
+<td style="text-align: right;">266.9465</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">172.5701</td>
+<td style="text-align: right;">172.5701</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="observations" class="level2">
+<h2 class="anchored" data-anchor-id="observations">Observations</h2>
+<p>The preceding example hopefully illustrates a few points:</p>
+<ul>
+<li>Nulls can cause issues in the most basic of analyses</li>
+<li>Beyond causing random or marginal errors, null handling changes the questions being answered</li>
+<li>Even within a language, null handling may feel inconsistent (w.r.t. strictness) across different operations</li>
+</ul>
+<p>So, with that, let’s compare languages!</p>
+</section>
+<section id="comparison" class="level2">
+<h2 class="anchored" data-anchor-id="comparison">Comparison</h2>
+<p>Below, we compare how R, SQL, and python handle column aggregation, rowwise transformation, joining, and filtering.</p>
+<section id="aggregation" class="level3">
+<h3 class="anchored" data-anchor-id="aggregation">Aggregation</h3>
+<p>SQL, as we saw before, simply ignores nulls in aggregation functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> </span>
+<span id="cb10-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(x) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> sum_x, </span>
+<span id="cb10-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span>(x <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">null</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> n_null_x</span>
+<span id="cb10-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> tbl</span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">sum_x</th>
+<th style="text-align: right;">n_null_x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Built by and for statistician’s, R is scandalized at the very idea of attempting to do math with null columns. For aggregation functions, it returns <code>NA</code> as a form of protest should any entry of the vector provided be null. (This can be overridden with the <code>na.rm</code> parameter.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">x <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>)</span>
+<span id="cb11-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(x)</span>
+<span id="cb11-3"></span>
+<span id="cb11-4">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> x)</span>
+<span id="cb11-5">dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(df, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(x))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>When it comes to python, well, it depends. Base and <code>numpy</code> operations act more like R whereas <code>pandas</code> aggregation acts more like SQL.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb13-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb13-3">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,np.nan]</span>
+<span id="cb13-4">y <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>]</span>
+<span id="cb13-5">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>:x,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>:y})</span>
+<span id="cb13-6"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(x)</span>
+<span id="cb13-7">np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(x)</span>
+<span id="cb13-8">df.agg({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'sum'</span>]})</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>nan
+nan
+       x
+sum  3.0</code></pre>
+</div>
+</div>
+</section>
+<section id="transformation" class="level3">
+<h3 class="anchored" data-anchor-id="transformation">Transformation</h3>
+<p>All of SQL, R, and python return NA when <code>NA</code>s are used in atomic or rowwise transformations.</p>
+<p>In SQL:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>, x<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>y <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">as</span> z</span>
+<span id="cb15-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> tbl</span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">-2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1">df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>)</span>
+<span id="cb16-2">dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(df, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">z =</span> x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>y)</span>
+<span id="cb16-3"></span>
+<span id="cb16-4">df<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>z <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">with</span>(df, x<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>y)</span>
+<span id="cb16-5">df</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">-2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">z</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">-2</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">-2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In python:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">np.array(x) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> np.array(y)</span>
+<span id="cb17-2">df.assign(z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> d: d.x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> d.y)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>array([-2., -2., nan])
+     x  y    z
+0  1.0  3 -2.0
+1  2.0  4 -2.0
+2  NaN  5  NaN</code></pre>
+</div>
+</div>
+</section>
+<section id="joining" class="level3">
+<h3 class="anchored" data-anchor-id="joining">Joining</h3>
+<p>The situation with joins may feel like the opposite of aggregation. Here, R and python’s most popular data wrangling packages are more permissive than SQL.</p>
+<p>As we saw in the case study, SQL does not match on nulls.</p>
+<p>Consider <code>tbl1</code> and <code>tbl2</code> as shown below:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> tbl1</span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A</th>
+<th style="text-align: left;">B</th>
+<th style="text-align: left;">X</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> tbl2</span></code></pre></div>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A</th>
+<th style="text-align: left;">B</th>
+<th style="text-align: left;">Y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Attempts to join return no results:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> tbl1.<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>, tbl2.Y </span>
+<span id="cb21-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> </span>
+<span id="cb21-3">  tbl1 <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">join</span> tbl2 </span>
+<span id="cb21-4">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">on</span> </span>
+<span id="cb21-5">  tbl1.A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tbl2.A <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">and</span> </span>
+<span id="cb21-6">  tbl1.B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tbl2.B</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">A</th>
+<th style="text-align: left;">B</th>
+<th style="text-align: left;">X</th>
+<th style="text-align: left;">y</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+<p>In contrast, default behavior for base R’s <code>merge</code> and <code>dplyr</code> <em>does match</em> on nulls. (Although, either behavior can be altered with the <code>incomparables</code> or <code>na_matches</code> arguments, respectively.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1">df1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">A =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">B =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">X =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb22-2">df2 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">A =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">B =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Y =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span>
+<span id="cb22-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">merge</span>(df1, df2, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"A"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"B"</span>))</span>
+<span id="cb22-4">dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">inner_join</span>(df1, df2, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"A"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"B"</span>))</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A</th>
+<th style="text-align: left;">B</th>
+<th style="text-align: left;">X</th>
+<th style="text-align: left;">Y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">A</th>
+<th style="text-align: left;">B</th>
+<th style="text-align: left;">X</th>
+<th style="text-align: left;">Y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">TRUE</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Similarly, <code>pandas</code> also matches on nulls for joining.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb23-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb23-3">df1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame([[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, np.nan, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>]], columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'X'</span>])</span>
+<span id="cb23-4">df2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame([[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, np.nan, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>]], columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Y'</span>])</span>
+<span id="cb23-5">pd.merge(df1, df2, on <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>])</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   A   B     X      Y
+0  1 NaN  True  False</code></pre>
+</div>
+</div>
+<p><code>R</code> and <code>python</code>’s behavior here seems most surprising. One might expect joining to work the same as raw logical evaluation works. However, neither language “likes” null comparison in its raw form. Instead, the default behavior is intentionally altered in these higher-level joining functions.</p>
+<p>In R:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span></span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NA</code></pre>
+</div>
+</div>
+<p>In python:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1">np.nan <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> np.nan</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>False</code></pre>
+</div>
+</div>
+</section>
+<section id="filtering" class="level3">
+<h3 class="anchored" data-anchor-id="filtering">Filtering</h3>
+<p>Finally, both SQL and R drop null records used in filtering statements since comparisons with these values are incapable of returning a TRUE/FALSE value that is used to subset the rows. In python, however, pandas does preserve nulls in filter conditions.</p>
+<p>Using the same <code>tbl1</code> shown above, we can also confirm that SQL proactively drops nulls in where clauses where they cannot be readily compared to non-null values. This seems quite consistent with its behavior in the joining case.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">select</span> A, B, X </span>
+<span id="cb29-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">from</span> tbl1 </span>
+<span id="cb29-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">where</span> B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">a</th>
+<th style="text-align: left;">b</th>
+<th style="text-align: left;">x</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+<p>Both base R and <code>dplyr</code> paradigms follow suit here.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1">df1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">A =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">B =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">X =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb30-2">df1[df1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>B <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,]</span>
+<span id="cb30-3">dplyr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(df1, B <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">A</th>
+<th style="text-align: left;">B</th>
+<th style="text-align: left;">X</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">A</th>
+<th style="text-align: left;">B</th>
+<th style="text-align: left;">X</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+</div>
+<p>However, bucking the trend, multiple approaches to subsetting <code>pandas</code> data will not drop nulls in filtering comparisons.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1">df1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame([[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, np.nan, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>]], columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'X'</span>])</span>
+<span id="cb31-2">df1[df1.B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb31-3">df1.query(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   A   B     X
+0  1 NaN  True
+   A   B     X
+0  1 NaN  True</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In data computation and analysis, the devil is often in the details. It’s not breaking news that low-level reasoning on the careful handling of null values can jeopardize the resulting analyses. However, as analysts take on increasingly complex tasks and using a plehora of different tools, it’s more important than ever for both data producers and consumers to consider the choices they are making in encoding and handling these values across the stack.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <category>sql</category>
+  <category>data</category>
+  <category>data-disasters</category>
+  <guid>https://emilyriederer.com/post/nulls-polyglot/</guid>
+  <pubDate>Mon, 05 Sep 2022 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>A Tale of Six States: Flexible data extraction with scraping and browser automation</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/states-scraping-automation/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Like many Americans, last fall I was captivated by <a href="https://twitter.com/ElectProject">Professor Michael McDonald</a>’s <a href="http://www.electproject.org/">US Elections Project</a> and, in particular, his daily reporting of <a href="https://electproject.github.io/Early-Vote-2020G/">early vote totals</a> across all 50 states. Not only did this reporting provide fuel for anxious speculation and satiate an innate desire for reading the tea leaves, but it was also a quite a feat in data management.</p>
+<p>In many discussions of <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">modern data management</a>, the extract-load-transform (ELT) process is offered as a solution to data silos. However, these tools largely focus on abstracting away the different REST APIs of common sources (e.g.&nbsp;Salesforce, Google Analytics, Facebook Ads) and destinations (e.g.&nbsp;BigQuery, Redshift, Snowflake). At the same time, many data science resources introduce static web page scraping as a tool in one’s toolkit but discuss less scraping websites rendered with client side JavaScript (as quite a bit of the internet is) or navigating arbitrary applications with browser automation.</p>
+<p>For more “creative”, persay, sources, we need to build our own solutions. And this is particularly true when we’re attempting to access, standardize, and analyze 50 separate data sets published at different cadences, provided with different levels of granularity, partitioned along different dimensions, controlled by different levels of access and permission, and embedded in systems with vastly different underlying architecture. (Oh, and in Dr.&nbsp;McDonald’s case, with a good number of Twitter users starting to tweet at you if you haven’t refreshed your website by 8:02AM!)</p>
+<p>To give an example of some of the diverse data sources used in the Elections Project:</p>
+<ul>
+<li><a href="https://elections.il.gov/VotingAndRegistrationSystems/PreElectionCounts.aspx?MID=l0hlXuSrKL0%3d&amp;T=637317257975604269">IL</a>, <a href="https://elections.wi.gov/index.php/publications/statistics/absentee">WI</a>, and <a href="https://dl.ncsbe.gov/?prefix=ENRS/2020_11_03/">NC</a> provide direct <code>csv</code> downloads with predictable URLs which contain all data to-date</li>
+<li><a href="http://services.sos.wv.gov/Elections/AbsenteeBallotStats">WV</a> and <a href="https://www.elections.alaska.gov/doc/info/statstable.php">AK</a> display data in static tables rendere by server-side PHP</li>
+<li><a href="https://www.vpap.org/elections/early-voting/">VA</a> shows its data in a dashboard rendered by client-side JavaScript (which may superficially sound like the last bullet but has different implications for the types of scraping tools that could lend a hand<sup>1</sup>)</li>
+<li><a href="https://elections.sos.ga.gov/Elections/voterabsenteefile.do">GA</a> and <a href="https://earlyvoting.texas-election.com/Elections/getElectionEVDates.do">TX</a> offer downloadable data which requires navigating through a Java serverlet UI<sup>2</sup> to access</li>
+<li><a href="https://app.powerbigov.us/view?r=eyJrIjoiMGEwN2E0MzUtOTA0OC00ZDA3LThjMTItZDZhYTBjYjU5ZjhjIiwidCI6IjJkMGYxZGI2LWRkNTktNDc3Mi04NjVmLTE5MTQxNzVkMDdjMiJ9">RI</a> publishes data in a PowerBI dashboard</li>
+<li>AL, AZ, MI, IA, and PA were among those that didn’t publish data publicly and required Professor McDonald to directly contact their Secretary of State offices</li>
+</ul>
+<p>The disparities in these data publishing formats and access patterns seemed like an interesting opportunity to compare different tools for data extraction. This posts starts out with a few trivial examples of using <code>requests</code> for HTTP requests and <code>BeautifulSoup</code> for static web scraping in order to understand the strengths and limitations for each tool and the unmet needs that browser automation helps address. We’ll then switch over to <code>Playwright</code> (with a touch of <code>pytesseract</code>) for a sampling of the types of challenges that browser automation can tackle.</p>
+<ul>
+<li>NC: Direct Download with <code>urllib.request</code></li>
+<li>WI: Direct Download with a Dynamic URL</li>
+<li>AK: Web scraping with <code>BeautifulSoup</code></li>
+<li>VA: Web scraping with <code>Playwright</code></li>
+<li>TX: Browser automation with <code>Playwright</code></li>
+<li>RI: Arbitrary UIs with OCR</li>
+</ul>
+<section id="nc-direct-download" class="level2">
+<h2 class="anchored" data-anchor-id="nc-direct-download">NC: Direct Download</h2>
+<p><img src="https://emilyriederer.com/post/states-scraping-automation/nc.PNG" class="img-fluid"></p>
+<p>North Carolina provides one of the simplest paths to accessing paths to downloading its data. Data files live in a public S3 bucket with static file names based on the election date. Granular voter-level data can be downloaded easily with the <code>urllib.request</code> library.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> urllib.request</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2020_11_03/absentee_counts_county_20201103.csv'</span></span>
+<span id="cb1-4">urllib.request.urlretrieve(url, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'nc.csv'</span>)</span></code></pre></div>
+</div>
+</section>
+<section id="wi-direct-download-with-dynamic-url" class="level2">
+<h2 class="anchored" data-anchor-id="wi-direct-download-with-dynamic-url">WI: Direct Download with Dynamic URL</h2>
+<p><img src="https://emilyriederer.com/post/states-scraping-automation/wi.PNG" class="img-fluid"></p>
+<p>Wisconsin has similarly accessible data files available for download. However, when they update files during an election cycle, each new file is named by publishing date. So, unlike North Carolina, the URL of interest varies and it’s not altogether obvious what the most current one is.</p>
+<p>We can still use <code>requests</code> to download this data, but it requires more caution in constructing the URL. The <code>retrieve_date()</code> function requires an ISO 8601 date to be passed in and attempts to construct a URL from it. Our <code>GET</code> request returns a status code of 500 if no such path exists, at which point we can throw an exception. Some calling program could decrement the date and try again.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> requests</span>
+<span id="cb2-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime</span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> retrieve_date(date): </span>
+<span id="cb2-5"></span>
+<span id="cb2-6">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># format dates as needed</span></span>
+<span id="cb2-7">  dt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.strptime(date, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb2-8">  yyyy_mm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dt.strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y-%m'</span>)</span>
+<span id="cb2-9">  mm_d_yyyy <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dt.strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%#d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">-%Y'</span>)</span>
+<span id="cb2-10">  </span>
+<span id="cb2-11">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># download csv</span></span>
+<span id="cb2-12">  url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'https://elections.wi.gov/sites/elections.wi.gov/files/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>yyyy_mm<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/AbsenteeCounts_County%20</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>mm_d_yyyy<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">.csv'</span></span>
+<span id="cb2-13">  req <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> requests.get(url)</span>
+<span id="cb2-14">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> req.status_code <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>:</span>
+<span id="cb2-15">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">Exception</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Resource not found'</span>)</span>
+<span id="cb2-16">  content <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> req.content</span>
+<span id="cb2-17">  </span>
+<span id="cb2-18">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># write to file</span></span>
+<span id="cb2-19">  csv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'wi.csv'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'wb'</span>)</span>
+<span id="cb2-20">  csv.write(content)</span>
+<span id="cb2-21">  csv.close()</span></code></pre></div>
+</div>
+</section>
+<section id="ak-web-scraping-with-beautifulsoup" class="level2">
+<h2 class="anchored" data-anchor-id="ak-web-scraping-with-beautifulsoup">AK: Web Scraping with <code>BeautifulSoup</code></h2>
+<p><img src="https://emilyriederer.com/post/states-scraping-automation/ak.PNG" class="img-fluid"></p>
+<p>Instead of provided a direct download, Arkansas publishes data to its election website by rendering a static HTML table with server-side PHP. As with before, we can retrieve this content with <code>requests</code>, but now we need to parse the output ourselves. Specifically, we want to iterate over table rows such as this:</p>
+<pre><code>&lt;tr&gt;
+  &lt;td&gt;Online Delivery&lt;/td&gt;
+  &lt;td&gt;16,446&lt;/td&gt;
+  &lt;td&gt;12,026&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+<p>For this, we can use <code>BeautifulSoup</code> to iterate through the table and save the results to a CSV file with <code>pandas</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> bs4 <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> BeautifulSoup</span>
+<span id="cb4-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> requests</span>
+<span id="cb4-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime</span>
+<span id="cb4-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb4-5"></span>
+<span id="cb4-6">url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"https://www.elections.alaska.gov/doc/info/statstable.php"</span></span>
+<span id="cb4-7">html_content <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> requests.get(url).text</span>
+<span id="cb4-8">soup <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> BeautifulSoup(html_content, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"lxml"</span>)</span>
+<span id="cb4-9">table <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> soup.find(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"table"</span>, attrs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"class"</span>:<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"lctbl"</span>})</span>
+<span id="cb4-10"></span>
+<span id="cb4-11">data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb4-12">rows <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> table.tbody.find_all(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"tr"</span>)</span>
+<span id="cb4-13"></span>
+<span id="cb4-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># iterate over rows excluding first (header) and last (total)</span></span>
+<span id="cb4-15"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> r <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(rows) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>): </span>
+<span id="cb4-16"></span>
+<span id="cb4-17">  row <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rows[r]</span>
+<span id="cb4-18">  vals <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [d.get_text() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> row.find_all(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"td"</span>)]</span>
+<span id="cb4-19">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># convert count columns to numeric</span></span>
+<span id="cb4-20">  vals[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(vals[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span>))</span>
+<span id="cb4-21">  vals[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(vals[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span>))</span>
+<span id="cb4-22">    </span>
+<span id="cb4-23">  data.append(vals)</span>
+<span id="cb4-24">  </span>
+<span id="cb4-25"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># save resulting data</span></span>
+<span id="cb4-26">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame(data, columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'channel'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'n_issued'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'n_returned'</span>])</span>
+<span id="cb4-27">df[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dt_updated'</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dt_fmt</span>
+<span id="cb4-28">df.to_csv(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ak.csv'</span>, index <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span></code></pre></div>
+</div>
+</section>
+<section id="va-web-scraping-with-playwright" class="level2">
+<h2 class="anchored" data-anchor-id="va-web-scraping-with-playwright">VA: Web Scraping with <code>Playwright</code></h2>
+<p><img src="https://emilyriederer.com/post/states-scraping-automation/va.PNG" class="img-fluid"></p>
+<p>Virginia seems superficially similar to Arkansas insomuch as data is provided in an in-browser display. However, since this display is constructed with browser-side JavaScript, it won’t appear in the content that results from a call to <code>requests.get()</code>.</p>
+<p>Many different approaches exist to force JavaScript to update the DOM before accessing the source<sup>3</sup>. Arguably Microsoft’s <code>Playwright</code> is overly complicated for this situation, but I use it for this example since it is a flexible tool for browser automation, and the next three examples help demonstrate the variety of features it offers.</p>
+<p>The following script navigates to Virginia’s website with a headless Firefox browser and then extracts vote counts stored as attributes in the bar chart tooltip. Each bar is create with script like this:</p>
+<pre><code>&lt;rect x="95.333" y="101" width="7.333" height="104" 
+      data-toggle="popever" data-placement="top" title 
+      data-content="In-Person: 140&lt;br /&gt;Mail: 94&lt;br /&gt;Total: 234" 
+      data-original-title="Sep 30"&gt;
+&lt;/rect&gt;</code></pre>
+<p>As before, results are then coerced into a <code>pandas</code> dataframe and written to a <code>csv</code>.</p>
+<p>The following script defines a <code>retrieve_county()</code> function to parse out this information for a single county.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> playwright.sync_api <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sync_playwright</span>
+<span id="cb6-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime</span>
+<span id="cb6-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> re</span>
+<span id="cb6-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb6-5"></span>
+<span id="cb6-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> retrieve_county(county, page):</span>
+<span id="cb6-7"></span>
+<span id="cb6-8">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># navigate to county-specific page</span></span>
+<span id="cb6-9">  county_url <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> county.lower().replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">' '</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'-'</span>)</span>
+<span id="cb6-10">  page.goto(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'https://www.vpap.org/elections/early-voting/year-2020/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>county_url<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">-va'</span>)</span>
+<span id="cb6-11">  </span>
+<span id="cb6-12">  county_records <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb6-13">  </span>
+<span id="cb6-14">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>):</span>
+<span id="cb6-15">  </span>
+<span id="cb6-16">    selector <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'#timeline g.popovers rect:nth-of-type(</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>n<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">)'</span></span>
+<span id="cb6-17">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">try</span>:</span>
+<span id="cb6-18">      date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> page.get_attribute(selector, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'data-original-title'</span>)</span>
+<span id="cb6-19">      vals <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> page.get_attribute(selector, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'data-content'</span>)</span>
+<span id="cb6-20">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">except</span>:</span>
+<span id="cb6-21">      <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">break</span></span>
+<span id="cb6-22"></span>
+<span id="cb6-23">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># process data into tabular structure</span></span>
+<span id="cb6-24">    vals_method <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> re.search(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'In-Person: (\d+)&lt;br /&gt;Mail: (\d+)&lt;br /&gt;Total: (\d+)'</span>, vals.replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span>))</span>
+<span id="cb6-25">    date_parse <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.strptime(date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">' 2020'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%b </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> %Y'</span>).strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb6-26">    county_records.append([county, date_parse, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'In-Person'</span>, vals_method.group(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)])</span>
+<span id="cb6-27">    county_records.append([county, date_parse, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Mail'</span>, vals_method.group(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)])</span>
+<span id="cb6-28">    </span>
+<span id="cb6-29">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> county_records</span></code></pre></div>
+</div>
+<p>As a low fidelity but transparent example of it in operation, I show it looping over a few counties. In reality, we’d add more exception handling or save interim results separately so failures in any one county did not take down the whole process.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> sync_playwright() <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> p:</span>
+<span id="cb7-2"></span>
+<span id="cb7-3">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># set up</span></span>
+<span id="cb7-4">  browser <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> p.firefox.launch()</span>
+<span id="cb7-5">  context <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> browser.new_context(accept_downloads <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb7-6">  page <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> context.new_page()</span>
+<span id="cb7-7">  </span>
+<span id="cb7-8">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># iterate over counties</span></span>
+<span id="cb7-9">  county <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Accomack County'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Albemarle County'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Alexandria City'</span>]</span>
+<span id="cb7-10">  records <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb7-11">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> c <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> county:</span>
+<span id="cb7-12">    records <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> retrieve_county(c, page)</span>
+<span id="cb7-13">  </span>
+<span id="cb7-14">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># save resulting data</span></span>
+<span id="cb7-15">  df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame(records, columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'county'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'date'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'channel'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'n'</span>])</span>
+<span id="cb7-16">  df.to_csv(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'va.csv'</span>, index <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb7-17"></span>
+<span id="cb7-18">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># cleanup</span></span>
+<span id="cb7-19">  page.close()</span>
+<span id="cb7-20">  context.close()</span>
+<span id="cb7-21">  browser.close()</span></code></pre></div>
+</div>
+<p>This creates the following data structure:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 x 4
+  county          date       channel       n
+  &lt;chr&gt;           &lt;date&gt;     &lt;chr&gt;     &lt;dbl&gt;
+1 Accomack County 2020-09-17 In-Person     0
+2 Accomack County 2020-09-17 Mail          0
+3 Accomack County 2020-09-18 In-Person   212
+4 Accomack County 2020-09-18 Mail          0
+5 Accomack County 2020-09-19 In-Person     0
+6 Accomack County 2020-09-19 Mail          0</code></pre>
+</div>
+</div>
+</section>
+<section id="tx-browser-automation-with-playwright" class="level2">
+<h2 class="anchored" data-anchor-id="tx-browser-automation-with-playwright">TX: Browser Automation with <code>Playwright</code></h2>
+<p><img src="https://emilyriederer.com/post/states-scraping-automation/tx.gif" class="img-fluid"></p>
+<p>Next up, we come to Texas. Texas, somewhat paradoxically, generously provides rich data (by day, by voting method, by county, and even <em>by person</em>) and yet does so in a way that is particularly tedious to access. Navigating to the data download requires selecting an election and then a voting date out of a UI before clicking a button in a Java serverlet<sup>4</sup> that triggers the creation and downloading of a report as shown above.</p>
+<p>This is where <code>Playwright</code> really shines. As with Virginia, it loads the Texas’ data in a headless<sup>5</sup> browser. But beyond just opening a browser, <code>Playwright</code> can interact with it in the same way as a user: selecting options from menus, clicking buttons, and more.</p>
+<p>In the <code>retrieve_date()</code> function below, I tell my browser exactly what I want it to do: go to the website, pick an election, click submit, pick a date, click submit, and then finally click a button to download data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> playwright.sync_api <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sync_playwright</span>
+<span id="cb9-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime</span>
+<span id="cb9-3"></span>
+<span id="cb9-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> retrieve_date(date, page):</span>
+<span id="cb9-5"></span>
+<span id="cb9-6">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># navigate to date-specific page </span></span>
+<span id="cb9-7">  target_date <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.strptime(date, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y%m</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb9-8">  target_date_str <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> target_date.strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> 00:00:00.0'</span>)</span>
+<span id="cb9-9">  target_file <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'tx-'</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> target_date.strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y%m</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'.csv'</span></span>
+<span id="cb9-10">  </span>
+<span id="cb9-11">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># pick election</span></span>
+<span id="cb9-12">  page.goto(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://earlyvoting.texas-election.com/Elections/getElectionDetails.do'</span>)</span>
+<span id="cb9-13">  page.select_option(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#idElection'</span>, label <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2020 NOVEMBER 3RD GENERAL ELECTION"</span>)</span>
+<span id="cb9-14">  page.click(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#electionsInfoForm button'</span>)</span>
+<span id="cb9-15">  page.wait_for_selector(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#selectedDate'</span>)</span>
+<span id="cb9-16">  </span>
+<span id="cb9-17">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># pick day</span></span>
+<span id="cb9-18">  page.select_option(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#selectedDate'</span>, value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> target_date_str)</span>
+<span id="cb9-19">  page.click(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'#electionsInfoForm button:nth-child(2)'</span>)</span>
+<span id="cb9-20">  page.wait_for_selector(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'"Generate Statewide Report"'</span>)</span>
+<span id="cb9-21"></span>
+<span id="cb9-22">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># download report  </span></span>
+<span id="cb9-23">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> page.expect_download() <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> download_info:</span>
+<span id="cb9-24">    page.click(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'"Generate Statewide Report"'</span>)</span>
+<span id="cb9-25">  download <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> download_info.value</span>
+<span id="cb9-26">  download.save_as(target_file)</span></code></pre></div>
+</div>
+<p>This function could then be called for one or more dates of interest:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> sync_playwright() <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> p:</span>
+<span id="cb10-2"></span>
+<span id="cb10-3">  browser <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> p.firefox.launch()</span>
+<span id="cb10-4">  context <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> browser.new_context(accept_downloads <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb10-5">  page <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> context.new_page()</span>
+<span id="cb10-6">  </span>
+<span id="cb10-7">  dates <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'20201020'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'20201021'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'20201022'</span>]</span>
+<span id="cb10-8">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dates:</span>
+<span id="cb10-9">    retrieve_date(d, page)</span>
+<span id="cb10-10"></span>
+<span id="cb10-11">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># cleanup</span></span>
+<span id="cb10-12">  page.close()</span>
+<span id="cb10-13">  context.close()</span>
+<span id="cb10-14">  browser.close()</span></code></pre></div>
+</div>
+</section>
+<section id="ri-arbitrary-uis-with-ocr" class="level2">
+<h2 class="anchored" data-anchor-id="ri-arbitrary-uis-with-ocr">RI: Arbitrary UIs with OCR</h2>
+<p><img src="https://emilyriederer.com/post/states-scraping-automation/ri.png" class="img-fluid"></p>
+<p>The ability to navigate around a UI starts to blend the capabilities of <code>Playwright</code>’s <em>browser automation</em> with the more full-fledged concept of robotic process automation (RPA). RPA tools can similarly navigate arbitrary non-browser-based UIs to perform manual tasks with great speed. Abritrary UIs lack many of the features we’ve been using so far such as Xpaths and CSS IDs and classes to tell our tools where to do what. Instead, their often have built-in optical character recognition (OCR) to recognize buttons or input boxes “on sight”.</p>
+<p><code>Playwright</code> doesn’t quite have these capabilities built in natively, but it does offer users the ability to screenshot their browser. This allows us to pass the screenshot to <code>pytesseract</code> for OCR in a similar manner.</p>
+<p>This techniques comes in handy for Rhode Island whose data is hosted in an embedded PowerBI app. The following script navigates to and screenshots the app, converts the resulting image to text, extracts the total vote count, and writes the results to PDFs.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> cv2</span>
+<span id="cb11-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pytesseract</span>
+<span id="cb11-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> playwright.sync_api <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sync_playwright</span>
+<span id="cb11-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> time</span>
+<span id="cb11-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> re</span>
+<span id="cb11-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb11-7">pytesseract.pytesseract.tesseract_cmd <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'C:</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\\</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Program Files</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\\</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Tesseract-OCR</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\\</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">tesseract.exe'</span></span>
+<span id="cb11-8"></span>
+<span id="cb11-9"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> sync_playwright() <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> p:</span>
+<span id="cb11-10"></span>
+<span id="cb11-11">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># set up</span></span>
+<span id="cb11-12">  browser <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> p.firefox.launch()</span>
+<span id="cb11-13">  context <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> browser.new_context(accept_downloads <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb11-14">  page <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> context.new_page()</span>
+<span id="cb11-15">  page.goto(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://app.powerbigov.us/view?r=eyJrIjoiMGEwN2E0MzUtOTA0OC00ZDA3LThjMTItZDZhYTBjYjU5ZjhjIiwidCI6IjJkMGYxZGI2LWRkNTktNDc3Mi04NjVmLTE5MTQxNzVkMDdjMiJ9'</span>)</span>
+<span id="cb11-16">  page.wait_for_load_state(state <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'networkidle'</span>)</span>
+<span id="cb11-17">  time.sleep(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>)</span>
+<span id="cb11-18">  page.screenshot(path <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ri.png'</span>)</span>
+<span id="cb11-19">  </span>
+<span id="cb11-20">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># cleanup</span></span>
+<span id="cb11-21">  page.close()</span>
+<span id="cb11-22">  context.close()</span>
+<span id="cb11-23">  browser.close()</span>
+<span id="cb11-24"></span>
+<span id="cb11-25"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># extract text</span></span>
+<span id="cb11-26">img <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cv2.imread(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ri.png'</span>)</span>
+<span id="cb11-27">text <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pytesseract.image_to_string(img)</span>
+<span id="cb11-28">n_tot <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> re.search(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Turnout</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">(\d+)'</span>, text.replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span>)).group(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb11-29">n_mail <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> re.search(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Mail Ballots Received by BOE</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">(\d+)'</span>, text.replace(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">''</span>)).group(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb11-30"></span>
+<span id="cb11-31"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># write output</span></span>
+<span id="cb11-32">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame([[n_tot, n_mail]], columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'n_tot'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'n_mail'</span>])</span>
+<span id="cb11-33">df.to_csv(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ri.csv'</span>, index <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span></code></pre></div>
+</div>
+<p>This creates the following data structure:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 x 2
+   n_tot n_mail
+   &lt;dbl&gt;  &lt;dbl&gt;
+1 305724 156178</code></pre>
+</div>
+</div>
+</section>
+<section id="what-next" class="level2">
+<h2 class="anchored" data-anchor-id="what-next">What Next?</h2>
+<p>Simply <em>accessing</em> data is only the first in many steps towards unifying and analyzing it. The full scope of the US Elections Project requires far more numerous and challenging steps including:</p>
+<ul>
+<li>Understanding the exact schema and variables of each data set</li>
+<li>Understanding when historical data may be modified or corrected and adjusting accordingly</li>
+<li>Accounting for sudden changes to reporting formats, cadences, or locations</li>
+<li>Obtaining data from states where the <code>robots.txt</code> prevents scraping (I’m looking at you, IL)</li>
+<li>Building relationships with Secretary of States’ offices where data is not publicly available</li>
+</ul>
+<p>Regardless, surveying what different states choose to publish and how they choose to share it provides an interesting opportunity to think about data access, usability, and available technologies for data retrieval.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Traditional tools like python’s <code>BeautifulSoup</code> or R’s <code>rvest</code> don’t play nicely with dynamic websites where client-side JavaScript is modifying the DOM↩︎</p></li>
+<li id="fn2"><p>Or so <a href="https://stackoverflow.com/questions/3597582/why-do-java-webapps-use-do-extension-where-did-it-come-from">this StackExchange</a> would suggest based on the <code>.do</code> extension↩︎</p></li>
+<li id="fn3"><p>Selenium and PhantomJS are popular related tools↩︎</p></li>
+<li id="fn4"><p>The significance of this is that this button is not like clicking a link with a specific web URL.↩︎</p></li>
+<li id="fn5"><p>Headless basically just means the browser doesn’t physically open on our computer so we don’t see it. Time and compute resources aren’t wasted on “painting” the browser to show us what is happening. However, if you enjoy watching your computer work in a “Look Mom, no hands!” sort of way, you can use the <code>headless = False</code> option when launching the browser.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>data</category>
+  <category>elt</category>
+  <category>python</category>
+  <guid>https://emilyriederer.com/post/states-scraping-automation/</guid>
+  <pubDate>Sat, 08 May 2021 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/states-scraping-automation/featured.png" medium="image" type="image/png" height="97" width="144"/>
+</item>
+</channel>
+</rss>

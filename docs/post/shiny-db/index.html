@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2022-01-02">
+<meta name="description" content="Key issues when adding persistent storage to a Shiny application, featuring {golem} app development and Digital Ocean serving">
+
+<title>Using databases with Shiny | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="Using databases with Shiny | Emily Riederer">
+<meta name="twitter:description" content="Key issues when adding persistent storage to a Shiny application, featuring {golem} app development and Digital Ocean serving">
+<meta name="twitter:image" content="https://emilyriederer.github.io/post/shiny-db/featured.png">
+<meta name="twitter:image-height" content="366">
+<meta name="twitter:image-width" content="491">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html" rel="" target="">
+ <span class="dropdown-text">Top</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../talk/index.html" rel="" target="">
+ <span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Using databases with Shiny</h1>
+                  <div>
+        <div class="description">
+          Key issues when adding persistent storage to a Shiny application, featuring {golem} app development and Digital Ocean serving
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">rstats</div>
+                <div class="quarto-category">shiny</div>
+                <div class="quarto-category">data</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 2, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#databases-options-for-storage" id="toc-databases-options-for-storage" class="nav-link active" data-scroll-target="#databases-options-for-storage">Databases &amp; Options for Storage</a></li>
+  <li><a href="#talking-to-your-database-through-shiny" id="toc-talking-to-your-database-through-shiny" class="nav-link" data-scroll-target="#talking-to-your-database-through-shiny">Talking to your database through Shiny</a>
+  <ul class="collapse">
+  <li><a href="#creating-a-database" id="toc-creating-a-database" class="nav-link" data-scroll-target="#creating-a-database">Creating a database</a></li>
+  <li><a href="#connecting-to-the-database" id="toc-connecting-to-the-database" class="nav-link" data-scroll-target="#connecting-to-the-database">Connecting to the database</a></li>
+  <li><a href="#creating-tables" id="toc-creating-tables" class="nav-link" data-scroll-target="#creating-tables">Creating tables</a></li>
+  <li><a href="#forming-the-connection-within-your-app" id="toc-forming-the-connection-within-your-app" class="nav-link" data-scroll-target="#forming-the-connection-within-your-app">Forming the connection within your app</a></li>
+  <li><a href="#crud-operations" id="toc-crud-operations" class="nav-link" data-scroll-target="#crud-operations">CRUD operations</a></li>
+  </ul></li>
+  <li><a href="#key-issues" id="toc-key-issues" class="nav-link" data-scroll-target="#key-issues">Key Issues</a>
+  <ul class="collapse">
+  <li><a href="#securing-data-transfer" id="toc-securing-data-transfer" class="nav-link" data-scroll-target="#securing-data-transfer">Securing data transfer</a></li>
+  <li><a href="#securing-database-credentials" id="toc-securing-database-credentials" class="nav-link" data-scroll-target="#securing-database-credentials">Securing database credentials</a></li>
+  <li><a href="#securing-input-integrity-sql-injection" id="toc-securing-input-integrity-sql-injection" class="nav-link" data-scroll-target="#securing-input-integrity-sql-injection">Securing input integrity (SQL injection)</a></li>
+  <li><a href="#dev-versus-prod" id="toc-dev-versus-prod" class="nav-link" data-scroll-target="#dev-versus-prod">Dev versus Prod</a></li>
+  <li><a href="#managing-connections" id="toc-managing-connections" class="nav-link" data-scroll-target="#managing-connections">Managing connections</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Shiny apps are R’s answer to building interface-driven applications that help expose important data, metrics, algorithms, and more with end-users. However, the more interesting work that your Shiny app allows users to do, the more likely users are to want to save, return to, and alter some of the ways that they interacted with your work.</p>
+<p>This creates a need for <strong>persistent storage</strong> in your Shiny application, as opposed to the ephemeral in-memory of basic Shiny applications that “forget” the data that they generated as soon as the application is stopped.</p>
+<p>Relational databases are a classic form of persistent storage for web applications. Many analysts may be familiar with <em>querying</em> relational databases to retrieve data, but <em>managing</em> a database for use with a web application is slightly more complex. You’ll find yourself needing to define tables, secure data, and manage connections. More importantly, you might worry about what things that you do not know you should be worrying about.</p>
+<p>This post provides some tips, call-outs, and solutions for using a relational database for persistent storage with Shiny. In my case, I rely on a Shiny app built with the <a href="https://thinkr-open.github.io/golem/"><code>golem</code> framework</a> and served on the Digital Ocean App platform.</p>
+<section id="databases-options-for-storage" class="level2">
+<h2 class="anchored" data-anchor-id="databases-options-for-storage">Databases &amp; Options for Storage</h2>
+<p>Dean Attali’s <a href="https://deanattali.com/blog/shiny-persistent-data-storage/">blog post on persistent storage</a> compares a range of options for persistent storage including databases, S3 buckets, Google Drive, and more.</p>
+<p>For my application, I anticipated the need to store and retrieve sizable amounts of structured data, so using a relational database seemed like a good option. Since I was hosting my application on <a href="https://m.do.co/c/6c5fdc198503">Digital Ocean App Platform</a>, I could create a <a href="https://www.digitalocean.com/products/managed-databases/">managed Postgres database</a> with just a few button clicks. As I share in the “Key Issues” section, this solution offers some significant benefits in terms of security.</p>
+<p>For more information on different options for hosting Shiny apps and some insight into why I chose Digital Ocean, check out Peter Solymos’ excellent blog on <a href="https://hosting.analythium.io/">Hosting Data Apps</a>.</p>
+</section>
+<section id="talking-to-your-database-through-shiny" class="level2">
+<h2 class="anchored" data-anchor-id="talking-to-your-database-through-shiny">Talking to your database through Shiny</h2>
+<p>General information on working with databases with R is included on RStudio’s <a href="https://db.rstudio.com/">excellent website</a>. Below, I focus on a few topics specific to databases with Shiny, Shiny apps built in the <code>{golem}</code> framework, and Shiny apps served on Digital Ocean in particular.</p>
+<section id="creating-a-database" class="level3">
+<h3 class="anchored" data-anchor-id="creating-a-database">Creating a database</h3>
+<p>To create a database for my application in DigitalOcean, I simply went to:</p>
+<p><code>Settings &gt; Add Component &gt; Database</code></p>
+<p>This creates a fully-managed Postgres databases so you do not have to thing a ton about the underlying set-up or configuration.</p>
+<p>At the time on writing, I was able to add a 1GB Dev Database for /$7 / month. For new users, DigitalOcean offers a generous number of free credits for use in the first 60 days. For a more mature product, one can add or switch to a production-ready Managed Database.</p>
+<p>After a few minutes, the database has launched and its Connection Parameters are provided, which look something like this:</p>
+<pre><code>host     : abc.b.db.ondigitalocean.com
+port     : 25060
+username : db
+password : abc123
+database : db
+sslmode  : require</code></pre>
+<p>By default, the Dev Database registers your application as a Trusted Source, meaning that only traffic from the application can attempt to access the database. As the <a href="https://docs.digitalocean.com/products/databases/postgresql/how-to/secure/#firewalls">documentation</a> explains, this type of firewall improves security by preventing against brute-force password or denial-of-service attacks from the outside.</p>
+<p><em>Note: If you just want to experiment with databases and Shiny but aren’t using an in-production, served application, you can mostly skip this step and use the “Dev” approach that is discuss in “Dev versus Prod” subsection of “Key Issues” below.</em></p>
+</section>
+<section id="connecting-to-the-database" class="level3">
+<h3 class="anchored" data-anchor-id="connecting-to-the-database">Connecting to the database</h3>
+<p>We can use the connection parameters provided to connect to the database using R’s <code>DBI</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">host   =</span> <span class="st">"aabc.b.db.ondigitalocean.com"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">dbname =</span> <span class="st">"db"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">user      =</span> <span class="st">"db"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">password  =</span> <span class="st">"abc123"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">port     =</span> <span class="dv">25060</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will talk about ways to not hardcode one’s password in the last section.</p>
+</section>
+<section id="creating-tables" class="level3">
+<h3 class="anchored" data-anchor-id="creating-tables">Creating tables</h3>
+<p>Next, you can set up tables in your database that your application will require.</p>
+<p>If you know SQL DDL, you can write a <a href="https://www.tutorialspoint.com/sql_certificate/using_ddl_statements.html">CREATE TABLE statement</a> which defines a tables names, fields, and data types. However, this can feel verbose or uncomfortable to analysts who mostly use DML (e.g.&nbsp;<code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>).</p>
+<p>Fortunately, you can also define a table using R’s <code>DBI</code> package. First, create a simple dataframe with a single record to help R infer the appropriate and expected data types. Then pass the first <em>zero</em> rows of the table (essentially, only the schema) to <code>DBI::dbCreateTable()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="st">"a"</span>, <span class="at">z =</span> <span class="fu">as.Date</span>(<span class="st">"2022-01-01"</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbCreateTable</span>(con, <span class="at">name =</span> <span class="st">"my_data"</span>, <span class="at">fields =</span> <span class="fu">head</span>(df, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To prove that this works, I show a “round trip” of the data using an in-memory SQLite database. Note that this is <em>not</em> an option for persistent storage because in-memory databases are not persistent. This is only to “prove” that this approach can create database tables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>con_lite <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="st">":memory:"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="st">"a"</span>, <span class="at">z =</span> <span class="fu">as.Date</span>(<span class="st">"2022-01-01"</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbCreateTable</span>(con_lite, <span class="at">name =</span> <span class="st">"my_data"</span>, <span class="at">fields =</span> <span class="fu">head</span>(df, <span class="dv">0</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbListTables</span>(con_lite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "my_data"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbReadTable</span>(con_lite, <span class="st">"my_data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] x y z
+&lt;0 rows&gt; (or 0-length row.names)</code></pre>
+</div>
+</div>
+<p>But where should you run this script? You do <em>not</em> want to put this code in your app to run every time the app launches, but we just limited database traffic to the app so we cannot run it locally. Instead, you can run this code from the app’s <a href="https://docs.digitalocean.com/products/app-platform/concepts/console/">console</a>. (Alternatively, if you upgrade to a Managed Database, I believe you can also whitelist your local IP as another trusted source.)</p>
+</section>
+<section id="forming-the-connection-within-your-app" class="level3">
+<h3 class="anchored" data-anchor-id="forming-the-connection-within-your-app">Forming the connection within your app</h3>
+<p>Once your database is set-up and ready to go, you can begin to integrate it into your application.</p>
+<p>I was using the <a href="https://thinkr-open.github.io/golem/"><code>golem</code> framework</a> for my application, so I connected to the database and made the initial data pull by adding the following lines in my top-level <code>app_server.R</code> file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">db_con</span>()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tbl_init <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbReadTable</span>(con, <span class="st">"my_data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The custom <code>db_con()</code> function contains <em>roughly</em> the <code>DBI::dbConnect()</code> code we saw above, but I turned it into a function to incorporate some added complexity which I will describe shortly.</p>
+<p>Most of the rest of my application uses Shiny modules, and this connection object and initial data pull can be seamless passed into either.</p>
+<p>To see similar code in a full app, check out Colin Fay’s <a href="https://github.com/ColinFay/golemexamples/blob/master/golemqlite/R/app_server.R#L7"><code>golemqlite</code></a> project on Github.</p>
+</section>
+<section id="crud-operations" class="level3">
+<h3 class="anchored" data-anchor-id="crud-operations">CRUD operations</h3>
+<p>CRUD operations (Create, Read, Update, Delete) are at the heart of any interactive application with persistent data storage.</p>
+<p>Interacting with your database within Shiny begins to look like more rote Shiny code. I do not describe this process in much detail since it is quite specific to what your app is trying to accomplish, but <a href="https://www.tychobra.com/posts/2020-01-29-shiny-crud-traditional/">this blog post</a> provides some nice examples.</p>
+<p>In short:</p>
+<ul>
+<li>To add records to the table, you can use <code>DBI::dbAppendTable()</code></li>
+<li>To remove records from the table, you can construct a <code>DELETE FROM my_data WHERE &lt;conditions&gt;</code> statement and run it with <code>DBI::dbExecute()</code></li>
+</ul>
+<p>Some cautions on the second piece are included in the “Key Issues” section.</p>
+</section>
+</section>
+<section id="key-issues" class="level2">
+<h2 class="anchored" data-anchor-id="key-issues">Key Issues</h2>
+<p>Adding a permanent data store to your application can open up a lot of exciting new functionality. However, it may create some challenges that your typical data analyst or Shiny developer has not faced before. In this last section, I highlight a few key issues that you should be aware of and provide some recommendations.</p>
+<section id="securing-data-transfer" class="level3">
+<h3 class="anchored" data-anchor-id="securing-data-transfer">Securing data transfer</h3>
+<p>Already, we have one safeguard in place for data security since our application is the only Trusted Source able to interface with our database.</p>
+<p>But, just like we secure our database credentials, it becomes important to think about securing the database itself. This is made easy with DigitalOcean because data is <a href="https://docs.digitalocean.com/products/databases/">end-to-end encrypted</a>, but depending on how or by whom your data is managed, this is something to bear in mind.</p>
+</section>
+<section id="securing-database-credentials" class="level3">
+<h3 class="anchored" data-anchor-id="securing-database-credentials">Securing database credentials</h3>
+<p>No matter how safe the data itself is, it still may be at risk if anyone can obtain our database credentials.</p>
+<p>Previously, I demonstrated how to connect to a database from R like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">host   =</span> <span class="st">"aabc.b.db.ondigitalocean.com"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">dbname =</span> <span class="st">"db"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">user      =</span> <span class="st">"db"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">password  =</span> <span class="st">"abc123"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">port     =</span> <span class="dv">25060</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>However, you should never ever put your password in plaintext like this. Instead, you can use <em>environment variables</em> to store the value of sensitive credentials like a password or even a username like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">host   =</span> <span class="st">"aabc.b.db.ondigitalocean.com"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">dbname =</span> <span class="st">"db"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">user      =</span> <span class="st">"db"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">password  =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PASS"</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">port     =</span> <span class="dv">25060</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, you can define that same environment variable more securely in <a href="https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/">within the App Platform</a>.</p>
+</section>
+<section id="securing-input-integrity-sql-injection" class="level3">
+<h3 class="anchored" data-anchor-id="securing-input-integrity-sql-injection">Securing input integrity (SQL injection)</h3>
+<p>Finally, it’s also important to be aware of <a href="https://www.w3schools.com/sql/sql_injection.asp">SQL injection</a> to ensure that your database does not get corrupted.</p>
+<p>SQL injection is usually discussed in the concept of malicious attacks. For example, W3 schools shows the following example where an application could be tricked into providing data on <em>all</em> users instead of a single user:</p>
+<pre><code>txtUserId = getRequestString("UserId");
+txtSQL = "SELECT * FROM Users WHERE UserId = " + txtUserId;</code></pre>
+<p>If the entered <code>UserId</code> is <code>"UserId = 105 OR 1=1"</code>, then the full SQL string will be <code>"SELECT * FROM Users WHERE UserId = 105 OR 1=1;"</code>.</p>
+<p>SQL injection is also at jokes you make have heard about “little Bobby Drop Tables” (<a href="https://xkcd.com/327/">xkcd</a>).</p>
+<p><img src="https://imgs.xkcd.com/comics/exploits_of_a_mom.png" class="img-fluid"></p>
+<p>That joke also, in some odd way, highlights that SQL injection need not be malicious. Rather, whenever we have software opened up to users beyond ourselves, they will likely use it in unexpected ways that push the system to its limit. For example, a user might try to enter or remove values from our database with double quotes, semicolons, or other features that mean something different to SQL than in human parlance and corrupt the code. Regardless of intent, we can protect against bad SQL that will break our application by using the <code>DBI::sqlInterpolate()</code> function.</p>
+<p>A demonstration of this function and how it can protect against bad query generation is shown in <a href="https://shiny.rstudio.com/articles/sql-injections.html">this post</a> by RStudio.</p>
+</section>
+<section id="dev-versus-prod" class="level3">
+<h3 class="anchored" data-anchor-id="dev-versus-prod">Dev versus Prod</h3>
+<p>However, you may have realized a flaw in this approach. Our entire app now depends on forming a connection <em>that can only be made by the in-production app.</em> This meams you cannot test your application locally. However, even if our local traffic was not categorically blocked, we wouldn’t <em>want</em> to test our app on the production database and recklessly add and remove entries.</p>
+<p>Instead, we would ideally have <em>separate</em> databases: one for development and one for production. Ideally, these would be the same type of database (e.g.&nbsp;both Postgres) to catch nuances of different SQL syntax and database operations. However, to keep things simpler (and cheaper), I decided to use an in-memory SQLite database locally.</p>
+<p>To accomplish this, I wrapped my database connection in a custom <code>db_con()</code> function that checks if the app is running in development or production (using <code>golem::app_prod()</code> which in turn checks the <code>R_CONFIG_ACTIVE</code> environment variable) and connects to different databases in either case. In the development case, it creates an in-memory SQLite database and remakes the empty table.</p>
+<p>(Another alternative to creating the database on-the-fly is to <a href="https://datacarpentry.org/R-ecology-lesson/05-r-and-databases.html#Creating_a_new_SQLite_database">pre-make a SQLite database</a> saved to a <code>.sqlite</code> file and connect to that. But for this example, my sample table is so simple, creating it manually takes a negligible amount of time and keeps things quite readable, so I left it as-is.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>db_con <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">prod =</span> golem<span class="sc">::</span><span class="fu">app_prod</span>()) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (prod) {</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">Postgres</span>(),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">host   =</span> <span class="st">"abc.b.db.ondigitalocean.com"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                          <span class="at">dbname =</span> <span class="st">"db"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                          <span class="at">user      =</span> <span class="st">"db"</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                          <span class="at">password  =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PASS"</span>),</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">port     =</span> <span class="dv">25060</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopifnot</span>( <span class="fu">require</span>(<span class="st">"RSQLite"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>) )</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(<span class="fu">SQLite</span>(), <span class="st">":memory:"</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="st">"a"</span>, <span class="at">z =</span> <span class="fu">as.Date</span>(<span class="st">"2022-01-01"</span>))</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    DBI<span class="sc">::</span><span class="fu">dbWriteTable</span>(con, <span class="st">"my_data"</span>, df)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(con)</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="managing-connections" class="level3">
+<h3 class="anchored" data-anchor-id="managing-connections">Managing connections</h3>
+<p>So, you’ve built a robust app that can run against a database locally or on your production server. Great! It’s time to share your application with the world. But what if it is <em>so</em> popular that you have a lot of concurrent users and they are all trying to work with the database at once?</p>
+<p>To maintain good application performance, you have to be careful about managing the database connection objects that you create (with <code>DBI::dbConnect()</code>) and to close them when you are doing using them.</p>
+<p>If this sounds manual and tedious, you’re in luck! The <a href="https://rstudio.github.io/pool/">{pool}</a> package adds a layer of abstraction to manage a <em>set</em> of connections and execute new queries to an available idle collection. Full examples are given on the package’s website, but in short <code>{pool}</code> is quite easy to implement due to it’s <code>DBI</code>-like syntax. You can replace <code>DBI::dbConenct()</code> with <code>pool::dbPool()</code> and proceed as usual!</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left"><span class="faux-block"> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> Creative Commons CC BY 4.0</a></span><br>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><span class="faux-block">Made with and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at GitHub</a></span></div>
+  </div>
+</footer>
+
+
+
+</body></html>

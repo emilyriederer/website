@@ -1,0 +1,21 @@
+---
+title: "Top Talks"
+listing:
+  contents:
+    - "causal-design-patterns/*.qmd"
+    - "dbtplyr/*.qmd"
+    - "organization/*.qmd"
+    - "rmarkdown-driven-development/*.qmd"
+  sort: "date desc"
+  type: default
+  categories: true
+  fields: [image, date, title, description, categories]
+  page-size: 5
+  image-align: left
+  filter-ui: true
+page-layout: full
+title-block-banner: true
+comments: false
+---
+
+

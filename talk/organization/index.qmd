@@ -1,0 +1,38 @@
+---
+title: "oRganization: Design patterns for internal packages"
+description: An overview of the unique design challenges and opportunities when building R packages for use inside of a single organization versus open-source. By using the jobs-to-be-done framework, this talk explores how internal packages can be better teammates by following specific design patterns for API design, testing, documentaiton, and more.   
+location: rstudio::conf(2021) | csv,conf,v6 | EARL Boston 2021
+image: featured.png
+categories: [workflow, pkgdev, rstats]
+date: 2021-01-21
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=E887K1au5ug) </span>   
+<span><i class = 'bi bi-pencil'></i> [Post - A Team of Packages](/post/team-of-packages/) </span>    
+
+## Abstract
+
+Many case studies demonstrate the benefits of organizations developing internal R packages. But how do you move your organization from individual internal packages to a coherent internal ecosystem?
+
+In this talk, I analyze how internal packages differ from open-source, publicly available packages in their ideal level of abstraction and their understanding of specific user needs. By applying the jobs-to-be-done framework, I envision internal packages as teammates annd consider the many roles they can play, from unblocking IT challenges to democratizing tribal knowledge.
+
+To help our team of packages succeed, we explore a wide variety of concrete design choices that developers of internal packages may make -- spanning functions, documentation, testing, and more. 
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{<video https://www.youtube.com/watch?v=E887K1au5ug>}}
+
+:::
+
+ 

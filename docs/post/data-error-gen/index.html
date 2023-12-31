@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2021-05-27">
+<meta name="description" content="A data consumer’s guide to validating data based on the failure modes data producer’s try to avoid">
+
+<title>Understanding the data (error) generating processes for data validation | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="Understanding the data (error) generating processes for data validation | Emily Riederer">
+<meta name="twitter:description" content="A data consumer’s guide to validating data based on the failure modes data producer’s try to avoid">
+<meta name="twitter:image" content="https://emilyriederer.github.io/post/data-error-gen/featured.png">
+<meta name="twitter:image-height" content="744">
+<meta name="twitter:image-width" content="1725">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html" rel="" target="">
+ <span class="dropdown-text">Top</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../talk/index.html" rel="" target="">
+ <span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Understanding the data (error) generating processes for data validation</h1>
+                  <div>
+        <div class="description">
+          A data consumer’s guide to validating data based on the failure modes data producer’s try to avoid
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">data</div>
+                <div class="quarto-category">elt</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 27, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-four-dgps-for-data-management" id="toc-the-four-dgps-for-data-management" class="nav-link active" data-scroll-target="#the-four-dgps-for-data-management">The Four DGPs for Data Management</a></li>
+  <li><a href="#data-collection" id="toc-data-collection" class="nav-link" data-scroll-target="#data-collection">Data Collection</a>
+  <ul class="collapse">
+  <li><a href="#what-counts" id="toc-what-counts" class="nav-link" data-scroll-target="#what-counts">What Counts</a></li>
+  <li><a href="#what-doesnt-count" id="toc-what-doesnt-count" class="nav-link" data-scroll-target="#what-doesnt-count">What Doesn’t Count</a></li>
+  <li><a href="#the-many-meanings-of-null" id="toc-the-many-meanings-of-null" class="nav-link" data-scroll-target="#the-many-meanings-of-null">The Many Meanings of Null</a></li>
+  </ul></li>
+  <li><a href="#data-loading" id="toc-data-loading" class="nav-link" data-scroll-target="#data-loading">Data Loading</a>
+  <ul class="collapse">
+  <li><a href="#data-load-failure-modes" id="toc-data-load-failure-modes" class="nav-link" data-scroll-target="#data-load-failure-modes">Data Load Failure Modes</a></li>
+  <li><a href="#multi-source" id="toc-multi-source" class="nav-link" data-scroll-target="#multi-source">Multi-Source</a></li>
+  <li><a href="#partial-loads" id="toc-partial-loads" class="nav-link" data-scroll-target="#partial-loads">Partial Loads</a></li>
+  <li><a href="#delayed-or-transient-records" id="toc-delayed-or-transient-records" class="nav-link" data-scroll-target="#delayed-or-transient-records">Delayed or Transient Records</a></li>
+  </ul></li>
+  <li><a href="#data-transformation" id="toc-data-transformation" class="nav-link" data-scroll-target="#data-transformation">Data Transformation</a>
+  <ul class="collapse">
+  <li><a href="#pre-aggregation" id="toc-pre-aggregation" class="nav-link" data-scroll-target="#pre-aggregation">Pre-Aggregation</a></li>
+  <li><a href="#field-encoding" id="toc-field-encoding" class="nav-link" data-scroll-target="#field-encoding">Field Encoding</a></li>
+  <li><a href="#updating-transformations" id="toc-updating-transformations" class="nav-link" data-scroll-target="#updating-transformations">Updating Transformations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<style>
+table {
+  width: 100%;
+}
+
+table strong { 
+   color: darkred;
+}
+
+</style>
+<p>Statistics literature often makes reference to the <em>data generating process</em> (DGP): an idealized description of a real-world system responsible for producing observed data. This leads to a modeling approach focused on describing that system as opposed to blindly fitting observations to a common functional form.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>As a trivial example, if one wished to model the height of a group of adults, they might suppose that the height of women and the height of men each is normally distributed with separate means and standard deviations. Then the overall distribution of population heights could be models as a mixture of samples from these two distributions.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>However, DGPs are not only useful for modeling. <strong>Conceptualizing the DGP of our observations can also lead to more principled data validation</strong> if we broaden the scope of the DGP to include the subsequent <em>manufacturing</em> of the data not just the originating <em>mechanism</em>.</p>
+<p>Unfortunately, consumers of analytical data may not always be familiar with the craft of data production (including data engineering, data modeling, and data management). Without an understanding of the general flow of data processing between collection and publication to a data warehouse, data consumers are less able to theorize about failure modes. Instead, similarly to blindly fitting models without an underlying theory, consumers may default to cursory checks of summary statistics without hypotheses for the kind of errors they are trying to detect or how these checks might help them.</p>
+<p>This post explores the DGP of system-generated data and the common ways that these processes can introduce risks to data quality. As we discuss data validation, we will make reference to the six dimensions of data quality defined by <a href="https://damauk.wildapricot.org/resources/Documents/DAMA%20UK%20DQ%20Dimensions%20White%20Paper2020.pdf">DAMA</a>: completeness, uniqueness, timeliness, validity, accuracy, and consistency. Along the way, we will explore how understanding how understanding key failure modes in the data production process can lead to more principled analytical data validation.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<section id="the-four-dgps-for-data-management" class="level2">
+<h2 class="anchored" data-anchor-id="the-four-dgps-for-data-management">The Four DGPs for Data Management</h2>
+<p>To better theorize about data quality issues, it’s useful to think of four DGPs: the real-world DGP, the data collection/extraction DGP<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>, the data loading DGP, and the data transformation DGP.</p>
+<p><img src="dgp.png" class="img-fluid"></p>
+<p>For example, consider the role of each of these four DGPs for e-commerce data:</p>
+<ul>
+<li><strong>Real-world DGP</strong>: Supply, demand, marketing, and a range of factors motivate a consumer to visit a website and make a purchase</li>
+<li><strong>Data collection DGP</strong>: Parts of the website are instrumented to log certain customer actions. This log is then extracted from the different operational system (login platforms, payment platforms, account records) to be used for analysis</li>
+<li><strong>Data loading DGP</strong>: Data recorded by different systems is moved to a data warehouse for further processing through some sort of manual, scheduled, or orchestrated job. These different systems may make data available at different frequencies.</li>
+<li><strong>Data transformation DGP</strong>: To arrive at that final data presentation requires creating a <a href="https://en.wikipedia.org/wiki/Data_model">data model</a> to describe domain-specific attributes with key variables crafted with data transformations</li>
+</ul>
+<p>Or, consider the role of each of these four DGPs for subway ridership data<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>:</p>
+<ul>
+<li><strong>Real-world DGP</strong>: Riders are motivated to use public transportation to commute, run errands, or visit friends. Different motivating factors may cause different weekly and annual seasonality</li>
+<li><strong>Data collection DGP</strong>: To ride the subway, riders go to a station and enter and exit through turnstiles. The mechanical rotation of the turnstile caused by a rider passing through is recorded</li>
+<li><strong>Data loading DGP</strong>: Data recorded at each turnstile is collected through a centralized computer system at the station. Once a week, each station uploads a flat file of this data to a data lake owned by the city’s Department of Transportation</li>
+<li><strong>Data transformation DGP</strong>: Turnstiles from different companies may have different data formats. Transformation may include harmonizing disparate sources, coding system-generated codes (e.g.&nbsp;Station XYZ) to semantically meaningful names (e.g.&nbsp;Main Street Station), and publishing a final unified representation across stations and across time</li>
+</ul>
+<p>In the next sections, we’ll explore how understanding key concepts about each of these DGPs can help build a consumers’ intuition on where to look for problems.</p>
+</section>
+<section id="data-collection" class="level2">
+<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
+<p>Data collection is necessarily the first step in data production, but the very goal of data collection: translating complex human concepts into tabular data records is fraught with error. Data collection is effectively dimensionality reduction, and just like statistical dimensionality reduction, it must sometimes sacrifice accuracy for clarity.</p>
+<p>This tradeoff makes data collection vulnerable to one of the largest risks to data validity: not that the data itself is incorrect <em>given its stated purpose</em> but rather that users misconstrue the population or metrics it includes. Thus, understanding what systems are intending to capture, publish, and extract and how they chose to encode information for those observations is essential for data validation and subsequent analysis.</p>
+<p>Data collection can happen in countless different ways: experimentation, surveys, observation, sensors, etc. In many business settings, data is often extracted from source systems whose primary purpose is to execute some sort of real-world process.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> Such systems may naturally collect data for operational purposes or may be <em>instrumented</em> to collect and log data as they are used. This production data is then often extracted from a source system to an alternative location such as a data warehouse for analysis.</p>
+<section id="what-counts" class="level3">
+<h3 class="anchored" data-anchor-id="what-counts">What Counts</h3>
+<p>One of the tricky nuances of data collection is understanding what precisely is getting captured and logged in the first place.</p>
+<p>Consider something as simple as a login system where users must enter their credentials, endure a Captcha-like verification process to prove that they are not a robot, and enter a multi-factor authentication code.</p>
+<p><img src="login-log.png" class="img-fluid"></p>
+<p>Which of these events gets collected and recorded has a significant impact on subsequent data processing. In a technical sense, no inclusion/exclusion decision here is <em>incorrect</em>, persay, but if the producers’ choices don’t match the consumers’ understandings, it can lead to misleading results.</p>
+<p>For example, an analyst might seek out a <code>logins</code> table in order to calculate the rate of successful website logins. Reasonably enough, they might compute this rate as the sum of successful events over the total. Now, suppose two users attempt to login to their account, and ultimately, one succeeds in accessing their private information and the other doesn’t. The analyst would probably hope to compute and report a 50% login success rate. However, depending on how the data is represented, they could quite easily compute nearly any value from 0% to 100%.</p>
+<p><img src="login-rate.png" class="img-fluid"></p>
+<ul>
+<li><strong>Per Attempt</strong>: If data is logged once per overall login attempt, successful attempts only trigger one event, but a user who forgot their password may try (and fail) to login multiple times. In the case illustrated above, that deflates the successful login rate to <strong>25%</strong>.</li>
+<li><strong>Per Event</strong>: If the logins table contains a row for every login-related event, each ‘success’ will trigger a large number of positive events and each ‘failure’ will trigger a negative event preceded by zero or more positive events. In the case illustrated below, this inflates our successful login rate to <strong>86%</strong>.</li>
+<li><strong>Per Conditional</strong>: If the collector decided to only look at downstream events, perhaps to circumvent record duplication, they might decide to create a record only to denote the success or failure of the final step in the login process (MFA). However, login attempts that failed an upstream step would not generate any record for this stage because they’ve already fallen out of the funnel. In this case, the computed rate could reach <strong>100%</strong></li>
+<li><strong>Per Intermediate</strong>: Similarly, if the login was defined specifically as successful password verification, the computed rate could his <strong>100%</strong> even if some users subsequently fail MFA</li>
+</ul>
+<table class="table">
+<thead>
+<tr class="header">
+<th></th>
+<th>Session</th>
+<th>Attempt</th>
+<th>Attempt</th>
+<th>Outcome</th>
+<th>Intermediate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Success</td>
+<td>1</td>
+<td>1</td>
+<td>6</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>Total</td>
+<td>2</td>
+<td>4</td>
+<td>7</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>Rate</td>
+<td>50%</td>
+<td><strong>25%</strong></td>
+<td><strong>86%</strong></td>
+<td><strong>100%</strong></td>
+<td><strong>100%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>While humans have a shared intuition of what concepts like a user, session, or login are, the act of collecting data forces us to map that intuition onto an atomic event . Any misunderstanding in precisely what that definition is can have massive impact on the perceived data quality; “per event” data will appear heavily duplicated if it is assumed to be “per session” data.</p>
+<p>In some cases, this could be obvious to detect. If the system outputs fields that are incredibly specific (e.g.&nbsp;with some hyperbole, imagine a <code>step_in_the_login_process</code> field with values taking any of the human-readable descriptions of the fifteen processes listed in the image above), but depending how this source is organized (e.g.&nbsp;in contrast to above, if we only have fields like <code>sourceid</code> and <code>processid</code> with unintuitive alphanumeric encoded values) and defined, it could be nearly impossible to understand the nuances without uncovering quality metadata or talking to a data producer.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
+</section>
+<section id="what-doesnt-count" class="level3">
+<h3 class="anchored" data-anchor-id="what-doesnt-count">What Doesn’t Count</h3>
+<p>Along with thinking about what <em>does</em> count (or gets logged), it’s equally important to understand what systemically does not generate a record. Consider users who have the intent or desire to login (motivated by a real-world DGP) but cannot find the login page, or users who load the login page but never click a button because they know that they’ve forgotten their password and see no way to request it. Often, some of these corner cases may be some of the most critical and informative (e.g.&nbsp;here, demonstrating some major flaws in our UI). It’s hard to <em>computationally</em> validate what data doesn’t exist, so <em>conceptual</em> data validation is critical.</p>
+</section>
+<section id="the-many-meanings-of-null" class="level3">
+<h3 class="anchored" data-anchor-id="the-many-meanings-of-null">The Many Meanings of Null</h3>
+<p>Related to the presence and absence of full <em>records</em> is the presence or absence of individual <em>fields</em>. If records contain some but not all relevant information, they may be published with explicitly missing fields or the full record may not be published at all.</p>
+<p><img src="missing-imp-exp.png" class="img-fluid"></p>
+<p>Understanding what the system implies by each <em>explicitly</em> missing data field is also critical for validation and analysis. Checks for data completeness usually include counting null values, but null data isn’t always incorrect. In fact, null data can be highly informative if we know what it means. Some meanings of null data might include:</p>
+<ul>
+<li><strong>Field is not relevant</strong>: Perhaps our <code>logins</code> table reports the mobile phone operating system (iOS or Android) that was used to access the login page to track platform-specific issues. However, there is no valid value for this</li>
+<li><strong>Relevant value is not known</strong>: Our <code>logins</code> table might also have an <code>account_id</code> field which attempts to match login attempts to known accounts/customers using different metadata like cookies or IP addresses. In theory, almost everyone trying to log in should have an account identifier, but our methods may not be good enough to identify them in all cases</li>
+<li><strong>Relevant value is null</strong>: Of course, sometimes someone without an account at all might try to log in for some reason. In this case, the correct value for an <code>account_id</code> field truly <em>is</em> null</li>
+<li><strong>Relevant value was recorded incorrectly</strong>: Sometimes systems have glitches. Without a doubt, every single login attempt <em>should</em> have a timestamp, but such a field could be null if this data was somehow lost or corrupted at the source</li>
+</ul>
+<p>Similarly, different systems might or might not report out these nulls in different ways such as:</p>
+<ul>
+<li><strong>True nulls</strong>: Literally the entry in the resulting dataset is null</li>
+<li><strong>Null-like non-nulls</strong>: Blank values like an empty string (<code>''</code>) that contain a null amount of information but won’t be detected when counting null values</li>
+<li><strong>Placeholder values</strong>: Meaningless values like an <code>account_id</code> of <code>00000000</code> for all unidentified accounts which preserve data <em>validity</em> (the expected structure) but have no intrinsic meaning</li>
+<li><strong>Sentinel/shadow values</strong>: Abnormal values which attempt to indicate the reasons for null-ness such as an <code>account_id</code> of <code>-1</code> when no browser cookies were found or <code>-2</code> when cookies were found but did not help link to any specific customer record</li>
+</ul>
+<p>Each of these encoding choices changes the definitions of appropriate completeness and validity for each field and, even more critically, impacts the expectations and assertions we should form for data accuracy. We can’t expect 100% completeness if nulls are a relevant value; we can’t check validity of ranges as easily if sentinel values are used with values that are outside the normal range (hopefully, or we have much bigger problems!) So, understanding how upstream systems <em>should</em> work is essential for assessing if they <em>do</em> work.</p>
+</section>
+</section>
+<section id="data-loading" class="level2">
+<h2 class="anchored" data-anchor-id="data-loading">Data Loading</h2>
+<p>Checking that data contains expected and <em>only</em> expected records (that is, completeness, uniqueness, and timeliness) is one of the most common first steps in data validation. However, the superficially simple act of loading data into a data warehouse or updating data between tables can introduce a variety of risks to data completeness which require different strategies to detect. Data loading errors can result in data that is stale, missing, duplicate, inconsistently up-to-date across sources, or complete but for only a subset of the range you think.</p>
+<p>While the data quality principles of <strong>completeness</strong>, <strong>uniqueness</strong>, and <strong>timeliness</strong> would suggest that records should exist once and only once, the reality of many haphazard data loading process means data may appear sometime between zero and a handful of times. Data loads can occur in many different ways. For example, they might be:</p>
+<ul>
+<li>manually executed</li>
+<li>scheduled (like a <a href="https://en.wikipedia.org/wiki/Cron">cron</a> job)</li>
+<li>orchestrated (with a tool like <a href="https://airflow.apache.org/">Airflow</a> or <a href="https://www.prefect.io/">Prefect</a>)</li>
+</ul>
+<p>No approach is free from challenges. For example, scheduled jobs risk executing before an upstream process has completed (resulting in stale or missing data); poorly orchestrated jobs may be prevented from working due to one missing dependency or might allow multiple stream to get out of sync (resulting in multisource missing data). Regardless of the method, all approaches must be carefully configured to handle failures gracefully to avoid creating duplicates, and the frequency at which they are executed may cause partial loading issues if it is incompatible with the granularity of the source data.</p>
+<section id="data-load-failure-modes" class="level3">
+<h3 class="anchored" data-anchor-id="data-load-failure-modes">Data Load Failure Modes</h3>
+<p>For example, suppose in the diagram below that each row of boxes represents one day of records in a table.</p>
+<p><img src="data-load.png" class="img-fluid"></p>
+<ul>
+<li><strong>Stale data</strong> occurs when the data is not as up-to-date as would be expected from is regular refresh cadence. This could happen if a manual step was skipped, a scheduled job was executed before the upstream source was available, or orchestrated data checks found errors and quarantined new records</li>
+<li><strong>Missing data</strong> occurs when one data load fails but subsequent loads have succeeded</li>
+<li><strong>Duplicate data</strong> occurs when one data load is executed multiple times</li>
+<li><strong>Multisource missing data</strong> occurs when a table is loaded from multiple sources, and some have continued to update as expected while others have not</li>
+<li><strong>Partial data</strong> occurs when a table is loaded correctly as intended by the producer but contains less data than expected by the consumer (e.g.&nbsp;a table loads ever 12 hours but because there is some data for a given date, the user assumes that all relevant records for that date have been loaded)</li>
+</ul>
+<p>The differences in these failure modes become important when an analyst attempts to assess data completeness. One of the first approaches an analyst might consider is simply to check the <code>min()</code> and <code>max()</code> event dates in their table. However, this can only help detect stale data. To catch missing data, an analyst might instead attempt to count the number of <code>distinct</code> days represented in the data; to detect duplicate data, that analyst might need to count records by day and examine the pattern.</p>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Stale</th>
+<th>Missing</th>
+<th>Duplicate</th>
+<th>Multi</th>
+<th>Partial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>min(date)</code><br> <code>max(date)</code></td>
+<td><strong>1<br>3</strong></td>
+<td>1<br>4</td>
+<td>1<br>4</td>
+<td>1<br>4</td>
+<td>1<br>4</td>
+</tr>
+<tr class="even">
+<td><code>count(distinct date)</code></td>
+<td><strong>3</strong></td>
+<td><strong>3</strong></td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td><code>count(1) by date</code></td>
+<td><strong>100<br>100<br>100<br>0</strong></td>
+<td><strong>100<br>100<br>0<br>100</strong></td>
+<td><strong>100<br>100<br>200<br>100</strong></td>
+<td>100<br>100<br>66<br>66</td>
+<td>100<br>100<br>100<br>50</td>
+</tr>
+<tr class="even">
+<td><code>count(1)</code><br> <code>count(distinct PKs)</code></td>
+<td>300<br>300</td>
+<td>300<br>300</td>
+<td><strong>400<br>300</strong></td>
+<td>332<br>332</td>
+<td>350<br>350</td>
+</tr>
+</tbody>
+</table>
+<p>In a case like the toy example above where the correct number of rows per date is highly predictable and the number of dates is small, such eyeballing is feasible; however when the expected number of records varies day-to-day or time series are long, this approach becomes subjective, error-prone, and intractable. Additionally, it still might be hard to catch errors in mutli-source data or partial loads if the lower number of records was still within the bounds of reasonable deviation for a series. These last two types deserve further exploration.</p>
+</section>
+<section id="multi-source" class="level3">
+<h3 class="anchored" data-anchor-id="multi-source">Multi-Source</h3>
+<p>A more effective strategy for assessing data completeness requires a better understanding of how data is being collected and loaded. In the case of multi-source data, one single source stopping loading may not be a big enough change to disrupt aggregate counts but could still jeopardize meaningful analysis. It would be more useful to conduct completeness checks by <em>subgroup</em> to identify these discrepancies.</p>
+<p>But not any subgroup will do; the subgroup must correspond to the various data sources. For example, suppose we run an e-commerce store and wish to look at sales from the past month by category. Naturally, we might think to check the completeness of the data by category. But what if sales data is sourced from three separate locations: our Shopify site (80%), our Amazon Storefront (15%), and phone sales (5%). Unless we explicitly check completeness by channel (a dimension we don’t particularly care about for our analysis), it would be easy to miss if our data source for phone sales has stopped working or loads at a different frequency.</p>
+<p>Another interesting aspect of multi-source data, is multiple sources can contribute either to different <em>rows/records</em> or different <em>columns/variables</em>. Table-level frequency counts won’t help us in the latter case since other sources might create the right total number of records but result in some specific fields in those records being missing or inaccurate.</p>
+</section>
+<section id="partial-loads" class="level3">
+<h3 class="anchored" data-anchor-id="partial-loads">Partial Loads</h3>
+<p>Partial loads really are not data errors at all, but are still important to detect since they can jeopardize an analysis. A common scenario might occur if a job loads new data every 12 hours (say, data from the morning and afternoon of day n-1 loads on day n at 12AM and 12PM, respectively). An analyst retrieving data at 11AM may be concerned to see an approximate ~50% drop in sales in the past day, despite confirming that their data looks to be “complete” since the maximum record date is, in fact, day n-1.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
+</section>
+<section id="delayed-or-transient-records" class="level3">
+<h3 class="anchored" data-anchor-id="delayed-or-transient-records">Delayed or Transient Records</h3>
+<p>The interaction between choices made in the data collection and data loading phases can introduce their own sets of problems.</p>
+<p>Consider an <code>orders</code> table for an e-commerce company that analysts may use to track customer orders. It might contain one record per <code>order_id</code> x <code>event</code> (placement, processing, shipment), one record per order placed, one record per order shipping, or one record per order with a <code>status</code> field that changes over time to denote the order’s current stage of life.</p>
+<p><img src="order-log.png" class="img-fluid"></p>
+<p>Any of these modeling choices seem reasonable and the difference between them might appear immaterial. But consider the <em>collection</em> choice to record and report <em>shipped</em> events. Perhaps this might be operationally easier if shipment come from one source system whereas orders could come from many. However, an interesting thing about shipments is that they are often lagged in a variable way from the order date.</p>
+<p><img src="order-date.png" class="img-fluid"></p>
+<p>Suppose the e-commerce company in question offers three shipping speeds at checkout. The chart below shows the range of possible shipment dates based on the order dates for the three different speeds (shown in different bars/colors). How might this effect our perceived data quality?</p>
+<ul>
+<li>Order data could appear <strong>stale</strong> or not timely since orders with a given <code>order_date</code> would only load days later once shipped</li>
+<li>Similar to <strong>missing</strong> or <strong>multisource</strong> data, the data <em>range</em> in the table could lead to deceptive and incomplete data validation because some orders from a later order date might ship (and thus be logged) before all orders from a previous order date</li>
+<li>Put another way, we could have multiple order dates demonstrating <strong>partial</strong> data loads</li>
+<li>These features of the data might behave inconsistently across time due to seasonality (e.g.&nbsp;no shipping on weekends or federal holidays), so heuristics developed to clean the data based on a small number of observations could fail</li>
+<li>From an analytical perspective, orders with faster shipping would be disproportionately overrepresented in the “tail” (most recent) data. If shipping category correlated with other characteristics like total order spend, this could create an artificial trend in the data</li>
+</ul>
+<p>Once again, understanding that data is <em>collected</em> at point of shipment and reasoning how shipment timing varies and impacts <em>loading</em> is necessary for successful validation.</p>
+</section>
+</section>
+<section id="data-transformation" class="level2">
+<h2 class="anchored" data-anchor-id="data-transformation">Data Transformation</h2>
+<p>Finally, once the data is roughly where we want it, it likely undergoes many transformations to translate all of the system-generated fields we discussed in data collection into semantically-relevant dimensions for analytical consumers. Of course, the types of transformations that could be done are innumerable with far more variation than data loading. So, we’ll just look at a few examples of common failure patterns.</p>
+<section id="pre-aggregation" class="level3">
+<h3 class="anchored" data-anchor-id="pre-aggregation">Pre-Aggregation</h3>
+<p>Data transformations may include aggregating data up to higher levels of granularity for easier analysis. For example, a transformation might add up item-level purchase data to make it easier for an analyst to look at spend per <em>order</em> of a specific user.</p>
+<p>Data transformations not only transform our data, but they also transform how the dimensions of data quality manifest. If data with some of the <strong>completeness</strong> or <strong>uniqueness</strong> issues we discussed with data loading is pre-aggregated, these problems can turn into problems of <strong>accuracy</strong>. For example, the duplicate or partial data loads that we discussed when aggregated could suggest inaccurately high or low quantities respectively.</p>
+<p><img src="completeness-accuracy.png" class="img-fluid"></p>
+</section>
+<section id="field-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="field-encoding">Field Encoding</h3>
+<p>When we assess data consistency across tables,</p>
+<p>Categorical fields in a data set might be created in any number of ways including:</p>
+<ul>
+<li>Directly taken from the source</li>
+<li>Coded in a transformation script</li>
+<li>Transformed with logic in a shared user-defined function (<a href="https://docs.snowflake.com/en/sql-reference/user-defined-functions.html">UDFs</a>) or <a href="https://docs.getdbt.com/docs/building-a-dbt-project/jinja-macros/#macros">macro</a></li>
+<li>Joined from a shared look-up table</li>
+</ul>
+<p>Each approach has different implications on data consistency and usability.</p>
+<p><img src="field-encoding.png" class="img-fluid"></p>
+<p>Using fields from the source simply is what it is – there’s no subjectivity or room for manual human error. If multiple tables come from the same source, it’s likely but not guaranteed that they will be encoded in the same way.</p>
+<p>Coding transformations in the ELT process is easy for data producers. There’s no need to coordinate across multiple processes or use cases, and the transformation can be immediately modified when needed. However, that same lack of coordination can lead to different results for fields that should be the same.</p>
+<p>Alternatively, macros, UDFs, and look-up tables provided centralized ways to map source data inputs to desired analytical data outputs in a systemic and consistent way. Of course, centralization has its own challenges. If something in the source data changes, the process of updating a centralized UDF or look-up table may be slowed down by the need to seek consensus and collaborate. So, data is more <em>consistent</em> but potentially less <em>accurate</em>.</p>
+<p>Regardless, such engineered values require scrutiny – paticularly if they are being used as a key to join multiple tables – and the distinct values in them should be carefully examined.</p>
+</section>
+<section id="updating-transformations" class="level3">
+<h3 class="anchored" data-anchor-id="updating-transformations">Updating Transformations</h3>
+<p>Of course, data consistency is not only a problem across different data sources but within one data source. Regardless of the method of field encoding used in the previous step, the intersection of data loading and data transformation strategies can introduce data consistency errors over time.</p>
+<p>Often, for computation efficiency, analytical tables are loaded using an <em>incremental</em> loading strategy. This means that only new records (determined by time period, a set of unique keys, or other criteria) from the upstream source are loaded to the downstream table. This is in contrast to a <em>full refresh</em> where the entire downstream table is recreated on each update.</p>
+<p><img src="incr-full-good.png" class="img-fluid"></p>
+<p>Incremental loads have many advantages. Rebuilding tables in entirety can be very time consuming and computationally expensive. In particular, in non-cloud data warehouses that are not able to scale computing power on demand, this sort of heavy duty processing job can noticeably drain resources from other queries that are trying to run in the database. Additionally, if the upstream staging data is ephemeral, fully rebuilding the table could mean failing to retain history.</p>
+<p>However, in the case that our data transformations change, incremental loads may introduce inconsistency in our data overtime as only new records are created and inserted with the new logic.</p>
+<p><img src="incr-full-bad-col.png" class="img-fluid"></p>
+<p>This is also a problem more broadly if some short-term error is discovered either with data loading or transformation in historical data. Incremental strategies may not always update to include the corrected version of the data.</p>
+<p><img src="incr-full-bad-row.png" class="img-fluid"></p>
+<p>Regardless, this underscores the need to validate entire datasets and to re-validate when repulling data.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In statistical modeling, the goal of considering the data generating process is not to understand an encode every single nuance of the complete DGP. After all, if all of that were known, we wouldn’t need a model: we could simulate the universe.</p>
+<p>Similarly for data validation, data consumers cannot know everything about the data production DGP without taking over the data production process in its entirety. But understanding some of the key failure modes faced by data producers can support data validation by helping consumers develop more realistic theories and expectations for the ways data may ‘break’ and how to refine strategies for detection them.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Michael Betancourt’s <a href="https://betanalpha.github.io/assets/case_studies/modeling_and_inference.html#1_probabilistic_modeling">tutorial</a> is a lovely example. Thanks to <a href="https://twitter.com/josephlewis1992">Joseph Lewis</a> on Twitter for the reference.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The open-source text <a href="https://web.stanford.edu/class/bios221/book/Chap-Mixtures.html"><em>Modern Statistics for Modern Biology</em></a> by Susan Holmes and Wolfgang Huber contains more examples.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Of course, strategies for collection, moving, transforming, storing, and validating data are innumerable. This is not intended to be a comprehensive guide on any of these topics but simply to illustrate why its important for analysts to keep in mind the <em>interplay</em> between these steps.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>I don’t mean to imply statisticians do not regularly think about the data collection DGP! The rich literatures on missing data imputation, censored data in survival analysis, and non-response bias is survey data collection are just a few examples of how carefully statisticians think about how data collection impacts analysis. I chose to break it out here to discuss the more technical aspects of collection<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Like NYC’s infamously messy <a href="http://web.mta.info/developers/turnstile.html">turnstile data</a>. I don’t claim to know precisely how this dataset is created, but many of the specific challenges it contains are highly relevant.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>As Angela Bass so aptly <a href="https://medium.com/@angebassa/data-alone-isnt-ground-truth-9e733079dfd4">writes</a>: “Data isn’t ground truth. Data are artifacts of systems.”<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>Of course, this isn’t the only potential type of issue in data collection. While <em>instrumentation</em> often leads to these definitional challenges, other types of data collection like <em>sensors</em> can have other types of challenges like systematically failing to capture certain observations. Consider, for example, bus ridership data collected as riders scan their pass upon entering. If students can ride free by showing the driver their student ID, these observations may be systemically not recorded. Again, relying on an <em>operational</em> system could lead <em>analytics</em> uses astray (like failing to account for peak usage times for this demographic.)<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>Of course, this concern could be somewhat easily allayed if they then checked a timestamp field, but such a field might not exists or might not have been used for validation since its harder to anticipate the appropriate maximum timestamp than it is the maximum date.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left"><span class="faux-block"> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> Creative Commons CC BY 4.0</a></span><br>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><span class="faux-block">Made with and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at GitHub</a></span></div>
+  </div>
+</footer>
+
+
+
+</body></html>

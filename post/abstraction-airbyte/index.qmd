@@ -1,0 +1,18 @@
+---
+title: "Crosspost: The Art of Abstraction in ETL"
+description: "Rounding out my three-part ETL series form Airbyte's developer blog"
+author: "Emily Riederer"
+date: "2023-05-03"
+categories: [data, workflow, elt]
+image: "featured.PNG"
+---
+
+![](featured.PNG)
+
+I previously shared the first in my three-part series of guest posts on Airbyte's developer blog about ETL. The first focused on errors in data extraction. The next two focused on the countless, small decisions one makes when loading data, and finally the DataOps burden to keep things up-and-running.
+
+This post serves only to serve as a quick reference to those posts:
+
+- [Dodging extraction errors](https://airbyte.com/blog/dodging-data-extraction-errors) 
+- [Making sound loading decisions](https://airbyte.com/blog/loading-data-in-etl)
+- [Keeping the good things going](https://airbyte.com/blog/etl-good-practices) 

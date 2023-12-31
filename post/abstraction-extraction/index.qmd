@@ -1,0 +1,27 @@
+---
+title: "The Art of Abstraction in ETL: Dodging Data Extraction Errors"
+description: "Cross-post from guest post on Airbyte's developer blog"
+author: "Emily Riederer"
+date: "2023-03-22"
+categories: [data, workflow, elt]
+image: "featured.PNG"
+---
+
+![](featured.png)
+
+Whenever I think about data developer tooling, I always like to take the perspectives of:
+
+1. Understanding what higher-level abstractions that it provides that help eliminate rote work or reduce mental overhead for data teams. In the spirit of [my post on the jobs-to-be-done of innersource analysis tools](/post/team-of-packages/), this can be framed as what 'jobs' that tool can be hired to do (and with what level of responsibility and autonomy)
+2. Interrogating the likely failure modes in the data stack based on the mechanics of the system, in the spirit of my [call for hypothesis-driven data quality testing](/post/grouping-data-quality/)
+
+These two themes motivated my recent guest post for Airbyte's developer blog on [The Art of Abstraction in ETL: Dodging Data Extraction Errors](https://airbyte.com/blog/dodging-data-extraction-errors). In this post, I argue:
+
+> Cooking a meal versus grocery shopping. Interior decorating versus loading the moving van. Transformation versus Extract-Load. It’s human nature to get excited by flashy outcomes and, consequently, the most proximate processes that evidently created them. 
+
+> This pattern repeats in the data world. Conferences, blog posts, corporate roadmaps, and even budgets focus on data transformation and the allure of “business insights” that might follow. The steps to extract and load data are sometimes discounted as a trivial exercise of scripting and scheduling a few API calls.
+
+> However, the elegance of Extract-Load is not just the outcome but the execution – the art of things not going wrong. Just as interior decorating cannot salvage a painting damaged in transit or a carefully planned menu cannot be prepared if half of the ingredients are out-of-stock, the Extract-Load steps of data processing have countless pitfalls which can sideline data teams from their ambitious agendas and aspirations. 
+
+I then go on to explore common challenges in successfully extracting data from an API and the abstractions that can aid in this process. 
+
+Please check out the full post on Airbyte's site! I hope it resonates.

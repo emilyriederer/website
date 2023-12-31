@@ -1,0 +1,390 @@
+---
+title: "Oh, I'm sure it's probably nothing"
+description: "How we do (or don't) think about null values and why the polyglot push makes it all the more important"
+author: "Emily Riederer"
+date: "2022-09-05"
+categories: [rstats, python, sql, data, data-disasters]
+image: "featured.jpg"
+---
+
+![ Photo credit to [Davide Ragusa](https://unsplash.com/@davideragusa) on Unsplash ](featured.jpg)
+
+
+```{r echo = FALSE}
+knit_print.data.frame = function(x, ...) {
+  res = paste(c("", "", knitr::kable(x, format = "markdown")), collapse = "\n")
+  knitr::asis_output(res)
+}
+
+registerS3method(
+  "knit_print", "data.frame", knit_print.data.frame,
+  envir = asNamespace("knitr")
+)
+
+custom_print <- function(x) {
+  paste(knitr::kable(x, format = "markdown"), collapse = "\n")
+}
+knitr::opts_knit$set(sql.print = custom_print)
+```
+
+```{r echo = FALSE}
+library(DBI)
+library(duckdb)
+con <- dbConnect(duckdb())
+df <- data.frame(x = c(1,2,NA), y = 3:5)
+df1 <- data.frame(A = 1, B = NA, X = TRUE)
+df2 <- data.frame(A = 1, B = NA, Y = FALSE)
+dbWriteTable(con, "tbl", df)
+dbWriteTable(con, "tbl1", df1)
+dbWriteTable(con, "tbl2", df2)
+```
+
+Language interoperability and different ways of enabling "polyglot" workflows have seemed to take centerstage in the data world recently:
+
+- [Apache Arrow](https://arrow.apache.org/) promises a language-independent memory format for interoperability, - [RStudio](https://www.rstudio.com/blog/rstudio-is-becoming-posit/) its rebranding as Posit to cement their place as a leader in language-agnostic data tooling, 
+- RStudio simultaneously announced [Quarto](https://quarto.org/) as an interoperable alternative to RMarkdown which will treat python, Julia, and JS as first-class citizens 
+- dbt has released its beta of [python models](https://docs.getdbt.com/docs/building-a-dbt-project/building-models/python-models) to extend is previously SQL-focused paradigm
+
+As a general matter, these are all exciting advances with great potential to aid in different workflows *when used judiciously*. However, it also poses the question: what cognitive burdens do we alleviate and which do we add when our projects begin to leverage multiple languages? 
+
+Despite common data analysis tools like SQL, R, and python being high-level languages with declarative interfaces (in the case of R's `tidyverse` and python's `pandas`), successful usage still requires understanding the underlying assumptions and operations of each tool. There is not such thing as a truly declarative language; only those that generally make decisions that the user likes well-enough to ask for the "what" and delegate the "how". These differences can emerge at many different levels: such as foundational issues like whether data structures are copied or modified in-place or broader design choices like default hyperparameters in machine learning libraries (e.g. python's `scikitlearn` notoriously uses regularized logistic regression as the default for logistic regression.) Somewhere along that spectrum lies the fickle issue of handling null values.
+
+In this post, I recap a quick case study of how incautious null handling risks data analysis validity. Then, taking a step back, I compare how R, python, and SQL behave differently when confront with null values and the implications for analysts switching between languages. 
+
+## TLDR
+
+A summary of these different behaviors is provided below:
+
+|  	| **R** 	| **python** 	| **SQL** 	|
+|:---:	|:---:	|:---:	|:---:	|
+| _Column Aggregation_ 	| NA 	| np: NA<br>pd: Value 	| Value 	|
+| _Row-wise Transformation_ 	| NA 	| NA 	| NA 	|
+| _Joining_ 	| Match by default 	| Match 	| No match 	|
+| _Filtering_ 	| No match 	| Match 	| No match 	|
+
+## Case Study
+
+Before comparing different languages, let's walk through a brief case study to see all the way that "lurking" nulls can surprise a junior analyst in any one language and observe a few different "contours" of the problem space.
+
+```{r echo = FALSE}
+df_monthly_spend <- data.frame(
+  STORE_ID = rep(c(1,2,NA), 3),
+  MONTH = rep(c(1, 2, 3), each = 3),
+  AMT_SPEND = c(rnorm(8, 100), NA)
+)
+
+df_monthly_return <- data.frame(
+  STORE_ID = rep(c(1,2,NA), 3),
+  MONTH = rep(c(1, 2, 3), each = 3),
+  AMT_RETURN = c(NA, rnorm(8, 100)/10)
+)
+
+dbWriteTable(con, "spend", df_monthly_spend, overwrite = TRUE)
+dbWriteTable(con, "returns", df_monthly_return, overwrite = TRUE)
+```
+
+Consider two tables in a retailer's database. The `spend` table reports total sales by month and store identifier (null if online).
+
+```{r echo = FALSE}
+print(df_monthly_spend)
+```
+
+Similarly, the `returns` table reports returned sales at the same grain.
+
+```{r echo = FALSE}
+print(df_monthly_return)
+```
+
+In both cases, nulls are used in the `'AMT_*'` fields to denote zeros for the respective `month x store_id` combinations`. 
+
+To calculate something as simple as the average gross spend per store across months, an analyst might attempt to write:
+
+```{sql connection = con}
+select 
+  store_id, 
+  avg(amt_spend)
+from spend
+group by 1
+order by 1
+```
+
+However, because SQL silently drops nulls in column aggregations, the online spend is not appropriately "penalized" for its lack of March spend. The averages across all three stores look nearly equal. 
+
+Not only is this answer "wrong", it can also be thought of as fundamentally changing the **computand** (a word I just made up. In statistics, we talk about estimands as "the conceptual thing we are trying to estimate with an estimator". Here, we aren't estimating anything -- just computing. But, there's still a concentual "thing we are trying to measure" and in this case, it's our *tools* and not our *methods* that are imposing assumptions on that) to one that answers a fundamentally different question:
+
+Instead of measuring "average monthly spend in Q1 by store", we're measuring "averaging monthly spend in Q1 by store *conditional on* there being spend". 
+
+To obtain the correct result, one would write:
+
+```{sql connection = con}
+select 
+  store_id, 
+  -- wrong answers
+  avg(amt_spend) as wrong1,  
+  sum(amt_spend) / count(amt_spend) as wrong2,
+  -- right answers
+  sum(amt_spend) / count(1) as right1,
+  avg(coalesce(amt_spend, 0)) as right2
+from spend
+group by 1
+order by 1
+```
+
+With a better understand of gross sales, the analyst might next proceed to compute net sales. 
+
+This first requires joining the `spend` and `returns` tables. Naively, they might attempt:
+
+```{sql connection = con}
+select 
+  spend.*,
+  returns.amt_return
+from 
+  spend
+  inner join
+  returns 
+  on
+  spend.store_id = returns.store_id and
+  spend.month = returns.month
+```
+
+However, this once again fails. Why? Although SQL handled nulls "permissively" when aggregating a column, it took a stricted stance when making the comparison on `spend.store_id = returns.store_id` in the join clause. SQL doesn't recognize different nulls as equal. To the extent than null means "I dunno" versus "The field is not relevant to this observation", it's reasonable that SQL should find it hard to decide whether two "I dunno"s are equal. 
+
+Once again, this isn't a "random" or inconsequential error. Continuing to use this corrupted dataset changes the computand from "net sales by month" to "net sales by month at physical retail locations".
+
+To remedy this, we can force `store_id` to take on a value:
+
+```{sql connection = con}
+select
+  spend.*,
+  returns.amt_return
+from 
+  spend
+  inner join
+  returns 
+  on
+  coalesce(spend.store_id, 999) = coalesce(returns.store_id, 999) and
+  spend.month = returns.month
+```
+
+And next we proceed with computing sales by month net of returns across all stores:
+
+```{sql connection = con}
+select
+  spend.month, 
+  sum(amt_spend - amt_return) as net_spend
+from 
+  spend
+  inner join
+  returns 
+  on
+  coalesce(spend.store_id, 999) = coalesce(returns.store_id, 999) and
+  spend.month = returns.month
+group by 1
+order by 1
+```
+
+However, by now, you should not be surprised that this result is also incorrect. If we inspect the sequence of computations, we realize that SQL is also stricter in its null handing in *rowwise computations* than *column-wise aggregations*. The subtraction of `amt_spend` and `amt_return` obliterates the total when either is null. So, we fail to include the gross spend at Store 1 in January simply because there were no returns (and vice versa for Internet sales in March).
+
+```{sql connection = con}
+select
+  spend.month, 
+  spend.store_id,
+  amt_spend,
+  amt_return,
+  amt_spend - amt_return as net_spend
+from 
+  spend
+  inner join
+  returns 
+  on
+  coalesce(spend.store_id, 999) = coalesce(returns.store_id, 999) and
+  spend.month = returns.month
+```
+
+A few ways to get the correct answer are shown below:
+
+```{sql connection = con}
+select
+  spend.month, 
+  sum(coalesce(amt_spend,0) - coalesce(amt_return,0)) as right1,
+  sum(amt_spend) - sum(amt_return) as right2
+from 
+  spend
+  inner join
+  returns 
+  on
+  coalesce(spend.store_id, 999) = coalesce(returns.store_id, 999) and
+  spend.month = returns.month
+group by 1
+order by 1
+```
+
+## Observations
+
+The preceding example hopefully illustrates a few points:
+
+- Nulls can cause issues in the most basic of analyses
+- Beyond causing random or marginal errors, null handling changes the questions being answered
+- Even within a language, null handling may feel inconsistent (w.r.t. strictness) across different operations
+
+So, with that, let's compare languages!
+
+
+## Comparison
+
+Below, we compare how R, SQL, and python handle column aggregation, rowwise transformation, joining, and filtering.
+
+### Aggregation
+
+SQL, as we saw before, simply ignores nulls in aggregation functions.
+
+```{sql, connection = con}
+select 
+  sum(x) as sum_x, 
+  sum(if(x is null,1,0)) as n_null_x
+from tbl
+```
+
+Built by and for statistician's, R is scandalized at the very idea of attempting to do math with null columns. For aggregation functions, it returns `NA` as a form of protest should any entry of the vector provided be null. (This can be overridden with the `na.rm` parameter.)
+
+```{r results = 'hold'}
+x <- c(1,2,NA)
+sum(x)
+
+df <- data.frame(x = x)
+dplyr::summarize(df, x = sum(x))
+```
+
+When it comes to python, well, it depends. Base and `numpy` operations act more like R whereas `pandas` aggregation acts more like SQL.
+
+```{python results = 'hold'}
+import pandas as pd
+import numpy as np
+x = [1,2,np.nan]
+y = [3,4,5]
+df = pd.DataFrame({'x':x,'y':y})
+sum(x)
+np.sum(x)
+df.agg({'x': ['sum']})
+```
+
+### Transformation
+
+All of SQL, R, and python return NA when `NA`s are used in atomic or rowwise transformations.
+
+In SQL:
+
+```{sql, connection = con}
+select *, x-y as z
+from tbl
+```
+
+In R:
+
+```{r results = 'hold'}
+df <- data.frame(x = c(1,2,NA), y = 3:5)
+dplyr::mutate(df, z = x-y)
+
+df$z <- with(df, x-y)
+df
+```
+
+In python:
+
+```{python results = 'hold'}
+np.array(x) - np.array(y)
+df.assign(z = lambda d: d.x - d.y)
+```
+
+### Joining 
+
+The situation with joins may feel like the opposite of aggregation. Here, R and python's most popular data wrangling packages are more permissive than SQL.
+
+As we saw in the case study, SQL does not match on nulls.
+
+Consider `tbl1` and `tbl2` as shown below:
+
+```{sql, connection = con}
+select * from tbl1
+```
+
+```{sql, connection = con}
+select * from tbl2
+```
+
+Attempts to join return no results:
+
+```{sql, connection = con}
+select tbl1.*, tbl2.Y 
+from 
+  tbl1 inner join tbl2 
+  on 
+  tbl1.A = tbl2.A and 
+  tbl1.B = tbl2.B
+```
+
+In contrast, default behavior for base R's `merge` and `dplyr` *does match* on nulls. (Although, either behavior can be altered with the `incomparables` or `na_matches` arguments, respectively.)
+
+```{r results = "hold"}
+df1 <- data.frame(A = 1, B = NA, X = TRUE)
+df2 <- data.frame(A = 1, B = NA, Y = FALSE)
+merge(df1, df2, by = c("A", "B"))
+dplyr::inner_join(df1, df2, by = c("A", "B"))
+```
+
+Similarly, `pandas` also matches on nulls for joining.
+
+```{python results = "hold"}
+import numpy as np
+import pandas as pd
+df1 = pd.DataFrame([[1, np.nan, True]], columns = ['A','B','X'])
+df2 = pd.DataFrame([[1, np.nan, False]], columns = ['A','B','Y'])
+pd.merge(df1, df2, on = ['A','B'])
+```
+
+`R` and `python`'s behavior here seems most surprising. One might expect joining to work the same as raw logical evaluation works. However, neither language "likes" null comparison in its raw form. Instead, the default behavior is intentionally altered in these higher-level joining functions.
+
+In R:
+
+```{r}
+NA == NA
+```
+
+In python:
+
+```{python}
+np.nan == np.nan
+```
+
+### Filtering
+
+Finally, both SQL and R drop null records used in filtering statements since comparisons with these values are incapable of returning a TRUE/FALSE value that is used to subset the rows. In python, however, pandas does preserve nulls in filter conditions. 
+
+Using the same `tbl1` shown above, we can also confirm that SQL proactively drops nulls in where clauses where they cannot be readily compared to non-null values. This seems quite consistent with its behavior in the joining case.
+
+```{sql, connection = con}
+select A, B, X 
+from tbl1 
+where B != 1
+```
+
+Both base R and `dplyr` paradigms follow suit here.
+
+```{r results = 'hold'}
+df1 <- data.frame(A = 1, B = NA, X = TRUE)
+df1[df1$B != 1,]
+dplyr::filter(df1, B != 1)
+```
+
+However, bucking the trend, multiple approaches to subsetting `pandas` data will not drop nulls in filtering comparisons.
+
+```{python results = 'hold'}
+df1 = pd.DataFrame([[1, np.nan, True]], columns = ['A','B','X'])
+df1[df1.B != 1]
+df1.query('B != 1')
+```
+
+## Conclusion
+
+In data computation and analysis, the devil is often in the details. It's not breaking news that low-level reasoning on the careful handling of null values can jeopardize the resulting analyses. However, as analysts take on increasingly complex tasks and using a plehora of different tools, it's more important than ever for both data producers and consumers to consider the choices they are making in encoding and handling these values across the stack.
+

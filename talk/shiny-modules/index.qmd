@@ -1,0 +1,36 @@
+---
+title: "Taking Flight with Shiny: a Modules-First Approach"
+description: "An argument for the individual and organization-wide benefits of teaching new developers Shiny with a modules-first paradigm."
+location: Appsilon ShinyConf 2023 
+image: featured.png
+categories: [workflow, rstats, shiny]
+date: 2023-03-15
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://posit.co/resources/videos/tidycf-turning-analysis-on-its-head-by-turning-cashflows-on-their-sides/) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - A beginner's guide to Shiny modules](/post/shiny-modules/) </span>    
+
+## Abstract 
+
+R users are increasingly trained to develop with good principles such as writing modular functions, testing their code, and decomposing long individual scripts into R projects. In recent years, such approaches have crept earlier into introductory R education with the realization that applying best practices is not an advanced skill but rather empowers beginners with a more robust structure. 
+
+However, new Shiny developers are confronted with two challenges: they must simultaneously learn new packages and concepts (like reactivity) which introductory tutorials demonstrate how to write their apps as single scripts. This means small changes are harder to test and debug for the groups that need it the most. Although Shiny modules offer a solution to this exact problem, they are regarded as an advanced topic and often not encountered until much later in a developer’s journey.
+
+In this talk, I will demonstrate a workflow to encourage the use of modules for newer Shiny users. I argue that a ‘module-first’ approach helps to decompose design into more tangible, bite-sized, and testable components and prevent the code sprawl that makes Shiny feel intimidating. Further, this approach can be even more powerful when developing Shiny applications in the enterprise setting and onboarding new team members to existing applications.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=F6I_jXPWFBk >}}
+
+:::

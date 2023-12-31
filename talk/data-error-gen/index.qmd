@@ -1,0 +1,40 @@
+---
+title: "The Data (error) Generating Process"
+description: Interrogating the data generating process to devise better data quality tests.
+location: Airbyte move(data) (2022) | CANSSI Ontario (2022)
+image: featured.png
+categories: [data]
+date: 2022-11-12
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=LkfP4dEv11Q) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Why Group Data Tests?](/post/grouping-data-quality/) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Grouped Data Tests in dbt-utils](/post/grouping-data-quality-update/) </span>    
+
+## Abstract 
+
+Statisticians often approach probabilistic modeling by first understanding the conceptual data generating process. However, when validating messy real-world data, the technical aspects of the data generating process is largely ignored.
+
+In this talk, I will argue the case for developing more semantically meaningful and well-curated data tests by incorporating both conceptual and technical aspects of "how the data gets made".
+
+To illustrate these concepts, we will explore the NYC subway rides open dataset to see how the simple act of reasoning about real-world events their collection through ETL processes can help craft far more sensitive and expressive data quality checks. I will also illustrate how to implement such checks based on new features which I recently contributed to the open-source `dbt-utils` package.
+
+Audience members should leave this talk with a clear framework in mind for ideating better tests for their own pipelines.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=LkfP4dEv11Q >}}
+
+:::
+

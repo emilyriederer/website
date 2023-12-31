@@ -1,0 +1,71 @@
+project:
+  type: website
+  output-dir: docs
+  preview: 
+    port: 4321
+
+execute:
+  freeze: auto
+
+website:
+  title: "Emily Riederer"
+  favicon: icon.png
+  google-analytics: "G-Z15TN5VYXJ"
+  cookie-consent: true
+  comments: 
+    utterances:
+      repo: emilyriederer/website
+      issue-term: title
+  twitter-card: true
+  site-url: https://emilyriederer.com/
+  navbar:
+    pinned: true
+    right:
+      - about.qmd
+      - text: "Posts"
+        menu:
+        - text: "Recent"
+          href: post/index.html
+        - text: "Favorites"
+          href: post/featured.html
+      - text: "Talks"
+        menu:
+        - text: "Recent"
+          href: talk/index.html
+        - text: "Favorites"
+          href: talk/featured.html
+      - text: "Publications"
+        href: publication/index.html
+      - text: "Projects"
+        href: project/index.html
+      - icon: github
+        href: https://github.com/emilyriederer
+      - icon: twitter
+        href: https://twitter.com/emilyriederer
+      - icon: linkedin
+        href: https://linkedin.com/in/emilyriederer
+      - icon: rss
+        href: index.xml
+  page-footer:
+    left: |
+      <span class="faux-block">{{< fa brands creative-commons >}} 2016-2023 Emily Riederer</span><br/>
+      <span class="faux-block">Licensed under [{{< fa brands creative-commons >}} {{< fa brands creative-commons-by >}} Creative Commons CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)</span>      
+    center: |
+    right: |
+      <span class="faux-block">Made with {{< fa brands r-project >}} and [Quarto](https://quarto.org/)</span><br/>
+      <span class="faux-block">[View the source at {{< fa brands github >}} GitHub](https://www.github.com/emilyriederer/website)</span>
+
+format:
+  html:
+    pagetitle: "{{< meta title >}} | Emily Riederer"
+    theme: 
+      light: [custom.scss, cosmo ]
+      dark:  [custom.scss, darkly]
+    css: styles.css
+    grid:
+      body-width: 800px
+    anchor-sections: true
+    link-external-icon: false
+    link-external-newwindow: true
+    footnotes-hover: true
+

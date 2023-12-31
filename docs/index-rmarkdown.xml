@@ -1,0 +1,1085 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Emily Riederer</title>
+<link>https://emilyriederer.com/#category=rmarkdown</link>
+<atom:link href="https://emilyriederer.com/index-rmarkdown.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.4.510</generator>
+<lastBuildDate>Thu, 21 Sep 2023 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Operationalizing Column-Name Contracts with dbtplyr</title>
+  <link>https://emilyriederer.com/talk/dbtplyr/</link>
+  <description><![CDATA[ 
+
+
+
+<p>url_video: “”</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<p>At Coalesce for dbt user audience:</p>
+<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
+<span><i class="bi bi-play"></i> <a href="https://www.getdbt.com/coalesce-2021/operationalizing-columnname-contracts-with-dbtplyr/">Video</a> </span></p>
+<p>At posit::conf for R user audience:</p>
+<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides-posit.pdf">Slides</a> </span><br>
+<span><i class="bi bi-play"></i> Video - posit::conf for R User Audience <em>coming soon!</em> </span></p>
+<p><span><i class="bi bi-pencil"></i> <a href="../../post/column-name-contracts/">Post - Column Name Contracts</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt/">Post - Column Name Contracts in dbt</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt-update/">Post - Column Name Contracts with dbtplyr</a> </span></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<p>Complex software systems make performance guarantees through documentation and unit tests, and they communicate these to users with conscientious interface design.</p>
+<p>However, published data tables exist in a gray area; they are static enough not to be considered a “service” or “software”, yet too raw to earn attentive user interface design. This ambiguity creates a disconnect between data producers and consumers and poses a risk for analytical correctness and reproducibility.</p>
+<p>In this talk, I will explain how controlled vocabularies can be used to form contracts between data producers and data consumers. Explicitly embedding meaning in each component of variable names is a low-tech and low-friction approach which builds a shared understanding of how each field in the dataset is intended to work.</p>
+<p>Doing so can offload the burden of data producers by facilitating automated data validation and metadata management. At the same time, data consumers benefit by a reduction in the cognitive load to remember names, a deeper understanding of variable encoding, and opportunities to more efficiently analyze the resulting dataset. After discussing the theory of controlled vocabulary column-naming and related workflows, I will illustrate these ideas with a demonstration of the {dbtplyr} dbt package which helps analytics engineers get the most value from controlled vocabularies by making it easier to effectively exploit column naming structures while coding.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
+<div id="slides" style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
+<p>Coming Soon!</p>
+</div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>rmarkdown</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.com/talk/dbtplyr/</guid>
+  <pubDate>Thu, 21 Sep 2023 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/dbtplyr/featured.png" medium="image" type="image/png" height="82" width="144"/>
+</item>
+<item>
+  <title>How to Make R Markdown Snow</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/snow/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Last year, I tweeted about how to spread holiday cheer by letting your R Markdown documents snow. After all, what better to put people in the holiday spirit than to add a random 5% probability that whatever part of a document they are trying to read will be covered?</p>
+<blockquote class="twitter-tweet blockquote">
+<p lang="en" dir="ltr">
+No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday party this year, but we CAN make our <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> R Markdown reports snow before we send them to each other <a href="https://t.co/SSBzlgb3TV">https://t.co/SSBzlgb3TV</a><br>HT to <a href="https://t.co/c7c5c5csMK">https://t.co/c7c5c5csMK</a> for the heavy lifting <a href="https://t.co/hIu7z0knR4">pic.twitter.com/hIu7z0knR4</a>
+</p>
+— Emily Riederer (<span class="citation" data-cites="EmilyRiederer">@EmilyRiederer</span>) <a href="https://twitter.com/EmilyRiederer/status/1337178684868980738?ref_src=twsrc%5Etfw">December 10, 2020</a>
+</blockquote>
+<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>I make no promises that this will amuse your recipients, but at least it seemed to strike a cord with other R Markdown creators. This year, I decided to write it up step-by-step. As silly as the example is, I think it demonstrates (through slight abuse) some useful features of R Markdown. Much like ice sculpting, we will apply the powertool that is R Markdown to achieve our rather fanciful end.</p>
+<p>If you want to skip the discussed, you can check out the <a href="https://github.com/emilyriederer/demo-rmd-snow">full project</a>, the main <a href="https://github.com/emilyriederer/demo-rmd-snow/blob/main/index.html">R Markdown file</a>, or the <a href="https://emilyriederer.github.io/demo-rmd-snow/">rendered output</a>. The rendered output is also shown below:</p>
+<p><img src="https://emilyriederer.com/post/snow/featured.gif" class="img-fluid"></p>
+<p>In the rest of this post, I’ll touch on three R Markdown tricks and their fanciful uses:</p>
+<ul>
+<li><strong>Using child documents…</strong> to add snowflake</li>
+<li><strong>Including raw HTML and custom CSS style…</strong> to animate them</li>
+<li><strong>Evaluating chunks conditionally…</strong> to keep things seasonal</li>
+</ul>
+<p>We will see how to dress up this <a href="https://github.com/emilyriederer/demo-rmd-snow/blob/main/index.Rmd">very important business R Markdown</a></p>
+<p>Much more useful applications of these same features are discussed in the linked sections of the <a href="https://bookdown.org/yihui/rmarkdown-cookbook/">R Markdown Cookbook</a>.</p>
+<section id="child-documents" class="level2">
+<h2 class="anchored" data-anchor-id="child-documents">Child documents</h2>
+<p><a href="https://bookdown.org/yihui/rmarkdown-cookbook/child-document.html">Child documents</a> allow R Markdown authors to combine multiple R Markdown files into a single final output rendered in a consistent environment. This helps create a more manageable, modular workflow if you are working on a long project or anaylsis with many distinct parts or if there are some pieces of boilerplate text or analysis that you wish to inject into many projects.</p>
+<p>To add child documents, we create an empty R code chunk, and use the <code>child</code> chunk option to pass the path to the R Markdown file that we wish to include. In our case, we reference our <code>snow.Rmd</code> file.</p>
+<pre><code>```{r child = "snow.Rmd"}`r ''`
+```</code></pre>
+<p>Of course, since child documents are functionally the same as including files in the same document, we could have included this material in the same file. However, since snowflakes should clearly only be placed in <em>very</em> important documents, it is good to use best practices and take a modular approach. Tactically, this also makes it easier to “turn them on an off” at will or swap them our for New Years fireworks, Valentine’s Day hearts, and more.</p>
+</section>
+<section id="including-html-and-css" class="level2">
+<h2 class="anchored" data-anchor-id="including-html-and-css">Including HTML and CSS</h2>
+<p>So, what is in the <a href="https://github.com/emilyriederer/demo-rmd-snow/blob/main/snow.Rmd"><code>snow.Rmd</code></a> file?</p>
+<p>First, we have to bring in the snowflakes themselves.</p>
+<pre><code>&lt;div class="snowflakes" aria-hidden="true"&gt;
+  &lt;div class="snowflake"&gt;
+  ❅
+  &lt;/div&gt;
+  &lt;!-- many more snowflakes... --&gt;
+&lt;/div&gt;</code></pre>
+<p>Because this R Markdown will render to an HTML document, we are free to include raw HTML text the same way we include narrative, English-language text. Here, I wrap unicode snowflakes in <code>&lt;divs&gt;</code> so I can attach CSS classes to them.</p>
+<p>Similarly, R Markdowns that will be rendered to HTML can use all the benefits of web technology like CSS and JavaScript. <a href="https://bookdown.org/yihui/rmarkdown-cookbook/html-css.html">Custom CSS</a> can be included either with the <code>css</code> language engine or a reference in the YAML header to an external <code>.css</code> file. For compactness, I go with the former.</p>
+<p>A <code>css</code> chunk adds CSS code used to animate the snowflake divs. This is taken nearly verbatim from <a href="https://codepen.io/codeconvey/pen/xRzQay">this CodePen</a>. Since this is rather lengthy, we can also use the <code>echo = FALSE</code> chunk option to not output all of the CSS in our final document.</p>
+<pre><code>```{css echo = FALSE}`r ''`
+&lt;&lt;css goes here&gt;&gt;
+```</code></pre>
+<p>For more tips on writing CSS for R Markown, check out my <a href="../../post/rmarkdown-css-tips/">post</a> on finding the right selectors.</p>
+</section>
+<section id="conditional-chunk-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="conditional-chunk-evaluation">Conditional chunk evaluation</h2>
+<p>The above two tricks are as for as my demo goes since I only planned to render it once. However, if you are creating automated reports and fear your recipients have limited patience for animated snowflakes, we can also use R Markdown <a href="https://yihui.org/knitr/options/">chunk options</a> with <a href="https://bookdown.org/yihui/rmarkdown-cookbook/chunk-variable.html">variables as arguments</a> to only allow these snowflakes to appear during a certain time period.</p>
+<p>So, for example instead of:</p>
+<pre><code>```{r child = "snow.Rmd"}`r ''`
+```</code></pre>
+<p>We might type:</p>
+<pre><code>```{r child = "snow.Rmd", eval = (substr(Sys.Date(), 6, 7) == 12)}`r ''`
+```</code></pre>
+<p>To only allow the child document to be included in December.</p>
+<p>If we had chosen not to use child documents, we could also use chunks to achieve conditional evaluation using the <a href="https://bookdown.org/yihui/rmarkdown-cookbook/eng-asis.html"><code>asis</code> engine</a>.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>rstats</category>
+  <category>rmarkdown</category>
+  <guid>https://emilyriederer.com/post/snow/</guid>
+  <pubDate>Sat, 11 Dec 2021 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/snow/featured.gif" medium="image" type="image/gif"/>
+</item>
+<item>
+  <title>R Markdown Cookbook</title>
+  <link>https://emilyriederer.com/publication/rmarkdown-cookbook/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+
+ ]]></description>
+  <category>rmarkdown</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/</guid>
+  <pubDate>Tue, 01 Sep 2020 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
+</item>
+<item>
+  <title>RMarkdown CSS Selector Tips</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/rmarkdown-css-tips/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>When working with R Markdown’s HTML output type, it’s possible to add a custom style to your output by passing in a CSS style sheet to the YAML header like this:</p>
+<pre><code>output:
+  html_document:
+    css: "my-style-sheet.css"</code></pre>
+<p>To use CSS effectively, it’s critical to understand how to specificy which selectors one wishes to style. This requires a mix of CSS knowledge and, in the case of R Markdown, an understanding of how HTML tags, IDs, and classes are used to wrap content from your R Markdown document.</p>
+<p>In this post, I leave the first of these issues (CSS knowledge) out of scope. You may find a quick crash course in CSS in the <a href="https://bookdown.org/yihui/blogdown/css.html">CSS chapter</a> of the <strong>blogdown</strong> book or study more in many free online tutorials such as <a href="https://www.w3schools.com/css/">W3 Schools</a>, the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">Mozilla Foundation</a>, and <a href="https://www.freecodecamp.org/learn">Free Code Camp</a>.</p>
+<p>Instead, I focus on explaining tags, IDs, and classes for some frequently occurring R Markdown components and recommend tools for exploring and identifying more complex elements on your own.</p>
+<section id="common-css-selectors" class="level3">
+<h3 class="anchored" data-anchor-id="common-css-selectors">Common CSS selectors</h3>
+<p>This section described common tags, classes, and IDs you may find in a typical R Markdown document when rendered with the <code>rmarkdown::html_document()</code> function with default settings. This is intended to serve as a high-level reference and intuition builder, but exact structure may change depending on additional options you set. The following section will help you dig deeper and explore your own document beyond these “typical” results.</p>
+<section id="headers" class="level4">
+<h4 class="anchored" data-anchor-id="headers">Headers</h4>
+<p>With the default option <code>section_divs = TRUE</code> for <code>rmarkdown::html_document</code>, each header creates its own <code>&lt;div&gt;</code> which contains all contents up until the next header of the same level. Then, a section header such as <code>## My Header</code> creates the following:</p>
+<ul>
+<li>The header text and following content is wrapped in a <code>&lt;div&gt;</code> with classes <code>'section'</code> and <code>'level2'</code> (or the appropriate level for the number of <code>#</code> in the markdown header). This div has an ID using the “kebab-case” version (lower case with “-” replacing spaces) version of the header text (e.g.&nbsp;<code>"my-header"</code>)</li>
+<li>If the header text has a custom class (e.g.&nbsp;<code>## My Header {.my-class}</code>), this class is added to the div’s classes</li>
+<li>If the header text has a custom ID (e.g.&nbsp;<code>## My Header {#my-id</code>), this ID supplants the default ID</li>
+</ul>
+<p>When <code>section_divs = FALSE</code>, section divs are not created, so the content following a header is at the same level as the header. In this case, the header tags themselves (<code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, etc.) are given IDs based on the kebab-case name. For example, <code>## My Header</code> converts to <code>&lt;h2 id = "my-header"&gt; My Header &lt;/h2&gt;</code>.</p>
+</section>
+<section id="text" class="level4">
+<h4 class="anchored" data-anchor-id="text">Text</h4>
+<p>The following markdown syntax translates to HTML tags within the text.</p>
+<ul>
+<li>Normal text paragraphs are wrapped in <code>&lt;p&gt;</code> tags</li>
+<li>Text made bold by <code>**</code> is wrapped in <code>&lt;strong&gt;</code> tags</li>
+<li>Text italicized by <code>*</code> is wrapped in <code>&lt;em&gt;</code> tags</li>
+<li>In-line code formatting with backticks is wrapped in <code>&lt;code&gt;</code> tags</li>
+<li>Strike-through made with <code>~</code> is wrapped in <code>&lt;strikethrough&gt;</code> tags</li>
+<li>Links made with <code>[]()</code> are created with <code>&lt;a&gt;</code> tags</li>
+</ul>
+<p>The following markdown syntax creates new sections in the text.</p>
+<ul>
+<li>Blockquotes made with <code>&gt;</code> are wrapped in <code>&lt;blockquote&gt;</code> tags</li>
+<li>Unordered lists made with <code>-</code> or <code>*</code> are wrapped in <code>&lt;ul&gt;</code> tags and individual elements are wrapped in <code>&lt;li&gt;</code> tags (list element)</li>
+<li>Ordered lists made with <code>1.</code> are wrapped in <code>&lt;ol&gt;</code> tags and individual elements are wrapped in <code>&lt;li&gt;</code> tags (list element)</li>
+<li>Markdown tables are made with <code>&lt;table&gt;</code> tags. Table rows are distinguished by <code>&lt;tr&gt;</code> tags and individual table data cells are separated by <code>&lt;td&gt;</code> tags.</li>
+<li>Sections created by Pandoc Divs (<code>:::</code>) are fenced by <code>&lt;div&gt;</code> tags. These can be given a class. For example, <code>::: MyDiv</code> and <code>::: {.MyDiv}</code> translate to <code>&lt;div class = 'MyDiv'&gt;</code> (If you haven’t seen Divs before, please check out the <a href="https://bookdown.org/yihui/rmarkdown-cookbook/multi-column.html">“Multi-column layout”</a> and <a href="https://bookdown.org/yihui/rmarkdown-cookbook/custom-blocks.html">“Custom blocks”</a> recipes in the <em>R Markdown Cookbook</em>)</li>
+</ul>
+</section>
+<section id="code" class="level4">
+<h4 class="anchored" data-anchor-id="code">Code</h4>
+<p>R code chunk blocks are wrapped in <code>&lt;pre&gt;</code> tags with class <code>"r"</code>. The code itself is wrapped in <code>&lt;code&gt;</code> tags with class <code>"hljs"</code> (for highlight.js, the default syntax highlighter). Individual parts of code are wrapped in <code>&lt;span&gt;</code> tags with classes such as <code>"hljs-number"</code>, <code>"hljs-string"</code>, and <code>"hljs-keyword"</code>. For example, the following shows the HTML code representing an R code chunk containing the code <code>1+1</code>:</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;pre</span> <span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"r"</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&gt;</span></span>
+<span id="cb2-2">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;code</span> <span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"hljs"</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&gt;</span></span>
+<span id="cb2-3">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;span</span> <span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"hljs-number"</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&gt;</span>1<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;/span&gt;</span></span>
+<span id="cb2-4">    "+"</span>
+<span id="cb2-5">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;span</span> <span class="er" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"hljs-number"</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&gt;</span>1<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;/span&gt;</span></span>
+<span id="cb2-6">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;/code&gt;</span></span>
+<span id="cb2-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;/pre&gt;</span></span></code></pre></div>
+<p>Console output such as numeric results, messages, warnings, and errors are similarly wrapped in <code>&lt;pre&gt;</code> and <code>&lt;code&gt;</code> tags.<sup>1</sup> Other types of output are treated differently. For example, the next section describes how plot output is processed.</p>
+</section>
+<section id="figures" class="level4">
+<h4 class="anchored" data-anchor-id="figures">Figures</h4>
+<p>Images will have slightly different selectors depending on how they were included in R Markdown.</p>
+<p>Images inserted with markdown code (<code>![]()</code>) create an <code>&lt;img&gt;</code> element that is a child of a <code>&lt;div&gt;</code> with class <code>figure</code>.</p>
+<p>Images inserted with R code (<code>knitr::include_graphics()</code>) create an <code>&lt;img&gt;</code> element that is a child of a <code>&lt;p&gt;</code> with no class.</p>
+<p>Similarly, R code which creates plots create an <code>&lt;img&gt;</code> element that is a child of a <code>&lt;p&gt;</code> with no class.</p>
+</section>
+<section id="combining-selectors" class="level4">
+<h4 class="anchored" data-anchor-id="combining-selectors">Combining selectors</h4>
+<p>Note that these selectors are typically most powerful when many are used together. With CSS, you may specify relationships such as “all elements having both of two specific classes”, “the n-th child of a given ID”, etc. The more you learn about CSS, the richer your vocabulary will become to describe complex and nuanced relationships.</p>
+<p>A nice quick reference of these selector combinations is available at https://www.w3schools.com/cssref/css_selectors.asp.</p>
+</section>
+</section>
+<section id="tools-for-exploring-html-output" class="level3">
+<h3 class="anchored" data-anchor-id="tools-for-exploring-html-output">Tools for exploring HTML output</h3>
+<p>For more customization, you may have to do more research to find the right CSS selectors to describe what you want to do. Luckily, there are many tools to help you explore your HTML output efficiently.</p>
+<p><strong>Exploring Raw HTML</strong>: First, an HTML file is a simple text document. In theory, you could open this file in any text editor and search through it. However, this is not the recommended approach. HTML output from R Markdown has a lot of text unrelated to the core, visible content of your document. This is particularly true when the document is self-contained (using the default option of <code>self_contained: true</code>) because all dependencies (e.g.&nbsp;images) are encoded within the document. This text makes understanding document structure much more challenging than necessary. Additionally, if you accidentally delete or modify raw HTML code it may be hard to repair.</p>
+<p><strong>Developer Tools</strong>: Most major web browsers offer developer tools which help to navigate the sourcecode of any website or HTML document. Google Chrome’s Elements Panel (https://developers.google.com/web/tools/chrome-devtools#elements) and Mozilla Firefox’s Page Inspector (https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector) are two examples. Using such interfaces, you may hover over either the code or the output to see relevant section of the other, and you can easily extract tags, classes, and IDs of each component. Such tools also make it easy to see what CSS is currently being applied to a given HTML element which may be useful when debugging CSS code which is not being applied correctly.</p>
+<p><strong>Selector Gadget</strong>: Similar to developer tools, the Selector Gadget browser add-in (https://selectorgadget.com/) is an open-source tool which allows you to determine appropriate CSS selectors for elements of an HTML document by hovering over them. Additionally, it shows which other items on the page are represented by the same set of selectors to help you understand everywhere your new style would be applied.</p>
+<p><strong>Experimentation</strong>: Finally, do not be afraid to experiment. It can sometimes be helpful to temporarily add style to items to help confirm or deny your understanding of the document structure. As a trivial example, the following CSS code draws brightly colored boxes around output at different levels of nesting. This could be useful to check visually review parent and child relationships between elements or notice invisible levels of nesting.</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb3-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">solid</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">red</span>}</span>
+<span id="cb3-2"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">solid</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">orange</span>}</span>
+<span id="cb3-3"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">solid</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">yellow</span>}</span>
+<span id="cb3-4"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">solid</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">green</span>}</span>
+<span id="cb3-5"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">solid</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">blue</span>}</span>
+<span id="cb3-6"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">solid</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">purple</span>}</span>
+<span id="cb3-7"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">solid</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">pink</span>}</span></code></pre></div>
+<p>Here’s an example of what applying this to a standard R Markdown output looks like:</p>
+<p><img src="https://emilyriederer.com/post/rmarkdown-css-tips/featured.PNG" class="img-fluid"></p>
+<p><strong>Iterate faster with an external CSS file</strong>: By default, <strong>rmarkdown</strong> renders documents to a single file and embeds related assets such as CSS, JavaScript, and images. Having a standalone document is convenient for sharing your results, but this embedding makes it harder to quickly edit your CSS to test out different options. If you want to modify the CSS of a rendered self-contained R Markdown document, you must find the CSS code embedded in a large raw HTML file or render the whole document again (including running R code and Pandoc). To iterate more quickly, set the <code>rmarkdown::html_document</code> option to <code>self_contained: false</code> and use the <code>css</code> option to pass a file path to an external CSS file. Your resulting HTML document will contain a reference to this file on your computer. Thus, after rendering, you may continue to modify the CSS file in a text editor and see the changes to your HTML document without running any code again; you may simply refresh the web browser that you are using to view the document or close and reopen your file.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>However, when the chunk option <code>results = 'asis'</code> is set, output is wrapped in <code>&lt;p&gt;</code> tags instead.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rmarkdown</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.com/post/rmarkdown-css-tips/</guid>
+  <pubDate>Tue, 30 Jun 2020 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/rmarkdown-css-tips/featured.PNG" medium="image"/>
+</item>
+<item>
+  <title>RMarkdown Driven Development: the Technical Appendix</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/rmddd-tech-appendix/</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>My initial post on <a href="../../post/rmarkdown-driven-development/">RMarkdown Driven Development</a> focuses on major <em>concepts</em> in the process of evolving a one-time, single-file analysis into a sustainable analytical tool. In the spirit of Etsy’s <a href="https://codeascraft.com/2018/10/10/etsys-experiment-with-immutable-documentation/">immutable documentation</a>, I intentionally minimized references to specific tools or packages. After all, software is transient; principles are evergreen.</p>
+<p>However, RMarkdown Driven Development is more than just a <em>conceptual</em> framework. There are three main components: the main conceptual workflow (the why-to), the technical implementation (the how-to), and the comparison of merits between different destination states (the what-now). I touched on all three of these briefly in my rstudio::conf 2020 presentation<sup>1</sup>, but plan to explore each more deeply in their own post. This post focuses on the second: tools for technical implementation.</p>
+<p>To implement RMarkdown Driven Development (RmdDD), one should take full advantage of the current state-of-the-art in R developer tools and the RStudio IDE. This article surveys helpful some of these helpful packages and tools. As the title implies, this piece is a appendix and not a complete narrative. It is neither a stand-along replacement for the original post, nor does it intend completely explain each referenced package and tool it mentions. This companion piece simply focuses on awareness raising for the plethora of tools that can make your job as a (file / project / package) engineer easier.</p>
+<p>As this is a very lenthy post, please use the visual guide and the table of contents below to jump around as you please:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/rmddd-tech-appendix/featured.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Diagram of packages and tools on RmdDD timeline</figcaption>
+</figure>
+</div>
+</section>
+<section id="review-of-rmarkdown-driven-development" class="level2">
+<h2 class="anchored" data-anchor-id="review-of-rmarkdown-driven-development">Review of RMarkdown Driven Development</h2>
+<p>Broadly speaking, RMarkdown Driven Development has five main steps.</p>
+<ol type="1">
+<li>Removing troublesome components</li>
+<li>Rearranging chunks</li>
+<li>Reducing duplication with functions</li>
+<li>Modularizing Rmd chunks into separate files and folders</li>
+<li>Migrating modularized project assets into a package</li>
+</ol>
+<p>Steps 1-3 result in a well-engineered single-file RMarkdown, Step 4 in an R Project, and finally Step 5 in a Package. Critically, RmdDD introduces good software engineering practices as early as possible in each step of this workflow. This means that you can stop at steps 3, 4, or 5, and even up in a sustainable analytical tool in the form of either a single file <code>.Rmd</code>, an R project, or a package.<sup>2</sup></p>
+<p>In service of these ‘exit ramps’, this post also discusses steps 3.5 and 4.5, that is tools that are not part of the overall RmdDD ‘progression’ but add functionality to the single-file or project folder end state.</p>
+</section>
+<section id="tools-covered" class="level2">
+<h2 class="anchored" data-anchor-id="tools-covered">Tools Covered</h2>
+<p>The following R packages, RMarkdown features, and RStudio IDE utilities are mentioned in this post. If some are of particular interest to you, you can search this post to jump to where they are mentioned. Do not be overwhelmed by the sheer number of tools and functionality mentioned. Very few are actually necessary to conduct RmdDD or to build a good analysis tool. Simply pick whichever tools you like to add to your toolkit.</p>
+<p><strong>R Packages</strong></p>
+<ul>
+<li><code>rmarkdown</code></li>
+<li><code>keyring</code></li>
+<li><code>here</code></li>
+<li><code>roxygen2</code></li>
+<li><code>assertr</code></li>
+<li><code>pointblank</code></li>
+<li><code>lintr</code></li>
+<li><code>styler</code></li>
+<li><code>spelling</code></li>
+<li><code>DT</code></li>
+<li><code>xfun</code></li>
+<li><code>diffr</code></li>
+<li><code>ProjectTemplate</code></li>
+<li><code>starters</code></li>
+<li><code>workflowr</code></li>
+<li><code>renv</code></li>
+<li><code>drake</code></li>
+<li><code>usethis</code></li>
+<li><code>devtools</code></li>
+<li><code>testthat</code></li>
+<li><code>pkgdown</code></li>
+<li><code>ghactions</code></li>
+</ul>
+<p><strong>RMarkdown Features</strong></p>
+<ul>
+<li>Parameters</li>
+<li>Named chunks</li>
+<li>Code download</li>
+<li>Embed a file</li>
+</ul>
+<p><strong>RStudio IDE Utilities</strong></p>
+<ul>
+<li>Parameters UI</li>
+<li>Named chunks</li>
+<li>Indexed comments</li>
+<li>Function documentation skeleton shortcut</li>
+<li>Live spell-check</li>
+<li>R Project (<code>.Rproj</code>)</li>
+<li>Version control</li>
+<li>Package build pane</li>
+</ul>
+</section>
+<section id="step-1-removing-troublesome-components" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-removing-troublesome-components">Step 1: Removing troublesome components</h2>
+<p>The goal of this step is to remove ‘clutter’ that your RMarkdown accumulated over the course of this analysis. Core examples are removing hard-coded variables, plain text credentials, local file paths, and unused code chunks.</p>
+<section id="convert-hard-coded-variables-to-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="convert-hard-coded-variables-to-parameters">Convert hard-coded variables to parameters</h3>
+<p>Hard-coded values make code brittle. Future users may not know when and where to change them, or may change them inconsistently and violate the internal integrity of the analysis.</p>
+<p>For example, imagine a quarterly report that requires filter multiple datasets to the same date range. This give an analyst updating the report to make multiple types of errors. First, they might forget to change the dates altogether, resulting in stale information. Even worse, they might remember to change <em>some</em> of the dates but accidentally miss one and end up blending two inconsistent data sources.</p>
+<pre><code>data1_lastyr &lt;- 
+  data1 %&gt;%
+  filter(between(date, ‘2018-01-01’, ‘2018-03-31’))
+  
+data2_lastyr &lt;- 
+  data2 %&gt;%
+  filter(between(date, ‘2018-01-01’, ‘2018-03-31’))</code></pre>
+<p>Instead, <a href="https://rmarkdown.rstudio.com/lesson-6.html">RMarkdown parameters</a> allow us highlight key variables in the YAML header, and turn the entire RMarkdown document into a ‘mega-function’.</p>
+<pre><code>---
+title: “My Analysis"
+output: html_document
+params:
+  start: ‘2018-01-01’
+  end: ‘2018-03-31’
+---</code></pre>
+<p>These parameters are stored as list items in the <code>params</code> variable and can be referenced in the code like this:</p>
+<pre><code>data1_lastyr &lt;- 
+  data1 %&gt;%
+  filter(between(date, params$start, params$end))
+</code></pre>
+</section>
+<section id="pass-secure-parameters-at-knit-time" class="level3">
+<h3 class="anchored" data-anchor-id="pass-secure-parameters-at-knit-time">Pass secure parameters at knit-time</h3>
+<p>Parameters also provide a secure way to deal with passwords or other secret credentials. For example, if we need to connect to a database to pull data, we can create parameters in our YAML header with dummy values.</p>
+<pre><code>---
+title: “My Analysis"
+output: html_document
+params:
+  username: emily
+  password: x
+---</code></pre>
+<p>These values can then be referenced within the code like this.</p>
+<pre><code>con &lt;- 
+  connect_to_database(
+    username = params$username,
+    password = params$password
+  )</code></pre>
+<p>When it comes time to knit the RMarkdown, there are multiple ways to pass the parameters in at knit-time.</p>
+<p>If we are knitting our RMarkdown from the RStudio IDE, we can use the parameters UI to prompt a pop-up box in which to enter parameters and replace the dummy values from the header. To do this, click the down arrow on the <code>Knit</code> button and chose <code>Knit with Parameters...</code>.</p>
+<p>Alternatively, this can also be done programmatically with the <code>rmarkdown::render</code> function. The <code>render</code> function can kick-off the process of knitting any RMarkdown when provided its file path, e.g.&nbsp;<code>rmarkdown::render(input = 'my-analysis.Rmd')</code>. <code>render</code> has a <code>params</code> argument which, as stated in the documentation, accepts “a list of named parameters that override custom parameters specified in the YAML front-matter”. That is, we can write:</p>
+<pre><code>rmarkdown::render(input = 'my-analysis.Rmd', params = list(password = {{CODE TO RETRIEVE PASSWORD}}))</code></pre>
+<p>where <code>{{CODE TO RETRIEVE PASSWORD}}</code> is replaced with the relevant code. You could consider retrieving code from an environment variable, a <a href="https://cran.r-project.org/web/packages/keyring/index.html">keychain from the <code>keyring</code> package</a>, or code you may use to interface with other password managers. Credential management is a large topic unto itself and beyond the scope of this post.</p>
+</section>
+<section id="create-file-paths-with-here" class="level3">
+<h3 class="anchored" data-anchor-id="create-file-paths-with-here">Create file paths with <code>here</code></h3>
+<p>When our RMarkdown includes external files such as data, images, scripts, etc. it can be tempting to reference the resource by its full, global file path. This can deceptively seem like the most robust option since we are telling our computer <em>exactly</em> where to find the resource. So we may have file paths that look like this:</p>
+<pre><code>data &lt;- readRDS(‘C:\Users\me\Desktop\my-project\data\my-data.rds’)</code></pre>
+<p>However, this code is incredibly brittle. It effectively guarantees your code will not work on any machine but the one you are currently using. Even then, the path will break if you move the <code>my-project</code> directory.</p>
+<p>Slightly better is to use relative file paths based on the relationship to the working directory. By default, RMarkdown assumes the directory where it is stored is the working directory. So, if our RMarkdown lives in the <code>my-project</code> directory, the working directory will be <code>‘C:\Users\me\Desktop\my-project'</code> and we can write:</p>
+<pre><code>data &lt;- readRDS('data\my-data.rds’)</code></pre>
+<p>This version is resilient to moving around the <code>my-project</code> directory on your computer and will work on other computers so long as your RMarkdown and external file continue to have the same “steps” between them.</p>
+<p>However, this approach can still cause some unexpected behavior. Suppose we move our RMarkdown into the <code>analysis</code> sub-directory of <code>my-project</code> (as we will do in Step 4). Then, the effective working directory during the knitting process will be <code>‘C:\Users\me\Desktop\my-project\analysis'</code>. To reference the same data file, we would have to use a relative path that both gets us <em>out</em> of the <code>analysis</code> sub-directory (using <code>..</code> to move up to the parent directory) and then go back down into the <code>data</code> sub-directory like this:</p>
+<pre><code>data &lt;- readRDS('..\data\my-data.rds')</code></pre>
+<p>To make our RMarkdown more resilient to where the RMarkdown lives within the project, we can construct file paths dynamically using the <a href="https://here.r-lib.org/"><code>here</code> package</a>. Malcolm Barrett’s <a href="https://malco.io/2018/11/05/why-should-i-use-the-here-package-when-i-m-already-using-projects/">blog post</a> provides a more complete description of <code>here</code>’s benefits, but in short, <code>here</code> helps guarantee consistent behavior both within a project and across operating systems. It’s user-friendly syntax looks like this:</p>
+<pre><code>data &lt;- readRDS(here::here(‘data’, ‘my-data.rds’))</code></pre>
+</section>
+</section>
+<section id="step-2-rearranging-chunks" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-rearranging-chunks">Step 2: Rearranging chunks</h2>
+<p>The goal of this step is to group similar parts of code together, specifically by moving infrastructure (e.g.&nbsp;package loads, data ingestion) and heavy-duty computation chunks to the top and letting narratives, tables, and plots sink to the bottom. This makes our document more navigable and easier to edit by locating like elements (e.g.&nbsp;computation vs narration) more centrally, and it allows us to notice repeated code or narration for consolidation.</p>
+<p>While the process of rearranging chunks is mostly manually, we can also pursue the aim in enhancing developer navigability with a few useful features of the RStudio IDE.</p>
+<section id="named-chunks" class="level3">
+<h3 class="anchored" data-anchor-id="named-chunks">Named Chunks</h3>
+<p>Since we are grouping chunks together by intent in this step, We can use <a href="https://itsalocke.com/blog/namer-automatic-labelling-of-r-markdown-chunks/">named chunks</a> to communicate the purpose of each chunk. For example, most analyses probably include steps such as loading packages, loading data, cleaning data, etc. so we might want chunks named <code>pkg-load</code>, <code>data-load</code>, <code>data-clean</code>, etc. To do this, we would simply insert the name in the chunk header immediately after we specify the language engine, e.g.&nbsp;<code>{r NAME-HERE}</code>.</p>
+<p>Named chunks have numerous benefits, but the one most relevant for improving navigability is that RStudio uses chunk names to create a dynamic table of contents at the bottom of the pane in which your RMarkdown lives, as shown below. This makes it easier to quickly find the piece of code we want to inspect and to rapidly move between sections.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/rmddd-tech-appendix/rmdd-toc.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Example of RStudio table of contents</figcaption>
+</figure>
+</div>
+</section>
+<section id="indexed-comments" class="level3">
+<h3 class="anchored" data-anchor-id="indexed-comments">Indexed Comments</h3>
+<p>Similarly to named chunks, sometimes we might want to annotate specific sections of code within a single chunk. To do this, we can use normal R code comments and simply put four dashes (<code>----</code>) at the end of the comment. RStudio uses this special type of comment in two ways. First, it adds this to the same table of contents we discussed before (as shown in the image above). Second, this also enables the ability to collapse code subsections by clicking on the small triangle that appears to the right of the line number of the commented line.</p>
+</section>
+</section>
+<section id="step-3-reducing-duplication-with-functions" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-reducing-duplication-with-functions">Step 3: Reducing duplication with functions</h2>
+<p>The goal of this step is to reduce duplicated code by taking note of similar, repeated code patterns and converting them to functions. Doing this improves code readability and helps us apply changes more consistently. How to write R functions is out of scope for this post, but you can learn more <a href="https://swcarpentry.github.io/r-novice-inflammation/02-func-R/">here</a>.</p>
+<section id="document-functions-with-roxygen2-template" class="level3">
+<h3 class="anchored" data-anchor-id="document-functions-with-roxygen2-template">Document functions with <code>roxygen2</code> template</h3>
+<p>One general benefit of R is the level of structure and consistency in the required documentation for R packages. Any time we bring up documentation with <code>?</code> or the <code>help()</code> function, we benefit from precise descriptions of the functions intent, input, and output.</p>
+<p><a href="https://roxygen2.r-lib.org/"><code>roxygen2</code></a> provides a light-weight syntax for authors to write this documentation, which then is rendered to official documentation files in the package-building process. However, <code>roxygen2</code> can be used even before we are building a package. This ensures we are writing documentation that is similar to what other R users are familiar with seeing and interpreting, and it also forces us to think more formally about the range of acceptable inputs and outputs for each function we write.</p>
+<p>Suppose we have defined a local scatterplot function that looks something like this:</p>
+<pre><code>viz_scatter_x &lt;- function(data, vbl) {
+  ggplot(
+    data = data, 
+    mapping = aes(x = x, y = {{vbl}}) +
+  geom_point()
+}
+</code></pre>
+<p>We can add <code>roxygen2</code> documentation using special <code>#'</code> comments above our function followed by <code>roxygen2</code> tags and values. To facilitate learning this system and rapidly generating documentation, we can use the RStudio IDE’s function documentation skeleton shortcut. With your cursor inside the function body, click <code>Code &gt; Insert Roxygen Skeleton</code> or use shortcut <code>Ctrl+Alt+Shift+R</code>. This adds into our code a basic documentation template.</p>
+<pre><code>#' Title
+#'
+#' @param data 
+#' @param vbl 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+viz_scatter_x &lt;- function(data, vbl) {
+  ggplot(
+    data = data, 
+    mapping = aes(x = x, y = {{vbl}}) +
+  geom_point()
+}
+</code></pre>
+<p>To complete this example, we can fill out the template like this:</p>
+<pre><code>#’ Scatterplot of variable versus x 
+#'
+#' @param data Dataset to plot. Must contain variable named x
+#' @param vbl Name of variable to plot on y axis
+#'
+#' @return ggplot2 object
+#’ @import ggplot2
+#' @export
+
+viz_scatter_x &lt;- function(data, vbl) {
+  ggplot(
+    data = data, 
+    mapping = aes(x = x, y = {{vbl}}) +
+  geom_point()
+}</code></pre>
+<p>An overview of <code>roxygen2</code> syntax can be found <a href="https://roxygen2.r-lib.org/articles/rd.html">here</a>.</p>
+</section>
+<section id="validate-data-inputs-with-assertr" class="level3">
+<h3 class="anchored" data-anchor-id="validate-data-inputs-with-assertr">Validate data inputs with <code>assertr</code></h3>
+<p>The function above is not, in fact, an ideal R function. While the y variable in our plot is specified by a function argument, the x variable is hard-coded into the function internally. As such, we are assuming that the dataset a user passes into the function contains a variable specifically named <code>x</code>. This is not a best practice since it adds some brittleness to the code, but when you first begin writing functions, you might occasionally end up with some. Additionally, if you are confident your dataset should stay consistent overtime (e.g.&nbsp;pulling from a stable database schema),you may find this to be a practical option since it avoid repeatedly specifying arguments that you don’t expect to take different values.</p>
+<p>If you are making any assumptions about the structure of your input data in your code, you might want to include a step to validate these assumptions and proactively flag to the user of the code if the data does not meet those expectations. R has multiple good options for data validation packages. If you are familiar with <code>dplyr</code> and are working with small datasets, the <a href="https://docs.ropensci.org/assertr/"><code>assertr</code> package</a> has a similar look and feel. If you want to validate large datasets on a remote system, the brand new <a href="https://rich-iannone.github.io/pointblank/"><code>pointblank</code> package</a> looks very promising, but I have not yet experimented with it personally.</p>
+</section>
+<section id="enforce-style-guide-with-lintr-or-styler" class="level3">
+<h3 class="anchored" data-anchor-id="enforce-style-guide-with-lintr-or-styler">Enforce style guide with <code>lintr</code> or <code>styler</code></h3>
+<p>At this point, we’ve eliminated as much unneeded or duplicative code as possible. Next, we should consider the quality and style of the code that remains. The <a href="https://github.com/jimhester/lintr"><code>lintr</code></a> and the <a href="https://styler.r-lib.org/"><code>styler</code></a> packages both accomplish this in slightly different ways.</p>
+<p><code>lintr</code> works by analyzing your code and flagging issues for you to manually change. It can be run on one or more files and provides an itemized list of line numbers where a problem exists and a description of the issue. Example output is shown below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/rmddd-tech-appendix/rmdd-lintr.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Example of lintr output</figcaption>
+</figure>
+</div>
+<p><code>styler</code> analyzes code similarly to <code>lintr</code>, but it automatically edits scripts to adhere to a style guide instead of providing suggestion.</p>
+<p>Both packages allow us to customize what checks we impose on our script. The main differences is a personal preference how ‘human-in-the-loop’ you want to be. I personally prefer the <code>lintr</code> package to maintain full control over my code. Additionally, getting immediate feedback on ways to improve my code style helps me learn to avoid those specific mistakes in the future.</p>
+</section>
+<section id="catch-typos-with-spelling" class="level3">
+<h3 class="anchored" data-anchor-id="catch-typos-with-spelling">Catch typos with <code>spelling</code></h3>
+<p>Finally, recall that one key reason we are working in RMarkdown to begin with is its capacity for literate programming and enabling communication of our results. We have thus far been mostly focused on the needs of future <em>analysis tool users</em> not the <em>analysis results consumer</em>. They will never see the style of our code but likely care a lot about the human-readability of our prose.</p>
+<p>For this reason, as we finish polish our single-file RMarkdown, we should use the <a href="https://docs.ropensci.org/spelling/"><code>spelling</code> package</a> to check for typos in our analysis. Alternatively, if you are working in RStudio version 1.3 or later, you may also take advantage of the <a href="https://github.com/rstudio/rstudio/issues/2825">live spellcheck feature</a></p>
+</section>
+</section>
+<section id="step-3.5-enhance-single-file-output" class="level2">
+<h2 class="anchored" data-anchor-id="step-3.5-enhance-single-file-output">Step 3.5: Enhance Single-File Output</h2>
+<p>Before we continue with the normal RmdDD ‘flow’, it’s worth taking a break to reflect upon what we’ve accomplished so far. At this point, we engineered a well-organized, well-document RMarkdown that is easier for developers to use.</p>
+<p>There are a few reasons why this might be the right stopping point. First, if you are automating a report that is nearly identical from iteration to iteration, the value of single-file push-button execution may trump greater modularity or unneeded flexibility. Secondly, if you are in a resource constrained environment and lack a good system for sharing files with collaborators or conducting version control, a single-file documents is appealing for its portability.</p>
+<p>If either of these describe your use case, this side-note is for you. Here, I comment on a few tips and tricks specific to getting the most out of single-file RMarkdowns. Otherwise, you may find it a bit tangential and prefer to jump to Step 4.</p>
+<section id="sharing-resources" class="level3">
+<h3 class="anchored" data-anchor-id="sharing-resources">Sharing Resources</h3>
+<p>If portability is the goal, you can carry this to the logical extreme and ship additional resources in the <em>output</em> of your RMarkdown. In a sense, we are creating a ‘desert island’ RMarkdown that is completely self-sustaining. I don’t recommend doing all of the things listed below simultaneously;this will drastically increase file size, and if you <em>need</em> to do all of these things, it’s probably a sign you shouldn’t be aiming for the single-file endpoint. That said, I mention them all here in case any one might be useful for your scenario.</p>
+<section id="allow-code-download-from-rmarkdown-output" class="level4">
+<h4 class="anchored" data-anchor-id="allow-code-download-from-rmarkdown-output">Allow Code Download from RMarkdown Output</h4>
+<p>You can allow those with access to the HTML output of your RMarkdown download the source <code>.Rmd</code> by specifying <code>code_download: true</code> in the YAML header like this:</p>
+<pre><code>output:
+  html_document:
+    code_download: true</code></pre>
+<p>Thanks to Allison Hill for publicizing this great trick:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p>{{% tweet "1108925218850893832" %}}</p>
+</div>
+</div>
+</section>
+<section id="allow-data-previewdownload-with-dt" class="level4">
+<h4 class="anchored" data-anchor-id="allow-data-previewdownload-with-dt">Allow Data Preview/Download with <code>DT</code></h4>
+<p>For relatively small datasets, you can both display you dataset and offer the option to download it using the <code>DT</code> package. <a href="https://rstudio.github.io/DT/003-tabletools-buttons.html">This example</a> demonstrates how you can add buttons to copy the data to clipboard or download it into multiple different formats.</p>
+</section>
+<section id="embed-an-arbitrary-file" class="level4">
+<h4 class="anchored" data-anchor-id="embed-an-arbitrary-file">Embed an arbitrary file</h4>
+<p>More broadly, you can embed a file, file(s), or folder from the HTML output of an RMarkdown with the functions <code>embed_file()</code>, <code>embed_files()</code>, and <code>embed_dir()</code> from the <a href="https://cran.r-project.org/web/packages/xfun/index.html"><code>xfun</code></a> package. The process of doing this is described in more detail in Yihui Xie’s <a href="https://yihui.org/en/2018/07/embed-file/">blog post</a> on these new functions.</p>
+</section>
+</section>
+<section id="version-comparison-with-diffr" class="level3">
+<h3 class="anchored" data-anchor-id="version-comparison-with-diffr">Version Comparison with <code>diffr</code></h3>
+<p>As mentioned above, single file outputs may be useful in scenarios in which you have no formal version control system. In this case, you can conduct a rudimentary comparison of the differences between separately saved versions of your script using the <a href="https://github.com/muschellij2/diffr"><code>diffr</code> package</a>.</p>
+<p>This tool wraps the JavaScript <code>codediff</code> library and provides an aesthetic comparison of differences between two text files, much like <code>diff</code> command line tools.</p>
+</section>
+</section>
+<section id="step-4-modularizing-rmd-chunks-into-a-project" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-modularizing-rmd-chunks-into-a-project">Step 4: Modularizing Rmd chunks into a project</h2>
+<p>The goal of this step is to strip as much as reasonable<sup>3</sup> outside of our RMarkdown by organizing it into other sub-directories in a project directory. This forces us to make more modular and reusable project assets and to decrease our RMarkdown’s knit-time by not making it do unnecessary work.</p>
+<section id="use-rstudio-r-project-.rproj" class="level3">
+<h3 class="anchored" data-anchor-id="use-rstudio-r-project-.rproj">Use RStudio R Project (<code>.Rproj</code>)</h3>
+<p>A <a href="https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects">R Project</a> is a convenient structure that make a typically directory ‘smarter’. Projects have numerous benefits, but one particularly important one is that, when opened in RStudio, they immediately are treated as the working directory.</p>
+<p>In the RStudio interface, they also improve navigability by enabling a <a href="https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN">Git tab for version control</a> and easy access to a file explorer.</p>
+<p>You can make a new project in RStudio using <code>usethis::create_project()</code> or by clicking <code>File &gt; New Project...</code>.</p>
+</section>
+<section id="pick-a-consistent-opinionated-folder-structure" class="level3">
+<h3 class="anchored" data-anchor-id="pick-a-consistent-opinionated-folder-structure">Pick a consistent &amp; opinionated folder structure</h3>
+<p>Alternatively, other packages such as <a href="http://projecttemplate.net/getting_started.html"><code>ProjectTemplate</code></a>, <a href="https://itsalocke.com/starters/"><code>starters</code></a>, or <a href="https://jdblischak.github.io/workflowr/articles/wflow-01-getting-started.html"><code>workflowr</code></a> will create your R project for you.</p>
+<p>Each ships with opinionated sub-directory structures to organize your work. These are similar in spirit to the structure I describe in the original RMarkdown Driven Development blog post but vary some in the exact semantics. Additionally, each provides a slightly different set of helper features to further tune and polish your project. I encourage you to explore all your options and pick what works best for you.</p>
+<p>The most critical step here is consistency; the more you keep the same structure between projects (and, ideally, across collaborators or any organization of which you are part), the easier it is for others to navigate your directory and find the project assets in which they are interested.</p>
+</section>
+</section>
+<section id="step-4.5-manage-dependencies-versions-and-interactions" class="level2">
+<h2 class="anchored" data-anchor-id="step-4.5-manage-dependencies-versions-and-interactions">Step 4.5: Manage dependencies, versions, and interactions</h2>
+<p>Once again, as in Section 3.5, we will briefly digress to take stock of where we are. Should we chose to take the ‘exit ramp’ of a well-formed R project, we will now find ourselves will a documented, modularized project with easy to find components. However, this structure has some additional benefits to reap and drawbacks to overcome <em>if we plan to stop at the project stage</em>, so this section focuses on overcoming them.</p>
+<p>One advantage of moving from a single file to a project structure is that it enables you to create helper artifacts and sub-directories that contain various types of package metadata in order to better maintain your project over time. Three particularly important examples of this are package dependency management, version control, and project interdependency management.</p>
+<section id="manage-package-dependencies-with-renv" class="level3">
+<h3 class="anchored" data-anchor-id="manage-package-dependencies-with-renv">Manage Package Dependencies with <code>renv</code></h3>
+<p>Dependency management refers to the process of tracking the specific versions of the packages you used in your project. This helps ensure reproducibility of your code even if those packages change in future updates. For example, sometimes functions may be removed, renamed, or re-implemented in functions; these ‘breaking changes’ may be the best option for that package but may break your downstream code.</p>
+<p>Package management is a challenging issue for many reasons. There are many critical decisions regarding when to capture the state of your dependencies, how to characterize the current version, and how to ensure you can recreate that environment in the future.</p>
+<p>Currently, one promising tool in the dependency management space is <a href="https://rstudio.github.io/renv/index.html"><code>renv</code></a>. It provides a portable and light-weight solution to package management problems by logging metadata about dependencies without actually saving all packages that are needed locally. By preserving this information, it can help restore this information, <code>renv</code> can also help recreate these specific environments by re-installing specific versions of packages across a number of different repositories (CRAN, GitHub, etc.)</p>
+</section>
+<section id="conduct-version-control-with-rstudio-git-integration" class="level3">
+<h3 class="anchored" data-anchor-id="conduct-version-control-with-rstudio-git-integration">Conduct Version Control with RStudio git Integration</h3>
+<p>This is also a good time to start thinking about version control with git. This is yet another huge topic and out of scope for this post. A good place to get started with using git with R is Jenny Bryan’s <a href="https://happygitwithr.com/">Happy Git and GitHub for the UseR</a>. More tactically, if you prefer to use Git through an IDE instead of the command line, RStudio has a <a href="https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN">built-in interface</a>. You can add version control to an existing project by choosing <code>Tools &gt; Project Options &gt; Version Control</code>.</p>
+<p>I personally prefer (and, to some extent, recommend) executing git commands in a terminal, but I still make use of RStudio’s version control pane to easily preview my current branch and project status (e.g.&nbsp;equivalents of always-on access to the <code>git status</code> commands.)</p>
+<p>As another alternative, <code>usethis</code> has a rapidly growing collection of functions to wrap conduct git and GitHub-related tasks in declarative R syntax.</p>
+</section>
+<section id="ensure-project-syncing-with-drake" class="level3">
+<h3 class="anchored" data-anchor-id="ensure-project-syncing-with-drake">Ensure Project Syncing with <code>drake</code></h3>
+<p>However, moving from a single-file RMarkdown to a project is not purely upside; we’ve introduced to risks and brittleness of a different variety. Knitting a single-file RMarkdown causes all computation to rerun.<sup>4</sup> This can be slow and tedious, but it helps guarantees that all of the parts of our analysis have run in order and all changes have complete ‘flowed through’. Projects, on the other hand, risk us forgetting steps (e.g.&nbsp;pulling fresh raw data but forgetting to refresh some intermediate data artifacts).</p>
+<p>The <a href="https://docs.ropensci.org/drake/"><code>drake</code></a> package helps counteract this by providing an R wrapper for the command line utility <a href="https://swcarpentry.github.io/make-novice/"><code>make</code></a>. These tools help us specify which documents in a project depend upon each other and allow us to selectively refresh elements that are ‘downstream’ from other critical elements.</p>
+</section>
+</section>
+<section id="step-5-migrating-a-project-to-a-package" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-migrating-a-project-to-a-package">Step 5: Migrating a project to a package</h2>
+<p>The goal of this step is to convert our R project to a package. This is fairly straightforward because an R package is, at the highest level, simple R files stored in the right places, and R has excellent developer tools to help us accomplish this. Additionally, there is a fairly clear one-to-one mapping between analysis project files and an R package structure, as is described in more detail in the main post.</p>
+<section id="configure-your-package-with-usethis" class="level3">
+<h3 class="anchored" data-anchor-id="configure-your-package-with-usethis">Configure your package with <code>usethis</code></h3>
+<p><a href="https://usethis.r-lib.org/index.html"><code>usethis</code></a> is a phenomenal tool for build R packages. I said above that write an R package is basically about saving files in the right place. Well, <code>usethis</code> makes this blazingly fast and simple by auto-generating many skeleton files, folder structures, and configuration infrastructure for your with simple declarative commands (e.g.&nbsp;<code>use_r_script()</code>, <code>use_vignette()</code>) which give you detailed and helpful messages as they go to work.</p>
+<p>Jenny Bryan is current rewriting the acclaimed <a href="http://r-pkgs.had.co.nz/">R Packages</a> book to highlight synergy with <code>usethis</code>. Check out this resource, even while the transformation is in progress, for a great overview of package components.</p>
+</section>
+<section id="autogenerate-documentation-with-devtools" class="level3">
+<h3 class="anchored" data-anchor-id="autogenerate-documentation-with-devtools">Autogenerate documentation with <code>devtools</code></h3>
+<p><a href="https://devtools.r-lib.org/"><code>devtools</code></a> has many helpful functions for writing a package. Most critically for this discussion is the <code>devtools::document()</code> function which will translate the <code>roxygen2</code> comments you wrote way back in Step 3 and translate them into official R documentation files (<code>.Rd</code> files which will populate the <code>man/</code> folder).</p>
+</section>
+<section id="write-unit-tests-with-testthat" class="level3">
+<h3 class="anchored" data-anchor-id="write-unit-tests-with-testthat">Write unit tests with <code>testthat</code></h3>
+<p><a href="https://testthat.r-lib.org/"><code>testthat</code></a> offers a high-level interface for writing unit tests for your R functions. This is critical for a well-managed R package, but quite honestly, writing functions for your unit tests are something you should start to think about as soon as you write functions!<sup>5</sup></p>
+<p>In fact, as Davis Vaughn points out on Twitter, if you save your R functions in an <code>R/</code> folder instead of the generic <code>src/</code> folder at the project stage, you can actually go ahead and run <code>testthat</code> unit tests at that step.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p>{{% tweet "1124732877344784384" %}}</p>
+</div>
+</div>
+</section>
+<section id="create-a-package-website-with-pkgdown" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-package-website-with-pkgdown">Create a package website with <code>pkgdown</code></h3>
+<p><a href="https://pkgdown.r-lib.org/"><code>pkgdown</code></a> goes one step above-and-beyond the requirements for an R package. It cleverly re-uses all of the metadata contained in your resulting R package to create an aesthetic and highly accessible documentation website for your pages. Want to see an ‘in the wild example’? All of the links above to <code>usethis</code>, <code>devtools</code>, <code>testthat</code>, and <code>pkgdown</code> point to outputs of this magical tool! Advanced features include custom search bars and Google Analytics tracking.</p>
+</section>
+<section id="coordinate-tasks-with-rstudios-build-pane" class="level3">
+<h3 class="anchored" data-anchor-id="coordinate-tasks-with-rstudios-build-pane">Coordinate tasks with RStudio’s Build Pane</h3>
+<p>RStudio’s <a href="https://support.rstudio.com/hc/en-us/articles/200486488-Developing-Packages-with-RStudio">package build pane</a> provides a great number of resources for helping with the package build process. This tab will help you execute and review the results of unit tests and R CMD check (don’t worry if you don’t know what that is yet!) and provides many helpful options for installing and building your package. The build pane accomplishes this by adding a UI layover over many of the functions in <code>devtools</code> and relates package development tools to further streamline your workflow.</p>
+</section>
+<section id="automate-builds-with-ghactions" class="level3">
+<h3 class="anchored" data-anchor-id="automate-builds-with-ghactions">Automate builds with <code>ghactions</code></h3>
+<p>As mentioned above, a lot of packages like <code>devtools</code> and <code>testthat</code> help you easily set up a lot of critical package infrastructure. However, you may find that there is a lot of manual overhead in repeatedly rerunning commands to build documentation, execute unit tests, or rebuild your package website. Additionally, if you are working with collaborators, you may wish to ensure these process-steps are executed on their code contributions before you incorporate them into your repository. If any of this sounds like a problem you are having, you might need a solution for <em>continuous integration</em>.</p>
+<p>The <a href="https://www.maxheld.de/ghactions/index.html"><code>ghactions</code></a> package is here to help! It provides an R interface to <a href="https://github.com/features/actions">GitHub Actions</a>, a workflow automation tool available for GitHub-based repos.</p>
+<p>This is a relatively new package, and currently you will likely find more online support and documentation for other continuous integration tools like Travis CI and Appveyor (including <code>usethis</code> functions that will help you set up configuration files for these services, along with documentation in the <em>R packages</em> book). However, GitHub Actions appears to be growing in popularity due to it’s parity of features and superior integration with GitHub repositories. For more information, check out Jim Hester’s compelling rstudio::conf 2020 presentation on GitHub Actions.</p>
+</section>
+</section>
+<section id="closing-thoughts" class="level2">
+<h2 class="anchored" data-anchor-id="closing-thoughts">Closing Thoughts</h2>
+<p>This post recounts the best practices and tools that I am aware of for RmdDD as of January 2020. As I stated in the introduction, I’m under no illusion that this content will not eventually grow stale. If you know over other good tools that should be included or find any of the information mentioned is out of date, please contact me on <a href="https://twitter.com/EmilyRiederer">Twitter</a> or consider submitting a PR on GitHub to add or update content.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>If you wish, you may see the slides on <a href="https://www.slideshare.net/EmilyRiederer/rmarkdown-driven-development-rstudioconf-2020">SlideShare</a> or watch the full conference <a href="https://resources.rstudio.com/rstudio-conf-2020/rmarkdown-driven-development-emily-riederer">video</a>↩︎</p></li>
+<li id="fn2"><p>The choice between these depends on the problem you are solving and the needs of your future users. While that choice is out-of-scope for this post, advice on making that decision is contained in my rstudio::conf slides and will be the subject of a future post.↩︎</p></li>
+<li id="fn3"><p>‘Reasonable’ in this case is highly dependent on what parts of the RMarkdown are static or dynamic.↩︎</p></li>
+<li id="fn4"><p>Unless one uses chunk caching. I personally find this to be a risky solution that is prone to human-error, so I leave it out of scope for this piece.↩︎</p></li>
+<li id="fn5"><p>Arguably, proponents of test-driven development would say you think about your tests <em>before</em> writing any functions.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>pkgdev</category>
+  <category>workflow</category>
+  <category>rstats</category>
+  <category>rmarkdown</category>
+  <guid>https://emilyriederer.com/post/rmddd-tech-appendix/</guid>
+  <pubDate>Sat, 01 Feb 2020 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/rmddd-tech-appendix/featured.png" medium="image" type="image/png" height="70" width="144"/>
+</item>
+<item>
+  <title>RMarkdown Driven Development</title>
+  <link>https://emilyriederer.com/talk/rmarkdown-driven-development/</link>
+  <description><![CDATA[ 
+
+
+
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
+<span><i class="bi bi-play"></i> <a href="https://posit.co/resources/videos/rmarkdown-driven-development/">Video</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../../post/rmarkdown-driven-development/">Post - RMarkown Driven Development</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../../post/rmddd-tech-appendix/">Post - RmdDD Technical Appendix</a> </span></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<p>RMarkdown enables analysts to engage with code interactively, embrace literate programming, and rapidly produce a wide variety of high-quality data products such as documents, emails, dashboards, and websites. However, RMarkdown is less commonly explored and celebrated for the important role it can play in helping R users grow into developers. In this talk, I will provide an overview of RMarkdown Driven Development, a workflow for converting one-off analysis into a well-engineered and well-designed R package with deep empathy for user needs. We will explore how the methodical incorporation of good coding practices such as modularization and testing naturally evolves a single-file RMarkdown into an R project or package. Along the way, we will discuss big-picture questions like “optimal stopping” (why some data products are better left as single files or projects) and concrete details such as the {here} and {testthat} packages which can provide step-change improvements to project sustainability.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
+<div id="slides" style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/Z9qk5YnuBQM" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>rmarkdown</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.com/talk/rmarkdown-driven-development/</guid>
+  <pubDate>Thu, 30 Jan 2020 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/rmarkdown-driven-development/featured.png" medium="image" type="image/png" height="75" width="144"/>
+</item>
+<item>
+  <title>RMarkdown Driven Development (RmdDD)</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/rmarkdown-driven-development/</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p><a href="https://rmarkdown.rstudio.com/">RMarkdown</a> is an excellent platform for capturing narrative analysis and code to create reproducible reports, <a href="https://bookdown.org/yihui/blogdown/">blogs</a>, <a href="https://bookdown.org/yihui/rmarkdown/xaringan.html">slides</a>, <a href="https://bookdown.org/">books</a>, and more. One benefit of RMarkdown is its abilities to keep an analyst in the “flow” of their work and to capture their thought process along the way. However, thought processes are rarely linear; as a result, first-draft RMarkdown scripts rarely are either. This is fine for some individual analysis and preliminary exploration but can significantly decrease how understandable and resilient an RMarkdown will be in the future.</p>
+<p>As a proponent of the concept of “analysis engineering”<sup>1</sup>, I tend to think of each RMarkdown as having a “data product” (an analytical engine calibrated to answer some specific question) nestled within it. Surfacing this tool just requires a touch of forethought before beginning an analysis and a bit of clean-up afterwards.</p>
+<p>In this post, I describe RMarkdown Driven Development (RmdDD?): a progression of stages between a single ad-hoc RMarkdown script and more advanced and reusable data products like R projects and packages. This approach has numerous benefits.</p>
+<p>First, the promise of re-use and reproducibility helps justify any incremental time expenditure on constructing a single analysis with “good practices”. Second, for newer project users or package developers, it hopefully helps emphasize that the learning gap between being a useR and developeR is much small than it may seem<sup>2</sup>. Finally, I have found that this approach to package development leads to very intuitive, user-friendly packages. Essentially, you, a humble user, have conducted rigorous UX research before you, the tool developer, ever shows up!</p>
+<p>In the broadest terms, I see an evolution of the following steps:</p>
+<ol type="1">
+<li>Removing Troublesome Elements</li>
+<li>Rearrange the Chunks</li>
+<li>Reduce Duplication with Functions</li>
+<li>Migrate from RMarkdown to R Project (Modularize your files!)</li>
+<li>Convert your R Project to a Package</li>
+</ol>
+<p>Each of these is discussed in more detail below. I also want to emphasize that this sequence is not a recommendation that every RMarkdown needs to become a project or a package. Clearly, that is just silly and in many cases causes unneccesary fragmentation and overhead. However, I believe imagining a spectrum between a single-file RMarkdown to a full-functioning R package is helpful to conscientiously make the decision where to draw the line. “Optimal stopping” at different stages may be the subject of a future post.</p>
+</section>
+<section id="a-taxonomy-of-rmarkdown-chunks" class="level2">
+<h2 class="anchored" data-anchor-id="a-taxonomy-of-rmarkdown-chunks">A Taxonomy of RMarkdown Chunks</h2>
+<p>First, let’s consider a high-level classification of RMarkdown chunks by different purposes. For this discussion, I disregard finer points of different language engines and chunk options and only consider different RMarkdown components by what they contribute to the final output.</p>
+<ul>
+<li><strong>Infrastructure</strong>: These chunks set up the environment in which the RMarkdown is rendered. This includes code that helps add functions to your enviornment (e.g.&nbsp;<code>library()</code>, <code>source()</code>), load data (e.g.&nbsp;functions from <code>readr</code> or <code>data.table::fread()</code> or functions calling APIs or databases), or define analysis parameters (e.g.&nbsp;hardcoded values that are somehow used to change behavior later in the script)</li>
+<li><strong>Wrangling</strong>: These chunks contain code to transform the data that you’ve loaded into information desired for analysis/discussion (e.g.&nbsp;tidying, aggregation, model fitting)</li>
+<li><strong>Communication</strong>: These chunks help to produce meaningful output for a report such as data visualizations and summary tables</li>
+</ul>
+</section>
+<section id="remove" class="level2">
+<h2 class="anchored" data-anchor-id="remove">(1) Remove Troublesome or Unsustainable Elements</h2>
+<p><img src="https://emilyriederer.com/post/rmarkdown-driven-development/proj-to-pack-0.png" class="img-fluid"></p>
+<p>First and foremost, some things should (almost) never be in an RMarkdown. Even if you don’t want to make your code more readable and reusable, please consider doing the following to preserve your own sanity and security.</p>
+<ul>
+<li><strong>Do not hardcode passwords.</strong> This is a good general principle of scripts, but especially important in an RMarkdown where they might accidentally “leak” into the rendered output (e.g.&nbsp;HTML) in a non-visible way without your realizing. If something in your file absolutely requires a password, one approach is to <a href="https://bookdown.org/yihui/rmarkdown/parameterized-reports.html">create a parameter</a> and <a href="https://bookdown.org/yihui/rmarkdown/params-knit.html">supply this upon knitting</a>.</li>
+<li><strong>Do not hardcode values, especially late in the script</strong>. Use <a href="https://bookdown.org/yihui/rmarkdown/parameterized-reports.html">parameters</a> to bring important variables that alter subsequent input to the top.</li>
+<li><strong>Do not hardcode absolute file paths</strong>. No one else has your specific set up of files, nor are you likely to if you change computers. This can lead to a lot of frustration.<sup>3</sup> Try to use relative paths to reference any external files (e.g.&nbsp;data) being brought in to your report. This is significantly easier once the analysis becomes and R project. At minimum, move any brittle dependencies like this to the top of your script where they will at least be found more quickly to debug.</li>
+<li><strong>Do not do complicated database queries.</strong> For simple RMarkdown files, sometimes it may be convenient to use the <code>sql</code> language engine and query a database. However, at least in my experience, it is generally not the best approach to attempt database queries in your RMarkdown. Sometimes, queries can take a long time to run, and you do not want to do this every time you find a typo or tweak some plot styling and want to reknit your document. Consider making your data pull a separate script and read the results into your RMarkdown.</li>
+<li><strong>Don’t litter.</strong> Resist the temptation to save everything you tried that didn’t work and isn’t part of your analysis or narrative. Note that I’m <em>not</em> advocating against transparency around reporting all the tests you ran, all the models you attempted to fit, etc. More precisely, don’t leave half written code just in case you want to try to make some specific plot or graph later. Don’t let your RMarkdown become a “junk drawer” or take misadvantage of the ability to store unneeded code with the <code>eval = FALSE</code> chunk option.</li>
+<li><strong>Don’t load unneccesary libraries.</strong> Often, you may add library loads in exploratory analysis “just in case” or have tried out using one package before deciding on a different approach. After you’ve removed the “litter” discussed previously, also be sure to clean up any side-effects of such litter. There isn’t a huge cost to excess library loads except that it can be confusing to users and raises (however slightly) the chance of a <code>NAMESPACE</code> conflict. You might also then cause some other user to install extra packages unneccesarily which, while not tragic, is inconvenient if there is no actual benefit.</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Bonus Points</strong> I mostly keep this discussion to structure, not content, but even for the simplest of all markdowns, please attempt to format your code nicely. Even a little whitespace and meaningful variables names (e.g.&nbsp;not <code>my_data_2</code>) can go a long way. For help here, check our the <a href="https://cran.r-project.org/web/packages/lintr/index.html"><code>lintr</code></a> package or use <code>Ctrl+Shift+A</code> in RStudio.</p>
+</blockquote>
+<p>After stripping your RMarkdown of these basic risks and complications, next we can move on to restructuring.</p>
+</section>
+<section id="rearrange" class="level2">
+<h2 class="anchored" data-anchor-id="rearrange">(2) Rearrange the Chunks</h2>
+<p><img src="https://emilyriederer.com/post/rmarkdown-driven-development/proj-to-pack-1.png" class="img-fluid"></p>
+<p>The lowest hanging fruit in cleaning up an RMarkdown document is to rearrange your chunks so that all Infrastructure chunks come first and most all Data Wrangling chunks immediately follow. This has two benefits: exposing dependencies and frontloading errors.</p>
+<p>Moving all Infrastructure chunks to the beginning of your RMarkdown makes it clear what dependencies your RMarkdown has. Instantly upon opening a file, a new analyst can understand what libraries and external files it requires. This is optimal over a case where some obscure library in the penultimate chunk of some large RMarkdown which almost runs to completion before erroring out due to a missing dependency.</p>
+<p>The rationale for front-loading a lot of wrangling chunks is similar. Because these chunks are the most computationally intense, they are most likely to throw errors. Having them at the beginning of your file means you will learn about your errors sooner; having all of them together will make it easier to debug. Additionally, in my experience, these are the chunks I most often want to edit, so it’s efficient not to have to scroll through code for plots and tables simply to find these chunks</p>
+<p>Of course, in this step, do be careful of being too “prescient”. If some of your data wrangling chunks are motivated by certain output and discussion later in your file, it may be confusing for this computation to be removed from its context and placed at the beginning. I’m reasonably convicted about this advice for creating standardized reporting frameworks, but I caution that the best structure becomes far more subjective for more creative analyses.</p>
+<blockquote class="blockquote">
+<p><strong>Bonus Points</strong> Now that your data load chunks are right at the top of your script, consider adding validation for the data getting loaded. Is it the same form that your code expects? Does it have the right variable names and types? Does it meet any logical checks or assumptions you deem necessary? A few good packages for this are <a href="https://cran.r-project.org/web/packages/validate/index.html"><code>validate</code></a> and <a href="https://cran.r-project.org/web/packages/assertr/index.html"><code>assertr</code></a>. Depending on your project, you could put these in a separate code chunk with the chunk option <code>include = FALSE</code> so that data validation can be run manually or include them in you script to throw errors and prevent attempt to render incorrect data structures.</p>
+</blockquote>
+</section>
+<section id="functions" class="level2">
+<h2 class="anchored" data-anchor-id="functions">(3) Reduce Duplication with Functions</h2>
+<p><img src="https://emilyriederer.com/post/rmarkdown-driven-development/proj-to-pack-1.png" class="img-fluid"></p>
+<p>Reorganization offers other clear benefits, one of which is that code with similar purposes ends up physically closer in your document. This may make it easier for you to spot similarities. As you notice similarities in different chunks of wrangling or reporting chunks, keep in mind <a href="https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)">the rule of three</a>. That is, similar code repeated multiple times should be turned into a function.</p>
+<p>For example, I often encounter situations where I need to produce the same plots or tables for many different groups. While an analyst is in exploratory mode, they might reasonably copy-paste such code, edit some key parameters, and eagerly proceed to analyzing the results. Converting this code to functions makes is significantly easier to test and maintain. It also has the benefit of converting Reporting code into Infrastructure code which can be moved to the top of the RMarkdown, with the previously described benefits. Generally, I define any local functions after my <code>library()</code> and <code>source()</code> commands.</p>
+<p>For good advice on <em>how</em> to modularize your functions, including naming<sup>4</sup> and behavior, I recommend <a href="https://masalmon.eu/2017/12/11/goodrpackages/">Maëlle Salmon’s blog post</a> and <a href="https://ropensci.github.io/dev_guide/building.html">rOpenSci’s package development guide</a>.</p>
+<blockquote class="blockquote">
+<p><strong>Bonus Points</strong> Now that you have functions, it’s a good time to think about testing them. You could add a few tests of your functions in a chunk with <code>include = FALSE</code> as described in the last section for data validation. One helpful package here is <a href="https://testthat.r-lib.org/"><code>testthat</code></a>. Even if you don’t include these in your RMarkdown, save any informal tests you run in a text file. They will be useful if you decide to turn your analysis all the way into a package</p>
+</blockquote>
+</section>
+<section id="project" class="level2">
+<h2 class="anchored" data-anchor-id="project">(4) Convert Your RMarkdown to Project</h2>
+<p><img src="https://emilyriederer.com/post/rmarkdown-driven-development/proj-to-pack-2.png" class="img-fluid"></p>
+<p>At this point, your RMarkdown ideally has clear requirements (library, file, and data dependencies) and minimal duplicated code. Particularly if you find that you are <code>source()</code>ing in a large number of files, defining many local functions, or reading in many different datasets, its worth considering whether to convert your single file RMarkdown into an R Project.</p>
+<p><a href="https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects">R Projects</a> are a special type of folder on your computer which automatically regards itself as the working directory. This has important benefits for shareability because it enables you to use relative paths.</p>
+<p>Additionally, by using a standardized file structure within your project<sup>5</sup>, you can help others easily navigate your repository. If an entire team or organization decides on a single file structure convention, collaborators can easily navigate each others folders and have a good intuition where to find a specific file in someone else’s project.</p>
+<p>There are many recommendations online for folder structures, but when modularizing an RMarkdown, I tend to use the following:</p>
+<ul>
+<li><code>analysis</code>: RMarkdown files that constitute my final narrative output</li>
+<li><code>src</code>: R scripts that contain useful helper functions or other set-up tasks (e.g.&nbsp;data pulls)</li>
+<li><code>data</code>: Raw data - this folder should be considered “read only”!</li>
+<li><code>output</code>: Intermediate data objects created in my analysis. Typically, I save these as RDS files (with <code>saveRDS</code> and <code>readRDS</code>)</li>
+<li><code>doc</code>: Any long form documentation or set-up instructions I wish to include</li>
+<li><code>ext</code>: Any miscellaneous external files that take part in my analysis</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Bonus Points</strong> Now that you have a project, consider taking a more proactive stance on package management to ensure the future user has correct / compatible versions of any packages on which your project relies. As of writing this, RStudio’s new package management solution <a href="https://rstudio.github.io/renv/"><code>renv</code></a> is still in development, but follow that project for more details!</p>
+</blockquote>
+</section>
+<section id="package" class="level2">
+<h2 class="anchored" data-anchor-id="package">(5) Convert Your Project to a Package</h2>
+<p><img src="https://emilyriederer.com/post/rmarkdown-driven-development/proj-to-pack-3.png" class="img-fluid"></p>
+<p>One of the beautiful things about R packages is their shocking simplicity. Before I wrote my first package, I always assumed that there was some mystical step change in the level of effort between writing everyday R code and writing a package. This is a misconception I frequently hear repeated by newer R users. In reality (admittedly, painting with a <em>very</em> broad brush), writing an R package is simply the art of putting things (R files) where they belong (in the right folders.)</p>
+<p>There is a clear parallel between the “project” folders described above and the folders typically found in an R package.<sup>6</sup></p>
+<ul>
+<li>Functions in the project’s <code>src/</code> folder can move to a package’s <code>R/</code> folder</li>
+<li>RMarkdown documents in the <code>analysis/</code> folder are worked examples of how your code solves a real problems - much like the contents of a <code>vignettes/</code> folder</li>
+<li>If you take the time to clean up those worked analyses, strip out any problem-specific context, and perhaps provide more user instructions, this could turn into an <a href="https://bookdown.org/yihui/rmarkdown/document-templates.html">RMarkdown template</a> which you can ship via the <code>inst/</code> folder</li>
+<li>Your <code>data/</code> (and possibly <code>output/</code>) folder(s) contain datasets that fuel your examples. This is the type of sample data that one often includes in a <code>data/</code> folder</li>
+</ul>
+<p>It’s also instructive to notice the <em>differences</em> between projects and packages. Following the description above, the biggest notable gaps are the lack of unit tests (which would live in the <code>tests/</code> folder) and function documentation (which can be autogenerated from <a href="https://cran.r-project.org/web/packages/roxygen2/index.html">roxygen2 comments</a> and live in <code>docs/</code>). These can easily be added when converting your project to a package.</p>
+<p>More importantly, I encourage <em>project</em> developers to consider whether they shouldn’t be including this level of detail even if they never plan to make a package. Even if your functions are just for you, don’t you want to trust them and remember how to use them when you revisit your project next quarter or year?</p>
+</section>
+<section id="thats-a-wrap" class="level2">
+<h2 class="anchored" data-anchor-id="thats-a-wrap">That’s a Wrap!</h2>
+<p>Voila! Now our humble RMarkdown has evolved all the way into a complete R package. Again, is this always necessary? Definitely not. Is it always advisable? No.&nbsp;But regardless of what end-state you want to leave your RMarkdown in, it’s always worth considering how it can be groomed towards becoming a more sustainable data product.</p>
+</section>
+<section id="updates" class="level2">
+<h2 class="anchored" data-anchor-id="updates">Updates</h2>
+<p>Since I initially wrote about this topic, I have since continued to explore this idea. Below is a list of more related content:</p>
+<ul>
+<li><a href="https://www.slideshare.net/EmilyRiederer/rmarkdown-driven-development-rstudioconf-2020">Slides</a> and <a href="https://resources.rstudio.com/rstudio-conf-2020/rmarkdown-driven-development-emily-riederer">video</a> from my rstudio::conf 2020 talk</li>
+<li>Follow-up post giving a <a href="../../post/rmddd-tech-appendix/">technical appendix</a> of related R packages and tools that may help with this process</li>
+</ul>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Hilary Parker explores this issue at length in her PeerJ preprint <a href="https://peerj.com/preprints/3210/">Opinionated Analysis Development</a> and related <a href="https://twitter.com/hspter/status/669517674821521409">tweet</a> about what to call analysts who embrace such practices↩︎</p></li>
+<li id="fn2"><p>I would argue that RMarkdown offers a whole new way to “slide gradually into programming”. This has always been a key tennet of R and its predecesors, as Roger Peng explored in his 2018 useR! keynote <a href="https://simplystatistics.org/2018/07/12/use-r-keynote-2018/">Teaching R to New Users - From tapply to the Tidyverse</a> ↩︎</p></li>
+<li id="fn3"><p>And Jenny Bryan will <a href="https://twitter.com/hadleywickham/status/940021008764846080">set your laptop on fire</a>↩︎</p></li>
+<li id="fn4"><p>Which is all to say that the illustration is, as it sounds, for illustrative purposes only. Please, please, please do not ever actually name a function anything as uninformative as <code>viz_fx()</code> or <code>viz_fx2()</code>!↩︎</p></li>
+<li id="fn5"><p>One of the “Good Enough” practices recommended in <a href="https://arxiv.org/abs/1609.00037">this excellent article</a> by <a href="https://datacarpentry.org/">Data Carpentry</a>↩︎</p></li>
+<li id="fn6"><p>In fact, one could use a package structure for their project to begin with. This idea is brought to life with the idea of creating an R <a href="https://github.com/ropensci/rrrpkg">research compendium</a>. I personally prefer to keep the naming conventions separate to distinguish between projects and packages, and to use the name that is most appropriate for the contents in each case. ↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>pkgdev</category>
+  <category>rmarkdown</category>
+  <category>rstats</category>
+  <category>workflow</category>
+  <guid>https://emilyriederer.com/post/rmarkdown-driven-development/</guid>
+  <pubDate>Sat, 04 May 2019 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/rmarkdown-driven-development/featured.png" medium="image" type="image/png" height="75" width="144"/>
+</item>
+<item>
+  <title>Assorted talks on designing analytical tools and communities for enterprise</title>
+  <link>https://emilyriederer.com/talk/ent-pkg-design/</link>
+  <description><![CDATA[ 
+
+
+
+<p><strong>What’s in Your Workflow?: Reproducible Business Analysis at Capital One</strong><br>
+<em><a href="https://popup.dominodatalab.com/">Domino Data Pop-Up, Chicago 2017</a></em></p>
+<script src="//fast.wistia.com/embed/medias/duhxs6epiy.jsonp" async=""></script>
+<script src="//fast.wistia.com/assets/external/E-v1.js" async=""></script>
+<div class="wistia_embed wistia_async_duhxs6epiy" style="height:349px;width:620px">
+&nbsp;
+</div>
+<p>&nbsp;</p>
+<p><strong>InnerSource for reproducible and extensible business analysis</strong><br>
+<em><a href="https://conferences.oreilly.com/strata/strata-ny-2018/public/schedule/detail/69450">O’Reilly Strata Data Conference, NYC 2018</a></em></p>
+<p><strong>Designing Empathetic, Empowering, and Engaging Internal Tools</strong><br>
+<em><a href="https://www.ideassn.org/chicago-2018/">IDEASS, Chicago 2018</a></em></p>
+<p><strong>Building an Innersource Culture for Data Analysis</strong><br>
+<em><a href="https://data.world/events/afternoon-of-data-chicago-2019/">data.world Afternoon of Data, Chicago 2019</a></em></p>
+<p>While every data analysis produces unique insights, the analysis process consists of many standard processes and building blocks. This talk explores what data analysts in an organization can learn from open source to collaboratively create a reproducible analytical infrastructure. Based on lessons learned at Capital One, we will discuss the motivations for cultivating an innersource culture, practical advice on designing and developing internal analytical tools, and strategies for helping data analysts evolve from passive users to active contributors.</p>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>rmarkdown</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.com/talk/ent-pkg-design/</guid>
+  <pubDate>Wed, 01 Nov 2017 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/ent-pkg-design/featured.png" medium="image" type="image/png" height="63" width="144"/>
+</item>
+</channel>
+</rss>

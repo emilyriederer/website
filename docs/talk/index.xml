@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Emily Riederer</title>
+<link>https://emilyriederer.github.io/talk/index.html</link>
+<atom:link href="https://emilyriederer.github.io/talk/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.3.450</generator>
+<lastBuildDate>Wed, 15 Mar 2023 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Taking Flight with Shiny: a Modules-First Approach</title>
+  <link>https://emilyriederer.github.io/talk/shiny-modules/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<p>Taking Flight with Shiny: a Modules-First Approach</p>
+<p><img src="https://emilyriederer.github.io/talk/shiny-modules/featured.png" class="img-fluid"></p>
+<p><a href="slides.pdf"><i class="bi-filetype-pdf"></i> Slides</a><br>
+<a href="https://www.youtube.com/watch?v=F6I_jXPWFBk&amp;list=PLexAKolMzPcriOdeLwoMxQOyHRnMguEv4"><span><i class="bi-play-fill"></i> Video</span></a></p>
+<p>R users are increasingly trained to develop with good principles such as writing modular functions, testing their code, and decomposing long individual scripts into R projects. In recent years, such approaches have crept earlier into introductory R education with the realization that applying best practices is not an advanced skill but rather empowers beginners with a more robust structure.</p>
+<p>However, new Shiny developers are confronted with two challenges: they must simultaneously learn new packages and concepts (like reactivity) which introductory tutorials demonstrate how to write their apps as single scripts. This means small changes are harder to test and debug for the groups that need it the most. Although Shiny modules offer a solution to this exact problem, they are regarded as an advanced topic and often not encountered until much later in a developer’s journey.</p>
+<p>In this talk, I will demonstrate a workflow to encourage the use of modules for newer Shiny users. I argue that a ‘module-first’ approach helps to decompose design into more tangible, bite-sized, and testable components and prevent the code sprawl that makes Shiny feel intimidating. Further, this approach can be even more powerful when developing Shiny applications in the enterprise setting and onboarding new team members to existing applications.</p>
+<p>This talk is based on by related <a href="content/post/shiny-modules">blog post</a>.</p>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>rstats</category>
+  <category>shiny</category>
+  <guid>https://emilyriederer.github.io/talk/shiny-modules/index.html</guid>
+  <pubDate>Wed, 15 Mar 2023 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.github.io/talk/shiny-modules/featured.png" medium="image" type="image/png" height="81" width="144"/>
+</item>
+<item>
+  <title>tidycf: Turning analysis on its head by turning cashflows on their side</title>
+  <link>https://emilyriederer.github.io/talk/tidycf/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<p><img src="https://emilyriederer.github.io/talk/tidycf/featured.png" class="img-fluid"></p>
+<embed src="slides.pdf" width="800" height="600" type="application/pdf">
+<p><a href="slides.pdf"><i class="bi-filetype-pdf"></i> Slides</a><br>
+<a href="https://rstudio.com/resources/rstudioconf-2018/tidycf-turning-analysis-on-its-head-by-turning-cashflows-on-their-sides/"><span><i class="bi-play-fill"></i> Video</span></a></p>
+<p>Statistical computing has revolutionized predictive modeling, but financial modeling lags in innovation. At Capital One, valuations analysis required legacy SAS platforms, obscure data lineage, and cumbersome Excel cashflow statements. This talk describes development of the tidycf R package to reinvent this process as a seamless, end-to-end workflow.</p>
+<p>Reimagining cashflow statements as tidy data facilitates a simple, efficient, and transparent workflow while incorporating more statistically rigorous methods. tidycf leverage the full power of R and RStudio – building on top of the tidyverse; reducing complex crunching, wrangling, and visualization to pipeable functions; guiding analysis and documentation with RMarkdown templates; and incorporating features of the latest development version IDE. Altogether, this delivers a good user experience without the overheard of maintaining a custom GUI.</p>
+<p>The resulting package goes beyond “getting stuff done”. tidycf also increases quality, reproducibility, and creativity of analysis; ensures consistency and knowledge transfer; reduces the burdens of documentation and regulation; and speeds innovation and time-to-market – all while guiding less-technical analysts through an immersive crash course to R and the tidyverse.</p>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>pkgdev</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.github.io/talk/tidycf/index.html</guid>
+  <pubDate>Wed, 01 Nov 2017 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.github.io/talk/tidycf/featured.png" medium="image" type="image/png" height="65" width="144"/>
+</item>
+</channel>
+</rss>

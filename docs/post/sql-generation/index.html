@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2021-01-16">
+<meta name="description" content="Using the tidyverse’s expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts. (Image source techdaily.ca)">
+
+<title>Generating SQL with {dbplyr} and sqlfluff | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="Generating SQL with {dbplyr} and sqlfluff | Emily Riederer">
+<meta name="twitter:description" content="Using the tidyverse’s expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts. (Image source techdaily.ca)">
+<meta name="twitter:image" content="https://emilyriederer.github.io/post/sql-generation/featured.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html" rel="" target="">
+ <span class="dropdown-text">Top</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../talk/index.html" rel="" target="">
+ <span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Generating SQL with {dbplyr} and sqlfluff</h1>
+                  <div>
+        <div class="description">
+          Using the tidyverse’s expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts. <em>(Image source <a href="https://techdaily.ca">techdaily.ca</a>)</em>
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">rstats</div>
+                <div class="quarto-category">data</div>
+                <div class="quarto-category">sql</div>
+                <div class="quarto-category">tutorial</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 16, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-basic-approach" id="toc-the-basic-approach" class="nav-link active" data-scroll-target="#the-basic-approach">The basic approach</a></li>
+  <li><a href="#a-slightly-more-realistic-example" id="toc-a-slightly-more-realistic-example" class="nav-link" data-scroll-target="#a-slightly-more-realistic-example">A (slightly) more realistic example</a></li>
+  <li><a href="#when-you-cant-connect-to-you-data" id="toc-when-you-cant-connect-to-you-data" class="nav-link" data-scroll-target="#when-you-cant-connect-to-you-data">When you can’t connect to you data</a></li>
+  <li><a href="#caveats" id="toc-caveats" class="nav-link" data-scroll-target="#caveats">Caveats</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p><a href="https://en.wikipedia.org/wiki/Declarative_programming">Declarative programming languages</a> such as HTML, CSS, and SQL are popular because they allow users to focus more on the desired <em>outcome</em> than the exact computational steps required to achieve that outcome. This can increase efficiency and code readability since programmers describe what they <em>want</em> – whether that be how their website is laid out (without worrying about how the browser computes this layout) or how a dataset is structured (regardless of how the database goes about obtaining and aggregating this data).</p>
+<p>However, sometimes this additional layer of abstraction can introduce problems of its own. Most notably, the lack of common <a href="https://en.wikipedia.org/wiki/Control_flow">control flow</a> can introduce a lot of redundancy. This is part of the motivation for <em>pre-processing</em> tools which use more imperative programming concepts such as local variables and for-loops to automatically generate declarative code. Common examples in the world of web development are <a href="https://sass-lang.com/">Sass</a> for CSS and <a href="https://haml.info/docs/yardoc/file.REFERENCE.html">Haml</a> for HTML. Of course, such tools naturally come at a cost of their own by requiring developers to learn yet another tool.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>For R (or, specifically <code>tidyverse</code>) users who need to generate SQL code, recent advances in <a href="https://dplyr.tidyverse.org/"><code>dplyr v1.0.0</code></a> and <a href="https://dbplyr.tidyverse.org/"><code>dbplyr v2.0.0</code></a> pose an interesting alternative. By using efficient, readable, and most important <em>familiar</em> syntax, users can generate accurate SQL queries that could otherwise be error-prone to write. For example, computing sums and means for a large number of variables. Coupled with the power of <a href="https://www.sqlfluff.com/"><code>sqlfluff</code></a>, an innovative SQL styler which was announced at DBT’s recent <a href="https://www.getdbt.com/coalesce/agenda/presenting-sqlfluff">coalesce conference</a>, these queries can be made not only accurate but also imminently readable.</p>
+<section id="the-basic-approach" class="level2">
+<h2 class="anchored" data-anchor-id="the-basic-approach">The basic approach</h2>
+<p>In the following example, I’ll briefly walk through the process of generating readable, well-styled SQL using <code>dbplyr</code> and <code>sqlfluff</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First, we would connect to our database using the <code>DBI</code> package. For the sake of example, I simply connect to an “in-memory” database, but <a href="https://db.rstudio.com/">a wide range of database connectors</a> are available depending on where your data lives.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="at">dbname =</span> <span class="st">":memory:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Again, <em>for the sake of this tutorial only</em>, I will write the <code>palmerpenguins::penguins</code> data to our database. Typically, data would already exist in the database of interest.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">copy_to</span>(con, palmerpenguins<span class="sc">::</span>penguins, <span class="st">"penguins"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For reference, the data looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(palmerpenguins<span class="sc">::</span>penguins)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 x 8
+  species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
+  &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
+1 Adelie  Torgersen           39.1          18.7               181        3750
+2 Adelie  Torgersen           39.5          17.4               186        3800
+3 Adelie  Torgersen           40.3          18                 195        3250
+4 Adelie  Torgersen           NA            NA                  NA          NA
+5 Adelie  Torgersen           36.7          19.3               193        3450
+6 Adelie  Torgersen           39.3          20.6               190        3650
+# i 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
+</div>
+</div>
+<p>Now, we’re done with set-up. Suppose we want to write a SQL query to calculate the sum, mean, and variance for all of the measures in our dataset measured in milimeters (and ending in “mm”). We can accomplish this by using the <code>tbl()</code> function to connect to our database’s data and describing the results we want with <code>dplyr</code>’s elegant syntax. This is now made especially concise with select helpers (e.g.&nbsp;<code>ends_with()</code>) and the <code>across()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"penguins"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>penguins_aggr <span class="ot">&lt;-</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  penguins <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="fu">n</span>(),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">ends_with</span>(<span class="st">"mm"</span>), sum, <span class="at">.names =</span> <span class="st">"TOT_{.col}"</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">ends_with</span>(<span class="st">"mm"</span>), var, <span class="at">.names =</span> <span class="st">"VAR_{.col}"</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">ends_with</span>(<span class="st">"mm"</span>), mean, <span class="at">.names =</span> <span class="st">"AVG_{.col}"</span>),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>penguins_aggr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Source:   lazy query [?? x 11]
+# Database: sqlite 3.33.0 [:memory:]
+  species       N TOT_bill_length_mm TOT_bill_depth_mm TOT_flipper_length_mm
+  &lt;chr&gt;     &lt;int&gt;              &lt;dbl&gt;             &lt;dbl&gt;                 &lt;int&gt;
+1 Adelie      152              5858.             2770.                 28683
+2 Chinstrap    68              3321.             1253.                 13316
+3 Gentoo      124              5843.             1843.                 26714
+# i 6 more variables: VAR_bill_length_mm &lt;dbl&gt;, VAR_bill_depth_mm &lt;dbl&gt;,
+#   VAR_flipper_length_mm &lt;dbl&gt;, AVG_bill_length_mm &lt;dbl&gt;,
+#   AVG_bill_depth_mm &lt;dbl&gt;, AVG_flipper_length_mm &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>However, since we are using a remote backend, the <code>penguins_aggr</code> object does not contain the resulting data that we see when it is printed (forcing its execution). Instead, it contains a reference to the database’s table and an accumulation of commands than need to be run on the table in the future. We can access this underlying SQL translation with the <code>dbplyr::show_query()</code> and use <code>capture.output()</code> to convert that query (otherwise printed to the R console) to a character vector.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>penguins_query <span class="ot">&lt;-</span> <span class="fu">capture.output</span>(<span class="fu">show_query</span>(penguins_aggr))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>penguins_query</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "&lt;SQL&gt;"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+[2] "SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`"
+[3] "FROM `penguins`"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+[4] "GROUP BY `species`"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 </code></pre>
+</div>
+</div>
+<p>At this point, we already have a function SQL query and have saved ourselves the hassle of writing nine typo-free aggregation functions. However, since <code>dbplyr</code> was not written to generate “pretty” queries, this is not the most readable or well-formatted code. To clean it up, we can apply the <code>sqlfluff</code> linter and styler.</p>
+<p>As a prerequisite, we slightly reformat the query to remove anything that isn’t native to common SQL and will confuse the linter, such as the first line of the query vector: <code>&lt;SQL&gt;</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>penguins_query <span class="ot">&lt;-</span> penguins_query[<span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(penguins_query)]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>penguins_query <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"`"</span>, <span class="st">""</span>, penguins_query)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>penguins_query</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS VAR_bill_length_mm, VARIANCE(bill_depth_mm) AS VAR_bill_depth_mm, VARIANCE(flipper_length_mm) AS VAR_flipper_length_mm, AVG(bill_length_mm) AS AVG_bill_length_mm, AVG(bill_depth_mm) AS AVG_bill_depth_mm, AVG(flipper_length_mm) AS AVG_flipper_length_mm"
+[2] "FROM penguins"                                                                                                                                                                                                                                                                                                                                                                                                                                              
+[3] "GROUP BY species"                                                                                                                                                                                                                                                                                                                                                                                                                                           </code></pre>
+</div>
+</div>
+<p>After cleaning, we can write the results to a temp file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(penguins_query, tmp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The current state of our file looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> species, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> N, <span class="fu">SUM</span>(bill_length_mm) <span class="kw">AS</span> TOT_bill_length_mm, <span class="fu">SUM</span>(bill_depth_mm) <span class="kw">AS</span> TOT_bill_depth_mm, <span class="fu">SUM</span>(flipper_length_mm) <span class="kw">AS</span> TOT_flipper_length_mm, <span class="fu">VARIANCE</span>(bill_length_mm) <span class="kw">AS</span> VAR_bill_length_mm, <span class="fu">VARIANCE</span>(bill_depth_mm) <span class="kw">AS</span> VAR_bill_depth_mm, <span class="fu">VARIANCE</span>(flipper_length_mm) <span class="kw">AS</span> VAR_flipper_length_mm, <span class="fu">AVG</span>(bill_length_mm) <span class="kw">AS</span> AVG_bill_length_mm, <span class="fu">AVG</span>(bill_depth_mm) <span class="kw">AS</span> AVG_bill_depth_mm, <span class="fu">AVG</span>(flipper_length_mm) <span class="kw">AS</span> AVG_flipper_length_mm</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> penguins</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> species</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we are ready to use <code>sqlfluff</code>. The <code>lint</code> command highlights errors in our script, and the <code>fix</code> command automatically fixes them (with flags <code>--no-safety</code> and <code>-f</code> requesting that it apply all rules and does not ask for permission to overwrite the file, respectively). However, note that if your stylistic preferences differ from the defaults, <code>sqlfluff</code> is imminently <a href="https://docs.sqlfluff.com/en/stable/rules.html">customizable</a> via YAML.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="fu">paste</span>(<span class="st">"sqlfluff lint"</span>, tmp), <span class="at">intern =</span> <span class="cn">TRUE</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command
+'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpOyDJYM\file51f4757357ce'
+had status 1</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>character(0)
+attr(,"status")
+[1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># intern = TRUE is only useful for the sake of showing linter results for this blog post</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># it is not needed for interactive use</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="fu">paste</span>(<span class="st">"sqlfluff fix --no-safety -f"</span>, tmp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<p>The results of these commands are a well-formatted and readable query.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> species, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> N, <span class="fu">SUM</span>(bill_length_mm) <span class="kw">AS</span> TOT_bill_length_mm, <span class="fu">SUM</span>(bill_depth_mm) <span class="kw">AS</span> TOT_bill_depth_mm, <span class="fu">SUM</span>(flipper_length_mm) <span class="kw">AS</span> TOT_flipper_length_mm, <span class="fu">VARIANCE</span>(bill_length_mm) <span class="kw">AS</span> VAR_bill_length_mm, <span class="fu">VARIANCE</span>(bill_depth_mm) <span class="kw">AS</span> VAR_bill_depth_mm, <span class="fu">VARIANCE</span>(flipper_length_mm) <span class="kw">AS</span> VAR_flipper_length_mm, <span class="fu">AVG</span>(bill_length_mm) <span class="kw">AS</span> AVG_bill_length_mm, <span class="fu">AVG</span>(bill_depth_mm) <span class="kw">AS</span> AVG_bill_depth_mm, <span class="fu">AVG</span>(flipper_length_mm) <span class="kw">AS</span> AVG_flipper_length_mm</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> penguins</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> species</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="a-slightly-more-realistic-example" class="level2">
+<h2 class="anchored" data-anchor-id="a-slightly-more-realistic-example">A (slightly) more realistic example</h2>
+<p>One situation in which this approach is useful is when engineering features that might include many subgroups or lags. Some flavors of SQL have <code>PIVOT</code> functions which help to aggregate and reshape data by group; however, this can vary by engine and even those that do (such as <a href="https://docs.snowflake.com/en/sql-reference/constructs/pivot.html">Snowflake</a>) require manually specifying the names of each field. Instead, our <code>dbplyr</code> and <code>sqlfluff</code> can help generate an accurate query to accomplsh this more concisely.</p>
+<p>Now assume we want to find the mean for each measurement separately for years 2007 through 2009. Ultimately, we want these measures organized in a table with one row per species. We can concisely describe this goal with <code>dplyr</code> instead of writing out the definition of each of 9 variables (three metrics for three years) separately.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>penguins_pivot <span class="ot">&lt;-</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  penguins <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize_at</span>(<span class="fu">vars</span>(<span class="fu">ends_with</span>(<span class="st">"mm"</span>)), </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>               <span class="fu">list</span>(<span class="at">in09 =</span> <span class="sc">~</span><span class="fu">mean</span>(<span class="fu">if_else</span>(year <span class="sc">==</span> 2009L, ., <span class="dv">0</span>)),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">in08 =</span> <span class="sc">~</span><span class="fu">mean</span>(<span class="fu">if_else</span>(year <span class="sc">==</span> 2008L, ., <span class="dv">0</span>)),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">in07 =</span> <span class="sc">~</span><span class="fu">mean</span>(<span class="fu">if_else</span>(year <span class="sc">==</span> 2007L, ., <span class="dv">0</span>)))</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>               ) </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>penguins_pivot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Source:   lazy query [?? x 10]
+# Database: sqlite 3.33.0 [:memory:]
+  species   bill_length_mm_in09 bill_depth_mm_in09 flipper_length_mm_in09
+  &lt;chr&gt;                   &lt;dbl&gt;              &lt;dbl&gt;                  &lt;dbl&gt;
+1 Adelie                   13.3               6.19                   65.7
+2 Chinstrap                17.3               6.47                   69.9
+3 Gentoo                   17.0               5.34                   76.4
+# i 6 more variables: bill_length_mm_in08 &lt;dbl&gt;, bill_depth_mm_in08 &lt;dbl&gt;,
+#   flipper_length_mm_in08 &lt;dbl&gt;, bill_length_mm_in07 &lt;dbl&gt;,
+#   bill_depth_mm_in07 &lt;dbl&gt;, flipper_length_mm_in07 &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Following the same process as before, we can convert this to a SQL query.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="fu">capture.output</span>(<span class="fu">show_query</span>(penguins_pivot))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> query[<span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(query)]</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>query <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"`"</span>, <span class="st">""</span>, query)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">tempfile</span>()</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(query, tmp)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="fu">paste</span>(<span class="st">"sqlfluff fix --no-safety -f"</span>, tmp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<p>The following query shows the basic results. In this case, the <code>sqlfluff</code> default is significantly more aggressive with identations for the <code>CASE WHEN</code> statements than I personally prefer. If I were to use this in practice, I could refer back to the customizable <a href="https://docs.sqlfluff.com/en/stable/rules.html#"><code>sqlfluff</code> rules</a> and either change their configuration or restrict rules I perceived as unaesthetic or overzealous from running.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> species, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2009</span>) <span class="cf">THEN</span> (bill_length_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2009</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> bill_length_mm_in09, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2009</span>) <span class="cf">THEN</span> (bill_depth_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2009</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> bill_depth_mm_in09, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2009</span>) <span class="cf">THEN</span> (flipper_length_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2009</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> flipper_length_mm_in09, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2008</span>) <span class="cf">THEN</span> (bill_length_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2008</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> bill_length_mm_in08, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2008</span>) <span class="cf">THEN</span> (bill_depth_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2008</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> bill_depth_mm_in08, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2008</span>) <span class="cf">THEN</span> (flipper_length_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2008</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> flipper_length_mm_in08, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2007</span>) <span class="cf">THEN</span> (bill_length_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2007</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> bill_length_mm_in07, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2007</span>) <span class="cf">THEN</span> (bill_depth_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2007</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> bill_depth_mm_in07, <span class="fu">AVG</span>(<span class="cf">CASE</span> <span class="cf">WHEN</span> (<span class="dt">year</span> <span class="op">=</span> <span class="dv">2007</span>) <span class="cf">THEN</span> (flipper_length_mm) <span class="cf">WHEN</span> <span class="kw">NOT</span>(<span class="dt">year</span> <span class="op">=</span> <span class="dv">2007</span>) <span class="cf">THEN</span> (<span class="fl">0.0</span>) <span class="cf">END</span>) <span class="kw">AS</span> flipper_length_mm_in07</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> penguins</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> species</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="when-you-cant-connect-to-you-data" class="level2">
+<h2 class="anchored" data-anchor-id="when-you-cant-connect-to-you-data">When you can’t connect to you data</h2>
+<p>Even if, for some reason, you cannot connect to R with your specific dataset, you may still use this approach.</p>
+<p>For example, suppose we cannot connect to the <code>penguins</code> dataset directly, but with the help of a data dictionary we can obtain a list of all of the fields in the dataset.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>penguins_cols <span class="ot">&lt;-</span> <span class="fu">names</span>(palmerpenguins<span class="sc">::</span>penguins)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In this case, we can simple mock a fake dataset using the column names, write it to an in-memory database, generate SQL, and style the output as before.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make fake dataset ----</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>penguins_mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">length</span>(penguins_cols)), <span class="at">nrow =</span> <span class="dv">1</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>penguins_dat <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">data.frame</span>(penguins_mat), penguins_cols)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>penguins_dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  species island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g sex
+1       1      1              1             1                 1           1   1
+  year
+1    1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># copy to database ----</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="at">dbname =</span> <span class="st">":memory:"</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">copy_to</span>(con, penguins_dat, <span class="st">"penguins_mock"</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>penguins_mock <span class="ot">&lt;-</span> <span class="fu">tbl</span>(con, <span class="st">"penguins_mock"</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># generate sql ----</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>penguins_aggr <span class="ot">&lt;-</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  penguins_mock <span class="sc">%&gt;%</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="fu">n</span>(),</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">ends_with</span>(<span class="st">"mm"</span>), sum, <span class="at">.names =</span> <span class="st">"TOT_{.col}"</span>),</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">ends_with</span>(<span class="st">"mm"</span>), var, <span class="at">.names =</span> <span class="st">"VAR_{.col}"</span>),</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">ends_with</span>(<span class="st">"mm"</span>), mean, <span class="at">.names =</span> <span class="st">"AVG_{.col}"</span>),</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="fu">show_query</span>(penguins_aggr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`
+FROM `penguins_mock`
+GROUP BY `species`</code></pre>
+</div>
+</div>
+<p>The only caution with this approach is that one should not use <em>type-driven</em> select helpers such <code>summarize_if(is.numeric, ...)</code> because our mock data has some erroneous types (e.g.&nbsp;<code>species</code>, <code>island</code>, and <code>sex</code> are erroneously numeric). Thus, we could generate SQL that would throw errors when applied to actual data. For example, the following SQL code attempts to sum up islands. This is perfectly reasonably given our dummy dataset but would be illogical and problematic when applied in production.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>penguins_mock <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species) <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize_if</span>(is.numeric, sum) <span class="sc">%&gt;%</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">show_query</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt;
+SELECT `species`, SUM(`island`) AS `island`, SUM(`bill_length_mm`) AS `bill_length_mm`, SUM(`bill_depth_mm`) AS `bill_depth_mm`, SUM(`flipper_length_mm`) AS `flipper_length_mm`, SUM(`body_mass_g`) AS `body_mass_g`, SUM(`sex`) AS `sex`, SUM(`year`) AS `year`
+FROM `penguins_mock`
+GROUP BY `species`</code></pre>
+</div>
+</div>
+</section>
+<section id="caveats" class="level2">
+<h2 class="anchored" data-anchor-id="caveats">Caveats</h2>
+<p>I have found this combination of tools to be useful for generating readable, typo-free queries when doing a large number of queries. However, I will end by highlighting when this may not be the best approach.</p>
+<p><strong><code>dbplyr</code> is not intended to generate SQL.</strong> There’s always a risk when using tools for something other than their primary intent. <code>dbplyr</code> is no exception. Overall, it does an excellent job translating SQL and being aware of the unique flavor of various SQL backends. However, translating between languages is a challenging problem, and sometimes the SQL translation may not be the most computationally efficient (e.g.&nbsp;requiring more subqueries) or semantic approach. For multistep or multitable problems, you may wish to use this approach simple for generating a few painful SQL chunks instead of your whole script.</p>
+<p><strong><code>dbplyr</code> <em>is</em> intended for you to <em>not</em> look at the SQL.</strong> One major benefit of <code>dbplyr</code> for R users is distinctly to <em>not</em> change languages and to benefit from a database’s compute power while staying in R. Not only is this use case not the intended purpose, you could go as far as to argue it is almost antithetical. Nevertheless, I do think there are many cases where one should preserve SQL independently; for example, you might need to do data tranformations in a production pipeline that does not run R, not wish to take on additional code dependencies, not be able to connect to your database with R, or be collaborating with non-R users.</p>
+<p><strong><code>sqlfluff</code> is still experimental.</strong> As the developers emphasized in their DBT talk, <code>sqlfluff</code> is still in its early changes and subject to change. While I’m optimistic that this only means this tool will only keep getting better, it’s possible the exact rules, configuration, flags, syntax, etc. may change. Check out the docs for the latest documentation there.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>That being said, for SQL <a href="https://docs.getdbt.com/tutorial/using-jinja"><code>dbt</code> with Jinja templating support</a> is an intriguing option<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left"><span class="faux-block"> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> Creative Commons CC BY 4.0</a></span><br>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><span class="faux-block">Made with and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at GitHub</a></span></div>
+  </div>
+</footer>
+
+
+
+</body></html>

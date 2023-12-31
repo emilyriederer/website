@@ -1,0 +1,42 @@
+---
+title: "DataFold Data Quality Meet Up"
+description: Joined a panel of speakers to discuss tips and tricks for running dbt at scale
+location: DataFold Data Quality Meetup (2023)
+image: featured.jpg
+categories: [elt, data]
+date: 2023-05-12
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=uAe74zdLHbM) </span>    
+
+## Abstract 
+
+This is the full recording from Datafold's 9th Data Quality Meetup on Thursday, May 11th, 2023, which was focused on 'Running dbt at scale'. 
+
+Following our usual structure, each of our speakers present a lightning talk and then we transition into a panel discussion moderated by Gleb Mezhanskiy - who pulls in the audiences' questions.
+
+We had 6 guest speakers & panelists:
+1. Emily Riederer @ Capital One - “Operationalizing Column Name Contracts” 
+2. Felix Kreitschmann and Jorrit Posor @ FINN Auto - "Supercharging Analytics Engineers: How to save time and prevent technical debt by automating CI checks”
+3. Alexandra Gronemeyer @ Airbyte - "adopting and running dbt within a small data team at Airbyte"
+4. Jason Jones @ Virgin Media O2 - "Zero to 200: scaling analytics engineering within an enterprise”
+5. Sung Won Chung @ dbt Labs - "Experiences implementing dbt at scale"
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=uAe74zdLHbM >}}
+
+:::
+
+

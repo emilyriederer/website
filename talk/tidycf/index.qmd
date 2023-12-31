@@ -1,0 +1,35 @@
+---
+title: "tidycf: Turning analysis on its head by turning cashflows on their side"
+description: A case study on building an internal R package for customer lifetime value modeling at Capital One and leading broader analyst adoption of open-source tooling and reproducible workflows through a community of practice.    
+location: EARL Boston (2017) | RLadies Chicago (2017) | rstudio::conf(2018)
+image: featured.png
+categories: [workflow, pkgdev, rstats]
+date: 2017-11-01
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://posit.co/resources/videos/tidycf-turning-analysis-on-its-head-by-turning-cashflows-on-their-sides/) </span>   
+
+## Abstract 
+
+Statistical computing has revolutionized predictive modeling, but financial modeling lags in innovation. At Capital One, valuations analysis required legacy SAS platforms, obscure data lineage, and cumbersome Excel cashflow statements. This talk describes development of the tidycf R package to reinvent this process as a seamless, end-to-end workflow.
+
+Reimagining cashflow statements as tidy data facilitates a simple, efficient, and transparent workflow while incorporating more statistically rigorous methods. tidycf leverage the full power of R and RStudio – building on top of the tidyverse; reducing complex crunching, wrangling, and visualization to pipeable functions; guiding analysis and documentation with RMarkdown templates; and incorporating features of the latest development version IDE. Altogether, this delivers a good user experience without the overheard of maintaining a custom GUI.
+
+The resulting package goes beyond “getting stuff done”. tidycf also increases quality, reproducibility, and creativity of analysis; ensures consistency and knowledge transfer; reduces the burdens of documentation and regulation; and speeds innovation and time-to-market – all while guiding less-technical analysts through an immersive crash course to R and the tidyverse.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=T0pp8n-OSqM >}}
+
+:::

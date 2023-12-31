@@ -1,0 +1,17 @@
+---
+title: "Projects"
+listing:
+  contents: 
+  - "*/index.qmd"
+  sort: "date desc"
+  type: default
+  categories: true
+  fields: [image, date, title, description, categories, location]
+  page-size: 5
+  image-align: left
+  filter-ui: true
+page-layout: full
+title-block-banner: true
+comments: false
+---
+

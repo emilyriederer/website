@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2021-11-27">
+<meta name="description" content="Which of these numbers doesn’t belong? -1, 0, 1, NA. You can’t judge data quality without data context, so our tools should enable as much context as possible.">
+
+<title>Make grouping a first-class citizen in data quality checks | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="Make grouping a first-class citizen in data quality checks | Emily Riederer">
+<meta name="twitter:description" content="Which of these numbers doesn’t belong? -1, 0, 1, NA. You can’t judge data quality without data context, so our tools should enable as much context as possible.">
+<meta name="twitter:image" content="https://emilyriederer.github.io/post/grouping-data-quality/featured.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html" rel="" target="">
+ <span class="dropdown-text">Top</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../talk/index.html" rel="" target="">
+ <span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Make grouping a first-class citizen in data quality checks</h1>
+                  <div>
+        <div class="description">
+          Which of these numbers doesn’t belong? -1, 0, 1, NA. You can’t judge data quality without data context, so our tools should enable as much context as possible.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">data</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">November 27, 2021</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#use-cases" id="toc-use-cases" class="nav-link active" data-scroll-target="#use-cases">Use Cases</a></li>
+  <li><a href="#demo-nyc-turnstile-data" id="toc-demo-nyc-turnstile-data" class="nav-link" data-scroll-target="#demo-nyc-turnstile-data">Demo: NYC turnstile data</a>
+  <ul class="collapse">
+  <li><a href="#context" id="toc-context" class="nav-link" data-scroll-target="#context">Context</a></li>
+  <li><a href="#quality-checks" id="toc-quality-checks" class="nav-link" data-scroll-target="#quality-checks">Quality checks</a></li>
+  </ul></li>
+  <li><a href="#alternatives-considered" id="toc-alternatives-considered" class="nav-link" data-scroll-target="#alternatives-considered">Alternatives Considered</a></li>
+  <li><a href="#downsides" id="toc-downsides" class="nav-link" data-scroll-target="#downsides">Downsides</a></li>
+  <li><a href="#survey-of-available-tools" id="toc-survey-of-available-tools" class="nav-link" data-scroll-target="#survey-of-available-tools">Survey of available tools</a>
+  <ul class="collapse">
+  <li><a href="#dbt-utils-8-14" id="toc-dbt-utils-8-14" class="nav-link" data-scroll-target="#dbt-utils-8-14">dbt-utils (8 / 14)</a></li>
+  <li><a href="#great-expectations-15-37" id="toc-great-expectations-15-37" class="nav-link" data-scroll-target="#great-expectations-15-37">Great Expectations (15 / 37)</a></li>
+  <li><a href="#monte-carlo-all" id="toc-monte-carlo-all" class="nav-link" data-scroll-target="#monte-carlo-all">Monte Carlo (All)</a></li>
+  </ul></li>
+  <li><a href="#code-appendix" id="toc-code-appendix" class="nav-link" data-scroll-target="#code-appendix">Code Appendix</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="featured.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@greysonjoralemon">Greyson Joralemon</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>Which of these numbers doesn’t belong? -1, 0, 1, NA.</p>
+<p>It may be hard to tell. If the data in question should be non-negative, -1 is clearly wrong; if it should be complete, the NA is problematic; if it represents the signs to be used in summation, 0 is questionable. In short, there is no data quality without data context.</p>
+<p>The past few years have seen an explosion in different solutions for monitoring in-production data quality. These tools, including software like <code>dbt</code> and <code>Great Expectations</code> as well as platforms like <code>Monte Carlo</code>, bring a more DevOps flavor to data production with important functionality like automated testing <em>within</em> pipelines (not just at the end), expressive and configurable semantics for common data checks, and more.</p>
+<p>However, despite all these features, I notice a common gap across the landscape which may limit the ability of these tools to encode richer domain context and detect common classes of data failures. I previously wrote about the importance of <a href="https://emilyriederer.netlify.app/post/data-error-gen/">validating data based on its data generating process</a> – both along the technical and conceptual dimensions. Following this logic, an important and lacking functionality<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> across the data quality monitoring landscape, is the ability to readily apply checks separately to groups of data. On a quick survey, I count about 8/14 <code>dbt</code> tests (from the add-on <a href="https://github.com/dbt-labs/dbt-utils">dbt-utils</a> package), 15/37 <a href="https://docs.greatexpectations.io/docs/reference/glossary_of_expectations">Great Expectations</a> column tests, and most all of the <a href="https://docs.getmontecarlo.com/docs/field-health-metrics">Monte Carlo</a> field health metrics that would be improved with first-class grouping functionality. (Lists at the bottom of the post.)</p>
+<p>Group-based checks can be important for fully articulating good “business rules” against which to assess data quality. For example, groups could reflect either computationally-relevant dimensions of the ETL process (e.g.&nbsp;data loaded from different sources) or semantically-relevant dimensions of the real-world process that our data captures (e.g.&nbsp;repeated measures pertaining to many individual customers, patients, product lines, etc.)</p>
+<p>In this post, I make my case for why grouping should be a first-class citizen in data quality tooling.</p>
+<section id="use-cases" class="level2">
+<h2 class="anchored" data-anchor-id="use-cases">Use Cases</h2>
+<p>There are three main use-cases for enabling easy data quality checks by group: checks that can only be expressed by group, checks that can be more rigorous by group, and checks that are more semantically intuitive by group.</p>
+<p><strong>Some checks can be more rigorous by group.</strong> Consider a recency check (i.e.&nbsp;that the maximum date represented in the data is appropriately close to the present.) If the data loads from multiple sources (e.g.&nbsp;customer acquisitions from web and mobile perhaps logging to different source systems), the maximum value of the field could pass the check if any one source loaded, but unless the data is grouped in such a way that reflects different data sources and <em>each</em> group’s maximum date is checked, stale data could go undetected.</p>
+<p><strong>Some types of checks can only be expressed by group.</strong> Consider a check for consecutive data values. If a table that measures some sort of user engagements, there might be fields for the <code>USER_ID</code> and <code>MONTHS_SINCE_ACQUISITION</code>. A month counter will most certainly <em>not</em> be strictly increasing across the entire dataset but absolutely should be monotonic within each user.</p>
+<p><strong>Some checks are more semantically intuitive by group.</strong> Consider a uniqueness check for the same example as above. The month counter is also not unique across the whole table but could be checked for uniqueness within each user. Group semantics would not be required to accomplish this; a simple <code>USER_ID x MONTHS_SINCE_ACQUISITION</code> composite variable could be produced and checked for uniqueness. However, it feels cumbersome and less semantically meaningful to derive additional fields just to fully check the properties of existing fields. (But for the other two categories, this alone would not justify adding such new features.)</p>
+<p>These categories demonstrate the specific use cases for grouped data checks. However, there are also soft benefits.</p>
+<p>Most prevalent, having group-based checks be first class citizens opens up a new <a href="https://english.stackexchange.com/questions/77535/what-does-falling-into-the-pit-of-success-mean"><strong>pit of success</strong></a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. If you believe, as do I, that this is a often a fundamentally important aspect of confirming data quality and not getting “false promises” (as in the first case where non-grouped checks are less rigorous), configuring checks this way should be as close to zero-friction as possible.</p>
+</section>
+<section id="demo-nyc-turnstile-data" class="level2">
+<h2 class="anchored" data-anchor-id="demo-nyc-turnstile-data">Demo: NYC turnstile data</h2>
+<section id="context" class="level3">
+<h3 class="anchored" data-anchor-id="context">Context</h3>
+<p>To better motivate this need, we will look at a real-world example. For this, I turn to New York City’s <a href="http://web.mta.info/developers/turnstile.html">subway turnstile data</a> which I can always count on to have plenty of data quality quirks (which, to be clear, I do not say as a criticism. There’s nothing unexpected about this in real-world “data as residue” data.)</p>
+<p>Specifically, we’ll pull down data extracts for roughly the first quarter of 2020 (published on Jan 11 - April 11, corresponding to weeks ending Jan 10 - April 10.)<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<p>This data contains 2869965 records, corresponding to one unique record per unique control area (<code>CA</code>), turnstile unit (<code>UNIT</code>), and individual turnstile device (<code>SCP</code>) at internals of four hours of the day.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(full_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2869965</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">distinct</span>(full_data, CA, UNIT, SCP, DATE, TIME))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2869965</code></pre>
+</div>
+</div>
+<p>Because this is raw turnstile data, the values for <code>ENTRIES</code> and <code>EXITS</code> may not be what one first expects. These fields contain the <em>cumulative number of turns of the turnstile</em> since it was last zeroed-out. Thus, to get the actual number of <em>incremental</em> entries during a given time period, one must take the difference between the current and previous number of entries <em>at the turnstile level</em>. Thus, missing or corrupted values<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> could cascade in unpredictable ways throughout the transformation process.</p>
+<p>Looking at the data for a single turnstile unit makes the way this data is encoded more clear:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>full_data <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(CA <span class="sc">==</span> <span class="st">"A002"</span>, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>         UNIT <span class="sc">==</span> <span class="st">"R051"</span>, </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>         SCP <span class="sc">==</span> <span class="st">"02-00-00"</span>, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>         DATE <span class="sc">==</span> <span class="st">"2020-01-04"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(TIME) <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(TIME, ENTRIES, EXITS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 x 3
+  TIME       ENTRIES   EXITS
+  &lt;hms&gt;        &lt;int&gt;   &lt;int&gt;
+1 10800 secs 7331213 2484849
+2 25200 secs 7331224 2484861
+3 39600 secs 7331281 2484936
+4 54000 secs 7331454 2485014
+5 68400 secs 7331759 2485106
+6 82800 secs 7331951 2485166</code></pre>
+</div>
+</div>
+</section>
+<section id="quality-checks" class="level3">
+<h3 class="anchored" data-anchor-id="quality-checks">Quality checks</h3>
+<p>So how does this map to the use cases above?</p>
+<p>First, lets consider checks that are <strong>more rigorous by group</strong>. One example of this is checking for completeness of the range of data.</p>
+<p>Looking at the aggregate level, the data appears complete. The minimum data is the correct start date for the week ending Jan 10 and the maximum date is the correct end date for the week ending April 10.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summarize</span>(full_data,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">min</span>(DATE),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">max</span>(DATE))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 x 2
+  `min(DATE)` `max(DATE)`
+  &lt;date&gt;      &lt;date&gt;     
+1 2020-01-04  2020-04-10 </code></pre>
+</div>
+</div>
+<p>This check might provide a false sense of security.</p>
+<p>However, what happens if we repeat this check at the actual grain of records which we <em>need</em> to be complete and subsequent calculations probably assume<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> are complete? We find many individual units whose data does not appear appropriately recent.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>full_data <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CA, UNIT, SCP) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">MAX =</span> <span class="fu">max</span>(DATE)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(MAX <span class="sc">!=</span> <span class="st">"2020-04-10"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'CA', 'UNIT'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 54 x 4
+# Groups:   CA, UNIT [24]
+   CA    UNIT  SCP      MAX       
+   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;date&gt;    
+ 1 C021  R212  00-00-00 2020-01-06
+ 2 C021  R212  00-00-01 2020-01-06
+ 3 C021  R212  00-00-02 2020-01-06
+ 4 C021  R212  00-00-03 2020-01-06
+ 5 H007  R248  00-00-00 2020-03-07
+ 6 H007  R248  00-00-01 2020-02-15
+ 7 H007  R248  00-03-00 2020-02-15
+ 8 H007  R248  00-03-01 2020-02-15
+ 9 H007  R248  00-03-02 2020-02-15
+10 H009  R235  00-03-04 2020-03-20
+# i 44 more rows</code></pre>
+</div>
+</div>
+<p>Next, consider checks that are <strong>only expressible by group</strong>. One example of this is a monotonicity (value always increasing) check.</p>
+<p>For example, <code>ENTRIES</code> is certainly <em>not</em> monotonically increasing at the row level. Each individual turnstile device is counting up according to its own usage. However, in an ideal world, these fields should be monotonic over time at the level of individual devices. (Spoiler alert: due to the maintenance, malfunction, and maxing-out scenarios mentioned above, it’s not.) Thus, this type of check is only possible at the grouped level.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>full_data <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(CA, UNIT, SCP) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(DATE, TIME) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">LAG_ENTRIES =</span> <span class="fu">lag</span>(ENTRIES)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ENTRIES <span class="sc">&lt;</span> LAG_ENTRIES, DATE <span class="sc">&gt;</span> <span class="st">'2020-01-25'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(CA, UNIT, SCP, DATE, TIME, ENTRIES, LAG_ENTRIES) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(ENTRIES <span class="sc">-</span> LAG_ENTRIES)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 19,281 x 7
+# Groups:   CA, UNIT, SCP [262]
+   CA    UNIT  SCP      DATE       TIME        ENTRIES LAG_ENTRIES
+   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;date&gt;     &lt;hms&gt;         &lt;int&gt;       &lt;int&gt;
+ 1 R231  R176  00-00-05 2020-03-09 75600 secs       99  1054865694
+ 2 R412  R146  00-03-03 2020-02-04 43200 secs 51627403   318991420
+ 3 N029  R333  01-00-00 2020-03-15 75600 secs       18   168628048
+ 4 R327  R361  01-06-00 2020-03-03 72000 secs   524397   135382887
+ 5 R312  R405  00-05-00 2020-02-16 57600 secs   131089   118174528
+ 6 N091  R029  02-05-00 2020-02-01 54000 secs   524368   118146213
+ 7 A025  R023  01-06-00 2020-03-04 82800 secs 11525743    67822764
+ 8 A025  R023  01-00-00 2020-03-04 82800 secs  5276291    28448967
+ 9 R238  R046  00-03-00 2020-02-15 82800 secs        5    16336060
+10 R533  R055  00-03-04 2020-03-14 43200 secs      104    15209650
+# i 19,271 more rows</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="alternatives-considered" class="level2">
+<h2 class="anchored" data-anchor-id="alternatives-considered">Alternatives Considered</h2>
+<p>Given that this post is, to some extent, a feature request across all data quality tools ever, it’s only polite to discuss downsides and alternative solutions that I considered. Clearly, finer-grained checks incur a greater computational cost and could, in some cases, be achieved via other means.</p>
+<p><strong>Grouped data check might seem excessive.</strong> After all, data quality checks do not, perhaps, aim to guarantee every field is 100% correct. Rather, they are higher-level metrics which aim to catch signals of deeper issues. My counterargument is largely based in the first use case listed above. Without testing data at the right level of granularity, checks could almost do more harm than good if they promote a false sense of data quality by masking issues.</p>
+<p><strong>Not all grains of data are equally likely to break.</strong> Taking the previous point into account, we likely cannot check everything, so we ought to focus our attention on some combination of the most “important” errors and the most “likely” errors. In the subway example, turnstile-level failures are likely because each individual turnstile is a sensor that is independently involved in the <em>data collection process</em> and can break in its own unique ways. However, for something like a clickstream for different users on a website, the data collection process is centralized, so it would be less like (and infeasible to check) for individual customer-level data to break in dramatically different ways.</p>
+<p><strong>High-risk grouped data is possibly ungrouped further upstream.</strong> Following the logic that grouped data is more dangerous if groups denote units responsible for their own data collection, in theory this data is being transmitted separately at some point in the pipeline. Thus, in some cases it could be checked before it is grouped. However, we cannot always get infinitely far upstream in the data pipeline as some pieces may be outside of our control or produced atomically by a third-party platform.</p>
+<p><strong>Some grouped checks can be achieved in other ways.</strong> Some (but not all) of these checks can be mocked by creating composite variables, using other built-in features<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>, or writing custom checks <a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>. However, there solutions seem to defy part of the benefits of these tools: semantically meaningful checks wrapped in readable syntax and ready for use out-of-the-box. This also implies that grouped operations are far less than first-class citizens. This also limits the ability to make use of some of the excellent functionality these tools offer for documenting data quality checks in metadata and reporting on their outcomes.</p>
+<p>I also considered the possibility that this is a niche, personal need moreso than a general one because I work with a <em>lot</em> of panel data. However, I generally believe <em>most</em> data is nested in some way. I can at least confirm that I’ve not completely alone in this desire with a peak at GitHub issue feature requests in different data quality tools. For example, three stale stale GitHub issues on the <code>Great Expectations</code> repo (<a href="https://github.com/great-expectations/great_expectations/issues/351">1</a>, <a href="https://github.com/great-expectations/great_expectations/issues/402">2</a>, <a href="https://github.com/great-expectations/great_expectations/issues/373">3</a>) request similar functionality.</p>
+</section>
+<section id="downsides" class="level2">
+<h2 class="anchored" data-anchor-id="downsides">Downsides</h2>
+<p>There’s no such thing as a free lunch or a free feature enhancement. My point is in no way to criticize existing data quality tools that do not have this functionality. Designing any tool is a process of trade-offs, and it’s only fair to discuss the downsides. These issues are exacerbated further when adding “just one more thing” to mature, heavily used tools as opposed to developing new ones.</p>
+<p><strong>Grouped checks are more computational expensive.</strong> Partitioning and grouping can make data check operations more expensive by disabling certain computational shortcuts<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> and requiring more total data to be retained. This is particularly true if the data is indexed or partitioned along different dimensions than the groups used for checks. The extra time required to run more fine-grained checks could become intractable or at least unappealing, particularly in an interactive or continuous integration context. However, in many cases it could be a better use of time to more rigorously test recently loaded data as opposed to (or in conjunction with) running higher-level checks across larger swaths of data.</p>
+<p><strong>API bloat makes tools less navigable.</strong> Any new feature has to be documented by developers and comprehended by users. Having too many “first-class citizen” features can lead to features being ignored, unknown, or misused. It’s easy to point to any one feature in isolation and claim it is important; it’s much harder to stare at a full backlog and decide where the benefits are worth the cost.</p>
+<p><strong>Incremental functionality adds more overhead.</strong> Every new feature demands careful programming and testing. Beyond that, there’s a substantial mental tax in thinking through how that feature needs to interact with existing functionality while, at the same time, preserving backwards compatibility.</p>
+<p><strong>Every feature built means a different one isn’t.</strong> As a software user, it’s easy to have a great idea for a feature that should absolutely be added. That’s a far different challenge than that faced by the developers and maintainers who must prioritize a rich backlog full of competing priorities.</p>
+</section>
+<section id="survey-of-available-tools" class="level2">
+<h2 class="anchored" data-anchor-id="survey-of-available-tools">Survey of available tools</h2>
+<p>My goal is in no way to critique any of the amazing, feature-rich data quality tools available today. However, to further illustrate my point, I pulled down key data checks from a few prominent packages to assess how many of their tests would be potentially enhanced with the ability to provided grouping parameters. Below are lists for <code>dbt-utils</code>, <code>Great Expectations</code>, and <code>Monte Carlo</code> with relevant tests <em>in bold</em>.</p>
+<section id="dbt-utils-8-14" class="level3">
+<h3 class="anchored" data-anchor-id="dbt-utils-8-14">dbt-utils (8 / 14)</h3>
+<ul>
+<li><strong>equal_rowcount</strong></li>
+<li>equality</li>
+<li>expression_is_true</li>
+<li><strong>recency</strong><br>
+</li>
+<li><strong>at_least_one</strong></li>
+<li><strong>not_constant</strong></li>
+<li><strong>cardinality_equality</strong></li>
+<li><strong>unique_where</strong></li>
+<li>not_null_where<br>
+</li>
+<li><strong>not_null_proportion</strong></li>
+<li>relationships_where</li>
+<li>mutually_exclusive_ranges</li>
+<li><strong>unique_combination_of_columns</strong> (<em>but less important - only for semantics</em>)</li>
+<li>accepted_range</li>
+</ul>
+</section>
+<section id="great-expectations-15-37" class="level3">
+<h3 class="anchored" data-anchor-id="great-expectations-15-37">Great Expectations (15 / 37)</h3>
+<ul>
+<li><strong>expect_column_values_to_be_unique</strong> (<em>but less important - only for semantics</em>)</li>
+<li>expect_column_values_to_not_be_null<br>
+</li>
+<li>expect_column_values_to_be_null<br>
+</li>
+<li>expect_column_values_to_be_of_type<br>
+</li>
+<li>expect_column_values_to_be_in_type_list</li>
+<li>expect_column_values_to_be_in_set</li>
+<li>expect_column_values_to_not_be_in_set</li>
+<li>expect_column_values_to_be_between<br>
+</li>
+<li><strong>expect_column_values_to_be_increasing</strong></li>
+<li><strong>expect_column_values_to_be_decreasing</strong></li>
+<li>expect_column_value_lengths_to_be_between</li>
+<li>expect_column_value_lengths_to_equal</li>
+<li>expect_column_values_to_match_regex</li>
+<li>expect_column_values_to_not_match_regex</li>
+<li>expect_column_values_to_match_regex_list</li>
+<li>expect_column_values_to_not_match_regex_list</li>
+<li>expect_column_values_to_match_like_pattern</li>
+<li>expect_column_values_to_not_match_like_pattern</li>
+<li>expect_column_values_to_match_like_pattern_list</li>
+<li>expect_column_values_to_not_match_like_pattern_list</li>
+<li>expect_column_values_to_match_strftime_format</li>
+<li>expect_column_values_to_be_dateutil_parseable</li>
+<li>expect_column_values_to_be_json_parseable</li>
+<li>expect_column_values_to_match_json_schema</li>
+<li>expect_column_distinct_values_to_be_in_set</li>
+<li><strong>expect_column_distinct_values_to_contain_set</strong></li>
+<li><strong>expect_column_distinct_values_to_equal_set</strong></li>
+<li><strong>expect_column_mean_to_be_between</strong></li>
+<li><strong>expect_column_median_to_be_between</strong></li>
+<li><strong>expect_column_quantile_values_to_be_between</strong></li>
+<li><strong>expect_column_stdev_to_be_between</strong></li>
+<li><strong>expect_column_unique_value_count_to_be_between</strong></li>
+<li><strong>expect_column_proportion_of_unique_values_to_be_between</strong></li>
+<li><strong>expect_column_most_common_value_to_be_in_set</strong></li>
+<li><strong>expect_column_max_to_be_between</strong></li>
+<li><strong>expect_column_min_to_be_between</strong></li>
+<li><strong>expect_column_sum_to_be_between</strong></li>
+</ul>
+</section>
+<section id="monte-carlo-all" class="level3">
+<h3 class="anchored" data-anchor-id="monte-carlo-all">Monte Carlo (All)</h3>
+<p>Any of Monte Carlo’s checks might be more sensitive to detecting changes with subgrouping. Since these “health metrics” tend to represent distributional properties, it can be useful to ensure that “good groups” aren’t pulling down the average value and masking errors in “bad groups”.</p>
+<ul>
+<li>Pct NUll<br>
+</li>
+<li>Pct Unique</li>
+<li>Pct Zero<br>
+</li>
+<li>Pct Negative<br>
+</li>
+<li>Min</li>
+<li>p20</li>
+<li>p40</li>
+<li>p60</li>
+<li>p80</li>
+<li>Mean</li>
+<li>Std</li>
+<li>Max</li>
+<li>Pct Whitespace</li>
+<li>Pct Integer</li>
+<li>Pct “Null”/“None”</li>
+<li>Pct Float</li>
+<li>Pct UUID</li>
+</ul>
+</section>
+</section>
+<section id="code-appendix" class="level2">
+<h2 class="anchored" data-anchor-id="code-appendix">Code Appendix</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># data source: http://web.mta.info/developers/turnstile.html</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co"># define read function with schema ----</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>read_data <span class="ot">&lt;-</span> <span class="cf">function</span>(url) {</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  readr<span class="sc">::</span><span class="fu">read_csv</span>(url,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>                  <span class="at">col_names =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                  <span class="at">col_types =</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">cols</span>(</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                      <span class="st">`</span><span class="at">C/A</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">col_character</span>(),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                      <span class="at">UNIT =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                      <span class="at">SCP =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                      <span class="at">STATION =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                      <span class="at">LINENAME =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>                      <span class="at">DIVISION =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>                      <span class="at">DATE =</span> <span class="fu">col_date</span>(<span class="at">format =</span> <span class="st">"%m/%d/%Y"</span>),</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>                      <span class="at">TIME =</span> <span class="fu">col_time</span>(<span class="at">format =</span> <span class="st">""</span>),</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>                      <span class="at">DESC =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>                      <span class="at">ENTRIES =</span> <span class="fu">col_integer</span>(),</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>                      <span class="at">EXITS =</span> <span class="fu">col_integer</span>()</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>                    ))</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co"># ridership data ----</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>dates <span class="ot">&lt;-</span> <span class="fu">seq.Date</span>(<span class="at">from =</span> <span class="fu">as.Date</span>(<span class="st">'2020-01-11'</span>), <span class="at">to =</span>, <span class="fu">as.Date</span>(<span class="st">'2020-04-11'</span>), <span class="at">by =</span> <span class="st">'7 days'</span>)</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>dates_str <span class="ot">&lt;-</span> <span class="fu">format</span>(dates, <span class="at">format =</span> <span class="st">'%y%m%d'</span>)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>dates_url <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">'http://web.mta.info/developers/data/nyct/turnstile/turnstile_%s.txt'</span>, dates_str)</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>datasets <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dates_url, <span class="at">FUN =</span> read_data)</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>full_data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, datasets)</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>full_data <span class="ot">&lt;-</span> full_data[full_data<span class="sc">$</span>DESC <span class="sc">==</span> <span class="st">"REGULAR"</span>,]</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(full_data)[<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="st">"CA"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>With the exception of <code>pointblank</code> which kindly entertained an issue I opened on this topic: https://github.com/rich-iannone/pointblank/issues/300<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The “pit of success” is the idea that well-designed tools can help nudge people to do the “right” thing by default because its also the easiest. I first learned of it in a talk by Hadley Wickham, and it is originally attributed to Microsoft program manage Rico Mariani.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Code for this pull is at the bottom of the post.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>This can happen for many reasons including turnstile maintenance or replacement. My goal in this post is not to go into all of the nuances of this particular dataset, of which much has already been written, so I’m simplifying somewhat to keep it as a tractable motivating example.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Transformations should probably never assume this. Any real ETL process using this data would like have to account for incompleteness in an automated fashion because it really is not a rare event. Again, we are simplifying here for the sake of example<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>For example, Great Expectations does offer conditional expectations which can be executed on manually-specified subsets of data. This could be a tractable solution for applying data checks to a small number of categorical variables, but less so for large or ill-defined categories like user IDs. More here: https://legacy.docs.greatexpectations.io/en/latest/reference/core_concepts/conditional_expectations.html<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>Like, in the case of <code>Great Expectation</code>’s python-based API, writing custom code to partition data before applying checks, or, in the case of <code>dbt</code>/<code>dbt-utils</code> writing a custom macro.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>For example, the maximum of a set of numbers is the maximum of the maximums of the subsets. Thus, if my data is distributed, I can find the max by comparing only summary statistics from the distributed subsets instead of pulling all of the raw data back together.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.github\.io\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left"><span class="faux-block"> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> Creative Commons CC BY 4.0</a></span><br>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right"><span class="faux-block">Made with and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at GitHub</a></span></div>
+  </div>
+</footer>
+
+
+
+</body></html>

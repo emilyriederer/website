@@ -1,0 +1,34 @@
+---
+title: "Evaluation without Experimentation"
+description: An introduction to inverse propensity of treatment weighting for program evaluation with applications to Two Million Texans' relational organizing campaign during the 2022 midterms  
+location: "Data for Progress Data Engineering Open Mic (Mar 2023)"
+image: featured.png
+categories: [causal]
+date: 2023-03-22
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://youtu.be/R5Imyf56mhc) </span>
+<span><i class = 'bi bi-pencil'></i> [Post - Causal Design Patterns](/post/causal-design-patterns/) </span>  
+
+## Abstract 
+
+In this four-minute lightning talk, I explain the motivation for using observational versus experimental methods when measuring the impact of GOTV (voter turnout) efforts. Next, I provide a high-level explanation of a specific method (inverse propensity of treatment weighting) and demonstrate the method's ability to balance baseline traits and historical performance of a synthetic control population for credible effect estimation. 
+
+This talk is based on my related [blog post](/post/causal-design-patterns) and summarizes my work as a Bluebonnet Data Fellow with the Two Million Texans relational organizing campaign during the 2022 midterms.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://youtu.be/R5Imyf56mhc >}}
+
+:::

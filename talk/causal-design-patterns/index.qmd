@@ -1,0 +1,40 @@
+---
+title: "Causal Design Patterns"
+description: An overview of basic research design patterns in causal inference, modern extensions, and data management strategies to set up a causal inference initiative for success  
+location: Data Science Salon NYC (2023) | Pivigo Data Meet-Up (2021) | Toronto Data Workshop (2021)
+image: featured.jpg
+categories: [causal]
+date: 2023-06-07
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> [Video](https://www.youtube.com/watch?v=0kDjkTB2yZ0) </span>    
+<span><i class = 'bi bi-play'></i> [Video - Discussion](https://www.youtube.com/watch?v=VP3BBZ7poc0&t=191s) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Causal Design Patterns](/post/causal-design-patterns/) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Causal Data Management](/post/causal-data/) </span>    
+
+## Abstract 
+
+Experimentation is a pillar of product data science and machine learning. But what can you do when experimentation is impractical, costly, risky to customer experience, or too slow to read the desired long-term results?
+
+While industry is often spoiled by their ability to AB test, the question of how to draw valid causal measurements from non-randomized data has long been a focus of many fields from epidemiology to public policy. This talk will review four common ‘design pattern’ for observational causal inference and how they can apply to industry. Exploring the assumptions, limitations, and applications of these methods will help practicing data scientists recognize opportunities to use this methods to tackle seemingly unanswerable questions they face.
+
+Moving beyond the basics, we will see how these building-block patterns are fueling an explosion in modern causal machine learning and discuss how to seed your organization for success with enterprise knowledge and data management.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+{{< video https://www.youtube.com/watch?v=0kDjkTB2yZ0 >}}
+
+:::
+
+

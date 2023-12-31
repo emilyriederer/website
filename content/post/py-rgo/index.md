@@ -6,8 +6,8 @@ title: "Python Rgonomics"
 subtitle: ""
 summary: "Exploring emerging tools that help R users feel at home (Image credit: Allison Horst)"
 authors: []
-tags: [rtats, python]
-categories: [rtats, python]
+tags: [rstats, python]
+categories: [rstats, python]
 date: 2023-12-29
 lastmod: 2023-12-29
 featured: false
@@ -23,7 +23,7 @@ image:
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
   
 projects: [""]
-rmd_hash: c1cd221c1049b340
+rmd_hash: c6875c67e82428e0
 
 ---
 

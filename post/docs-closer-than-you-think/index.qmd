@@ -9,7 +9,7 @@ image: "featured.PNG"
 
 Documentation can be a make-or-break for the success of a data initiative, but it's too often considered an optional nice-to-have. I'm a big believer that writing is thinking. Similarly, documenting is planning, executing, and validating. 
 
-Previously, I've explored how [we can create latent and lasting documentation]() of data products and how [column names can be self documenting]().
+Previously, I've explored how [we can create latent and lasting documentation](https://emilyriederer.netlify.app/post/latent-lasting-documentation/) of data products and how [column names can be self documenting](https://emilyriederer.netlify.app/post/column-name-contracts/).
 
 Recently, I had the opportunity to expand on these ideas in a [cross-post with Select Star](https://www.selectstar.com/blog/why-youre-closer-to-data-documentation-than-you-think). I argue that teams can produce high-quality and maintainable documentation with low overhead with a form of "documentation-driven development". That is, smartly structuring and re-using artifacts from the development process into long-term documentation. For example:
 

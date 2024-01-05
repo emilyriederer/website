@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.github.io/publication/index.html</link>
-<atom:link href="https://emilyriederer.github.io/publication/index.xml" rel="self" type="application/rss+xml"/>
+<link>https://emilyriederer.com/publication/index.html</link>
+<atom:link href="https://emilyriederer.com/publication/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
 <lastBuildDate>Sat, 19 Nov 2022 06:00:00 GMT</lastBuildDate>
 <item>
   <title>Causal and Associational Language in Observational Health Research: A Systematic Evaluation</title>
   <dc:creator>Noah Haber, et al</dc:creator>
-  <link>https://emilyriederer.github.io/publication/causal-language/index.html</link>
+  <link>https://emilyriederer.com/publication/causal-language/index.html</link>
   <description><![CDATA[ 
 
 
@@ -25,14 +25,14 @@
 
  ]]></description>
   <category>causal</category>
-  <guid>https://emilyriederer.github.io/publication/causal-language/index.html</guid>
+  <guid>https://emilyriederer.com/publication/causal-language/index.html</guid>
   <pubDate>Sat, 19 Nov 2022 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.github.io/publication/causal-language/featured.jpeg" medium="image" type="image/jpeg"/>
+  <media:content url="https://emilyriederer.com/publication/causal-language/featured.jpeg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>97 Things Every Data Engineer Should Know: Collective Wisdom from the Experts</title>
   <dc:creator>Tobias Macey</dc:creator>
-  <link>https://emilyriederer.github.io/publication/data-eng-97-things/index.html</link>
+  <link>https://emilyriederer.com/publication/data-eng-97-things/index.html</link>
   <description><![CDATA[ 
 
 
@@ -51,13 +51,13 @@
 
  ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.github.io/publication/data-eng-97-things/index.html</guid>
+  <guid>https://emilyriederer.com/publication/data-eng-97-things/index.html</guid>
   <pubDate>Sun, 01 Aug 2021 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.github.io/publication/data-eng-97-things/featured.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://emilyriederer.com/publication/data-eng-97-things/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>R Markdown Cookbook</title>
-  <link>https://emilyriederer.github.io/publication/rmarkdown-cookbook/index.html</link>
+  <link>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</link>
   <description><![CDATA[ 
 
 
@@ -68,9 +68,9 @@
  ]]></description>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.github.io/publication/rmarkdown-cookbook/index.html</guid>
+  <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</guid>
   <pubDate>Tue, 01 Sep 2020 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.github.io/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
+  <media:content url="https://emilyriederer.com/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
 </item>
 </channel>
 </rss>

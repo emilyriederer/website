@@ -6,17 +6,60 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.com/</link>
+<link>https://emilyriederer.com/index.html</link>
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.510</generator>
-<lastBuildDate>Sat, 30 Dec 2023 06:00:00 GMT</lastBuildDate>
+<generator>quarto-1.3.450</generator>
+<lastBuildDate>Fri, 05 Jan 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Crosspost: Why you’re closer to data documentation than you think</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/docs-closer-than-you-think/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p><img src="https://emilyriederer.com/post/docs-closer-than-you-think/featured.PNG" class="img-fluid"></p>
+<p>Documentation can be a make-or-break for the success of a data initiative, but it’s too often considered an optional nice-to-have. I’m a big believer that writing is thinking. Similarly, documenting is planning, executing, and validating.</p>
+<p>Previously, I’ve explored how <a href="">we can create latent and lasting documentation</a> of data products and how <a href="">column names can be self documenting</a>.</p>
+<p>Recently, I had the opportunity to expand on these ideas in a <a href="https://www.selectstar.com/blog/why-youre-closer-to-data-documentation-than-you-think">cross-post with Select Star</a>. I argue that teams can produce high-quality and maintainable documentation with low overhead with a form of “documentation-driven development”. That is, smartly structuring and re-using artifacts from the development process into long-term documentation. For example:</p>
+<ul>
+<li>At the planning stage:
+<ul>
+<li>Structuring requirements docs in the form of data dictionaries</li>
+<li>Creating early alignment on higher-order concepts like entity definitions (and <em>writing them down</em>)</li>
+<li>Mentally beta testing data usability with an entity-relationship diagram</li>
+</ul></li>
+<li>At the development stage:
+<ul>
+<li>Ensuring relevant parts of internal “development documentation” (e.g.&nbsp;dbt column definitions, docstrings) are published to a format and location accessible to users</li>
+<li>With different information but similar motivation to ER diagrams, sharing the full orchestration DAG to help users trace column-level lineage and internalize how each field maps to a real-world data generating process</li>
+<li>Sharing data tests being executed (the “user contract”) and their results</li>
+</ul></li>
+<li>Throughout the lifecycle:
+<ul>
+<li>Answering questions “in public” (e.g.&nbsp;Slack versus email) to create a searchable collection of insights</li>
+<li>Producing table usage statistics to help large, decentralized orgs capture the “wisdom of the crowds”</li>
+</ul></li>
+</ul>
+<p>If you or your team works on data documentation, I’d love to hear what other patterns you’ve found to collect useful documentation assets during a data development process.</p>
+
+
+
+ ]]></description>
+  <category>data</category>
+  <category>workflow</category>
+  <category>elt</category>
+  <guid>https://emilyriederer.com/post/docs-closer-than-you-think/index.html</guid>
+  <pubDate>Fri, 05 Jan 2024 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/docs-closer-than-you-think/featured.PNG" medium="image"/>
+</item>
 <item>
   <title>Python Rgonomics</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/py-rgo/</link>
+  <link>https://emilyriederer.com/post/py-rgo/index.html</link>
   <description><![CDATA[ 
-
 
 
 
@@ -24,7 +67,7 @@
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/py-rgo/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption>Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
+<figcaption class="figure-caption">Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
 </figure>
 </div>
 <p>Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in <a href="https://arrow.apache.org/">Arrow</a> (a language-agnostic in-memory standard for data storage), growing adoption of <a href="https://quarto.org/">Quarto</a> (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney <a href="https://posit.co/blog/welcome-wes/">joining Posit</a> (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.</p>
@@ -132,24 +175,24 @@
 </section>
 
 
-<div id="quarto-appendix" class="default"><aside id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
 <li id="fn1"><p>Of course, languages have their own subcultures too. The <code>tidyverse</code> and <code>data.table</code> parts of the R world tend to favor different semantics and ergonomics. This post caters more to the former.↩︎</p></li>
 <li id="fn2"><p>There is no doubt a place for language ports, especially for earlier stage project where no native language-specific standard exists. For example, I like Karandeep Singh’s lab work on <a href="https://github.com/TidierOrg/Tidier.jl">a tidyverse for Julia</a> and maintain my own <a href="https://github.com/emilyriederer/dbtplyr"><code>dbtplyr</code></a> package to port <code>dplyr</code>’s select helpers to <code>dbt</code>↩︎</p></li>
 <li id="fn3"><p> If anything, the one challenge of VS Code is the sheer number of set up options, but to start out, you can see these excellent tutorials from Rami Krispin on recommended <a href="https://github.com/RamiKrispin/vscode-python">python</a> and <a href="https://github.com/RamiKrispin/vscode-python">R</a> configurations ↩︎</p></li>
 </ol>
-</aside></div> ]]></description>
+</section></div> ]]></description>
   <category>rstats</category>
   <category>python</category>
-  <guid>https://emilyriederer.com/post/py-rgo/</guid>
+  <guid>https://emilyriederer.com/post/py-rgo/index.html</guid>
   <pubDate>Sat, 30 Dec 2023 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/py-rgo/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Big ideas from the 2023 Causal Data Science Meeting</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/recap-causal-2023/</link>
+  <link>https://emilyriederer.com/post/recap-causal-2023/index.html</link>
   <description><![CDATA[ 
 
 
@@ -170,13 +213,13 @@
 
  ]]></description>
   <category>causal</category>
-  <guid>https://emilyriederer.com/post/recap-causal-2023/</guid>
+  <guid>https://emilyriederer.com/post/recap-causal-2023/index.html</guid>
   <pubDate>Sat, 18 Nov 2023 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/recap-causal-2023/featured.png" medium="image" type="image/png" height="83" width="144"/>
 </item>
 <item>
   <title>Operationalizing Column-Name Contracts with dbtplyr</title>
-  <link>https://emilyriederer.com/talk/dbtplyr/</link>
+  <link>https://emilyriederer.com/talk/dbtplyr/index.html</link>
   <description><![CDATA[ 
 
 
@@ -219,13 +262,13 @@
   <category>workflow</category>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/talk/dbtplyr/</guid>
+  <guid>https://emilyriederer.com/talk/dbtplyr/index.html</guid>
   <pubDate>Thu, 21 Sep 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/dbtplyr/featured.png" medium="image" type="image/png" height="82" width="144"/>
 </item>
 <item>
   <title>Scaling Personalized Volunteer Emails</title>
-  <link>https://emilyriederer.com/talk/midterm-email/</link>
+  <link>https://emilyriederer.com/talk/midterm-email/index.html</link>
   <description><![CDATA[ 
 
 
@@ -256,13 +299,13 @@
  ]]></description>
   <category>data</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/talk/midterm-email/</guid>
+  <guid>https://emilyriederer.com/talk/midterm-email/index.html</guid>
   <pubDate>Wed, 21 Jun 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/midterm-email/featured.png" medium="image" type="image/png" height="80" width="144"/>
 </item>
 <item>
   <title>Causal Design Patterns</title>
-  <link>https://emilyriederer.com/talk/causal-design-patterns/</link>
+  <link>https://emilyriederer.com/talk/causal-design-patterns/index.html</link>
   <description><![CDATA[ 
 
 
@@ -297,14 +340,14 @@
 
  ]]></description>
   <category>causal</category>
-  <guid>https://emilyriederer.com/talk/causal-design-patterns/</guid>
+  <guid>https://emilyriederer.com/talk/causal-design-patterns/index.html</guid>
   <pubDate>Wed, 07 Jun 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/causal-design-patterns/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Industry information management for causal inference</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/causal-data/</link>
+  <link>https://emilyriederer.com/post/causal-data/index.html</link>
   <description><![CDATA[ 
 
 
@@ -394,13 +437,13 @@
 </section></div> ]]></description>
   <category>causal</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/post/causal-data/</guid>
+  <guid>https://emilyriederer.com/post/causal-data/index.html</guid>
   <pubDate>Tue, 30 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/causal-data/featured.png" medium="image" type="image/png" height="60" width="144"/>
 </item>
 <item>
   <title>DataFold Data Quality Meet Up</title>
-  <link>https://emilyriederer.com/talk/meetup-datafold/</link>
+  <link>https://emilyriederer.com/talk/meetup-datafold/index.html</link>
   <description><![CDATA[ 
 
 
@@ -433,14 +476,14 @@
  ]]></description>
   <category>elt</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/talk/meetup-datafold/</guid>
+  <guid>https://emilyriederer.com/talk/meetup-datafold/index.html</guid>
   <pubDate>Fri, 12 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/meetup-datafold/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Crosspost: The Art of Abstraction in ETL</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/abstraction-airbyte/</link>
+  <link>https://emilyriederer.com/post/abstraction-airbyte/index.html</link>
   <description><![CDATA[ 
 
 
@@ -461,13 +504,13 @@
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/post/abstraction-airbyte/</guid>
+  <guid>https://emilyriederer.com/post/abstraction-airbyte/index.html</guid>
   <pubDate>Wed, 03 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-airbyte/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>Posit Data Science Hangout</title>
-  <link>https://emilyriederer.com/talk/meetup-posit/</link>
+  <link>https://emilyriederer.com/talk/meetup-posit/index.html</link>
   <description><![CDATA[ 
 
 
@@ -495,14 +538,14 @@
  ]]></description>
   <category>rstats</category>
   <category>workflow</category>
-  <guid>https://emilyriederer.com/talk/meetup-posit/</guid>
+  <guid>https://emilyriederer.com/talk/meetup-posit/index.html</guid>
   <pubDate>Thu, 13 Apr 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/meetup-posit/featured.png" medium="image" type="image/png" height="74" width="144"/>
 </item>
 <item>
   <title>The Art of Abstraction in ETL: Dodging Data Extraction Errors</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/abstraction-extraction/</link>
+  <link>https://emilyriederer.com/post/abstraction-extraction/index.html</link>
   <description><![CDATA[ 
 
 
@@ -533,13 +576,13 @@
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/post/abstraction-extraction/</guid>
+  <guid>https://emilyriederer.com/post/abstraction-extraction/index.html</guid>
   <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-extraction/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>Evaluation without Experimentation</title>
-  <link>https://emilyriederer.com/talk/midterm-iptw/</link>
+  <link>https://emilyriederer.com/talk/midterm-iptw/index.html</link>
   <description><![CDATA[ 
 
 
@@ -570,13 +613,13 @@
 
  ]]></description>
   <category>causal</category>
-  <guid>https://emilyriederer.com/talk/midterm-iptw/</guid>
+  <guid>https://emilyriederer.com/talk/midterm-iptw/index.html</guid>
   <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/midterm-iptw/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 <item>
   <title>Taking Flight with Shiny: a Modules-First Approach</title>
-  <link>https://emilyriederer.com/talk/shiny-modules/</link>
+  <link>https://emilyriederer.com/talk/shiny-modules/index.html</link>
   <description><![CDATA[ 
 
 
@@ -611,16 +654,15 @@
   <category>workflow</category>
   <category>rstats</category>
   <category>shiny</category>
-  <guid>https://emilyriederer.com/talk/shiny-modules/</guid>
+  <guid>https://emilyriederer.com/talk/shiny-modules/index.html</guid>
   <pubDate>Wed, 15 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/shiny-modules/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 <item>
   <title>Causal and Associational Language in Observational Health Research: A Systematic Evaluation</title>
   <dc:creator>Noah Haber, et al</dc:creator>
-  <link>https://emilyriederer.com/publication/causal-language/</link>
+  <link>https://emilyriederer.com/publication/causal-language/index.html</link>
   <description><![CDATA[ 
-
 
 
 
@@ -630,13 +672,13 @@
 
  ]]></description>
   <category>causal</category>
-  <guid>https://emilyriederer.com/publication/causal-language/</guid>
+  <guid>https://emilyriederer.com/publication/causal-language/index.html</guid>
   <pubDate>Sat, 19 Nov 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/publication/causal-language/featured.jpeg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>The Data (error) Generating Process</title>
-  <link>https://emilyriederer.com/talk/data-error-gen/</link>
+  <link>https://emilyriederer.com/talk/data-error-gen/index.html</link>
   <description><![CDATA[ 
 
 
@@ -671,14 +713,14 @@
 
  ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.com/talk/data-error-gen/</guid>
+  <guid>https://emilyriederer.com/talk/data-error-gen/index.html</guid>
   <pubDate>Sat, 12 Nov 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/data-error-gen/featured.png" medium="image" type="image/png" height="54" width="144"/>
 </item>
 <item>
   <title>Goin’ to Carolina in my mind (or on my hard drive)</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/duckdb-carolina/</link>
+  <link>https://emilyriederer.com/post/duckdb-carolina/index.html</link>
   <description><![CDATA[ 
 
 
@@ -1301,14 +1343,14 @@ order by 1,2
  ]]></description>
   <category>data</category>
   <category>sql</category>
-  <guid>https://emilyriederer.com/post/duckdb-carolina/</guid>
+  <guid>https://emilyriederer.com/post/duckdb-carolina/index.html</guid>
   <pubDate>Sun, 25 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/duckdb-carolina/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Oh, I’m sure it’s probably nothing</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/nulls-polyglot/</link>
+  <link>https://emilyriederer.com/post/nulls-polyglot/index.html</link>
   <description><![CDATA[ 
 
 
@@ -2809,14 +2851,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <category>sql</category>
   <category>data</category>
   <category>data-disasters</category>
-  <guid>https://emilyriederer.com/post/nulls-polyglot/</guid>
+  <guid>https://emilyriederer.com/post/nulls-polyglot/index.html</guid>
   <pubDate>Mon, 05 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Update: grouped data quality check PR merged to dbt-utils</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/grouping-data-quality-update/</link>
+  <link>https://emilyriederer.com/post/grouping-data-quality-update/index.html</link>
   <description><![CDATA[ 
 
 
@@ -2878,13 +2920,13 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
  ]]></description>
   <category>data</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/grouping-data-quality-update/</guid>
+  <guid>https://emilyriederer.com/post/grouping-data-quality-update/index.html</guid>
   <pubDate>Fri, 26 Aug 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/grouping-data-quality-update/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>The Data Engineering Podcast: Column Names as Contracts</title>
-  <link>https://emilyriederer.com/talk/pod-tdep-colnames/</link>
+  <link>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</link>
   <description><![CDATA[ 
 
 
@@ -2911,14 +2953,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
 
  ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.com/talk/pod-tdep-colnames/</guid>
+  <guid>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</guid>
   <pubDate>Wed, 12 Jan 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/pod-tdep-colnames/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>Using databases with Shiny</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/shiny-db/</link>
+  <link>https://emilyriederer.com/post/shiny-db/index.html</link>
   <description><![CDATA[ 
 
 
@@ -3245,7 +3287,7 @@ font-style: inherit;">25060</span>)</span></code></pre></div>
 txtSQL = "SELECT * FROM Users WHERE UserId = " + txtUserId;</code></pre>
 <p>If the entered <code>UserId</code> is <code>"UserId = 105 OR 1=1"</code>, then the full SQL string will be <code>"SELECT * FROM Users WHERE UserId = 105 OR 1=1;"</code>.</p>
 <p>SQL injection is also at jokes you make have heard about “little Bobby Drop Tables” (<a href="https://xkcd.com/327/">xkcd</a>).</p>
-<p><img src="https://imgs.xkcd.com/comics/exploits_of_a_mom.png" class="img-fluid"></p>
+<p><img src="https://emilyriederer.com/post/shiny-db/https:/imgs.xkcd.com/comics/exploits_of_a_mom.png" class="img-fluid"></p>
 <p>That joke also, in some odd way, highlights that SQL injection need not be malicious. Rather, whenever we have software opened up to users beyond ourselves, they will likely use it in unexpected ways that push the system to its limit. For example, a user might try to enter or remove values from our database with double quotes, semicolons, or other features that mean something different to SQL than in human parlance and corrupt the code. Regardless of intent, we can protect against bad SQL that will break our application by using the <code>DBI::sqlInterpolate()</code> function.</p>
 <p>A demonstration of this function and how it can protect against bad query generation is shown in <a href="https://shiny.rstudio.com/articles/sql-injections.html">this post</a> by RStudio.</p>
 </section>
@@ -3387,85 +3429,9 @@ font-style: inherit;">return</span>(con)</span>
   <category>rstats</category>
   <category>shiny</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/post/shiny-db/</guid>
+  <guid>https://emilyriederer.com/post/shiny-db/index.html</guid>
   <pubDate>Sun, 02 Jan 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/shiny-db/featured.png" medium="image" type="image/png" height="107" width="144"/>
-</item>
-<item>
-  <title>How to Make R Markdown Snow</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/snow/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>Last year, I tweeted about how to spread holiday cheer by letting your R Markdown documents snow. After all, what better to put people in the holiday spirit than to add a random 5% probability that whatever part of a document they are trying to read will be covered?</p>
-<blockquote class="twitter-tweet blockquote">
-<p lang="en" dir="ltr">
-No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday party this year, but we CAN make our <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> R Markdown reports snow before we send them to each other <a href="https://t.co/SSBzlgb3TV">https://t.co/SSBzlgb3TV</a><br>HT to <a href="https://t.co/c7c5c5csMK">https://t.co/c7c5c5csMK</a> for the heavy lifting <a href="https://t.co/hIu7z0knR4">pic.twitter.com/hIu7z0knR4</a>
-</p>
-— Emily Riederer (<span class="citation" data-cites="EmilyRiederer">@EmilyRiederer</span>) <a href="https://twitter.com/EmilyRiederer/status/1337178684868980738?ref_src=twsrc%5Etfw">December 10, 2020</a>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>I make no promises that this will amuse your recipients, but at least it seemed to strike a cord with other R Markdown creators. This year, I decided to write it up step-by-step. As silly as the example is, I think it demonstrates (through slight abuse) some useful features of R Markdown. Much like ice sculpting, we will apply the powertool that is R Markdown to achieve our rather fanciful end.</p>
-<p>If you want to skip the discussed, you can check out the <a href="https://github.com/emilyriederer/demo-rmd-snow">full project</a>, the main <a href="https://github.com/emilyriederer/demo-rmd-snow/blob/main/index.html">R Markdown file</a>, or the <a href="https://emilyriederer.github.io/demo-rmd-snow/">rendered output</a>. The rendered output is also shown below:</p>
-<p><img src="https://emilyriederer.com/post/snow/featured.gif" class="img-fluid"></p>
-<p>In the rest of this post, I’ll touch on three R Markdown tricks and their fanciful uses:</p>
-<ul>
-<li><strong>Using child documents…</strong> to add snowflake</li>
-<li><strong>Including raw HTML and custom CSS style…</strong> to animate them</li>
-<li><strong>Evaluating chunks conditionally…</strong> to keep things seasonal</li>
-</ul>
-<p>We will see how to dress up this <a href="https://github.com/emilyriederer/demo-rmd-snow/blob/main/index.Rmd">very important business R Markdown</a></p>
-<p>Much more useful applications of these same features are discussed in the linked sections of the <a href="https://bookdown.org/yihui/rmarkdown-cookbook/">R Markdown Cookbook</a>.</p>
-<section id="child-documents" class="level2">
-<h2 class="anchored" data-anchor-id="child-documents">Child documents</h2>
-<p><a href="https://bookdown.org/yihui/rmarkdown-cookbook/child-document.html">Child documents</a> allow R Markdown authors to combine multiple R Markdown files into a single final output rendered in a consistent environment. This helps create a more manageable, modular workflow if you are working on a long project or anaylsis with many distinct parts or if there are some pieces of boilerplate text or analysis that you wish to inject into many projects.</p>
-<p>To add child documents, we create an empty R code chunk, and use the <code>child</code> chunk option to pass the path to the R Markdown file that we wish to include. In our case, we reference our <code>snow.Rmd</code> file.</p>
-<pre><code>```{r child = "snow.Rmd"}`r ''`
-```</code></pre>
-<p>Of course, since child documents are functionally the same as including files in the same document, we could have included this material in the same file. However, since snowflakes should clearly only be placed in <em>very</em> important documents, it is good to use best practices and take a modular approach. Tactically, this also makes it easier to “turn them on an off” at will or swap them our for New Years fireworks, Valentine’s Day hearts, and more.</p>
-</section>
-<section id="including-html-and-css" class="level2">
-<h2 class="anchored" data-anchor-id="including-html-and-css">Including HTML and CSS</h2>
-<p>So, what is in the <a href="https://github.com/emilyriederer/demo-rmd-snow/blob/main/snow.Rmd"><code>snow.Rmd</code></a> file?</p>
-<p>First, we have to bring in the snowflakes themselves.</p>
-<pre><code>&lt;div class="snowflakes" aria-hidden="true"&gt;
-  &lt;div class="snowflake"&gt;
-  ❅
-  &lt;/div&gt;
-  &lt;!-- many more snowflakes... --&gt;
-&lt;/div&gt;</code></pre>
-<p>Because this R Markdown will render to an HTML document, we are free to include raw HTML text the same way we include narrative, English-language text. Here, I wrap unicode snowflakes in <code>&lt;divs&gt;</code> so I can attach CSS classes to them.</p>
-<p>Similarly, R Markdowns that will be rendered to HTML can use all the benefits of web technology like CSS and JavaScript. <a href="https://bookdown.org/yihui/rmarkdown-cookbook/html-css.html">Custom CSS</a> can be included either with the <code>css</code> language engine or a reference in the YAML header to an external <code>.css</code> file. For compactness, I go with the former.</p>
-<p>A <code>css</code> chunk adds CSS code used to animate the snowflake divs. This is taken nearly verbatim from <a href="https://codepen.io/codeconvey/pen/xRzQay">this CodePen</a>. Since this is rather lengthy, we can also use the <code>echo = FALSE</code> chunk option to not output all of the CSS in our final document.</p>
-<pre><code>```{css echo = FALSE}`r ''`
-&lt;&lt;css goes here&gt;&gt;
-```</code></pre>
-<p>For more tips on writing CSS for R Markown, check out my <a href="../../post/rmarkdown-css-tips/">post</a> on finding the right selectors.</p>
-</section>
-<section id="conditional-chunk-evaluation" class="level2">
-<h2 class="anchored" data-anchor-id="conditional-chunk-evaluation">Conditional chunk evaluation</h2>
-<p>The above two tricks are as for as my demo goes since I only planned to render it once. However, if you are creating automated reports and fear your recipients have limited patience for animated snowflakes, we can also use R Markdown <a href="https://yihui.org/knitr/options/">chunk options</a> with <a href="https://bookdown.org/yihui/rmarkdown-cookbook/chunk-variable.html">variables as arguments</a> to only allow these snowflakes to appear during a certain time period.</p>
-<p>So, for example instead of:</p>
-<pre><code>```{r child = "snow.Rmd"}`r ''`
-```</code></pre>
-<p>We might type:</p>
-<pre><code>```{r child = "snow.Rmd", eval = (substr(Sys.Date(), 6, 7) == 12)}`r ''`
-```</code></pre>
-<p>To only allow the child document to be included in December.</p>
-<p>If we had chosen not to use child documents, we could also use chunks to achieve conditional evaluation using the <a href="https://bookdown.org/yihui/rmarkdown-cookbook/eng-asis.html"><code>asis</code> engine</a>.</p>
-
-
-</section>
-
- ]]></description>
-  <category>rstats</category>
-  <category>rmarkdown</category>
-  <guid>https://emilyriederer.com/post/snow/</guid>
-  <pubDate>Sat, 11 Dec 2021 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/snow/featured.gif" medium="image" type="image/gif"/>
 </item>
 </channel>
 </rss>

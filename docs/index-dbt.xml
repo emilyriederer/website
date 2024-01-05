@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.com/#category=dbt</link>
+<link>https://emilyriederer.com/index.html#category=dbt</link>
 <atom:link href="https://emilyriederer.com/index-dbt.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.510</generator>
+<generator>quarto-1.3.450</generator>
 <lastBuildDate>Fri, 26 Aug 2022 05:00:00 GMT</lastBuildDate>
 <item>
   <title>Update: grouped data quality check PR merged to dbt-utils</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/grouping-data-quality-update/</link>
+  <link>https://emilyriederer.com/post/grouping-data-quality-update/index.html</link>
   <description><![CDATA[ 
 
 
@@ -76,14 +76,14 @@
  ]]></description>
   <category>data</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/grouping-data-quality-update/</guid>
+  <guid>https://emilyriederer.com/post/grouping-data-quality-update/index.html</guid>
   <pubDate>Fri, 26 Aug 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/grouping-data-quality-update/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Update: column-name contracts with dbtplyr</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/convo-dbt-update/</link>
+  <link>https://emilyriederer.com/post/convo-dbt-update/index.html</link>
   <description><![CDATA[ 
 
 
@@ -172,14 +172,14 @@ from {{ ref('mydata') }}</code></pre>
  ]]></description>
   <category>rstats</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/convo-dbt-update/</guid>
+  <guid>https://emilyriederer.com/post/convo-dbt-update/index.html</guid>
   <pubDate>Tue, 21 Sep 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/convo-dbt-update/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>Embedding column-name contracts in data pipelines with dbt</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/convo-dbt/</link>
+  <link>https://emilyriederer.com/post/convo-dbt/index.html</link>
   <description><![CDATA[ 
 
 
@@ -3185,7 +3185,7 @@ font-style: inherit;">as</span> mm</span></code></pre></div>
   <category>data</category>
   <category>sql</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/convo-dbt/</guid>
+  <guid>https://emilyriederer.com/post/convo-dbt/index.html</guid>
   <pubDate>Sat, 06 Feb 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/convo-dbt/featured.png" medium="image" type="image/png" height="61" width="144"/>
 </item>

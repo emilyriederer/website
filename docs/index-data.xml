@@ -6,14 +6,58 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.com/#category=data</link>
+<link>https://emilyriederer.com/index.html#category=data</link>
 <atom:link href="https://emilyriederer.com/index-data.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.510</generator>
-<lastBuildDate>Wed, 21 Jun 2023 05:00:00 GMT</lastBuildDate>
+<generator>quarto-1.3.450</generator>
+<lastBuildDate>Fri, 05 Jan 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Crosspost: Why you’re closer to data documentation than you think</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/docs-closer-than-you-think/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p><img src="https://emilyriederer.com/post/docs-closer-than-you-think/featured.PNG" class="img-fluid"></p>
+<p>Documentation can be a make-or-break for the success of a data initiative, but it’s too often considered an optional nice-to-have. I’m a big believer that writing is thinking. Similarly, documenting is planning, executing, and validating.</p>
+<p>Previously, I’ve explored how <a href="">we can create latent and lasting documentation</a> of data products and how <a href="">column names can be self documenting</a>.</p>
+<p>Recently, I had the opportunity to expand on these ideas in a <a href="https://www.selectstar.com/blog/why-youre-closer-to-data-documentation-than-you-think">cross-post with Select Star</a>. I argue that teams can produce high-quality and maintainable documentation with low overhead with a form of “documentation-driven development”. That is, smartly structuring and re-using artifacts from the development process into long-term documentation. For example:</p>
+<ul>
+<li>At the planning stage:
+<ul>
+<li>Structuring requirements docs in the form of data dictionaries</li>
+<li>Creating early alignment on higher-order concepts like entity definitions (and <em>writing them down</em>)</li>
+<li>Mentally beta testing data usability with an entity-relationship diagram</li>
+</ul></li>
+<li>At the development stage:
+<ul>
+<li>Ensuring relevant parts of internal “development documentation” (e.g.&nbsp;dbt column definitions, docstrings) are published to a format and location accessible to users</li>
+<li>With different information but similar motivation to ER diagrams, sharing the full orchestration DAG to help users trace column-level lineage and internalize how each field maps to a real-world data generating process</li>
+<li>Sharing data tests being executed (the “user contract”) and their results</li>
+</ul></li>
+<li>Throughout the lifecycle:
+<ul>
+<li>Answering questions “in public” (e.g.&nbsp;Slack versus email) to create a searchable collection of insights</li>
+<li>Producing table usage statistics to help large, decentralized orgs capture the “wisdom of the crowds”</li>
+</ul></li>
+</ul>
+<p>If you or your team works on data documentation, I’d love to hear what other patterns you’ve found to collect useful documentation assets during a data development process.</p>
+
+
+
+ ]]></description>
+  <category>data</category>
+  <category>workflow</category>
+  <category>elt</category>
+  <guid>https://emilyriederer.com/post/docs-closer-than-you-think/index.html</guid>
+  <pubDate>Fri, 05 Jan 2024 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/docs-closer-than-you-think/featured.PNG" medium="image"/>
+</item>
 <item>
   <title>Scaling Personalized Volunteer Emails</title>
-  <link>https://emilyriederer.com/talk/midterm-email/</link>
+  <link>https://emilyriederer.com/talk/midterm-email/index.html</link>
   <description><![CDATA[ 
 
 
@@ -44,14 +88,14 @@
  ]]></description>
   <category>data</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/talk/midterm-email/</guid>
+  <guid>https://emilyriederer.com/talk/midterm-email/index.html</guid>
   <pubDate>Wed, 21 Jun 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/midterm-email/featured.png" medium="image" type="image/png" height="80" width="144"/>
 </item>
 <item>
   <title>Industry information management for causal inference</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/causal-data/</link>
+  <link>https://emilyriederer.com/post/causal-data/index.html</link>
   <description><![CDATA[ 
 
 
@@ -141,13 +185,13 @@
 </section></div> ]]></description>
   <category>causal</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/post/causal-data/</guid>
+  <guid>https://emilyriederer.com/post/causal-data/index.html</guid>
   <pubDate>Tue, 30 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/causal-data/featured.png" medium="image" type="image/png" height="60" width="144"/>
 </item>
 <item>
   <title>DataFold Data Quality Meet Up</title>
-  <link>https://emilyriederer.com/talk/meetup-datafold/</link>
+  <link>https://emilyriederer.com/talk/meetup-datafold/index.html</link>
   <description><![CDATA[ 
 
 
@@ -180,14 +224,14 @@
  ]]></description>
   <category>elt</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/talk/meetup-datafold/</guid>
+  <guid>https://emilyriederer.com/talk/meetup-datafold/index.html</guid>
   <pubDate>Fri, 12 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/meetup-datafold/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Crosspost: The Art of Abstraction in ETL</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/abstraction-airbyte/</link>
+  <link>https://emilyriederer.com/post/abstraction-airbyte/index.html</link>
   <description><![CDATA[ 
 
 
@@ -208,14 +252,14 @@
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/post/abstraction-airbyte/</guid>
+  <guid>https://emilyriederer.com/post/abstraction-airbyte/index.html</guid>
   <pubDate>Wed, 03 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-airbyte/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>The Art of Abstraction in ETL: Dodging Data Extraction Errors</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/abstraction-extraction/</link>
+  <link>https://emilyriederer.com/post/abstraction-extraction/index.html</link>
   <description><![CDATA[ 
 
 
@@ -246,13 +290,13 @@
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/post/abstraction-extraction/</guid>
+  <guid>https://emilyriederer.com/post/abstraction-extraction/index.html</guid>
   <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-extraction/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>The Data (error) Generating Process</title>
-  <link>https://emilyriederer.com/talk/data-error-gen/</link>
+  <link>https://emilyriederer.com/talk/data-error-gen/index.html</link>
   <description><![CDATA[ 
 
 
@@ -287,14 +331,14 @@
 
  ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.com/talk/data-error-gen/</guid>
+  <guid>https://emilyriederer.com/talk/data-error-gen/index.html</guid>
   <pubDate>Sat, 12 Nov 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/data-error-gen/featured.png" medium="image" type="image/png" height="54" width="144"/>
 </item>
 <item>
   <title>Goin’ to Carolina in my mind (or on my hard drive)</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/duckdb-carolina/</link>
+  <link>https://emilyriederer.com/post/duckdb-carolina/index.html</link>
   <description><![CDATA[ 
 
 
@@ -917,14 +961,14 @@ order by 1,2
  ]]></description>
   <category>data</category>
   <category>sql</category>
-  <guid>https://emilyriederer.com/post/duckdb-carolina/</guid>
+  <guid>https://emilyriederer.com/post/duckdb-carolina/index.html</guid>
   <pubDate>Sun, 25 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/duckdb-carolina/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Oh, I’m sure it’s probably nothing</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/nulls-polyglot/</link>
+  <link>https://emilyriederer.com/post/nulls-polyglot/index.html</link>
   <description><![CDATA[ 
 
 
@@ -2425,14 +2469,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <category>sql</category>
   <category>data</category>
   <category>data-disasters</category>
-  <guid>https://emilyriederer.com/post/nulls-polyglot/</guid>
+  <guid>https://emilyriederer.com/post/nulls-polyglot/index.html</guid>
   <pubDate>Mon, 05 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Update: grouped data quality check PR merged to dbt-utils</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/grouping-data-quality-update/</link>
+  <link>https://emilyriederer.com/post/grouping-data-quality-update/index.html</link>
   <description><![CDATA[ 
 
 
@@ -2494,13 +2538,13 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
  ]]></description>
   <category>data</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/grouping-data-quality-update/</guid>
+  <guid>https://emilyriederer.com/post/grouping-data-quality-update/index.html</guid>
   <pubDate>Fri, 26 Aug 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/grouping-data-quality-update/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>The Data Engineering Podcast: Column Names as Contracts</title>
-  <link>https://emilyriederer.com/talk/pod-tdep-colnames/</link>
+  <link>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</link>
   <description><![CDATA[ 
 
 
@@ -2527,14 +2571,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
 
  ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.com/talk/pod-tdep-colnames/</guid>
+  <guid>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</guid>
   <pubDate>Wed, 12 Jan 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/pod-tdep-colnames/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>Using databases with Shiny</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/shiny-db/</link>
+  <link>https://emilyriederer.com/post/shiny-db/index.html</link>
   <description><![CDATA[ 
 
 
@@ -2861,7 +2905,7 @@ font-style: inherit;">25060</span>)</span></code></pre></div>
 txtSQL = "SELECT * FROM Users WHERE UserId = " + txtUserId;</code></pre>
 <p>If the entered <code>UserId</code> is <code>"UserId = 105 OR 1=1"</code>, then the full SQL string will be <code>"SELECT * FROM Users WHERE UserId = 105 OR 1=1;"</code>.</p>
 <p>SQL injection is also at jokes you make have heard about “little Bobby Drop Tables” (<a href="https://xkcd.com/327/">xkcd</a>).</p>
-<p><img src="https://imgs.xkcd.com/comics/exploits_of_a_mom.png" class="img-fluid"></p>
+<p><img src="https://emilyriederer.com/post/shiny-db/https:/imgs.xkcd.com/comics/exploits_of_a_mom.png" class="img-fluid"></p>
 <p>That joke also, in some odd way, highlights that SQL injection need not be malicious. Rather, whenever we have software opened up to users beyond ourselves, they will likely use it in unexpected ways that push the system to its limit. For example, a user might try to enter or remove values from our database with double quotes, semicolons, or other features that mean something different to SQL than in human parlance and corrupt the code. Regardless of intent, we can protect against bad SQL that will break our application by using the <code>DBI::sqlInterpolate()</code> function.</p>
 <p>A demonstration of this function and how it can protect against bad query generation is shown in <a href="https://shiny.rstudio.com/articles/sql-injections.html">this post</a> by RStudio.</p>
 </section>
@@ -3003,14 +3047,14 @@ font-style: inherit;">return</span>(con)</span>
   <category>rstats</category>
   <category>shiny</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/post/shiny-db/</guid>
+  <guid>https://emilyriederer.com/post/shiny-db/index.html</guid>
   <pubDate>Sun, 02 Jan 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/shiny-db/featured.png" medium="image" type="image/png" height="107" width="144"/>
 </item>
 <item>
   <title>Make grouping a first-class citizen in data quality checks</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/grouping-data-quality/</link>
+  <link>https://emilyriederer.com/post/grouping-data-quality/index.html</link>
   <description><![CDATA[ 
 
 
@@ -3566,14 +3610,14 @@ font-style: inherit;">"CA"</span></span></code></pre></div>
 </ol>
 </section></div> ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.com/post/grouping-data-quality/</guid>
+  <guid>https://emilyriederer.com/post/grouping-data-quality/index.html</guid>
   <pubDate>Sat, 27 Nov 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/grouping-data-quality/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>A lightweight data validation ecosystem with R, GitHub, and Slack</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/data-valid-lightweight/</link>
+  <link>https://emilyriederer.com/post/data-valid-lightweight/index.html</link>
   <description><![CDATA[ 
 
 
@@ -4024,14 +4068,14 @@ font-style: inherit;">-</span>repo pulls commits releases deployments</span></co
   <category>rstats</category>
   <category>data</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/post/data-valid-lightweight/</guid>
+  <guid>https://emilyriederer.com/post/data-valid-lightweight/index.html</guid>
   <pubDate>Thu, 26 Aug 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/data-valid-lightweight/featured.png" medium="image" type="image/png" height="105" width="144"/>
 </item>
 <item>
   <title>97 Things Every Data Engineer Should Know: Collective Wisdom from the Experts</title>
   <dc:creator>Tobias Macey</dc:creator>
-  <link>https://emilyriederer.com/publication/data-eng-97-things/</link>
+  <link>https://emilyriederer.com/publication/data-eng-97-things/index.html</link>
   <description><![CDATA[ 
 
 
@@ -4050,14 +4094,14 @@ font-style: inherit;">-</span>repo pulls commits releases deployments</span></co
 
  ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.com/publication/data-eng-97-things/</guid>
+  <guid>https://emilyriederer.com/publication/data-eng-97-things/index.html</guid>
   <pubDate>Sun, 01 Aug 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/publication/data-eng-97-things/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Understanding the data (error) generating processes for data validation</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/data-error-gen/</link>
+  <link>https://emilyriederer.com/post/data-error-gen/index.html</link>
   <description><![CDATA[ 
 
 
@@ -4353,14 +4397,14 @@ table strong {
 </section></div> ]]></description>
   <category>data</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/post/data-error-gen/</guid>
+  <guid>https://emilyriederer.com/post/data-error-gen/index.html</guid>
   <pubDate>Thu, 27 May 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/data-error-gen/featured.png" medium="image" type="image/png" height="62" width="144"/>
 </item>
 <item>
   <title>A Tale of Six States: Flexible data extraction with scraping and browser automation</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/states-scraping-automation/</link>
+  <link>https://emilyriederer.com/post/states-scraping-automation/index.html</link>
   <description><![CDATA[ 
 
 
@@ -5253,13 +5297,13 @@ font-style: inherit;">False</span>)</span></code></pre></div>
   <category>data</category>
   <category>elt</category>
   <category>python</category>
-  <guid>https://emilyriederer.com/post/states-scraping-automation/</guid>
+  <guid>https://emilyriederer.com/post/states-scraping-automation/index.html</guid>
   <pubDate>Sat, 08 May 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/states-scraping-automation/featured.png" medium="image" type="image/png" height="97" width="144"/>
 </item>
 <item>
   <title>Column Names as Contracts</title>
-  <link>https://emilyriederer.com/talk/col-names-contract/</link>
+  <link>https://emilyriederer.com/talk/col-names-contract/index.html</link>
   <description><![CDATA[ 
 
 
@@ -5293,14 +5337,14 @@ font-style: inherit;">False</span>)</span></code></pre></div>
 
  ]]></description>
   <category>data</category>
-  <guid>https://emilyriederer.com/talk/col-names-contract/</guid>
+  <guid>https://emilyriederer.com/talk/col-names-contract/index.html</guid>
   <pubDate>Fri, 26 Feb 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/col-names-contract/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 <item>
   <title>Embedding column-name contracts in data pipelines with dbt</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/convo-dbt/</link>
+  <link>https://emilyriederer.com/post/convo-dbt/index.html</link>
   <description><![CDATA[ 
 
 
@@ -8306,14 +8350,14 @@ font-style: inherit;">as</span> mm</span></code></pre></div>
   <category>data</category>
   <category>sql</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/convo-dbt/</guid>
+  <guid>https://emilyriederer.com/post/convo-dbt/index.html</guid>
   <pubDate>Sat, 06 Feb 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/convo-dbt/featured.png" medium="image" type="image/png" height="61" width="144"/>
 </item>
 <item>
   <title>Causal design patterns for data analysts</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/causal-design-patterns/</link>
+  <link>https://emilyriederer.com/post/causal-design-patterns/index.html</link>
   <description><![CDATA[ 
 
 
@@ -8325,7 +8369,7 @@ font-style: inherit;">as</span> mm</span></code></pre></div>
 <figcaption class="figure-caption">Mnemonic illustrations of CI methods, made with <a href="https://excalidraw.com/">Excalidraw</a></figcaption>
 </figure>
 </div>
-<p><a href="https://www.kdnuggets.com/2021/04/top-stories-2021-mar.html"> <img src="https://www.kdnuggets.com/images/tkb-2103-s.png" width="96" alt="Silver Blog" align="right"></a></p>
+<p><a href="https://www.kdnuggets.com/2021/04/top-stories-2021-mar.html"> <img src="https://emilyriederer.com/post/causal-design-patterns/https:/www.kdnuggets.com/images/tkb-2103-s.png" width="96" alt="Silver Blog" align="right"></a></p>
 <p>Software engineers study design patterns<sup>1</sup> to help them recognize archetypes, consider approaches with a common language, and reuse tried-and-true architectures. Similarly, statistics has many prototypical analyses, but too often these frameworks are siloed within specific disciplines and clouded by domain-specific language. This makes methods harder to discover and hides their general applicability. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.</p>
 <p>Observational causal inference is one such field. The need to understand true causal (versus correlative) effects and to derive meaning and strategy from “found” historical data (as opposed to experimentally “produced” data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more.</p>
 <p>This post aims to break down some of those barriers by briefly summarizing common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each method, I provide an illustration, overview of the method, summary of the required data structure and key assumptions, and a hypothetical consumer retail example.</p>
@@ -8560,998 +8604,9 @@ font-style: inherit;">as</span> mm</span></code></pre></div>
   <category>causal</category>
   <category>data</category>
   <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/causal-design-patterns/</guid>
+  <guid>https://emilyriederer.com/post/causal-design-patterns/index.html</guid>
   <pubDate>Sat, 30 Jan 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/causal-design-patterns/featured.png" medium="image" type="image/png" height="107" width="144"/>
-</item>
-<item>
-  <title>Generating SQL with {dbplyr} and sqlfluff</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/sql-generation/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p><a href="https://en.wikipedia.org/wiki/Declarative_programming">Declarative programming languages</a> such as HTML, CSS, and SQL are popular because they allow users to focus more on the desired <em>outcome</em> than the exact computational steps required to achieve that outcome. This can increase efficiency and code readability since programmers describe what they <em>want</em> – whether that be how their website is laid out (without worrying about how the browser computes this layout) or how a dataset is structured (regardless of how the database goes about obtaining and aggregating this data).</p>
-<p>However, sometimes this additional layer of abstraction can introduce problems of its own. Most notably, the lack of common <a href="https://en.wikipedia.org/wiki/Control_flow">control flow</a> can introduce a lot of redundancy. This is part of the motivation for <em>pre-processing</em> tools which use more imperative programming concepts such as local variables and for-loops to automatically generate declarative code. Common examples in the world of web development are <a href="https://sass-lang.com/">Sass</a> for CSS and <a href="https://haml.info/docs/yardoc/file.REFERENCE.html">Haml</a> for HTML. Of course, such tools naturally come at a cost of their own by requiring developers to learn yet another tool.<sup>1</sup></p>
-<p>For R (or, specifically <code>tidyverse</code>) users who need to generate SQL code, recent advances in <a href="https://dplyr.tidyverse.org/"><code>dplyr v1.0.0</code></a> and <a href="https://dbplyr.tidyverse.org/"><code>dbplyr v2.0.0</code></a> pose an interesting alternative. By using efficient, readable, and most important <em>familiar</em> syntax, users can generate accurate SQL queries that could otherwise be error-prone to write. For example, computing sums and means for a large number of variables. Coupled with the power of <a href="https://www.sqlfluff.com/"><code>sqlfluff</code></a>, an innovative SQL styler which was announced at DBT’s recent <a href="https://www.getdbt.com/coalesce/agenda/presenting-sqlfluff">coalesce conference</a>, these queries can be made not only accurate but also imminently readable.</p>
-<section id="the-basic-approach" class="level2">
-<h2 class="anchored" data-anchor-id="the-basic-approach">The basic approach</h2>
-<p>In the following example, I’ll briefly walk through the process of generating readable, well-styled SQL using <code>dbplyr</code> and <code>sqlfluff</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(dbplyr)</span>
-<span id="cb1-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(dplyr)</span>
-<span id="cb1-3"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(DBI)</span></code></pre></div>
-</div>
-<p>First, we would connect to our database using the <code>DBI</code> package. For the sake of example, I simply connect to an “in-memory” database, but <a href="https://db.rstudio.com/">a wide range of database connectors</a> are available depending on where your data lives.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">con <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">dbConnect</span>(RSQLite<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SQLite</span>(), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">dbname =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">":memory:"</span>)</span></code></pre></div>
-</div>
-<p>Again, <em>for the sake of this tutorial only</em>, I will write the <code>palmerpenguins::penguins</code> data to our database. Typically, data would already exist in the database of interest.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">copy_to</span>(con, palmerpenguins<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>penguins, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins"</span>)</span></code></pre></div>
-</div>
-<p>For reference, the data looks like this:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">head</span>(palmerpenguins<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>penguins)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 x 8
-  species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-  &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
-1 Adelie  Torgersen           39.1          18.7               181        3750
-2 Adelie  Torgersen           39.5          17.4               186        3800
-3 Adelie  Torgersen           40.3          18                 195        3250
-4 Adelie  Torgersen           NA            NA                  NA          NA
-5 Adelie  Torgersen           36.7          19.3               193        3450
-6 Adelie  Torgersen           39.3          20.6               190        3650
-# i 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
-</div>
-</div>
-<p>Now, we’re done with set-up. Suppose we want to write a SQL query to calculate the sum, mean, and variance for all of the measures in our dataset measured in milimeters (and ending in “mm”). We can accomplish this by using the <code>tbl()</code> function to connect to our database’s data and describing the results we want with <code>dplyr</code>’s elegant syntax. This is now made especially concise with select helpers (e.g.&nbsp;<code>ends_with()</code>) and the <code>across()</code> function.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">penguins <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tbl</span>(con, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins"</span>)</span></code></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">penguins_aggr <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb7-2">  penguins <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb7-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb7-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize</span>(</span>
-<span id="cb7-5">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">N =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">n</span>(),</span>
-<span id="cb7-6">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), sum, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"TOT_{.col}"</span>),</span>
-<span id="cb7-7">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), var, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"VAR_{.col}"</span>),</span>
-<span id="cb7-8">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), mean, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"AVG_{.col}"</span>),</span>
-<span id="cb7-9">  )</span>
-<span id="cb7-10">penguins_aggr</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># Source:   lazy query [?? x 11]
-# Database: sqlite 3.33.0 [:memory:]
-  species       N TOT_bill_length_mm TOT_bill_depth_mm TOT_flipper_length_mm
-  &lt;chr&gt;     &lt;int&gt;              &lt;dbl&gt;             &lt;dbl&gt;                 &lt;int&gt;
-1 Adelie      152              5858.             2770.                 28683
-2 Chinstrap    68              3321.             1253.                 13316
-3 Gentoo      124              5843.             1843.                 26714
-# i 6 more variables: VAR_bill_length_mm &lt;dbl&gt;, VAR_bill_depth_mm &lt;dbl&gt;,
-#   VAR_flipper_length_mm &lt;dbl&gt;, AVG_bill_length_mm &lt;dbl&gt;,
-#   AVG_bill_depth_mm &lt;dbl&gt;, AVG_flipper_length_mm &lt;dbl&gt;</code></pre>
-</div>
-</div>
-<p>However, since we are using a remote backend, the <code>penguins_aggr</code> object does not contain the resulting data that we see when it is printed (forcing its execution). Instead, it contains a reference to the database’s table and an accumulation of commands than need to be run on the table in the future. We can access this underlying SQL translation with the <code>dbplyr::show_query()</code> and use <code>capture.output()</code> to convert that query (otherwise printed to the R console) to a character vector.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">penguins_query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">capture.output</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>(penguins_aggr))</span>
-<span id="cb9-2">penguins_query</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "&lt;SQL&gt;"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-[2] "SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`"
-[3] "FROM `penguins`"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-[4] "GROUP BY `species`"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 </code></pre>
-</div>
-</div>
-<p>At this point, we already have a function SQL query and have saved ourselves the hassle of writing nine typo-free aggregation functions. However, since <code>dbplyr</code> was not written to generate “pretty” queries, this is not the most readable or well-formatted code. To clean it up, we can apply the <code>sqlfluff</code> linter and styler.</p>
-<p>As a prerequisite, we slightly reformat the query to remove anything that isn’t native to common SQL and will confuse the linter, such as the first line of the query vector: <code>&lt;SQL&gt;</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">penguins_query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> penguins_query[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">length</span>(penguins_query)]</span>
-<span id="cb11-2">penguins_query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">gsub</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"`"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">""</span>, penguins_query)</span>
-<span id="cb11-3">penguins_query</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS VAR_bill_length_mm, VARIANCE(bill_depth_mm) AS VAR_bill_depth_mm, VARIANCE(flipper_length_mm) AS VAR_flipper_length_mm, AVG(bill_length_mm) AS AVG_bill_length_mm, AVG(bill_depth_mm) AS AVG_bill_depth_mm, AVG(flipper_length_mm) AS AVG_flipper_length_mm"
-[2] "FROM penguins"                                                                                                                                                                                                                                                                                                                                                                                                                                              
-[3] "GROUP BY species"                                                                                                                                                                                                                                                                                                                                                                                                                                           </code></pre>
-</div>
-</div>
-<p>After cleaning, we can write the results to a temp file.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">tmp <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tempfile</span>()</span>
-<span id="cb13-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">writeLines</span>(penguins_query, tmp)</span></code></pre></div>
-</div>
-<p>The current state of our file looks like this:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">SELECT</span> species, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">COUNT</span>(<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> N, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_flipper_length_mm</span>
-<span id="cb14-2"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">FROM</span> penguins</span>
-<span id="cb14-3"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">GROUP</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">BY</span> species</span></code></pre></div>
-</div>
-<p>Finally, we are ready to use <code>sqlfluff</code>. The <code>lint</code> command highlights errors in our script, and the <code>fix</code> command automatically fixes them (with flags <code>--no-safety</code> and <code>-f</code> requesting that it apply all rules and does not ask for permission to overwrite the file, respectively). However, note that if your stylistic preferences differ from the defaults, <code>sqlfluff</code> is imminently <a href="https://docs.sqlfluff.com/en/stable/rules.html">customizable</a> via YAML.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">system</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"sqlfluff lint"</span>, tmp), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">intern =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>) </span></code></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command
-'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpOyDJYM\file51f4757357ce'
-had status 1</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>character(0)
-attr(,"status")
-[1] 1</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># intern = TRUE is only useful for the sake of showing linter results for this blog post</span></span>
-<span id="cb18-2"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># it is not needed for interactive use</span></span></code></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">system</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"sqlfluff fix --no-safety -f"</span>, tmp))</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
-</div>
-</div>
-<p>The results of these commands are a well-formatted and readable query.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">SELECT</span> species, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">COUNT</span>(<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> N, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_flipper_length_mm</span>
-<span id="cb21-2"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">FROM</span> penguins</span>
-<span id="cb21-3"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">GROUP</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">BY</span> species</span></code></pre></div>
-</div>
-</section>
-<section id="a-slightly-more-realistic-example" class="level2">
-<h2 class="anchored" data-anchor-id="a-slightly-more-realistic-example">A (slightly) more realistic example</h2>
-<p>One situation in which this approach is useful is when engineering features that might include many subgroups or lags. Some flavors of SQL have <code>PIVOT</code> functions which help to aggregate and reshape data by group; however, this can vary by engine and even those that do (such as <a href="https://docs.snowflake.com/en/sql-reference/constructs/pivot.html">Snowflake</a>) require manually specifying the names of each field. Instead, our <code>dbplyr</code> and <code>sqlfluff</code> can help generate an accurate query to accomplsh this more concisely.</p>
-<p>Now assume we want to find the mean for each measurement separately for years 2007 through 2009. Ultimately, we want these measures organized in a table with one row per species. We can concisely describe this goal with <code>dplyr</code> instead of writing out the definition of each of 9 variables (three metrics for three years) separately.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1">penguins_pivot <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb22-2">  penguins <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb22-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb22-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize_at</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">vars</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>)), </span>
-<span id="cb22-5">               <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">list</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">in09 =</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> 2009L, ., <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>)),</span>
-<span id="cb22-6">                    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">in08 =</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> 2008L, ., <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>)),</span>
-<span id="cb22-7">                    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">in07 =</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> 2007L, ., <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>)))</span>
-<span id="cb22-8">               ) </span>
-<span id="cb22-9">penguins_pivot</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># Source:   lazy query [?? x 10]
-# Database: sqlite 3.33.0 [:memory:]
-  species   bill_length_mm_in09 bill_depth_mm_in09 flipper_length_mm_in09
-  &lt;chr&gt;                   &lt;dbl&gt;              &lt;dbl&gt;                  &lt;dbl&gt;
-1 Adelie                   13.3               6.19                   65.7
-2 Chinstrap                17.3               6.47                   69.9
-3 Gentoo                   17.0               5.34                   76.4
-# i 6 more variables: bill_length_mm_in08 &lt;dbl&gt;, bill_depth_mm_in08 &lt;dbl&gt;,
-#   flipper_length_mm_in08 &lt;dbl&gt;, bill_length_mm_in07 &lt;dbl&gt;,
-#   bill_depth_mm_in07 &lt;dbl&gt;, flipper_length_mm_in07 &lt;dbl&gt;</code></pre>
-</div>
-</div>
-<p>Following the same process as before, we can convert this to a SQL query.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1">query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">capture.output</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>(penguins_pivot))</span>
-<span id="cb24-2">query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> query[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">length</span>(query)]</span>
-<span id="cb24-3">query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">gsub</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"`"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">""</span>, query)</span>
-<span id="cb24-4">tmp <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tempfile</span>()</span>
-<span id="cb24-5"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">writeLines</span>(query, tmp)</span>
-<span id="cb24-6"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">system</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"sqlfluff fix --no-safety -f"</span>, tmp))</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
-</div>
-</div>
-<p>The following query shows the basic results. In this case, the <code>sqlfluff</code> default is significantly more aggressive with identations for the <code>CASE WHEN</code> statements than I personally prefer. If I were to use this in practice, I could refer back to the customizable <a href="https://docs.sqlfluff.com/en/stable/rules.html#"><code>sqlfluff</code> rules</a> and either change their configuration or restrict rules I perceived as unaesthetic or overzealous from running.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">SELECT</span> species, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_length_mm_in09, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_depth_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_depth_mm_in09, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (flipper_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> flipper_length_mm_in09, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_length_mm_in08, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_depth_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_depth_mm_in08, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (flipper_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> flipper_length_mm_in08, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_length_mm_in07, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_depth_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_depth_mm_in07, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (flipper_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> flipper_length_mm_in07</span>
-<span id="cb26-2"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">FROM</span> penguins</span>
-<span id="cb26-3"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">GROUP</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">BY</span> species</span></code></pre></div>
-</div>
-</section>
-<section id="when-you-cant-connect-to-you-data" class="level2">
-<h2 class="anchored" data-anchor-id="when-you-cant-connect-to-you-data">When you can’t connect to you data</h2>
-<p>Even if, for some reason, you cannot connect to R with your specific dataset, you may still use this approach.</p>
-<p>For example, suppose we cannot connect to the <code>penguins</code> dataset directly, but with the help of a data dictionary we can obtain a list of all of the fields in the dataset.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1">penguins_cols <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">names</span>(palmerpenguins<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>penguins)</span></code></pre></div>
-</div>
-<p>In this case, we can simple mock a fake dataset using the column names, write it to an in-memory database, generate SQL, and style the output as before.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># make fake dataset ----</span></span>
-<span id="cb28-2">penguins_mat <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">rep</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">length</span>(penguins_cols)), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">nrow =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>)</span>
-<span id="cb28-3">penguins_dat <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">setNames</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">data.frame</span>(penguins_mat), penguins_cols)</span>
-<span id="cb28-4">penguins_dat</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  species island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g sex
-1       1      1              1             1                 1           1   1
-  year
-1    1</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># copy to database ----</span></span>
-<span id="cb30-2">con <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">dbConnect</span>(RSQLite<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SQLite</span>(), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">dbname =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">":memory:"</span>)</span>
-<span id="cb30-3"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">copy_to</span>(con, penguins_dat, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins_mock"</span>)</span>
-<span id="cb30-4">penguins_mock <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tbl</span>(con, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins_mock"</span>)</span>
-<span id="cb30-5"></span>
-<span id="cb30-6"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># generate sql ----</span></span>
-<span id="cb30-7">penguins_aggr <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb30-8">  penguins_mock <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb30-9">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb30-10">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize</span>(</span>
-<span id="cb30-11">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">N =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">n</span>(),</span>
-<span id="cb30-12">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), sum, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"TOT_{.col}"</span>),</span>
-<span id="cb30-13">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), var, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"VAR_{.col}"</span>),</span>
-<span id="cb30-14">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), mean, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"AVG_{.col}"</span>),</span>
-<span id="cb30-15">  )</span>
-<span id="cb30-16"></span>
-<span id="cb30-17"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>(penguins_aggr)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;SQL&gt;
-SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`
-FROM `penguins_mock`
-GROUP BY `species`</code></pre>
-</div>
-</div>
-<p>The only caution with this approach is that one should not use <em>type-driven</em> select helpers such <code>summarize_if(is.numeric, ...)</code> because our mock data has some erroneous types (e.g.&nbsp;<code>species</code>, <code>island</code>, and <code>sex</code> are erroneously numeric). Thus, we could generate SQL that would throw errors when applied to actual data. For example, the following SQL code attempts to sum up islands. This is perfectly reasonably given our dummy dataset but would be illogical and problematic when applied in production.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1">penguins_mock <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb32-2">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb32-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize_if</span>(is.numeric, sum) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb32-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>()</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;SQL&gt;
-SELECT `species`, SUM(`island`) AS `island`, SUM(`bill_length_mm`) AS `bill_length_mm`, SUM(`bill_depth_mm`) AS `bill_depth_mm`, SUM(`flipper_length_mm`) AS `flipper_length_mm`, SUM(`body_mass_g`) AS `body_mass_g`, SUM(`sex`) AS `sex`, SUM(`year`) AS `year`
-FROM `penguins_mock`
-GROUP BY `species`</code></pre>
-</div>
-</div>
-</section>
-<section id="caveats" class="level2">
-<h2 class="anchored" data-anchor-id="caveats">Caveats</h2>
-<p>I have found this combination of tools to be useful for generating readable, typo-free queries when doing a large number of queries. However, I will end by highlighting when this may not be the best approach.</p>
-<p><strong><code>dbplyr</code> is not intended to generate SQL.</strong> There’s always a risk when using tools for something other than their primary intent. <code>dbplyr</code> is no exception. Overall, it does an excellent job translating SQL and being aware of the unique flavor of various SQL backends. However, translating between languages is a challenging problem, and sometimes the SQL translation may not be the most computationally efficient (e.g.&nbsp;requiring more subqueries) or semantic approach. For multistep or multitable problems, you may wish to use this approach simple for generating a few painful SQL chunks instead of your whole script.</p>
-<p><strong><code>dbplyr</code> <em>is</em> intended for you to <em>not</em> look at the SQL.</strong> One major benefit of <code>dbplyr</code> for R users is distinctly to <em>not</em> change languages and to benefit from a database’s compute power while staying in R. Not only is this use case not the intended purpose, you could go as far as to argue it is almost antithetical. Nevertheless, I do think there are many cases where one should preserve SQL independently; for example, you might need to do data tranformations in a production pipeline that does not run R, not wish to take on additional code dependencies, not be able to connect to your database with R, or be collaborating with non-R users.</p>
-<p><strong><code>sqlfluff</code> is still experimental.</strong> As the developers emphasized in their DBT talk, <code>sqlfluff</code> is still in its early changes and subject to change. While I’m optimistic that this only means this tool will only keep getting better, it’s possible the exact rules, configuration, flags, syntax, etc. may change. Check out the docs for the latest documentation there.</p>
-
-
-</section>
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>That being said, for SQL <a href="https://docs.getdbt.com/tutorial/using-jinja"><code>dbt</code> with Jinja templating support</a> is an intriguing option↩︎</p></li>
-</ol>
-</section></div> ]]></description>
-  <category>rstats</category>
-  <category>data</category>
-  <category>sql</category>
-  <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/sql-generation/</guid>
-  <pubDate>Sat, 16 Jan 2021 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/sql-generation/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>

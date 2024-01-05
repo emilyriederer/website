@@ -1,0 +1,29 @@
+---
+title: "Crosspost: Why you're closer to data documentation than you think"
+description: "Writing is thinking; documenting is planning and executing. In this cross-post with Select Star, I write about how teams can produce high-quality and maintainble documentation by smartly structuring planning and development documentation and effeciently recycling them into long-term, user-friendly docs"
+author: "Emily Riederer"
+date: "2024-01-05"
+categories: [data, workflow, elt]
+image: "featured.PNG"
+---
+
+Documentation can be a make-or-break for the success of a data initiative, but it's too often considered an optional nice-to-have. I'm a big believer that writing is thinking. Similarly, documenting is planning, executing, and validating. 
+
+Previously, I've explored how [we can create latent and lasting documentation]() of data products and how [column names can be self documenting]().
+
+Recently, I had the opportunity to expand on these ideas in a [cross-post with Select Star](https://www.selectstar.com/blog/why-youre-closer-to-data-documentation-than-you-think). I argue that teams can produce high-quality and maintainable documentation with low overhead with a form of "documentation-driven development". That is, smartly structuring and re-using artifacts from the development process into long-term documentation. For example:
+
+- At the planning stage:
+  + Structuring requirements docs in the form of data dictionaries
+  + Creating early alignment on higher-order concepts like entity definitions (and *writing them down*)
+  + Mentally beta testing data usability with an entity-relationship diagram
+- At the development stage:
+  + Ensuring relevant parts of internal "development documentation" (e.g. dbt column definitions, docstrings) are published to a format and location accessible to users
+  + With different information but similar motivation to ER diagrams, sharing the full orchestration DAG to help users trace column-level lineage and internalize how each field maps to a real-world data generating process
+  + Sharing data tests being executed (the "user contract") and their results
+- Throughout the lifecycle:
+  + Answering questions "in public" (e.g. Slack versus email) to create a searchable collection of insights
+  + Producing table usage statistics to help large, decentralized orgs capture the "wisdom of the crowds"
+
+If you or your team works on data documentation, I'd love to hear what other patterns you've found to collect useful documentation assets during a data development process.
+

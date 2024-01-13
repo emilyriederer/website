@@ -278,7 +278,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/index.html</loc>
-    <lastmod>2024-01-05T10:52:45.166Z</lastmod>
+    <lastmod>2024-01-13T11:48:33.327Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/about.html</loc>
@@ -290,11 +290,11 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/post/index.html</loc>
-    <lastmod>2024-01-05T10:52:47.350Z</lastmod>
+    <lastmod>2024-01-13T11:48:35.578Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/py-rgo/index.html</loc>
-    <lastmod>2024-01-05T10:52:49.382Z</lastmod>
+    <lastmod>2024-01-13T11:18:47.842Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/publication/causal-language/index.html</loc>
@@ -414,7 +414,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/post/column-name-contracts/index.html</loc>
-    <lastmod>2024-01-01T20:19:34.847Z</lastmod>
+    <lastmod>2024-01-13T11:17:33.095Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/causal-data/index.html</loc>
@@ -547,5 +547,9 @@
   <url>
     <loc>https://emilyriederer.com/post/docs-closer-than-you-think/index.html</loc>
     <lastmod>2024-01-05T10:52:16.756Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/py-rgo-polars/index.html</loc>
+    <lastmod>2024-01-13T11:48:29.530Z</lastmod>
   </url>
 </urlset>

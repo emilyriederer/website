@@ -10,7 +10,1055 @@
 <atom:link href="https://emilyriederer.com/index-rstats.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Sat, 30 Dec 2023 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 13 Jan 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>polars’ Rgonomic Patterns</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo-polars/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/py-rgo-polars/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>A few weeks ago, I shared some <a href="../../post/py-rgo/">recommended modern python tools and libraries</a> that I believe have the most similar ergonomics for R (specifically <code>tidyverse</code>) converts. This post expands on that one with a focus on the <code>polars</code> library.</p>
+<p>At the surface level, all data wrangling libraries have roughly the same functionality. Operations like selecting existing columns and making new ones, subsetting and ordering rows, and summarzing results is tablestakes.</p>
+<p>However, no one falls in love with a specific library because it has the best <code>select()</code> or <code>filter()</code> function the world has ever seen. It’s the ability to easily do more complex transformations that differentiate a package expert versus novice, and the learning curve for everything that happens <em>after</em> the “Getting Started” guide ends is what can leave experts at one tool feeling so disempowered when working with another.</p>
+<p>This deeper sense of intuition and fluency – when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data – is what I aim to capture in the term “ergonomics”. In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by <code>polars</code> and <code>dplyr</code> that enable users to express complex transformation precisely, concisely, and expressively.</p>
+<p>So, with that, we will import <code>polars</code> and get started!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span></code></pre></div>
+</div>
+<p>This document was made with <code>polars</code> version <code>0.20.4</code>.</p>
+<section id="basic-functionality" class="level2">
+<h2 class="anchored" data-anchor-id="basic-functionality">Basic Functionality</h2>
+<p>The similarities between <code>polars</code> and <code>dplyr</code>’s top-level API are already well-explored in many posts, including those by <a href="https://blog.tidy-intelligence.com/posts/dplyr-vs-polars/">Tidy Intelligence</a> and <a href="https://robertmitchellv.com/blog/2022-07-r-python-side-by-side/r-python-side-by-side.html">Robert Mitchell</a>.</p>
+<p>We will only do the briefest of recaps of the core data wrangling functions of each and how they can be composed in order to make the latter half of the piece make sense. We will meet these functions again in-context when discussing <code>dplyr</code> and <code>polar</code>’s more advanced workflows.</p>
+<section id="main-verbs" class="level3">
+<h3 class="anchored" data-anchor-id="main-verbs">Main Verbs</h3>
+<p><code>dplyr</code> and <code>polars</code> offer the same foundational functionality for manipulating dataframes. Their APIs for these operations are substantially similar.</p>
+<p>For a single dataset:</p>
+<ul>
+<li>Column selection: <code>select()</code> -&gt; <code>select()</code> + <code>drop()</code></li>
+<li>Creating or altering columns: <code>mutate()</code> -&gt; <code>with_columns()</code></li>
+<li>Subsetting rows: <code>filter()</code> -&gt; <code>filter()</code></li>
+<li>Ordering rows: <code>arrange()</code> -&gt; <code>sort()</code></li>
+<li>Computing group-level summary metrics: <code>group_by()</code> + <code>summarize()</code> -&gt; <code>group_by()</code> + <code>agg()</code></li>
+</ul>
+<p>For multiple datasets:</p>
+<ul>
+<li>Merging on a shared key: <code>*_join()</code> -&gt; <code>join(strategy = '*')</code></li>
+<li>Stacking datasets of the same structure: <code>union()</code> -&gt; <code>concat()</code></li>
+<li>Transforming rows and columns: <code>pivot_{longer/wider}()</code><sup>1</sup> -&gt; <code>pivot()</code></li>
+</ul>
+</section>
+<section id="main-verb-design" class="level3">
+<h3 class="anchored" data-anchor-id="main-verb-design">Main Verb Design</h3>
+<p>Beyond the similarity in naming, <code>dplyr</code> and <code>polars</code> top-level functions are substantially similar in their deeper design choices which impact the ergonomics of use:</p>
+<ul>
+<li>Referencing columns: Both make it easy to concisely references columns in a dataset without the repeated and redundant references to said dataset (as sometimes occurs in base R or python’s <code>pandas</code>). dplyr does this through nonstandard evaluation wherein a dataframe’s coumns can be reference directly within a data transformation function as if they were top-level variables; in <code>polars</code>, column names are wrapped in <code>pl.col()</code></li>
+<li>Optional argument: Both tend to have a wide array of nice-to-have optional arguments. For example the joining capabilities in both libraries offer optional join validation<sup>2</sup> and column renaming by appended suffix</li>
+<li>Consistent dataframe-in -&gt; dataframe-out design: <code>dplyr</code> functions take a dataframe as their first argument and return a dataframe. Similarly, <code>polars</code> methods are called on a dataframe and return a dataframe. This design may seem obvious, but it has two important implications:
+<ul>
+<li>it enables the chaining workflow discussed next</li>
+<li>it means we are always getting a <em>new object</em> returned versus modifying an existing dataset. This isn’t always true with <code>pandas</code> where it can be easier to accidentally modify and existing dataset “in place” which makes code less idempotent and more error prone</li>
+</ul></li>
+<li>Lack of indexes!: I don’t want to belabor this or criticize <code>pandas</code>, but for R users not used to thinking explicitly about defining and using indexes at every step of transformation, this can feel like a lot of mental overhead in a move to <code>pandas</code>. <code>polars</code>, like <code>dplyr</code>, foregoes that concept entirely</li>
+</ul>
+</section>
+<section id="chaining-piping" class="level3">
+<h3 class="anchored" data-anchor-id="chaining-piping">Chaining (Piping)</h3>
+<p>These methods are applied to <code>polars</code> dataframes by <em>chaining</em> which should feel very familiar to R <code>dplyr</code> fans.</p>
+<p>In <code>dplyr</code> and the broad <code>tidyverse</code>, most functions take a dataframe as their first argument and return a dataframe, enabling the piping of functions. This makes it easy to write more human-readable scripts where functions are written in the order of execution and whitespace can easily be added between lines. The following lines would all be equivalent.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transformation2</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transformation1</span>(df))</span>
+<span id="cb2-2"></span>
+<span id="cb2-3">df <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transformation1</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transformation2</span>()</span>
+<span id="cb2-4"></span>
+<span id="cb2-5">df <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transformation1</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">transformation2</span>()</span></code></pre></div>
+</div>
+<p>Similarly, <code>polars</code>’s main transfomration methods offer a consistent dataframe-in dataframe-out design which allows <em>method chaining</em>. Here, we similarly can write commands in order where the <code>.</code> beginning the next method call serves the same purpose as R’s pipe. And for python broadly, to achieve the same affordance for whitespace, we can wrap the entire command in parentheses.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">(</span>
+<span id="cb3-2">  df</span>
+<span id="cb3-3">  .transformation1()</span>
+<span id="cb3-4">  .transformation2()</span>
+<span id="cb3-5">)</span></code></pre></div>
+</div>
+<p>One could even say that <code>polars</code> dedication to chaining goes even deeper than <code>dplyr</code>. In <code>dplyr</code>, while core dataframe-level functions are piped, functions on specific columns are still often written in a nested fashion<sup>3</sup></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">df <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">z =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">g</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">f</span>(a)))</span></code></pre></div>
+</div>
+<p>In contrast, most of <code>polars</code> column-level transformation methods also make it ergonomic to keep the same literate left-to-right chaining within column-level definitions with the same benefits to readability as for dataframe-level operations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">df.with_columns(z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>).f().g())</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-wrangling">Advanced Wrangling</h2>
+<p>Beyond the surface-level similarity, <code>polars</code> supports some of the more complex ergonomics that <code>dplyr</code> users may enjoy. This includes functionality like:</p>
+<ul>
+<li>expressive and explicit syntax for transformations across multiple rows</li>
+<li>concise helpers to identify subsets of columns and apply transformations</li>
+<li>consistent syntax for window functions within data transformation operations</li>
+<li>the ability to work with nested data structures</li>
+</ul>
+<p>Below, we will examine some of this functionality with a trusty fake dataframe.<sup>4</sup> As with <code>pandas</code>, you can make a quick dataframe in <code>polars</code> by passing a dictionary to <code>pl.DataFrame()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl </span>
+<span id="cb6-2"></span>
+<span id="cb6-3">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>:[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>], </span>
+<span id="cb6-4">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>:[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>], </span>
+<span id="cb6-5">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c'</span>:[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]})</span>
+<span id="cb6-6">df.head()</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 3)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>3</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>6</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="explicit-api-for-row-wise-operations" class="level3">
+<h3 class="anchored" data-anchor-id="explicit-api-for-row-wise-operations">Explicit API for row-wise operations</h3>
+<p>While row-wise operations are relatively easy to write ad-hoc, it can still be nice semantically to have readable and stylistically consistent code for such transformations.</p>
+<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/articles/rowwise.html"><code>rowwise()</code></a> eliminates ambiguity in whether subsequent functions should be applied element-wise or collectively. Similiarly, <code>polars</code> has explicit <code>*_horizontal()</code> functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">df.with_columns(</span>
+<span id="cb7-2">  b_plus_c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.sum_horizontal(pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>), pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'c'</span>)) </span>
+<span id="cb7-3">)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">b_plus_c</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>3</td>
+<td>7</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>4</td>
+<td>8</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>5</td>
+<td>9</td>
+<td>14</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="column-selectors" class="level3">
+<h3 class="anchored" data-anchor-id="column-selectors">Column Selectors</h3>
+<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/reference/select.html">column selectors</a> dynamically determine a set of columns based on pattern-matching their names (e.g.&nbsp;<code>starts_with()</code>, <code>ends_with()</code>), data types, or other features. I’ve previously <a href="../../post/column-name-contracts/">written</a> and <a href="../../talk/col-names-contract/">spoken</a> at length about how transformative this functionality can be when paired with</p>
+<p><code>polars</code> has a similar set of <a href="https://docs.pola.rs/py-polars/html/reference/selectors.html">column selectors</a>. We’ll import them and see a few examples.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars.selectors <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cs</span></code></pre></div>
+</div>
+<p>To make things more interesting, we’ll also turn one of our columns into a different data type.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.with_columns(pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>).cast(pl.Utf8))</span></code></pre></div>
+</div>
+<section id="in-select" class="level4">
+<h4 class="anchored" data-anchor-id="in-select">In <code>select</code></h4>
+<p>We can select columns based on name or data type and use one or more conditions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">df.select(cs.starts_with(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> cs.string())</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">a</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>str</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td>"1"</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>"1"</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>"2"</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>"2"</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Negative conditions also work.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">df.select(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>cs.string())</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="in-with_columns" class="level4">
+<h4 class="anchored" data-anchor-id="in-with_columns">In <code>with_columns</code></h4>
+<p>Column selectors can play multiple rows in the transformation context.</p>
+<p>The same transformation can be applied to multiple columns. Below, we find all integer variables, call a method to add 1 to each, and use the <code>name.suffix()</code> method to dynamically generate descriptive column names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">df.with_columns(</span>
+<span id="cb12-2">  cs.integer().add(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).name.suffix(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"_plus1"</span>)</span>
+<span id="cb12-3">)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">b_plus1</th>
+<th data-quarto-table-cell-role="th">c_plus1</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>6</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>7</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>We can also use selected variables within transformations, like the rowwise sums that we just saw earlier.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df.with_columns(</span>
+<span id="cb13-2">  row_total <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.sum_horizontal(cs.integer())</span>
+<span id="cb13-3">)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">row_total</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>14</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="in-group_by-and-agg" class="level4">
+<h4 class="anchored" data-anchor-id="in-group_by-and-agg">In <code>group_by</code> and <code>agg</code></h4>
+<p>Column selectors can also be passed as inputs anywhere else that one or more columns is accepted, as with data aggregation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">df.group_by(cs.string()).agg(cs.integer().<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>())</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 3)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>7</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>11</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="consistent-api-for-window-functions" class="level3">
+<h3 class="anchored" data-anchor-id="consistent-api-for-window-functions">Consistent API for Window Functions</h3>
+<p>Window functions are another incredibly important tool in any data wrangling language but seem criminally undertaught in introductory analysis classes. Window functions allows you to apply aggregation <em>logic</em> over subgroups of data while preserving the original <em>grain</em> of the data (e.g.&nbsp;in a table of all customers and orders and a column for the max purchase account by customer).</p>
+<p><code>dplyr</code> make window functions trivially easy with the <code>group_by()</code> + <code>mutate()</code> pattern, invoking users’ pre-existing understanding of how to write aggregation logic and how to invoke transformations that preserve a table’s grain.</p>
+<p><code>polars</code> takes a slightly different but elegant approach. Similarly, it reuses the core <code>with_columns()</code> method for window functions. However, it uses a more SQL-reminiscent specification of the “window” in the column definition versus a separate grouping statement. This has the added advantage of allowing one to use multiple window functions with different windows in the same <code>with_columns()</code> call if you should so choose.</p>
+<p>A simple window function tranformation can be done by calling <code>with_columns()</code>, chaining an aggregation method onto a column, and following with the <code>over()</code> method to define the window of interest.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df.with_columns(</span>
+<span id="cb15-2">  min_b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>().over(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>)</span>
+<span id="cb15-3">)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">min_b</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>The chaining over and aggregate and <code>over()</code> can follow any other arbitrarily complex logic. Here, it follows a basic “case when”-type statement that creates an indicator for whether column b is null.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">df.with_columns(</span>
+<span id="cb16-2">  n_b_odd <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.when( (pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb16-3">              .then(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb16-4">              .otherwise(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb16-5">              .<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>().over(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>)</span>
+<span id="cb16-6">)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">n_b_odd</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i32</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="list-columns-and-nested-frames" class="level3">
+<h3 class="anchored" data-anchor-id="list-columns-and-nested-frames">List Columns and Nested Frames</h3>
+<p>While the R <code>tidyverse</code>’s raison d’etre was originally around the design of heavily normalize <a href="https://vita.had.co.nz/papers/tidy-data.pdf">tidy data</a>, modern data and analysis sometimes benefits from more complex and hierarchical data structures. Sometimes data comes to us in nested forms, like from an API<sup>5</sup>, and other times nesting data can help us perform analysis more effectively<sup>6</sup> Recognizing these use cases, <code>tidyr</code> provides many capability for the creation and manipulation of <a href="https://tidyr.tidyverse.org/articles/nest.html">nested data</a> in which a single cell contains values from multiple columns or sometimes even a whoel miniature dataframe.</p>
+<p><code>polars</code> makes these operations similarly easy with its own version of structs (list columns) and arrays (nested dataframes).</p>
+<section id="list-columns-nested-frames" class="level4">
+<h4 class="anchored" data-anchor-id="list-columns-nested-frames">List Columns &amp; Nested Frames</h4>
+<p>List columns that contain multiple key-value pairs (e.g.&nbsp;column-value) in a single column can be created with <code>pl.struct()</code> similar to R’s <code>list()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df.with_columns(list_col <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct( cs.integer() ))</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>struct[2]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>{3,7}</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>{4,8}</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>{5,9}</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>{6,0}</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>These structs can be further be aggregated across rows into miniature datasets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>).agg(list_col <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>list[struct[2]]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"2"</td>
+<td>[{5,9}, {6,0}]</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>[{3,7}, {4,8}]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>In fact, this could be a good use case for our column selectors! If we have many columns we want to keep unnested and many we want to next, it could be efficient to list out only the grouping variables and create our nested dataset by examining matches.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">cols <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>]</span>
+<span id="cb19-2">(df</span>
+<span id="cb19-3">  .group_by(cs.by_name(cols))</span>
+<span id="cb19-4">  .agg(list_col <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>cs.by_name(cols)))</span>
+<span id="cb19-5">)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>list[struct[2]]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>[{3,7}, {4,8}]</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>[{5,9}, {6,0}]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="undoing" class="level4">
+<h4 class="anchored" data-anchor-id="undoing">Undoing</h4>
+<p>Just as we constructed our nested data, we can denormalize it and return it to the original state in two steps. To see this, we can assign the nested structure above as <code>df_nested</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1">df_nested <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>).agg(list_col <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></div>
+</div>
+<p>First <code>explode()</code> returns the table to the original grain, leaving use with a single struct in each row.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">df_nested.explode(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'list_col'</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>struct[2]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"2"</td>
+<td>{5,9}</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>{6,0}</td>
+</tr>
+<tr class="odd">
+<td>"1"</td>
+<td>{3,7}</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>{4,8}</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Then, <code>unnest()</code> unpacks each struct and turns each element back into a column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">df_nested.explode(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'list_col'</span>).unnest(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'list_col'</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 3)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Of the <code>tidyverse</code> funtions mentioned so far, this is the only one found in <code>tidyr</code> not <code>dplyr</code>↩︎</p></li>
+<li id="fn2"><p>That is, validating an assumption that joins should have been one-to-one, one-to-many, etc.↩︎</p></li>
+<li id="fn3"><p>However, this is more by convention. There’s not a strong reason why they would strictly need to be.↩︎</p></li>
+<li id="fn4"><p>I recently ran a <a href="https://twitter.com/EmilyRiederer/status/1744707632886095998">Twitter poll</a> on whether people prefer real, canonical, or fake datasets for learning and teaching. Fake data wasn’t the winner, but a strategy I find personally fun and useful as the unit-test analog for learning.↩︎</p></li>
+<li id="fn5"><p>For example, an API payload for a LinkedIn user might have nested data structures representing professional experience and educational experience↩︎</p></li>
+<li id="fn6"><p>For example, training a model on different data subsets.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <category>tutorial</category>
+  <guid>https://emilyriederer.com/post/py-rgo-polars/index.html</guid>
+  <pubDate>Sat, 13 Jan 2024 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo-polars/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Python Rgonomics</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -8427,48 +9475,6 @@ font-style: inherit;">shinyApp</span>(ui, server)</span></code></pre></div>
   <guid>https://emilyriederer.com/post/shiny-modules/index.html</guid>
   <pubDate>Sun, 26 Jul 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/shiny-modules/featured.png" medium="image" type="image/png" height="65" width="144"/>
-</item>
-<item>
-  <title>projmgr: Managing the human dependencies of your project</title>
-  <link>https://emilyriederer.com/talk/projmgr/index.html</link>
-  <description><![CDATA[ 
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=8OfaIOICD20">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/shiny-modules/">Post - A beginner’s guide to Shiny modules</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>Many tools (e.g.&nbsp;git, make, Docker) and R packages (e.g.&nbsp;packrat, renv) aim to eliminate pain and uncertainty from technical project management, resulting in well-engineered software and reproducible research. However, there is no analogous gold standard tool for managing the most time-consuming and unpredictable dependencies in our work: our fellow humans.</p>
-<p>Communication with our collaborators and customers is often spread across email, Slack, GitHub, and sometimes third-party project management tools like Jira or Trello. Switching between these different software tools and frames of mind knocks analysts out of their flow and detracts from getting work done.</p>
-<p>The projmgr R package offers a solution: an opinionated interface for conducting end-to-end project management through GitHub.Key features of this package include bulk generation of GitHub issues and milestones from a YAML project plan and automated creation of status updates with user-friendly text summaries and plots.</p>
-<p>In this lightning talk, I demonstrate the key features of projmgr motivated by a range of use cases including updating stakeholders, monitoring KPIs, managing an analytics team, and organizing a hackathon.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<div id="slides" style="width:100%; aspect-ratio:16/11;">
-<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
-</div>
-</div>
-<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/8OfaIOICD20" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>workflow</category>
-  <category>rstats</category>
-  <category>pkgdev</category>
-  <guid>https://emilyriederer.com/talk/projmgr/index.html</guid>
-  <pubDate>Mon, 06 Jul 2020 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/projmgr/featured.png" medium="image" type="image/png" height="89" width="144"/>
 </item>
 </channel>
 </rss>

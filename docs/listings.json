@@ -31,6 +31,7 @@
   {
     "listing": "/post/index.html",
     "items": [
+      "/post/py-rgo-polars/index.html",
       "/post/docs-closer-than-you-think/index.html",
       "/post/py-rgo/index.html",
       "/post/recap-causal-2023/index.html",
@@ -78,6 +79,7 @@
       "/post/causal-design-patterns/index.html",
       "/post/column-name-contracts/index.html",
       "/post/rmarkdown-driven-development/index.html",
+      "/post/py-rgo-polars/index.html",
       "/post/docs-closer-than-you-think/index.html",
       "/post/py-rgo/index.html",
       "/post/recap-causal-2023/index.html",

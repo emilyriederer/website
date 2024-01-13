@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2024-01-13">
+<meta name="description" content="In this follow-up post to Python Rgonomics, we deep dive into some of the advanced data wrangling functionality in python’s polars package to see how it’s powertools like column selectors and nested data structures mirror the best of dplyr and tidyr’s expressive and concise syntax">
+
+<title>polars’ Rgonomic Patterns | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/cookie-consent/cookie-consent.js"></script>
+<link href="../../site_libs/cookie-consent/cookie-consent.css" rel="stylesheet">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z15TN5VYXJ"></script>
+
+<script type="text/plain" cookie-consent="tracking">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-Z15TN5VYXJ', { 'anonymize_ip': true});
+</script>
+
+<script type="text/javascript" charset="UTF-8">
+document.addEventListener('DOMContentLoaded', function () {
+cookieconsent.run({
+  "notice_banner_type":"simple",
+  "consent_type":"implied",
+  "palette":"light",
+  "language":"en",
+  "page_load_consent_levels":["strictly-necessary","functionality","tracking","targeting"],
+  "notice_banner_reject_button_hide":false,
+  "preferences_center_close_button_hide":false,
+  "website_name":""
+  });
+});
+</script> 
+  
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="polars’ Rgonomic Patterns | Emily Riederer">
+<meta name="twitter:description" content="In this follow-up post to Python Rgonomics, we deep dive into some of the advanced data wrangling functionality in python’s polars package to see how it’s powertools like column selectors and nested data structures mirror the best of dplyr and tidyr’s expressive and concise syntax">
+<meta name="twitter:image" content="https://emilyriederer.com/post/py-rgo-polars/featured.jpg">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html" rel="" target="">
+ <span class="dropdown-text">Favorites</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-talks" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+ <span class="menu-text">Talks</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-talks">    
+        <li>
+    <a class="dropdown-item" href="../../talk/index.html" rel="" target="">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../talk/featured.html" rel="" target="">
+ <span class="dropdown-text">Favorites</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html" rel="" target="">
+ <span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title"><code>polars</code>’ Rgonomic Patterns</h1>
+                  <div>
+        <div class="description">
+          In this follow-up post to Python Rgonomics, we deep dive into some of the advanced data wrangling functionality in python’s <code>polars</code> package to see how it’s powertools like column selectors and nested data structures mirror the best of <code>dplyr</code> and <code>tidyr</code>’s expressive and concise syntax
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">rstats</div>
+                <div class="quarto-category">python</div>
+                <div class="quarto-category">tutorial</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 13, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#basic-functionality" id="toc-basic-functionality" class="nav-link active" data-scroll-target="#basic-functionality">Basic Functionality</a>
+  <ul class="collapse">
+  <li><a href="#main-verbs" id="toc-main-verbs" class="nav-link" data-scroll-target="#main-verbs">Main Verbs</a></li>
+  <li><a href="#main-verb-design" id="toc-main-verb-design" class="nav-link" data-scroll-target="#main-verb-design">Main Verb Design</a></li>
+  <li><a href="#chaining-piping" id="toc-chaining-piping" class="nav-link" data-scroll-target="#chaining-piping">Chaining (Piping)</a></li>
+  </ul></li>
+  <li><a href="#advanced-wrangling" id="toc-advanced-wrangling" class="nav-link" data-scroll-target="#advanced-wrangling">Advanced Wrangling</a>
+  <ul class="collapse">
+  <li><a href="#explicit-api-for-row-wise-operations" id="toc-explicit-api-for-row-wise-operations" class="nav-link" data-scroll-target="#explicit-api-for-row-wise-operations">Explicit API for row-wise operations</a></li>
+  <li><a href="#column-selectors" id="toc-column-selectors" class="nav-link" data-scroll-target="#column-selectors">Column Selectors</a></li>
+  <li><a href="#consistent-api-for-window-functions" id="toc-consistent-api-for-window-functions" class="nav-link" data-scroll-target="#consistent-api-for-window-functions">Consistent API for Window Functions</a></li>
+  <li><a href="#list-columns-and-nested-frames" id="toc-list-columns-and-nested-frames" class="nav-link" data-scroll-target="#list-columns-and-nested-frames">List Columns and Nested Frames</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="featured.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>A few weeks ago, I shared some <a href="../../post/py-rgo/">recommended modern python tools and libraries</a> that I believe have the most similar ergonomics for R (specifically <code>tidyverse</code>) converts. This post expands on that one with a focus on the <code>polars</code> library.</p>
+<p>At the surface level, all data wrangling libraries have roughly the same functionality. Operations like selecting existing columns and making new ones, subsetting and ordering rows, and summarzing results is tablestakes.</p>
+<p>However, no one falls in love with a specific library because it has the best <code>select()</code> or <code>filter()</code> function the world has ever seen. It’s the ability to easily do more complex transformations that differentiate a package expert versus novice, and the learning curve for everything that happens <em>after</em> the “Getting Started” guide ends is what can leave experts at one tool feeling so disempowered when working with another.</p>
+<p>This deeper sense of intuition and fluency – when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data – is what I aim to capture in the term “ergonomics”. In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by <code>polars</code> and <code>dplyr</code> that enable users to express complex transformation precisely, concisely, and expressively.</p>
+<p>So, with that, we will import <code>polars</code> and get started!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This document was made with <code>polars</code> version <code>0.20.4</code>.</p>
+<section id="basic-functionality" class="level2">
+<h2 class="anchored" data-anchor-id="basic-functionality">Basic Functionality</h2>
+<p>The similarities between <code>polars</code> and <code>dplyr</code>’s top-level API are already well-explored in many posts, including those by <a href="https://blog.tidy-intelligence.com/posts/dplyr-vs-polars/">Tidy Intelligence</a> and <a href="https://robertmitchellv.com/blog/2022-07-r-python-side-by-side/r-python-side-by-side.html">Robert Mitchell</a>.</p>
+<p>We will only do the briefest of recaps of the core data wrangling functions of each and how they can be composed in order to make the latter half of the piece make sense. We will meet these functions again in-context when discussing <code>dplyr</code> and <code>polar</code>’s more advanced workflows.</p>
+<section id="main-verbs" class="level3">
+<h3 class="anchored" data-anchor-id="main-verbs">Main Verbs</h3>
+<p><code>dplyr</code> and <code>polars</code> offer the same foundational functionality for manipulating dataframes. Their APIs for these operations are substantially similar.</p>
+<p>For a single dataset:</p>
+<ul>
+<li>Column selection: <code>select()</code> -&gt; <code>select()</code> + <code>drop()</code></li>
+<li>Creating or altering columns: <code>mutate()</code> -&gt; <code>with_columns()</code></li>
+<li>Subsetting rows: <code>filter()</code> -&gt; <code>filter()</code></li>
+<li>Ordering rows: <code>arrange()</code> -&gt; <code>sort()</code></li>
+<li>Computing group-level summary metrics: <code>group_by()</code> + <code>summarize()</code> -&gt; <code>group_by()</code> + <code>agg()</code></li>
+</ul>
+<p>For multiple datasets:</p>
+<ul>
+<li>Merging on a shared key: <code>*_join()</code> -&gt; <code>join(strategy = '*')</code></li>
+<li>Stacking datasets of the same structure: <code>union()</code> -&gt; <code>concat()</code></li>
+<li>Transforming rows and columns: <code>pivot_{longer/wider}()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> -&gt; <code>pivot()</code></li>
+</ul>
+</section>
+<section id="main-verb-design" class="level3">
+<h3 class="anchored" data-anchor-id="main-verb-design">Main Verb Design</h3>
+<p>Beyond the similarity in naming, <code>dplyr</code> and <code>polars</code> top-level functions are substantially similar in their deeper design choices which impact the ergonomics of use:</p>
+<ul>
+<li>Referencing columns: Both make it easy to concisely references columns in a dataset without the repeated and redundant references to said dataset (as sometimes occurs in base R or python’s <code>pandas</code>). dplyr does this through nonstandard evaluation wherein a dataframe’s coumns can be reference directly within a data transformation function as if they were top-level variables; in <code>polars</code>, column names are wrapped in <code>pl.col()</code></li>
+<li>Optional argument: Both tend to have a wide array of nice-to-have optional arguments. For example the joining capabilities in both libraries offer optional join validation<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> and column renaming by appended suffix</li>
+<li>Consistent dataframe-in -&gt; dataframe-out design: <code>dplyr</code> functions take a dataframe as their first argument and return a dataframe. Similarly, <code>polars</code> methods are called on a dataframe and return a dataframe. This design may seem obvious, but it has two important implications:
+<ul>
+<li>it enables the chaining workflow discussed next</li>
+<li>it means we are always getting a <em>new object</em> returned versus modifying an existing dataset. This isn’t always true with <code>pandas</code> where it can be easier to accidentally modify and existing dataset “in place” which makes code less idempotent and more error prone</li>
+</ul></li>
+<li>Lack of indexes!: I don’t want to belabor this or criticize <code>pandas</code>, but for R users not used to thinking explicitly about defining and using indexes at every step of transformation, this can feel like a lot of mental overhead in a move to <code>pandas</code>. <code>polars</code>, like <code>dplyr</code>, foregoes that concept entirely</li>
+</ul>
+</section>
+<section id="chaining-piping" class="level3">
+<h3 class="anchored" data-anchor-id="chaining-piping">Chaining (Piping)</h3>
+<p>These methods are applied to <code>polars</code> dataframes by <em>chaining</em> which should feel very familiar to R <code>dplyr</code> fans.</p>
+<p>In <code>dplyr</code> and the broad <code>tidyverse</code>, most functions take a dataframe as their first argument and return a dataframe, enabling the piping of functions. This makes it easy to write more human-readable scripts where functions are written in the order of execution and whitespace can easily be added between lines. The following lines would all be equivalent.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">transformation2</span>(<span class="fu">transformation1</span>(df))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> <span class="fu">transformation1</span>() <span class="sc">|&gt;</span> <span class="fu">transformation2</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transformation1</span>() <span class="sc">|&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transformation2</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Similarly, <code>polars</code>’s main transfomration methods offer a consistent dataframe-in dataframe-out design which allows <em>method chaining</em>. Here, we similarly can write commands in order where the <code>.</code> beginning the next method call serves the same purpose as R’s pipe. And for python broadly, to achieve the same affordance for whitespace, we can wrap the entire command in parentheses.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  df</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  .transformation1()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  .transformation2()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>One could even say that <code>polars</code> dedication to chaining goes even deeper than <code>dplyr</code>. In <code>dplyr</code>, while core dataframe-level functions are piped, functions on specific columns are still often written in a nested fashion<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">z =</span> <span class="fu">g</span>(<span class="fu">f</span>(a)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In contrast, most of <code>polars</code> column-level transformation methods also make it ergonomic to keep the same literate left-to-right chaining within column-level definitions with the same benefits to readability as for dataframe-level operations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df.with_columns(z <span class="op">=</span> pl.col(<span class="st">'a'</span>).f().g())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="advanced-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-wrangling">Advanced Wrangling</h2>
+<p>Beyond the surface-level similarity, <code>polars</code> supports some of the more complex ergonomics that <code>dplyr</code> users may enjoy. This includes functionality like:</p>
+<ul>
+<li>expressive and explicit syntax for transformations across multiple rows</li>
+<li>concise helpers to identify subsets of columns and apply transformations</li>
+<li>consistent syntax for window functions within data transformation operations</li>
+<li>the ability to work with nested data structures</li>
+</ul>
+<p>Below, we will examine some of this functionality with a trusty fake dataframe.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> As with <code>pandas</code>, you can make a quick dataframe in <code>polars</code> by passing a dictionary to <code>pl.DataFrame()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pl.DataFrame({<span class="st">'a'</span>:[<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>], </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                   <span class="st">'b'</span>:[<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>], </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                   <span class="st">'c'</span>:[<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">0</span>]})</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 3)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>3</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>6</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="explicit-api-for-row-wise-operations" class="level3">
+<h3 class="anchored" data-anchor-id="explicit-api-for-row-wise-operations">Explicit API for row-wise operations</h3>
+<p>While row-wise operations are relatively easy to write ad-hoc, it can still be nice semantically to have readable and stylistically consistent code for such transformations.</p>
+<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/articles/rowwise.html"><code>rowwise()</code></a> eliminates ambiguity in whether subsequent functions should be applied element-wise or collectively. Similiarly, <code>polars</code> has explicit <code>*_horizontal()</code> functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df.with_columns(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  b_plus_c <span class="op">=</span> pl.sum_horizontal(pl.col(<span class="st">'b'</span>), pl.col(<span class="st">'c'</span>)) </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">b_plus_c</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>3</td>
+<td>7</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>4</td>
+<td>8</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>5</td>
+<td>9</td>
+<td>14</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="column-selectors" class="level3">
+<h3 class="anchored" data-anchor-id="column-selectors">Column Selectors</h3>
+<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/reference/select.html">column selectors</a> dynamically determine a set of columns based on pattern-matching their names (e.g.&nbsp;<code>starts_with()</code>, <code>ends_with()</code>), data types, or other features. I’ve previously <a href="../../post/column-name-contracts/">written</a> and <a href="../../talk/col-names-contract/">spoken</a> at length about how transformative this functionality can be when paired with</p>
+<p><code>polars</code> has a similar set of <a href="https://docs.pola.rs/py-polars/html/reference/selectors.html">column selectors</a>. We’ll import them and see a few examples.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars.selectors <span class="im">as</span> cs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To make things more interesting, we’ll also turn one of our columns into a different data type.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.with_columns(pl.col(<span class="st">'a'</span>).cast(pl.Utf8))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="in-select" class="level4">
+<h4 class="anchored" data-anchor-id="in-select">In <code>select</code></h4>
+<p>We can select columns based on name or data type and use one or more conditions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df.select(cs.starts_with(<span class="st">'b'</span>) <span class="op">|</span> cs.string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">a</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>str</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td>"1"</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>"1"</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>"2"</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>"2"</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Negative conditions also work.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df.select(<span class="op">~</span>cs.string())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>3</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="in-with_columns" class="level4">
+<h4 class="anchored" data-anchor-id="in-with_columns">In <code>with_columns</code></h4>
+<p>Column selectors can play multiple rows in the transformation context.</p>
+<p>The same transformation can be applied to multiple columns. Below, we find all integer variables, call a method to add 1 to each, and use the <code>name.suffix()</code> method to dynamically generate descriptive column names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df.with_columns(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  cs.integer().add(<span class="dv">1</span>).name.suffix(<span class="st">"_plus1"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">b_plus1</th>
+<th data-quarto-table-cell-role="th">c_plus1</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>6</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>7</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>We can also use selected variables within transformations, like the rowwise sums that we just saw earlier.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df.with_columns(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  row_total <span class="op">=</span> pl.sum_horizontal(cs.integer())</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">row_total</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>14</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="in-group_by-and-agg" class="level4">
+<h4 class="anchored" data-anchor-id="in-group_by-and-agg">In <code>group_by</code> and <code>agg</code></h4>
+<p>Column selectors can also be passed as inputs anywhere else that one or more columns is accepted, as with data aggregation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>df.group_by(cs.string()).agg(cs.integer().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 3)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>7</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>11</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="consistent-api-for-window-functions" class="level3">
+<h3 class="anchored" data-anchor-id="consistent-api-for-window-functions">Consistent API for Window Functions</h3>
+<p>Window functions are another incredibly important tool in any data wrangling language but seem criminally undertaught in introductory analysis classes. Window functions allows you to apply aggregation <em>logic</em> over subgroups of data while preserving the original <em>grain</em> of the data (e.g.&nbsp;in a table of all customers and orders and a column for the max purchase account by customer).</p>
+<p><code>dplyr</code> make window functions trivially easy with the <code>group_by()</code> + <code>mutate()</code> pattern, invoking users’ pre-existing understanding of how to write aggregation logic and how to invoke transformations that preserve a table’s grain.</p>
+<p><code>polars</code> takes a slightly different but elegant approach. Similarly, it reuses the core <code>with_columns()</code> method for window functions. However, it uses a more SQL-reminiscent specification of the “window” in the column definition versus a separate grouping statement. This has the added advantage of allowing one to use multiple window functions with different windows in the same <code>with_columns()</code> call if you should so choose.</p>
+<p>A simple window function tranformation can be done by calling <code>with_columns()</code>, chaining an aggregation method onto a column, and following with the <code>over()</code> method to define the window of interest.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df.with_columns(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  min_b <span class="op">=</span> pl.col(<span class="st">'b'</span>).<span class="bu">min</span>().over(<span class="st">'a'</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">min_b</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>The chaining over and aggregate and <code>over()</code> can follow any other arbitrarily complex logic. Here, it follows a basic “case when”-type statement that creates an indicator for whether column b is null.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df.with_columns(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  n_b_odd <span class="op">=</span> pl.when( (pl.col(<span class="st">'b'</span>) <span class="op">%</span> <span class="dv">2</span>) <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>              .then(<span class="dv">1</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>              .otherwise(<span class="dv">0</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>              .<span class="bu">sum</span>().over(<span class="st">'a'</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">n_b_odd</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>i32</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="list-columns-and-nested-frames" class="level3">
+<h3 class="anchored" data-anchor-id="list-columns-and-nested-frames">List Columns and Nested Frames</h3>
+<p>While the R <code>tidyverse</code>’s raison d’etre was originally around the design of heavily normalize <a href="https://vita.had.co.nz/papers/tidy-data.pdf">tidy data</a>, modern data and analysis sometimes benefits from more complex and hierarchical data structures. Sometimes data comes to us in nested forms, like from an API<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>, and other times nesting data can help us perform analysis more effectively<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> Recognizing these use cases, <code>tidyr</code> provides many capability for the creation and manipulation of <a href="https://tidyr.tidyverse.org/articles/nest.html">nested data</a> in which a single cell contains values from multiple columns or sometimes even a whoel miniature dataframe.</p>
+<p><code>polars</code> makes these operations similarly easy with its own version of structs (list columns) and arrays (nested dataframes).</p>
+<section id="list-columns-nested-frames" class="level4">
+<h4 class="anchored" data-anchor-id="list-columns-nested-frames">List Columns &amp; Nested Frames</h4>
+<p>List columns that contain multiple key-value pairs (e.g.&nbsp;column-value) in a single column can be created with <code>pl.struct()</code> similar to R’s <code>list()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df.with_columns(list_col <span class="op">=</span> pl.struct( cs.integer() ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>struct[2]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+<td>{3,7}</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+<td>{4,8}</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+<td>{5,9}</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+<td>{6,0}</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>These structs can be further be aggregated across rows into miniature datasets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>df.group_by(<span class="st">'a'</span>).agg(list_col <span class="op">=</span> pl.struct( cs.integer() ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>list[struct[2]]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"2"</td>
+<td>[{5,9}, {6,0}]</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>[{3,7}, {4,8}]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>In fact, this could be a good use case for our column selectors! If we have many columns we want to keep unnested and many we want to next, it could be efficient to list out only the grouping variables and create our nested dataset by examining matches.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cols <span class="op">=</span> [<span class="st">'a'</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>(df</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  .group_by(cs.by_name(cols))</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  .agg(list_col <span class="op">=</span> pl.struct(<span class="op">~</span>cs.by_name(cols)))</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>list[struct[2]]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"1"</td>
+<td>[{3,7}, {4,8}]</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>[{5,9}, {6,0}]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="undoing" class="level4">
+<h4 class="anchored" data-anchor-id="undoing">Undoing</h4>
+<p>Just as we constructed our nested data, we can denormalize it and return it to the original state in two steps. To see this, we can assign the nested structure above as <code>df_nested</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df_nested <span class="op">=</span> df.group_by(<span class="st">'a'</span>).agg(list_col <span class="op">=</span> pl.struct( cs.integer() ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First <code>explode()</code> returns the table to the original grain, leaving use with a single struct in each row.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df_nested.explode(<span class="st">'list_col'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">list_col</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>struct[2]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"2"</td>
+<td>{5,9}</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>{6,0}</td>
+</tr>
+<tr class="odd">
+<td>"1"</td>
+<td>{3,7}</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>{4,8}</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Then, <code>unnest()</code> unpacks each struct and turns each element back into a column.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>df_nested.explode(<span class="st">'list_col'</span>).unnest(<span class="st">'list_col'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (4, 3)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+<th data-quarto-table-cell-role="th">c</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"1"</td>
+<td>3</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>4</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Of the <code>tidyverse</code> funtions mentioned so far, this is the only one found in <code>tidyr</code> not <code>dplyr</code><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>That is, validating an assumption that joins should have been one-to-one, one-to-many, etc.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>However, this is more by convention. There’s not a strong reason why they would strictly need to be.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>I recently ran a <a href="https://twitter.com/EmilyRiederer/status/1744707632886095998">Twitter poll</a> on whether people prefer real, canonical, or fake datasets for learning and teaching. Fake data wasn’t the winner, but a strategy I find personally fun and useful as the unit-test analog for learning.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>For example, an API payload for a LinkedIn user might have nested data structures representing professional experience and educational experience<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>For example, training a model on different data subsets.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.com\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left"><span class="faux-block"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> Creative Commons CC BY 4.0</a></span><br>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="cookie-consent-footer"><a href="#" id="open_preferences_center">Cookie Preferences</a></div></div>
+    <div class="nav-footer-right"><span class="faux-block">Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at <i class="fa-brands fa-github" aria-label="github"></i> GitHub</a></span></div>
+  </div>
+</footer>
+
+
+
+</body></html>

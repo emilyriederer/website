@@ -1,0 +1,32 @@
+---
+title: "`seaborn`' Rgonomic Patterns"
+description: "`ggplot2`'s excellence and impact on data visualization is undenial. In this continuation of the Python Rgonomics series, we look at the recently released `seaborn` objects interface. This transports the best of `ggplot2`'s grammar-of-graphics design philosophy into a one of the most widely used python visualization libraries, creating the perfect on-ramp for users of both languages"
+author: "Emily Riederer"
+date: "2024-01-15"
+categories: [rstats, python, tutorial]
+image: "featured.jpg"
+---
+
+![ Photo credit to [`seaborn` documentation](https://seaborn.pydata.org/examples/wide_data_lineplot.html) on Unsplash ](featured.jpg)
+
+INTRO
+
+The `seaborn` [objects interface](https://seaborn.pydata.org/tutorial.html#objects-interface)
+
+## What are `ggplot2`'s ergonomics?
+
+To claim that `seaborn` has a similar aesthetic and user experience as `ggplot2`, we can consider what has given `ggplot2` such staying power. Fortunately, the underlying philosophy of the grammar of graphics is well explored, including in Hadley Wickham's [paper](https://vita.had.co.nz/papers/layered-grammar.html).
+
+- TODO 
+- TODO
+- TODO
+
+ TLDR? We'll say `ggplot2`'s ergonomics allow users to TODO.
+
+So, with that, we will import `seaborn.objects` and get started!
+```{python}
+import seaborn.objects as so
+```
+
+This document was made with `seaborn` version `0.13.1`.
+

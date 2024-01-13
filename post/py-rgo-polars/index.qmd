@@ -54,10 +54,12 @@ Beyond the similarity in naming, `dplyr` and `polars` top-level functions are su
 
 - Referencing columns: Both make it easy to concisely references columns in a dataset without the repeated and redundant references to said dataset (as sometimes occurs in base R or python's `pandas`). dplyr does this through nonstandard evaluation wherein a dataframe's coumns can be reference directly within a data transformation function as if they were top-level variables; in `polars`, column names are wrapped in `pl.col()`
 - Optional argument: Both tend to have a wide array of nice-to-have optional arguments. For example the joining capabilities in both libraries offer optional join validation^[That is, validating an assumption that joins should have been one-to-one, one-to-many, etc.] and column renaming by appended suffix
-- Consistent dataframe-in -> dataframe-out design: `dplyr` functions take a dataframe as their first argument and return a dataframe. Similarly, `polars` methods are called on a dataframe and return a dataframe. This design may seem obvious, but it has two important implications:
-  + it enables the chaining workflow discussed next
-  + it means we are always getting a *new object* returned versus modifying an existing dataset. This isn't always true with `pandas` where it can be easier to accidentally modify and existing dataset "in place" which makes code less idempotent and more error prone
-- Lack of indexes!: I don't want to belabor this or criticize `pandas`, but for R users not used to thinking explicitly about defining and using indexes at every step of transformation, this can feel like a lot of mental overhead in a move to `pandas`. `polars`, like `dplyr`, foregoes that concept entirely
+- Consistent dataframe-in -> dataframe-out design: `dplyr` functions take a dataframe as their first argument and return a dataframe. Similarly, `polars` methods are called on a dataframe and return a dataframe which enables the chaining workflow discussed next
+
+Equally important to the ergonomics is what design features both packages forego:^[In both of these cases, `pandas` is the elephant-in-the-room foil. I say this not to criticize `pandas` but just to highlight specific features of its design which may be particularly unappealing or unintutive to those coming from other places.]
+
+- Modification in-place: `dplyr` and `polars` functions return a new object versus modifying an existing dataset. This isn't always true with `pandas` where it can be easier to accidentally modify and existing dataset "in place" which makes code less idempotent^[Meaning you can't get the same result twice because if you rerun the same code the input has already been modified] and more error prone
+- Indexes: I don't want to belabor this or criticize `pandas`, but for R users, `pandas` indexes may seem like an elusive chimera that's sometimes column-like, sometimes-not, and creates another property to mentall track about a dataset at each step
 
 ### Chaining (Piping)
 

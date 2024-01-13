@@ -15,7 +15,25 @@ At the surface level, all data wrangling libraries have roughly the same functio
 
 However, no one falls in love with a specific library because it has the best `select()` or `filter()` function the world has ever seen. It's the ability to easily do more complex transformations that differentiate a package expert versus novice, and the learning curve for everything that happens *after* the "Getting Started" guide ends is what can leave experts at one tool feeling so disempowered when working with another. 
 
-This deeper sense of intuition and fluency -- when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data -- is what I aim to capture in the term "ergonomics". In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by `polars` and `dplyr` that enable users to express complex transformation precisely, concisely, and expressively. 
+This deeper sense of intuition and fluency -- when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data -- is what I aim to capture in the term "ergonomics". In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by `polars` and `dplyr`.
+
+## What are `dplyr`'s ergonomics?
+
+To claim `polars` has a similar aesthetic and user experience as `dplyr`, we first have to consider what the heart of `dplyr`'s ergonomics actually is. The explicit design philosophy is described in the developers' writings on [tidy design principles](https://design.tidyverse.org/unifying.html), but I'll blend those official intended principles with my personal definitions based on the lived user experience. 
+
+- Consistent: 
+  + Function names are highly consistent (e.g. snake case verbs) with dependable inputs and outputs (mostly dataframe-in dataframe-out) to increase intuition, reduce mistakes, and eliminate surprises
+  + Metaphors extend throughout the codebase. For example `group_by()` + `summarize()` or `group_by()` + `mutate()` do what one might expect (aggregation versus a window function) instead of requiring users to remember arbitrary command-specific syntax
+  + Always returns a new dataframe versus modifying in-place so code is more idempotent^[Meaning you can't get the same result twice because if you rerun the same code the input has already been modified] and less error prone
+- Composable: 
+  + Functions exist at a "sweet spot" level of abstraction. We have the right primitive building blocks that users have full control to do anything they want to do with a dataframe but almost never have to write brute-force glue code. These building blocks can be layered however one choose to conduct
+  + Conistency of return types leads to composability since dataframe-in dataframe-out allows for chaining
+- Human-Centered:
+  + Packages hit a comfortable level of abstraction somewhere between fully procedural (e.g. manually looping over array indexes without a dataframe abstraction) and fully declarative (e.g. SQL-style languages where you "request" the output but aspects like the order of operations may become unclear). Writing code is essentially articulating the steps of an analysis
+  + This focus on code as recipe writing leads to the creation of useful optional functions and helpers (like my favorite -- column selectors)
+  + User's rarely need to break the fourth wall of this abstraction-layer (versus thinking about things like indexes in `pandas`)
+
+ TLDR? We'll say `dplyr`'s ergonomics allow users to express complex transformation precisely, concisely, and expressively.
 
 So, with that, we will import `polars` and get started!
 ```{python}
@@ -55,11 +73,6 @@ Beyond the similarity in naming, `dplyr` and `polars` top-level functions are su
 - Referencing columns: Both make it easy to concisely references columns in a dataset without the repeated and redundant references to said dataset (as sometimes occurs in base R or python's `pandas`). dplyr does this through nonstandard evaluation wherein a dataframe's coumns can be reference directly within a data transformation function as if they were top-level variables; in `polars`, column names are wrapped in `pl.col()`
 - Optional argument: Both tend to have a wide array of nice-to-have optional arguments. For example the joining capabilities in both libraries offer optional join validation^[That is, validating an assumption that joins should have been one-to-one, one-to-many, etc.] and column renaming by appended suffix
 - Consistent dataframe-in -> dataframe-out design: `dplyr` functions take a dataframe as their first argument and return a dataframe. Similarly, `polars` methods are called on a dataframe and return a dataframe which enables the chaining workflow discussed next
-
-Equally important to the ergonomics is what design features both packages forego:^[In both of these cases, `pandas` is the elephant-in-the-room foil. I say this not to criticize `pandas` but just to highlight specific features of its design which may be particularly unappealing or unintutive to those coming from other places.]
-
-- Modification in-place: `dplyr` and `polars` functions return a new object versus modifying an existing dataset. This isn't always true with `pandas` where it can be easier to accidentally modify and existing dataset "in place" which makes code less idempotent^[Meaning you can't get the same result twice because if you rerun the same code the input has already been modified] and more error prone
-- Indexes: I don't want to belabor this or criticize `pandas`, but for R users, `pandas` indexes may seem like an elusive chimera that's sometimes column-like, sometimes-not, and creates another property to mentall track about a dataset at each step
 
 ### Chaining (Piping)
 

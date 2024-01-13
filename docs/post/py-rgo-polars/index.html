@@ -270,7 +270,8 @@ cookieconsent.run({
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#basic-functionality" id="toc-basic-functionality" class="nav-link active" data-scroll-target="#basic-functionality">Basic Functionality</a>
+  <li><a href="#what-are-dplyrs-ergonomics" id="toc-what-are-dplyrs-ergonomics" class="nav-link active" data-scroll-target="#what-are-dplyrs-ergonomics">What are <code>dplyr</code>’s ergonomics?</a></li>
+  <li><a href="#basic-functionality" id="toc-basic-functionality" class="nav-link" data-scroll-target="#basic-functionality">Basic Functionality</a>
   <ul class="collapse">
   <li><a href="#main-verbs" id="toc-main-verbs" class="nav-link" data-scroll-target="#main-verbs">Main Verbs</a></li>
   <li><a href="#main-verb-design" id="toc-main-verb-design" class="nav-link" data-scroll-target="#main-verb-design">Main Verb Design</a></li>
@@ -301,12 +302,36 @@ cookieconsent.run({
 <p>A few weeks ago, I shared some <a href="../../post/py-rgo/">recommended modern python tools and libraries</a> that I believe have the most similar ergonomics for R (specifically <code>tidyverse</code>) converts. This post expands on that one with a focus on the <code>polars</code> library.</p>
 <p>At the surface level, all data wrangling libraries have roughly the same functionality. Operations like selecting existing columns and making new ones, subsetting and ordering rows, and summarzing results is tablestakes.</p>
 <p>However, no one falls in love with a specific library because it has the best <code>select()</code> or <code>filter()</code> function the world has ever seen. It’s the ability to easily do more complex transformations that differentiate a package expert versus novice, and the learning curve for everything that happens <em>after</em> the “Getting Started” guide ends is what can leave experts at one tool feeling so disempowered when working with another.</p>
-<p>This deeper sense of intuition and fluency – when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data – is what I aim to capture in the term “ergonomics”. In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by <code>polars</code> and <code>dplyr</code> that enable users to express complex transformation precisely, concisely, and expressively.</p>
+<p>This deeper sense of intuition and fluency – when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data – is what I aim to capture in the term “ergonomics”. In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by <code>polars</code> and <code>dplyr</code>.</p>
+<section id="what-are-dplyrs-ergonomics" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-dplyrs-ergonomics">What are <code>dplyr</code>’s ergonomics?</h2>
+<p>To claim <code>polars</code> has a similar aesthetic and user experience as <code>dplyr</code>, we first have to consider what the heart of <code>dplyr</code>‘s ergonomics actually is. The explicit design philosophy is described in the developers’ writings on <a href="https://design.tidyverse.org/unifying.html">tidy design principles</a>, but I’ll blend those official intended principles with my personal definitions based on the lived user experience.</p>
+<ul>
+<li>Consistent:
+<ul>
+<li>Function names are highly consistent (e.g.&nbsp;snake case verbs) with dependable inputs and outputs (mostly dataframe-in dataframe-out) to increase intuition, reduce mistakes, and eliminate surprises</li>
+<li>Metaphors extend throughout the codebase. For example <code>group_by()</code> + <code>summarize()</code> or <code>group_by()</code> + <code>mutate()</code> do what one might expect (aggregation versus a window function) instead of requiring users to remember arbitrary command-specific syntax</li>
+<li>Always returns a new dataframe versus modifying in-place so code is more idempotent<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and less error prone</li>
+</ul></li>
+<li>Composable:
+<ul>
+<li>Functions exist at a “sweet spot” level of abstraction. We have the right primitive building blocks that users have full control to do anything they want to do with a dataframe but almost never have to write brute-force glue code. These building blocks can be layered however one choose to conduct</li>
+<li>Conistency of return types leads to composability since dataframe-in dataframe-out allows for chaining</li>
+</ul></li>
+<li>Human-Centered:
+<ul>
+<li>Packages hit a comfortable level of abstraction somewhere between fully procedural (e.g.&nbsp;manually looping over array indexes without a dataframe abstraction) and fully declarative (e.g.&nbsp;SQL-style languages where you “request” the output but aspects like the order of operations may become unclear). Writing code is essentially articulating the steps of an analysis</li>
+<li>This focus on code as recipe writing leads to the creation of useful optional functions and helpers (like my favorite – column selectors)</li>
+<li>User’s rarely need to break the fourth wall of this abstraction-layer (versus thinking about things like indexes in <code>pandas</code>)</li>
+</ul></li>
+</ul>
+<p>TLDR? We’ll say <code>dplyr</code>’s ergonomics allow users to express complex transformation precisely, concisely, and expressively.</p>
 <p>So, with that, we will import <code>polars</code> and get started!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This document was made with <code>polars</code> version <code>0.20.4</code>.</p>
+</section>
 <section id="basic-functionality" class="level2">
 <h2 class="anchored" data-anchor-id="basic-functionality">Basic Functionality</h2>
 <p>The similarities between <code>polars</code> and <code>dplyr</code>’s top-level API are already well-explored in many posts, including those by <a href="https://blog.tidy-intelligence.com/posts/dplyr-vs-polars/">Tidy Intelligence</a> and <a href="https://robertmitchellv.com/blog/2022-07-r-python-side-by-side/r-python-side-by-side.html">Robert Mitchell</a>.</p>
@@ -326,7 +351,7 @@ cookieconsent.run({
 <ul>
 <li>Merging on a shared key: <code>*_join()</code> -&gt; <code>join(strategy = '*')</code></li>
 <li>Stacking datasets of the same structure: <code>union()</code> -&gt; <code>concat()</code></li>
-<li>Transforming rows and columns: <code>pivot_{longer/wider}()</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> -&gt; <code>pivot()</code></li>
+<li>Transforming rows and columns: <code>pivot_{longer/wider}()</code><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> -&gt; <code>pivot()</code></li>
 </ul>
 </section>
 <section id="main-verb-design" class="level3">
@@ -334,13 +359,8 @@ cookieconsent.run({
 <p>Beyond the similarity in naming, <code>dplyr</code> and <code>polars</code> top-level functions are substantially similar in their deeper design choices which impact the ergonomics of use:</p>
 <ul>
 <li>Referencing columns: Both make it easy to concisely references columns in a dataset without the repeated and redundant references to said dataset (as sometimes occurs in base R or python’s <code>pandas</code>). dplyr does this through nonstandard evaluation wherein a dataframe’s coumns can be reference directly within a data transformation function as if they were top-level variables; in <code>polars</code>, column names are wrapped in <code>pl.col()</code></li>
-<li>Optional argument: Both tend to have a wide array of nice-to-have optional arguments. For example the joining capabilities in both libraries offer optional join validation<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> and column renaming by appended suffix</li>
+<li>Optional argument: Both tend to have a wide array of nice-to-have optional arguments. For example the joining capabilities in both libraries offer optional join validation<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> and column renaming by appended suffix</li>
 <li>Consistent dataframe-in -&gt; dataframe-out design: <code>dplyr</code> functions take a dataframe as their first argument and return a dataframe. Similarly, <code>polars</code> methods are called on a dataframe and return a dataframe which enables the chaining workflow discussed next</li>
-</ul>
-<p>Equally important to the ergonomics is what design features both packages forego:<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
-<ul>
-<li>Modification in-place: <code>dplyr</code> and <code>polars</code> functions return a new object versus modifying an existing dataset. This isn’t always true with <code>pandas</code> where it can be easier to accidentally modify and existing dataset “in place” which makes code less idempotent<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> and more error prone</li>
-<li>Indexes: I don’t want to belabor this or criticize <code>pandas</code>, but for R users, <code>pandas</code> indexes may seem like an elusive chimera that’s sometimes column-like, sometimes-not, and creates another property to mentall track about a dataset at each step</li>
 </ul>
 </section>
 <section id="chaining-piping" class="level3">
@@ -364,7 +384,7 @@ cookieconsent.run({
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  .transformation2()</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>One could even say that <code>polars</code> dedication to chaining goes even deeper than <code>dplyr</code>. In <code>dplyr</code>, while core dataframe-level functions are piped, functions on specific columns are still often written in a nested fashion<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p>One could even say that <code>polars</code> dedication to chaining goes even deeper than <code>dplyr</code>. In <code>dplyr</code>, while core dataframe-level functions are piped, functions on specific columns are still often written in a nested fashion<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">z =</span> <span class="fu">g</span>(<span class="fu">f</span>(a)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -383,7 +403,7 @@ cookieconsent.run({
 <li>consistent syntax for window functions within data transformation operations</li>
 <li>the ability to work with nested data structures</li>
 </ul>
-<p>Below, we will examine some of this functionality with a trusty fake dataframe.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> As with <code>pandas</code>, you can make a quick dataframe in <code>polars</code> by passing a dictionary to <code>pl.DataFrame()</code>.</p>
+<p>Below, we will examine some of this functionality with a trusty fake dataframe.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> As with <code>pandas</code>, you can make a quick dataframe in <code>polars</code> by passing a dictionary to <code>pl.DataFrame()</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -763,14 +783,14 @@ cookieconsent.run({
 </thead>
 <tbody>
 <tr class="odd">
-<td>"2"</td>
-<td>11</td>
-<td>9</td>
-</tr>
-<tr class="even">
 <td>"1"</td>
 <td>7</td>
 <td>15</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>11</td>
+<td>9</td>
 </tr>
 </tbody>
 </table>
@@ -908,7 +928,7 @@ cookieconsent.run({
 </section>
 <section id="list-columns-and-nested-frames" class="level3">
 <h3 class="anchored" data-anchor-id="list-columns-and-nested-frames">List Columns and Nested Frames</h3>
-<p>While the R <code>tidyverse</code>’s raison d’etre was originally around the design of heavily normalize <a href="https://vita.had.co.nz/papers/tidy-data.pdf">tidy data</a>, modern data and analysis sometimes benefits from more complex and hierarchical data structures. Sometimes data comes to us in nested forms, like from an API<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>, and other times nesting data can help us perform analysis more effectively<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> Recognizing these use cases, <code>tidyr</code> provides many capability for the creation and manipulation of <a href="https://tidyr.tidyverse.org/articles/nest.html">nested data</a> in which a single cell contains values from multiple columns or sometimes even a whoel miniature dataframe.</p>
+<p>While the R <code>tidyverse</code>’s raison d’etre was originally around the design of heavily normalize <a href="https://vita.had.co.nz/papers/tidy-data.pdf">tidy data</a>, modern data and analysis sometimes benefits from more complex and hierarchical data structures. Sometimes data comes to us in nested forms, like from an API<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>, and other times nesting data can help us perform analysis more effectively<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> Recognizing these use cases, <code>tidyr</code> provides many capability for the creation and manipulation of <a href="https://tidyr.tidyverse.org/articles/nest.html">nested data</a> in which a single cell contains values from multiple columns or sometimes even a whoel miniature dataframe.</p>
 <p><code>polars</code> makes these operations similarly easy with its own version of structs (list columns) and arrays (nested dataframes).</p>
 <section id="list-columns-nested-frames" class="level4">
 <h4 class="anchored" data-anchor-id="list-columns-nested-frames">List Columns &amp; Nested Frames</h4>
@@ -994,12 +1014,12 @@ cookieconsent.run({
 </thead>
 <tbody>
 <tr class="odd">
-<td>"1"</td>
-<td>[{3,7}, {4,8}]</td>
-</tr>
-<tr class="even">
 <td>"2"</td>
 <td>[{5,9}, {6,0}]</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>[{3,7}, {4,8}]</td>
 </tr>
 </tbody>
 </table>
@@ -1035,12 +1055,12 @@ cookieconsent.run({
 </thead>
 <tbody>
 <tr class="odd">
-<td>"1"</td>
-<td>[{3,7}, {4,8}]</td>
-</tr>
-<tr class="even">
 <td>"2"</td>
 <td>[{5,9}, {6,0}]</td>
+</tr>
+<tr class="even">
+<td>"1"</td>
+<td>[{3,7}, {4,8}]</td>
 </tr>
 </tbody>
 </table>
@@ -1079,20 +1099,20 @@ cookieconsent.run({
 </thead>
 <tbody>
 <tr class="odd">
-<td>"2"</td>
-<td>{5,9}</td>
-</tr>
-<tr class="even">
-<td>"2"</td>
-<td>{6,0}</td>
-</tr>
-<tr class="odd">
 <td>"1"</td>
 <td>{3,7}</td>
 </tr>
 <tr class="even">
 <td>"1"</td>
 <td>{4,8}</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>{5,9}</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>{6,0}</td>
 </tr>
 </tbody>
 </table>
@@ -1126,16 +1146,6 @@ cookieconsent.run({
 </thead>
 <tbody>
 <tr class="odd">
-<td>"2"</td>
-<td>5</td>
-<td>9</td>
-</tr>
-<tr class="even">
-<td>"2"</td>
-<td>6</td>
-<td>0</td>
-</tr>
-<tr class="odd">
 <td>"1"</td>
 <td>3</td>
 <td>7</td>
@@ -1144,6 +1154,16 @@ cookieconsent.run({
 <td>"1"</td>
 <td>4</td>
 <td>8</td>
+</tr>
+<tr class="odd">
+<td>"2"</td>
+<td>5</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td>"2"</td>
+<td>6</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
@@ -1160,14 +1180,13 @@ cookieconsent.run({
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>Of the <code>tidyverse</code> funtions mentioned so far, this is the only one found in <code>tidyr</code> not <code>dplyr</code><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>That is, validating an assumption that joins should have been one-to-one, one-to-many, etc.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>In both of these cases, <code>pandas</code> is the elephant-in-the-room foil. I say this not to criticize <code>pandas</code> but just to highlight specific features of its design which may be particularly unappealing or unintutive to those coming from other places.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>Meaning you can’t get the same result twice because if you rerun the same code the input has already been modified<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5"><p>However, this is more by convention. There’s not a strong reason why they would strictly need to be.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6"><p>I recently ran a <a href="https://twitter.com/EmilyRiederer/status/1744707632886095998">Twitter poll</a> on whether people prefer real, canonical, or fake datasets for learning and teaching. Fake data wasn’t the winner, but a strategy I find personally fun and useful as the unit-test analog for learning.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7"><p>For example, an API payload for a LinkedIn user might have nested data structures representing professional experience and educational experience<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn8"><p>For example, training a model on different data subsets.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Meaning you can’t get the same result twice because if you rerun the same code the input has already been modified<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Of the <code>tidyverse</code> funtions mentioned so far, this is the only one found in <code>tidyr</code> not <code>dplyr</code><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>That is, validating an assumption that joins should have been one-to-one, one-to-many, etc.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>However, this is more by convention. There’s not a strong reason why they would strictly need to be.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>I recently ran a <a href="https://twitter.com/EmilyRiederer/status/1744707632886095998">Twitter poll</a> on whether people prefer real, canonical, or fake datasets for learning and teaching. Fake data wasn’t the winner, but a strategy I find personally fun and useful as the unit-test analog for learning.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>For example, an API payload for a LinkedIn user might have nested data structures representing professional experience and educational experience<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>For example, training a model on different data subsets.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

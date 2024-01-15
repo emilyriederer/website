@@ -1,0 +1,151 @@
+---
+title: "`seaborn`' Rgonomic Patterns"
+description: "`ggplot2`'s excellence and impact on data visualization is undeniable. In this continuation of the Python Rgonomics series, we look at the recently released `seaborn` objects interface. This transports the best of `ggplot2`'s grammar-of-graphics design philosophy into a one of the most common python visualization libraries, creating the perfect on-ramp for users of both languages"
+author: "Emily Riederer"
+date: "2024-01-20"
+categories: [rstats, python, tutorial]
+image: "featured.jpg"
+draft: true
+---
+
+![ Image credit to [`seaborn` documentation](https://seaborn.pydata.org/examples/wide_data_lineplot.html)](featured.jpg)
+
+Recently, I've written about python tools and packages that have [the most similar ergonomics](https://www.emilyriederer.com/post/py-rgo/) to what R users might expect. This post continues that general overview and [`polars` deep dive](https://www.emilyriederer.com/post/py-rgo-polars/) with a focus on the visualization layer.
+
+Even R's most ardent critics often have to admit that `ggplot2` is a thing of beauty. It's approach to encoding graphical choices has influenced countless packges in other languages. [In September 2022](https://seaborn.pydata.org/whatsnew/v0.12.0.html#introduction-of-the-objects-interface), python's highly popular `seaborn` package joined the club by introducing it's [objects interface](https://seaborn.pydata.org/tutorial.html#objects-interface) which describes itself as:
+
+> The interface aims to provide a more declarative, composable, and extensible API for making statistical graphics. It is inspired by Wilkinson’s grammar of graphics, offering a Pythonic API that is informed by the design of libraries such as `ggplot2` and `vega-lite` along with lessons from the past 10 years of `seaborn`’s development.
+
+`seaborn.objects`, then, seems to promise a "best of both worlds": a truly pythonic approach^[Unlike other options like `plotnine` which may offer a much closer parallel to `ggplot2` but feel like more of an island than an on-ramp to the python ecosystem] that should easily extend and integrate with python-native workflows while introducing the usability and intuition of `ggplot2`. This post explores the extent to which that promise holds true and how well `seaborn.objects` captures the ergonomics of `ggplot2`.
+
+::: {.callout-warning}
+As-of writing, `seaborn.objects` is still [flagged as experimental](https://seaborn.pydata.org/tutorial/objects_interface.html) in the documentation. 
+:::
+
+## What are `ggplot2`'s ergonomics?
+
+To claim that `seaborn.objects` has a similar aesthetic and user experience as `ggplot2`, we can consider what has given `ggplot2` such staying power. Fortunately, the underlying philosophy of the grammar of graphics is well explored, including in Hadley Wickham's [paper](https://vita.had.co.nz/papers/layered-grammar.html) and the [`ggplot2` book](https://ggplot2-book.org/introduction) (currently a work-in-progress 3rd edition). Key features include:
+
+- "An underlying *grammar* that allows you to compose graphs by combining independent components"
+- A *layered* approach to constructing that grammar that supports composable, iterative development
+- A rich set of capabilities to control each set of components (layers, scales, coordinate systems, facets, themes, labels) with reasonable defaults should you chose not to
+
+While these two features may seem esoteric, what they afford a sweet-spot level of abstraction. Unlike a `d3` or `matplotlib`, users do not need to articulate specifically *how* a plot should be built; however, they remain in control of any aspect they want to control, unlike many BI tools or the original `seaborn` set of preconfigured plot options (e.g. separate cookiecutter functions for `boxplot`, `barplot`, `swarmplot`, etc. which limits flexibility and increases the surface area of what must be learned). 
+
+So, with that, we will import `seaborn.objects` and get started!
+```{python}
+import seaborn as sns
+import seaborn.objects as so
+```
+
+This document was made with `seaborn` version `0.13.1`.
+
+## But first - data 
+
+```{python}
+import polars as pl 
+import polars.selectors as cs
+
+df_pd = sns.load_dataset('taxis')
+df = pl.from_pandas(df_pd)
+df.head()
+```
+
+```{python}
+df_trips = (
+    df
+    .with_columns(
+        date = pl.col('pickup').cast(pl.Date),
+        dow = pl.col('pickup').dt.weekday(),
+        hod = pl.col('pickup').dt.hour(),
+        duration = (pl.col('dropoff') - pl.col('pickup')).dt.minutes()
+    )
+    .with_columns( 
+        cs.by_name('pickup','dropoff').cast(pl.Date).prefix('dt_'),
+        wnd = pl.when( pl.col('dow') > 5).then(True).otherwise(False)
+        )
+)
+
+df_trips.head()
+```
+
+## Plots
+
+```{python}
+(
+  so.Plot(df_trips, x = 'distance', y = 'fare')
+  .add(so.Dot(alpha = 0.2))
+)
+```
+
+```{python}
+(
+  so.Plot(df_trips, x = 'distance', y = 'duration', color = 'wnd')
+  .add(so.Dot(alpha = 0.2))
+  .facet(col = 'pickup_borough', wrap = 2)
+)
+```
+
+```{python}
+(
+  so.Plot(df_trips, x = 'distance', y = 'duration', color = 'wnd')
+  .add(so.Dot(alpha = 0.2))
+  .facet(col = 'pickup_borough', 
+         order = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'],
+         wrap = 2)
+)
+```
+
+```{python}
+theme_spec = {
+  "axes.facecolor": "w", 
+  "axes.edgecolor": "slategray"
+}
+
+label_spec = {
+    'x': "Distance (mi)",
+    'y': "Trip Time (min)",
+    'color': "Day or Week"
+}
+
+p = (
+  so.Plot(df_trips, x = 'distance', y = 'duration', color = 'wnd')
+  .add(so.Dot(alpha = 0.2))
+  .facet(col = 'pickup_borough', 
+         order = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'],
+         wrap = 2)
+  .scale(color = "viridis")
+  .theme(theme_spec)
+  .label(**label_spec)
+)
+
+p.show()
+```
+
+## Convert to Matplotlib for Deeper Dive
+
+```{python}
+import matplotlib.pyplot as plt
+f = plt.figure()
+f.suptitle("AAA")
+p.on(f).plot()
+```
+
+## Subfigures 
+
+https://seaborn.pydata.org/generated/seaborn.objects.Plot.on.html
+
+```{python}
+import matplotlib as mpl
+f = mpl.figure.Figure(figsize=(7, 4), dpi=100, layout="constrained")
+sf1, sf2 = f.subfigures(1, 2)
+
+f.suptitle("AAA")
+p.on(sf1).plot()
+p.on(sf2).plot()
+f
+```
+
+```{python}
+f
+```

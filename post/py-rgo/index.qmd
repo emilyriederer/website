@@ -66,6 +66,10 @@ To preview these recommendations:
 - Environment Management: [`pdm`](https://pdm-project.org/latest/)
 - Code Quality: [`ruff`](https://docs.astral.sh/ruff/)
 
+::: {.callout-note}
+I don't want this advice to set up users for a potential snag. If you are on Windows and install python with `pyenv-win`, Quarto (as of writing on v1.3) may struggle to find the correct executable. Better support for this is on the backlog, but if you run into this issue, checkout this [brilliant fix](https://github.com/quarto-dev/quarto-cli/issues/3500#issuecomment-1375334561). 
+:::
+
 ### For setting up
 
 The first hurdle is often getting started -- both in terms of installing the tools you'll need and getting into a comfortable IDE to run them.

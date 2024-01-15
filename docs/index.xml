@@ -1229,6 +1229,19 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 <li>Environment Management: <a href="https://pdm-project.org/latest/"><code>pdm</code></a></li>
 <li>Code Quality: <a href="https://docs.astral.sh/ruff/"><code>ruff</code></a></li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I don’t want this advice to set up users for a potential snag. If you are on Windows and install python with <code>pyenv-win</code>, Quarto (as of writing on v1.3) may struggle to find the correct executable. Better support for this is on the backlog, but if you run into this issue, checkout this <a href="https://github.com/quarto-dev/quarto-cli/issues/3500#issuecomment-1375334561">brilliant fix</a>.</p>
+</div>
+</div>
 <section id="for-setting-up" class="level3">
 <h3 class="anchored" data-anchor-id="for-setting-up">For setting up</h3>
 <p>The first hurdle is often getting started – both in terms of installing the tools you’ll need and getting into a comfortable IDE to run them.</p>

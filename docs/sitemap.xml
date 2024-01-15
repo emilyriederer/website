@@ -278,7 +278,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/index.html</loc>
-    <lastmod>2024-01-15T11:14:33.211Z</lastmod>
+    <lastmod>2024-01-15T11:33:06.074Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/about.html</loc>
@@ -290,7 +290,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/post/index.html</loc>
-    <lastmod>2024-01-15T11:14:36.227Z</lastmod>
+    <lastmod>2024-01-15T11:32:17.505Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/py-rgo/index.html</loc>
@@ -551,5 +551,9 @@
   <url>
     <loc>https://emilyriederer.com/post/py-rgo-polars/index.html</loc>
     <lastmod>2024-01-15T11:08:12.769Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/docs-personas/index.html</loc>
+    <lastmod>2024-01-15T11:32:21.781Z</lastmod>
   </url>
 </urlset>

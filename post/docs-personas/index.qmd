@@ -1,0 +1,28 @@
+---
+title: "Crosspost: Why You Need Data Documentation in 2024"
+description: "Data documentation isn't a box to check; it's an active member of your team with many jobs-to-be-done. In this cross-post with Select Star, I write about how effective documentation can be your data products' developer advocate for users, project manager for developers, and chief of staff for data leaders"
+author: "Emily Riederer"
+date: "2024-01-15"
+categories: [data, workflow, elt]
+image: "featured.PNG"
+---
+
+We've all worked with poorly documented dataset, and we all know it isn't pretty. However, it's surprisingly easy for teams to continue to fall into "documentation debt" and deprioritize this foundational work in favor of flashy new projects. These tradeoff discussions may become even more painful in 2024 as teams are continually asked to do more with less. 
+
+Recently, I had the opportunity to articulate some of the underappreciated benefits of data documentation in a [cross-post with Select Star](https://www.selectstar.com/blog/why-you-need-data-documentation-in-2024). This builds on my prior post showing that [documentation can be strategically created throughout the data development process](/post/docs-closer-than-you-think/). To make the case for taking those "raw" documentation resources to a polished final form, I return to the jobs-to-be-done framework that I've previously employed to talk about [the value of innersource packages](/post/team-of-packages/). In this perspective, documentation is like hiring an extra resource (or more!) to your team. 
+
+Some of the jobs discussed are:
+
+- Developer Advocacy and Product Evangelism for users
+  + Users think data doesn't exist if they can't find it, they think data is broken if they misinterpret it
+  + Documentation is both a "user interface" to make data usage easy and a bulwark against confusion and frustration
+- Producct and Project Management for developers
+  + Data intent can "drift" over time
+  + As teams evolve and collaborate, this risks initial intent getting lost and poluted (after all, what really is a "customer"?)
+  + Documentation serves as a contract and coach for one or more teams to force clarity and consistency of intent
+- Chief of Staff oversight for data leaders
+  + Leaders face increasing demands in data governance: navigating changing privacy regulations, fighting decaying data quality, and discerning their next strategic investments
+  + Documentation is their command center to understand what data assets exists and where to better spot risks and opportunities
+
+If you or your team works on data documentation, I'd love to hear what other "jobs" you have found that data documentation performs in your organization. 
+

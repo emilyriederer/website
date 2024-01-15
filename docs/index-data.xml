@@ -10,7 +10,49 @@
 <atom:link href="https://emilyriederer.com/index-data.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Fri, 05 Jan 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 15 Jan 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Crosspost: Why You Need Data Documentation in 2024</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/docs-personas/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>We’ve all worked with poorly documented dataset, and we all know it isn’t pretty. However, it’s surprisingly easy for teams to continue to fall into “documentation debt” and deprioritize this foundational work in favor of flashy new projects. These tradeoff discussions may become even more painful in 2024 as teams are continually asked to do more with less.</p>
+<p>Recently, I had the opportunity to articulate some of the underappreciated benefits of data documentation in a <a href="https://www.selectstar.com/blog/why-you-need-data-documentation-in-2024">cross-post with Select Star</a>. This builds on my prior post showing that <a href="../../post/docs-closer-than-you-think/">documentation can be strategically created throughout the data development process</a>. To make the case for taking those “raw” documentation resources to a polished final form, I return to the jobs-to-be-done framework that I’ve previously employed to talk about <a href="../../post/team-of-packages/">the value of innersource packages</a>. In this perspective, documentation is like hiring an extra resource (or more!) to your team.</p>
+<p>Some of the jobs discussed are:</p>
+<ul>
+<li>Developer Advocacy and Product Evangelism for users
+<ul>
+<li>Users think data doesn’t exist if they can’t find it, they think data is broken if they misinterpret it</li>
+<li>Documentation is both a “user interface” to make data usage easy and a bulwark against confusion and frustration</li>
+</ul></li>
+<li>Producct and Project Management for developers
+<ul>
+<li>Data intent can “drift” over time</li>
+<li>As teams evolve and collaborate, this risks initial intent getting lost and poluted (after all, what really is a “customer”?)</li>
+<li>Documentation serves as a contract and coach for one or more teams to force clarity and consistency of intent</li>
+</ul></li>
+<li>Chief of Staff oversight for data leaders
+<ul>
+<li>Leaders face increasing demands in data governance: navigating changing privacy regulations, fighting decaying data quality, and discerning their next strategic investments</li>
+<li>Documentation is their command center to understand what data assets exists and where to better spot risks and opportunities</li>
+</ul></li>
+</ul>
+<p>If you or your team works on data documentation, I’d love to hear what other “jobs” you have found that data documentation performs in your organization.</p>
+
+
+
+ ]]></description>
+  <category>data</category>
+  <category>workflow</category>
+  <category>elt</category>
+  <guid>https://emilyriederer.com/post/docs-personas/index.html</guid>
+  <pubDate>Mon, 15 Jan 2024 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/docs-personas/featured.PNG" medium="image"/>
+</item>
 <item>
   <title>Crosspost: Why you’re closer to data documentation than you think</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -8352,260 +8394,6 @@ font-style: inherit;">as</span> mm</span></code></pre></div>
   <guid>https://emilyriederer.com/post/convo-dbt/index.html</guid>
   <pubDate>Sat, 06 Feb 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/convo-dbt/featured.png" medium="image" type="image/png" height="61" width="144"/>
-</item>
-<item>
-  <title>Causal design patterns for data analysts</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/causal-design-patterns/index.html</link>
-  <description><![CDATA[ 
-
-
-
-
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://emilyriederer.com/post/causal-design-patterns/featured.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Mnemonic illustrations of CI methods, made with <a href="https://excalidraw.com/">Excalidraw</a></figcaption>
-</figure>
-</div>
-<p><a href="https://www.kdnuggets.com/2021/04/top-stories-2021-mar.html"> <img src="https://emilyriederer.com/post/causal-design-patterns/https:/www.kdnuggets.com/images/tkb-2103-s.png" width="96" alt="Silver Blog" align="right"></a></p>
-<p>Software engineers study design patterns<sup>1</sup> to help them recognize archetypes, consider approaches with a common language, and reuse tried-and-true architectures. Similarly, statistics has many prototypical analyses, but too often these frameworks are siloed within specific disciplines and clouded by domain-specific language. This makes methods harder to discover and hides their general applicability. Consequently, it can be hard for practitioners outside of these fields to recognize when the problem they are facing fits one of these paradigms.</p>
-<p>Observational causal inference is one such field. The need to understand true causal (versus correlative) effects and to derive meaning and strategy from “found” historical data (as opposed to experimentally “produced” data) is nearly universal, but methods are scattered across epidemiology, economics, political science, and more.</p>
-<p>This post aims to break down some of those barriers by briefly summarizing common cross-disciplinary design patterns for measuring causal effects from observational data with an emphasis on potential use in industry. For each method, I provide an illustration, overview of the method, summary of the required data structure and key assumptions, and a hypothetical consumer retail example.</p>
-<p>Causal inference is complex and doing it well requires both statistical and domain expertise. Instead of providing all of the details which are already eloquently described in countless free resources, this post humbly aims to advertise these methods so analysts can add them into their mental index and investigate them further when they encounter a relevant question.</p>
-<section id="why-ci-in-industry" class="level2">
-<h2 class="anchored" data-anchor-id="why-ci-in-industry">Why CI in Industry?</h2>
-<p>Classic examples of causal questions include “Does smoking cause cancer?” and “Does education cause extra income?” Naively, we might compare outcomes (cancer or income) for those receiving the treatment (smoking and education) and those not. However, the fact that someone chose to smoke or pursue higher education creates selection bias; these behaviors likely correlate to other factors (risk taking, financial support, etc.) which can also impact the outcome.</p>
-<p>In industry, businesses want to know what causal effect their strategies (e.g.&nbsp;promotional offers) have on customer behavior. Here, of course, business have a major advantage over the examples above because the assignment mechanism into the treatment group (e.g.&nbsp;whom to send a discount code) is <em>known</em> and <em>under their control</em>. They often also have richer “pre-treatment” behavior for each individual (customer) which can help both assess and correct for bias.</p>
-<p>However, these advantages don’t make causal inference unnecessary; if anything, they simply make it more possible and more relevant. Good businesses don’t act at random. For example, we market to customers who are likely to be interested in our company and who, therefore, might have been interested even without marketing. When it comes to measuring effectiveness, good business is bad science. Because our <em>treatments</em> are not given at random, comparing the <em>outcomes</em> of treated and untreated groups is confounded and biased towards making us think we are more effective than we actually may be.</p>
-<p>One antidote to this is true experimentation in which treatment is randomly assigned <em>within</em> the homogenous target population. Experimentation, particularly A/B tests, have become a mainstay of industry data science, so why does observational causal inference matter?</p>
-<ul>
-<li>Some situations you cannot test due to ethics, logistics, or reputational risk</li>
-<li>Testing can be expensive. There are <em>direct costs</em> (e.g.&nbsp;testing a marketing promotion) of instituting a policy that might not be effective, <em>implementation costs</em> (e.g.&nbsp;having a tech team implement a new display), and <em>opportunity costs</em> (e.g.&nbsp;holding out a control group and not applying what you hope to be a profitable strategy as broadly as possible)<sup>2</sup></li>
-<li>Randomized experimentation is harder than it sounds! Sometimes experiments may not go as planned, but treating the results as observational data may help salvage some information value</li>
-<li>Data collection can take time. We may want to read long-term endpoints like customer retention or attrition after many year.<sup>3</sup> When we long to read an experiment that <em>wasn’t</em> launched three years ago, historical observational data can help us get a preliminary answer sooner</li>
-<li>Similarly, we can’t time travel. Some strategies that we’ve fully launched we cannot unwind just to test. If we regret not testing after the fact, we can potential find a quasiexperiment to analyze</li>
-<li>It’s not either-or but both-and. Due to the financial and temporal costs of experimentation, causal inference can also be a tool to help us better prioritize what experiments are worth running</li>
-<li>Even when you can experiment, understanding observational causal inference can help you better identify biases and design your experiments</li>
-</ul>
-<p>Beyond these specific challenges, perhaps the best reason is that there are so many questions that you can answer. As we’ll see, most all of these methods rely on exploiting some arbitrary amount of randomness in whether or not a specific individual or group received a certain treatment. Industry (and life in general) is full of non-random but well-defined (and somewhat arbitrary) policies which make it fertile ground for observational causal inference. Analysts can embark on data search-and-rescue missions and find new uses in reams of historical data that might be otherwise discounted as hopelessly biased or outdated.</p>
-</section>
-<section id="unifying-themes" class="level2">
-<h2 class="anchored" data-anchor-id="unifying-themes">Unifying themes</h2>
-<p>To illustrate potential applications, this post will provide a brief overview of Stratification, Propensity Score Weighting, Regression Discontinuity, and Difference in Differences with motivating examples from consumer retail. Each of these methods deal with situations where different groups receive different treatments but the assignment of groups was not completely random.</p>
-<p>To measure a causal effect, we want to somehow consider the <a href="https://en.wikipedia.org/wiki/Rubin_causal_model">potential outcomes</a> and be able to contrast the average outcome under the treatment versus the average outcome under a <em>counterfactual</em> scenario in which similar observations went untreated.</p>
-<p>To create this counterfactual without true randomization, these methods attempt to exploit different sources of partial random variation<sup>4</sup> while avoiding different types of confounding in order to derive a valid inference.</p>
-<p>The types of partial randomization found in your historical data and the types of biases you are concerned about dictate which methods are applicable. In short:</p>
-<ul>
-<li>If you have significant overlap between “similar” treated and untreated individuals but the treatment was not randomly assigned, stratification or propensity score weighting can help you <em>rebalance</em> your data so that your treated and untreated groups have a more similar distribution of traits and their average outcomes are more comparable</li>
-<li>If you have <em>disjoint</em> treated and untreated groups partitioned by a sharp cut-off, regression discontinuity allows you to measure the <em>local</em> treatment effect at the juncture between groups</li>
-<li>If treatments are assigned to different <em>populations</em>, difference-in-differences and event study methods help to compare different groups across multiple <em>time</em> periods.</li>
-</ul>
-</section>
-<section id="stratification" class="level2">
-<h2 class="anchored" data-anchor-id="stratification">Stratification</h2>
-<p><img src="https://emilyriederer.com/post/causal-design-patterns/excalidraw-strat.png" class="img-fluid"></p>
-<p>Stratification helps us correct for imbalanced weighting of treated and control populations that arise due to a non-random assignment mechanism.</p>
-<p><strong>TLDR</strong>: When you have “similar”<sup>5</sup> treated and untreated <em>individuals</em> with different distributions on a small number of relevant dimensions, use stratification helps to <em>rebalance</em> these groups to make their average effects more comparable</p>
-<p><strong>Motivating Example:</strong></p>
-<ul>
-<li>Suppose we attempted to A/B test “one-click instant checkout” on our Black Friday website and want to measure the effect on total purchase amount<sup>6</sup>.</li>
-<li>Due to a glitch the code, web users had a 50% chance of being in the treatment group (i.e.&nbsp;seeing the button) but mobile users only had a 30% chance.</li>
-<li>Additionally, we know that mobile users tend to spend less per order. Thus, the fact that web users are <em>over-represented</em> in the treatment group means that simply comparing treatment versus control outcomes will bias our results and make the causal effect of the button appear higher than it is in actuality.</li>
-</ul>
-<p><strong>Approach:</strong></p>
-<ul>
-<li>Bin (stratify) the population by subgroups based on values of each observation’s characteristics</li>
-<li>Calculate the average treatment effect in each subgroup</li>
-<li>Take the weighted average of the subgroup effects, weighted for the population of interest (e.g.&nbsp;treatment distribution, control distribution, population distribution)</li>
-</ul>
-<p><strong>Key Assumptions:</strong></p>
-<ul>
-<li>All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment are independent conditional on the covariates)</li>
-<li>All observations had some positive probability of being treated. Heuristically, you can think of this as meaning in the image above that there are no major regions where there are only green control observations and no blue treatment observations</li>
-<li>Only a small number of variables require adjustment (because they impact both the treatment likelihood and the outcome) Otherwise, we are plagued by the <a href="https://en.wikipedia.org/wiki/Curse_of_dimensionality">curse of dimensionality</a></li>
-</ul>
-<p><strong>Example Application:</strong></p>
-<ul>
-<li>Although we could run another A/B test, we only had one shot at Black Friday and need to decide whether or not to include this button next year. We can calculate separate treatment effects within web orders versus mobile orders and then weight average these effects based on the overall channel distribution across all orders.</li>
-<li>(Technically with modern web design, we could make separate decisions for mobile and web users, so we might not actually care about the overall treatment effect. This is just an example.)</li>
-</ul>
-<p><strong>Related Methods:</strong></p>
-<ul>
-<li>Propensity score weighting (covered next) can be seen as a more advanced form of stratification. Both methods share the goal of making the distribution of treatment and control groups more similar.</li>
-</ul>
-<p><strong>Tools:</strong></p>
-<ul>
-<li>This method is computationally simple, so it can essentially be done with <code>SQL</code> or any basic data wrangling package like <code>dplyr</code> or <code>pandas</code> so long as the tool can perform aggregations by group</li>
-</ul>
-</section>
-<section id="propensity-score-weighting" class="level2">
-<h2 class="anchored" data-anchor-id="propensity-score-weighting">Propensity Score Weighting</h2>
-<p><img src="https://emilyriederer.com/post/causal-design-patterns/excalidraw-psw.png" class="img-fluid"></p>
-<p>Similar to stratification, propensity score (think “likelihood of treatment”) weighting helps us correct for systemic differences between treatment and control populations that stem from non-random assignment mechanisms. However, this approach allows us to control for many observable characteristics that influence assignment by reducing all relevant information into a single score on which we balance.<sup>7</sup></p>
-<p><strong>TLDR</strong>: When you have “similar”<sup>8</sup> treated and untreated <em>individuals</em> with different distributions on a larger number of relevant dimensions, propensity score weighting helps to <em>rebalance</em> these groups to make their average effects more comparable</p>
-<p><strong>Motivating Example:</strong></p>
-<ul>
-<li>We sent a marketing promotion text message to all of our customers for whom we have a valid cell phone number and want to know the causal effect on the likelihood to make a purchase in the next month.</li>
-<li>We did not intentionally leave a control group untreated, but we can observe the untreated response for customers for whom we do <em>not</em> have a valid cell phone number.</li>
-<li>Phone number is an optional field on UI when making a purchase, so there is some randomness between the population; however, we know that those who do not provide a phone number are less frequent shoppers <em>on average</em> but a full spectrum of low-to-high frequency shoppers exists in both groups</li>
-<li>Thus, if we simply compare the treated and untreated groups, the promotion will look <em>more effective</em> than it really was because it is being sent to generally <em>more active</em> customers.</li>
-</ul>
-<p><strong>Approach:</strong></p>
-<ul>
-<li>Model the probability of <em>receiving</em> the treatment (the propensity score) based each observation’s observable characteristics that are relevant both to their treatment assignment and to their outcome.<sup>9</sup></li>
-<li>In observational data, the treatment group’s distribution of propensity scores will generally skew right (tend higher, shown in solid blue) and the control group’s distribution will skew left (tend lower, shown in solid green)</li>
-<li>Use predicted probabilities (propensity scores) to weight the untreated observations to fit the same distribution of treatment likelihood as the control group (shown in dotted green)</li>
-<li>Weights can be constructed in different ways depending on the quantity of interest (average treatment effect of treated, average treatment effect of population, average treatment effect if given to the control population, etc.)</li>
-<li>Apply weights when calculating the average outcome in each of the treated and control groups and subtract to find the treatment effect</li>
-</ul>
-<p><strong>Key Assumptions:</strong></p>
-<ul>
-<li>All common causes of the treatment and the outcome can be captured through the covariates (more mathematically, the outcome and the treatment are independent conditional on the covariates)</li>
-<li>All observations had some positive probability<sup>10</sup> of being treated. Heuristically, you can think of this as meaning in the image above there are no regions on the line where the treatement or control frequency curves go all the way down to zero</li>
-</ul>
-<p><strong>Example Application:</strong></p>
-<ul>
-<li>Model the propensity of treatment (or equivalently, having a phone number on record) based on demographics and historical purchase behavior</li>
-<li>Derive weights to calculate the average treatment effect of the treated. Treated observations are left unweighted; for untreated observations, the weight is the ratio of the propensity score over one minus the propensity score<sup>11</sup> <sup>12</sup></li>
-</ul>
-<p><strong>Related Methods:</strong></p>
-<ul>
-<li>Stratification is conceptually similar to propensity score weighting since it implicitly calculates the treatment effect on a reweighted sample. There, the reweighting comes after computing localized effects instead of before</li>
-<li>Propensity scores are sometimes also used in matching, but there are <a href="https://www.youtube.com/watch?v=rBv39pK1iEs&amp;list=PL0n492lUg2sjYNAtpfatEm-AuGkAmCz4G">arguments</a> against this approach</li>
-</ul>
-<p><strong>Tools:</strong></p>
-<ul>
-<li><a href="https://cran.r-project.org/web/packages/WeightIt/index.html"><code>WeightIt</code></a> R package</li>
-<li>Easy to implement with simple <code>stats::glm()</code> as shown in Lucy D’Agostino McGowan’s <a href="https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/">blog post</a></li>
-</ul>
-</section>
-<section id="regression-discontinuity" class="level2">
-<h2 class="anchored" data-anchor-id="regression-discontinuity">Regression Discontinuity</h2>
-<p><img src="https://emilyriederer.com/post/causal-design-patterns/excalidraw-rdd.png" class="img-fluid"></p>
-<p>Often, in real life and particularly in industry, we violate the “positive probability of treatment throughout the covariate space” assumption required by stratification and propensity score weighting. Business and public policy often use strategies that have sharp cut-offs (e.g.&nbsp;customer segmentation based on age and spend) with individuals on either side of this cut-off receiving different treatments. In such cases, we have no relevant observations to re-weight. However, we can apply a regression discontinuity design to understand the local effect of a treatment at the point of discontinuity.</p>
-<p><strong>TLDR</strong>: When you have disjoint treated and untreated <em>individuals</em> separated by a sharp cut-off, use the arbitrary variation in treatment assignment for those right above or below the cut-off to measure a local causal effect</p>
-<p><strong>Motivating Example:</strong></p>
-<ul>
-<li>Customers who have not made a purchase in 90 days are sent a “$10 Off Your Next Purchase” coupon.</li>
-<li>We can use the sharp cut-off in “days since last purchase” to measure the effect of a coupon on spend in the next year.</li>
-<li>While it’s implausible to think that customers who haven’t purchased in 10 days are similar to those who have not in 150 days, customers who haven’t purchased in 88 days are likely not substantively different than those who have not purchased in 92 days except for the different treatment</li>
-</ul>
-<p><strong>Approach:</strong></p>
-<ul>
-<li>A set of individuals either do or do not receive a treatment based on an arbitrary cut-off.</li>
-<li>Model the relationship between the “running” variable (the variable used in the cut-off) and the outcome on both sides of the cut-off. Then, the <em>local</em> treatment effect at the point of the cut-off can be determined by the difference in modeled outcome at this value of the running variable.</li>
-<li>Note that we can only measure the <em>local</em> treatment effect <em>at the cut-off</em> – not the global average treatment effect, as we did with stratification and propensity score weighting</li>
-</ul>
-<p><strong>Key Assumptions:</strong></p>
-<ul>
-<li>The assignment rule is unknown to the individuals being observed so it cannot be gamed</li>
-<li>The outcome of interest can be modeled as a continuous function with respect to the decisioning variable</li>
-<li>We can fit a reasonably well-specified and simple model between the outcome of interest and the decisioning variable. Since RDD necessarily requires us to use estimates from the very “tails” of our model, overly complex models (e.g.&nbsp;high degree polynomials) can reach bizarre conclusions</li>
-</ul>
-<p><strong>Example Application:</strong></p>
-<ul>
-<li>We can model the relationship between “days since last spend” and “spend in the next year” and evaluate the difference in modeled values at the value of 90 for “days since last spend”</li>
-<li>A <em>counter-example</em> that violates the assumption would be advertising “Free Shipping and Returns over $50” and attempting to measure the effect of offering free shipping on future customer loyalty. Why? This cut-off is <em>known</em> to individuals ahead of time and can be gamed. For example, perhaps less loyal are more skeptical of a company’s products and more likely to return, so they might intentionally spend more than $50 to change their classification and gain entrance to the treatment group</li>
-<li>As a side note, could you have simply A/B tested in this case? Definitely! It would be easy to get a fairer comparison by randomly withholding the coupon from some customers. However, its unlikely that <em>every</em> historical campaign your organization ever ran had a good randomized control. With this approach, you can still extract some useful insights to inform your next steps.</li>
-</ul>
-<p><strong>Related Methods:</strong></p>
-<ul>
-<li>Fuzzy regression discontinuity allows for cut-off points to be probabilistic instead of absolute</li>
-<li><a href="https://en.wikipedia.org/wiki/Instrumental_variables_estimation">Instrumental variable methods</a> and two-stage least squares can be thought of as a broader family in which regression discontinuity is a simple example. More broadly, these methods address confounding between a treatment and an outcome by modeling the relationship between a treatment and an instrument which is only related to the outcome through the treatment</li>
-</ul>
-<p><strong>Tools:</strong></p>
-<ul>
-<li><a href="https://cran.r-project.org/web/packages/rdd/index.html"><code>rdd</code></a> R package for regression discontinuity</li>
-<li><a href="https://cran.r-project.org/web/packages/AER/index.html"><code>AER</code></a> R package for instrumental variable methods</li>
-</ul>
-</section>
-<section id="difference-in-differences" class="level2">
-<h2 class="anchored" data-anchor-id="difference-in-differences">Difference in Differences</h2>
-<p><img src="https://emilyriederer.com/post/causal-design-patterns/excalidraw-did.png" class="img-fluid"></p>
-<p>So far, we’ve looked at methods that try to make groups as <em>similar</em> before treatment as possible. One way we can evaluate these methods is to see if, as we would expect, their values of the variable of interest before treatment are similar (e.g.&nbsp;spend in the 6 months leading up to a promotion.) However, the data we have available makes that intractably restrictive. Instead of looking for similarity in absolute level, difference-in-differences helps us more flexibly settle for similarity in trajectories over time. That is, instead of comparing treatment and control groups within the same population at the same time, we can compare the <em>relative change</em> across treatment and control populations <em>across time</em>.</p>
-<p><strong>TLDR</strong>: When you have group-level treatments or data available, use random variation <em>across populations</em> to compare their overall trends <em>over time</em></p>
-<p><strong>Motivating Example:</strong></p>
-<ul>
-<li>We want to estimate the effect of a store remodel on visits.</li>
-<li>A remodel affects all potential customers, so this “treatment” cannot be applied at the individual level; in theory, it could be randomized to individual <em>stores</em>, but we do not have the budget for or interest to randomly remodel many stores before there is evidence of a positive effect.</li>
-</ul>
-<p><strong>Approach:</strong></p>
-<ul>
-<li>In two separate populations, one receives the treatment and one does not. We believe but-for the treatment the two populations would have similar trends in outcome</li>
-<li>We can estimate the treatment effect by taking the <em>difference</em> between the post-treatment <em>difference</em> between populations and the pre-treatment <em>difference</em> between populations</li>
-<li>In effect, this is the same as extrapolating the counterfactual for the treated population in the post-treatment period if it had not received treatment (the dashed line in the image above)</li>
-<li>Technically, this is implemented as a fixed-effects regression model</li>
-</ul>
-<p><strong>Key Assumptions:</strong></p>
-<ul>
-<li>The decision to treat the treatment group was not influenced by the outcome</li>
-<li>If not for the treatment, the two groups being compared would have parallel trends in the outcome. Note that groups are allowed to have different <em>levels</em> but must have similar trends over time</li>
-<li>There is no spill-over effect such that treating the treatment group has an effect on the control group</li>
-</ul>
-<p><strong>Example Application:</strong></p>
-<ul>
-<li>We can estimate the effect of a store remodel on visits by comparing store traffic before and after the remodel with traffic at a store that did not remodel.</li>
-<li>Note how sensitive this method is to our assumptions:
-<ul>
-<li>if the remodel is an expansion and caused by a foreseen increase in traffic, our first assumption is violated and our effect will be overestimated</li>
-<li>if the control we chose is another nearby store in the same town, we could experience spillover effects where more people who would have otherwise gone to the control store decide to go to the treatment store instead. This again would overestimate the effect</li>
-</ul></li>
-<li>Another <em>counter-example</em> that violates the assumption would be measuring the effect of placing a certain product brand near a store’s check-out on sales and using sales of a different brand of the same product as the control. Why? Since these products are substitutes, the product placement of the treatment group could “spillover” to negatively effect sales of the control</li>
-</ul>
-<p><strong>Related Methods:</strong></p>
-<ul>
-<li>Variants exist that relax different assumptions. For example, we may consider cases in which different units receive the treatment at different times, different units have different (heterogenous) treatment effects, the parallel trend assumption only holds after conditioning on covariates, and many more scenarios</li>
-<li>Synthetic control methods can be thought of as an extension of difference-in-differences where the control is a weighted average of a number of different possible controls</li>
-<li>Bayesian structural time-series methods relax the “parallel trends” asumptions of difference-in-differences by modeling the relationship between time series (including trend and seasonal components)</li>
-</ul>
-<p><strong>Tools:</strong></p>
-<ul>
-<li><a href="https://bcallaway11.github.io/did/"><code>did</code></a> R package for difference-in-differences</li>
-<li><a href="https://www.jstatsoft.org/article/view/v042i13"><code>Synth</code></a> R package for synthetic controls</li>
-<li><a href="http://google.github.io/CausalImpact/CausalImpact.html"><code>CausalImpact</code></a> R package for Bayesian structural time-series</li>
-</ul>
-</section>
-<section id="implications" class="level2">
-<h2 class="anchored" data-anchor-id="implications">Implications</h2>
-<p><img src="https://emilyriederer.com/post/causal-design-patterns/excalidraw-implications.png" class="img-fluid"></p>
-<p>If the examples above have at all intrigued you, there are a few more things to keep in mind. Explaining these design patterns is easy; implementing them when, and <em>only</em> when, relevant is hard. Causal inference requires investment in data management, domain knowledge, and probabilistic reasoning.</p>
-<p>Data management is need to ensure that data on past treatments is preserved, discoverable, and sufficiently detailed. All of these methods require rich data with measures of baseline characteristics of each individual being studied and a solid understanding of the treatment they received. This may seem obvious, but it’s easy to neglect to preserve data of sufficient granularity. For example, we might have a database that maps every customer’s account to a system-generated <code>campaign_id</code> denoting some marketing campaign that they participated in; however, unless information about that specific campaign (the specific treatment, the targeting, the timing, etc.) is readily available, this is not terribly useful. Additionally, as in our stratification example, some of the best opportunities for causal inference come from execution errors (or, more gently, “natural experiments”). We may be inclined to forget about these errors and move on, but information on events that did not go as intended can be powerful fodder for future analysis.</p>
-<p>Domain knowledge is essential to validating the assumptions. Unlike other forms of inference (e.g.&nbsp;a basic linear regression), many of the assumptions we discussed for the methods above cannot be computational or visually assessed (e.g.&nbsp;not like the quintessential residual or QQ plots). Instead, assumptions rely largely and careful attention to detail combined with intuition and background knowledge from one’s domain. This means causal inference should necessarily be a human-in-the-loop activity.</p>
-<p>Finally, a solid grasp of probabilistic reasoning and understanding of these methods is also critical. As many of the resources I link below discuss at length, it’s easy to do causal inference wrong. For example, attempting to control for the wrong variables can sometimes <em>induce</em> correlations and cause biases instead of eliminating them.<sup>13</sup></p>
-</section>
-<section id="learn-more" class="level2">
-<h2 class="anchored" data-anchor-id="learn-more">Learn More</h2>
-<p>The point of this post is not to teach any one method of causal inference but to help raise awareness for basic causal questions, data requirements, and analysis designs which one might be able to use in the wild. There’s a plethora of fantastic resources available to learn more about the specific implementation of these or other methods. Please check out my companion <a href="../../post/resource-roundup-causal/">resource roundup post</a> for links to many free books, courses, talks, tutorials, and more.</p>
-
-
-</section>
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>A concept popularized by the 1994 book <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>. See more on <a href="https://en.wikipedia.org/wiki/Design_Patterns">Wikipedia</a>↩︎</p></li>
-<li id="fn2"><p>Regarding opportunity costs, however, <a href="https://multithreaded.stitchfix.com/blog/2020/08/05/bandits/">multi-armed bandits</a> can help balance this opportunity cost by deciding when to “explore versus exploit”↩︎</p></li>
-<li id="fn3"><p>Specifically, we <em>should</em> consider these endpoints. Notoriously, short-term tests can be superficially rosy due to a novelty effect↩︎</p></li>
-<li id="fn4"><p>You may see this called “exogeneity” in the economics literature↩︎</p></li>
-<li id="fn5"><p>What is “similarity”? Without going into too much detail, we’re specifically concerned here about characteristics of an individual that affect both their likelihood to receive the treatment of interest <strong>and</strong> affect the outcome of interest↩︎</p></li>
-<li id="fn6"><p>On one hand, we might think this would reduce abandoned baskets; on the other hand, it might decrease browsing↩︎</p></li>
-<li id="fn7"><p>Heuristically, you can think of it as a type of “dimensionality reduction” based on <em>relevance</em> instead of <em>variance</em>.↩︎</p></li>
-<li id="fn8"><p>See previous footnote on “similarity”.↩︎</p></li>
-<li id="fn9"><p>Note that we are modeling whether or not they <em>receive</em> treatment - not if they <em>respond</em> to it. This may seem unintuitive since we <em>know</em> whether or not they received treatment, but you can intuitively think of it as modeling how similar various untreated observation are to treated ones↩︎</p></li>
-<li id="fn10"><p>This is often called the positivity assumption↩︎</p></li>
-<li id="fn11"><p>Intuitively, you can think of this as canceling out the probability of being untreated (the actual state) and replacing it with the probability of receiving treatment (the target state) in the same way one converts 60 inches to feet by multiplying by (1 foot / 12 inches).↩︎</p></li>
-<li id="fn12"><p>I promised I wouldn’t get into the math and formulas in the post, but here’s a short numerical illustration of how this works. Suppose we have two groups A and B. A has 30 treated individuals and 20 untreated individuals, so the true propensity score is 60% (30/50). B has 10 treated individuals and 40 untreated individuals so the true propensity score is 20% (10/50). Thus, Group A accounts for 75% (30/40) of the treated group and 33% (20/60) of the untreated group. If the distinction between Group A and Group B suggests different performance on the outcome of interest, this imbalance would skew our comparison between the treated and untreated. Following our formula, the weight to apply to the untreated Group A population is 3/2 (0.6/0.4) and the weight to apply to the untreated Group B population is 1/4 (0.2/0.8). When we weight average our untreated group then, the weight on Group A in the untreated group is (20 * 3/2) / ( 20*3/2 + 40*1/4) = 30 / 40 = 3/4 = 75%. And voila! Now the distribution is the same as in the treated group. In reality, we would apply propensity scores instead to situations with <em>multiple</em> and <em>continuous</em> factors effecting the propensity score (not just “Groups A and B”), but a univariate and discrete example can make it easier to see what is happening.↩︎</p></li>
-<li id="fn13"><p>For more here, look for references to “collider bias” in the linked resources, such as <a href="https://mixtape.scunning.com/ch2.html#colliding">this section</a> of <em>Causal Inference: the Mixtape</em>.↩︎</p></li>
-</ol>
-</section></div> ]]></description>
-  <category>causal</category>
-  <category>data</category>
-  <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/causal-design-patterns/index.html</guid>
-  <pubDate>Sat, 30 Jan 2021 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/causal-design-patterns/featured.png" medium="image" type="image/png" height="107" width="144"/>
 </item>
 </channel>
 </rss>

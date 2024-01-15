@@ -10,7 +10,49 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.3.450</generator>
-<lastBuildDate>Sat, 13 Jan 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 15 Jan 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Crosspost: Why You Need Data Documentation in 2024</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/docs-personas/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>We’ve all worked with poorly documented dataset, and we all know it isn’t pretty. However, it’s surprisingly easy for teams to continue to fall into “documentation debt” and deprioritize this foundational work in favor of flashy new projects. These tradeoff discussions may become even more painful in 2024 as teams are continually asked to do more with less.</p>
+<p>Recently, I had the opportunity to articulate some of the underappreciated benefits of data documentation in a <a href="https://www.selectstar.com/blog/why-you-need-data-documentation-in-2024">cross-post with Select Star</a>. This builds on my prior post showing that <a href="../../post/docs-closer-than-you-think/">documentation can be strategically created throughout the data development process</a>. To make the case for taking those “raw” documentation resources to a polished final form, I return to the jobs-to-be-done framework that I’ve previously employed to talk about <a href="../../post/team-of-packages/">the value of innersource packages</a>. In this perspective, documentation is like hiring an extra resource (or more!) to your team.</p>
+<p>Some of the jobs discussed are:</p>
+<ul>
+<li>Developer Advocacy and Product Evangelism for users
+<ul>
+<li>Users think data doesn’t exist if they can’t find it, they think data is broken if they misinterpret it</li>
+<li>Documentation is both a “user interface” to make data usage easy and a bulwark against confusion and frustration</li>
+</ul></li>
+<li>Producct and Project Management for developers
+<ul>
+<li>Data intent can “drift” over time</li>
+<li>As teams evolve and collaborate, this risks initial intent getting lost and poluted (after all, what really is a “customer”?)</li>
+<li>Documentation serves as a contract and coach for one or more teams to force clarity and consistency of intent</li>
+</ul></li>
+<li>Chief of Staff oversight for data leaders
+<ul>
+<li>Leaders face increasing demands in data governance: navigating changing privacy regulations, fighting decaying data quality, and discerning their next strategic investments</li>
+<li>Documentation is their command center to understand what data assets exists and where to better spot risks and opportunities</li>
+</ul></li>
+</ul>
+<p>If you or your team works on data documentation, I’d love to hear what other “jobs” you have found that data documentation performs in your organization.</p>
+
+
+
+ ]]></description>
+  <category>data</category>
+  <category>workflow</category>
+  <category>elt</category>
+  <guid>https://emilyriederer.com/post/docs-personas/index.html</guid>
+  <pubDate>Mon, 15 Jan 2024 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/docs-personas/featured.PNG" medium="image"/>
+</item>
 <item>
   <title>polars’ Rgonomic Patterns</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -3990,39 +4032,6 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <guid>https://emilyriederer.com/post/grouping-data-quality-update/index.html</guid>
   <pubDate>Fri, 26 Aug 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/grouping-data-quality-update/featured.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>The Data Engineering Podcast: Column Names as Contracts</title>
-  <link>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</link>
-  <description><![CDATA[ 
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Listen</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-play"></i> <a href="https://www.dataengineeringpodcast.com/controlled-vocabulary-with-dbtplyr-episode-252/">Pod</a> </span><br>
-<span><i class="bi bi-download"></i><a href="tdep_col-name-contracts.mp3">Download MP3</a></span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/column-name-contracts/">Post - Column Names as Contracts</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>Communication and shared context are the hardest part of any data system. In recent years the focus has been on data catalogs as the means for documenting data assets, but those introduce a secondary system of record in order to find the necessary information. In this episode Emily Riederer shares her work to create a controlled vocabulary for managing the semantic elements of the data managed by her team and encoding it in the schema definitions in her data warehouse. She also explains how she created the dbtplyr package to simplify the work of creating and enforcing your own controlled vocabularies.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<iframe src="https://player.fireside.fm/v2/fE6B9ALy+6SCH5nMW?theme=dark" width="740" height="200" frameborder="0" scrolling="no">
-</iframe>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>data</category>
-  <guid>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</guid>
-  <pubDate>Wed, 12 Jan 2022 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/pod-tdep-colnames/featured.PNG" medium="image"/>
 </item>
 </channel>
 </rss>

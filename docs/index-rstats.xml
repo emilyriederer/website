@@ -10,7 +10,617 @@
 <atom:link href="https://emilyriederer.com/index-rstats.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.542</generator>
-<lastBuildDate>Sat, 13 Jan 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 20 Jan 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Base Python Rgonomic Patterns</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo-base/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/py-rgo-base/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption>Photo credit to <a href="https://unsplash.com/@davidclode">David Clode</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>In the past few weeks, I’ve been writing about a <a href="../..\post/py-rgo">stack of tools</a> and <a href="../..\post/py-rgo-polars/">specific packages like <code>polars</code></a> that may help R users feel “at home” when working in python due to similiar ergonomics. However, one common snag in switching languages is ramping up on common “recipes” for higher-level workflows (e.g.&nbsp;how to build a <code>sklearn</code> modeling pipeline) but missing a langugage’s fundamentals that make writing glue code feel smooth (and dare I say pleasant?) It’s a maddening feeling to get code for a <em>complex</em> task to finish only to have the result wrapped in an object that you can’t suss out how to save or manipulate.</p>
+<p>This post goes back to the basics. We’ll briefly reflect on a few aspects of usability that have led to the success of many workflow packages in R. Then, I’ll demonstrate some a grabbag of coding patterns in python that make it feel more elegant to connect bits of code into a coherent workflow.</p>
+<p>We’ll look at the kind of functinoality that you didn’t know to miss until it was gone, you’re may not be quite sure what to search to figure out how to get it back, <em>and</em> you wonder if it’s even reasonable to hope there’s an analog<sup>1</sup>. This won’t be anything groundbreaking – just some nuts and bolts. Specifically: helper functions for data and time manipulation, advanced string interpolation, list comprehensions for more functional programming, and object serialization.</p>
+<section id="what-other-r-ergonomics-do-we-enjoy" class="level2">
+<h2 class="anchored" data-anchor-id="what-other-r-ergonomics-do-we-enjoy">What other R ergonomics do we enjoy?</h2>
+<p>R’s passionate user and developer community has invested a lot in building tools that smooth over rough edges and provide slick, concise APIs to rote tasks. Sepcifically, a number of packages are devoted to:</p>
+<ul>
+<li><strong>Utility functions</strong>: Things that make it easier to “automate the boring stuff” like <code>fs</code> for naviating file systems or <code>lubridate</code> for more semantic date wrangling</li>
+<li><strong>Formatting functions</strong>: Things that help us make things look nice for users like <code>cli</code> and <code>glue</code> to improve human readability of terminal output and string interpolation</li>
+<li><strong>Efficiency functions</strong>: Things that help us write efficient workflows like <code>purrr</code> which provides a concise, typesafe interface for iteration</li>
+</ul>
+<p>All of these capabilities are things we <em>could</em> somewhat trivially write ourselves, but we don’t <em>want</em> to and we don’t <em>need</em> to. Fortunately, we don’t need to in python either.</p>
+</section>
+<section id="date-manipulation" class="level2">
+<h2 class="anchored" data-anchor-id="date-manipulation">Date Manipulation</h2>
+<p>I don’t know a data person who loves dates. In the R world, many enjoy <code>lubridate</code>’s wide range of helper functions for cleaning, formatting, and computing on dates.</p>
+<p>Python’s <code>datetime</code> module is similarly effective. We can easily create and manage dates in <code>date</code> or <code>datetime</code> classes which make them easy to work with.</p>
+<div id="482ecba4" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datetime <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> date</span>
+<span id="cb1-3">today <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> date.today()</span>
+<span id="cb1-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(today)</span>
+<span id="cb1-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(today)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2024-01-18</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>datetime.date</code></pre>
+</div>
+</div>
+<p>Two of the most important functions are <code>strftime()</code> and <code>strptime()</code>.</p>
+<p><code>strftime()</code> <em>formats</em> dates into strings. It accepts both a date and the desired string format. Below, we demonstrate by commiting the cardinal sin of writing a date in non-ISO8601.</p>
+<div id="a2f774f4" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">today_str <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.strftime(today, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%m/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/%Y'</span>)</span>
+<span id="cb4-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(today_str)</span>
+<span id="cb4-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(today_str)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>01/18/2024</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>str</code></pre>
+</div>
+</div>
+<p><code>strptime()</code> does the opposite and turns a string encoding a date into an actual date. It can try to guess the format, or we can be nice and provide it guidance.</p>
+<div id="39604f32" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">someday_dtm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.strptime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2023-01-01'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb7-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(someday_dtm)</span>
+<span id="cb7-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(someday_dtm)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2023-01-01 00:00:00</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>datetime.datetime</code></pre>
+</div>
+</div>
+<p>Date math is also relatively easy with <code>datetime</code>. For example, you can see we calculate the date difference simply by… taking the difference! From the resulting delta object, we can access the <code>days</code> attribute.</p>
+<div id="d9e1fd4d" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">n_days_diff <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ( today <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> someday_dtm.date() )</span>
+<span id="cb10-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(n_days_diff)</span>
+<span id="cb10-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(n_days_diff)</span>
+<span id="cb10-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(n_days_diff.days)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>382 days, 0:00:00</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>int</code></pre>
+</div>
+</div>
+</section>
+<section id="string-interpolation-f-strings" class="level2">
+<h2 class="anchored" data-anchor-id="string-interpolation-f-strings">String Interpolation (f-strings)</h2>
+<p>R’s <code>glue</code> is beloved for it’s ability to easily combine variables and texts into complex strings without a lot of ugly, nested <code>paste()</code> functions.</p>
+<p>python has a number of ways of doing this, but the most readable is the newest: f-strings. Simply put an <code>f</code> before the string and put any variable names to be interpolated in <code>{</code>curly braces<code>}</code>.</p>
+<div id="0fbc964a" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Emily"</span></span>
+<span id="cb13-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"This blog post is written by </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This blog post is written by Emily</code></pre>
+</div>
+</div>
+<p>f-strings also support formatting with formats specified after a colon. Below, we format a long float to round to 2 digits.</p>
+<div id="dc384fd7" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">proportion <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.123456789</span></span>
+<span id="cb15-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"The proportion is </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>proportion<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The proportion is 0.12</code></pre>
+</div>
+</div>
+<p>Any python expression – not just a single variable – can go in curly braces. So, we can instead format that propotion as a percent.</p>
+<div id="410397f6" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">proportion <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.123456789</span></span>
+<span id="cb17-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"The proportion is </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>proportion<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.1f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">%"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The proportion is 12.3%</code></pre>
+</div>
+</div>
+<p>Despite the slickness of f-strings, sometimes other string interpolation approaches can be useful. For example, if all the variables I want to interpolate are in a dictionary (as often will happen, for example, with REST API responses), the string <code>format()</code> method is a nice alternative. It allows us to pass in the dictionary, “unpacking” the argument with <code>**</code><sup>2</sup></p>
+<div id="ebf64a89" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb19-2">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dog_name'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Squeak'</span>,</span>
+<span id="cb19-3">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dog_type'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Chihuahua'</span></span>
+<span id="cb19-4">}</span>
+<span id="cb19-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{dog_name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> is a </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{dog_type}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>result))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Squeak is a Chihuahua</code></pre>
+</div>
+</div>
+<section id="application-generating-file-names" class="level3">
+<h3 class="anchored" data-anchor-id="application-generating-file-names">Application: Generating File Names</h3>
+<p>Combining what we’ve discussed about <code>datetime</code> and f-strings, here’s a pattern I use frequently. If I am logging results from a run of some script, I might save the results in a file suffixed with the run timestamp. We can generate this easily.</p>
+<div id="69ed9b97" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">dt_stub <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.now().strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y%m</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">_%H%M%S'</span>)</span>
+<span id="cb21-2">file_name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"output-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>dt_stub<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">.csv"</span></span>
+<span id="cb21-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(file_name)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>output-20240118_185839.csv</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="iteration" class="level2">
+<h2 class="anchored" data-anchor-id="iteration">Iteration</h2>
+<p>Thanks in part to a modern-day fiction that <code>for</code> loops in R are inefficient, R users have gravitated towards concise mapping functions for iteration. These can include the <code>*apply()</code> family<sup>3</sup>, <code>purrr</code>’s <code>map_*()</code> functions, or the parallelized version of either.</p>
+<p>Python too has a nice pattern for arbitrary iteration in list comprehensions. For any iterable, we can use a list comprehension to make a list of outputs by processing a list of inputs, with optional conditional and default expressions.</p>
+<p>Here are some trivial examples:</p>
+<div id="d9fdf41d" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1">l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>]</span>
+<span id="cb23-2">[i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> l]</span>
+<span id="cb23-3">[i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> l <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb23-4">[i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">else</span> i <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> l]</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>[2, 2, 4]</code></pre>
+</div>
+</div>
+<p>There are also closer analogs to <code>purrr</code> like python’s <code>map()</code> function. <code>map()</code> takes a function and an iterable object and applies the function to each element. Like with <code>purrr</code>, functions can be anonymous (as defined in python with lambda functions) or named. List comprehensions are popular for their concise syntax, but there are many different thoughts on the matter as expressed in <a href="https://stackoverflow.com/questions/1247486/list-comprehension-vs-map">this StackOverflow post</a>.</p>
+<div id="5b51f594" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> add_one(i): </span>
+<span id="cb25-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb25-3"></span>
+<span id="cb25-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># these are the same</span></span>
+<span id="cb25-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> i: i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, l))</span>
+<span id="cb25-6"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(add_one, l))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>[2, 3, 4]</code></pre>
+</div>
+</div>
+<section id="application-simulation" class="level3">
+<h3 class="anchored" data-anchor-id="application-simulation">Application: Simulation</h3>
+<p>As a more realistic example, let’s consider how list comprehensions might help us conduct a numerical simulation or sensitivity analysis.</p>
+<p>Suppose we want to simulate 100 draws from a Bernoulli distribution with different success probabilites and see how close our empirically calculated rate is to the true rate.</p>
+<p>We can define the probabilites we want to simulate in a list, use a list comprehension to create the simulations. We then have a list-of-lists of results.</p>
+<div id="39d91434" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy.random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> rnd</span>
+<span id="cb27-2"></span>
+<span id="cb27-3">probs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>]</span>
+<span id="cb27-4">coin_flips <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ rnd.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, p, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>).tolist() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> probs ]</span>
+<span id="cb27-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(coin_flips)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>5</code></pre>
+</div>
+</div>
+<p>To conduct our analysis, we can put these into a <code>polars</code> dataframe.</p>
+<div id="1a72e3ae" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span>
+<span id="cb29-2"></span>
+<span id="cb29-3">df_flips <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'prob'</span>: probs, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'flip'</span>: coin_flips})</span>
+<span id="cb29-4">df_flips</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">prob</th>
+<th data-quarto-table-cell-role="th">flip</th>
+</tr>
+<tr class="odd">
+<th>f64</th>
+<th>list[i64]</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.1</td>
+<td>[0, 0, … 0]</td>
+</tr>
+<tr class="even">
+<td>0.25</td>
+<td>[0, 0, … 0]</td>
+</tr>
+<tr class="odd">
+<td>0.5</td>
+<td>[1, 1, … 0]</td>
+</tr>
+<tr class="even">
+<td>0.75</td>
+<td>[1, 1, … 1]</td>
+</tr>
+<tr class="odd">
+<td>0.9</td>
+<td>[1, 1, … 1]</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>To analyze our data, we can then “blow up” our list-of-lists (going from a 5-row dataset to a 500-row dataset) and aggregate the results.</p>
+<div id="a2b3b7f3" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1">(</span>
+<span id="cb30-2">df_flips</span>
+<span id="cb30-3">  .explode(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'flip'</span>)</span>
+<span id="cb30-4">  .group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'prob'</span>)</span>
+<span id="cb30-5">  .agg(pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'flip'</span>).mean().alias(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p_hat'</span>))</span>
+<span id="cb30-6">  .sort(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'prob'</span>)</span>
+<span id="cb30-7">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (5, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">prob</th>
+<th data-quarto-table-cell-role="th">p_hat</th>
+</tr>
+<tr class="odd">
+<th>f64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.1</td>
+<td>0.12</td>
+</tr>
+<tr class="even">
+<td>0.25</td>
+<td>0.24</td>
+</tr>
+<tr class="odd">
+<td>0.5</td>
+<td>0.43</td>
+</tr>
+<tr class="even">
+<td>0.75</td>
+<td>0.73</td>
+</tr>
+<tr class="odd">
+<td>0.9</td>
+<td>0.96</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="saving-in-memory-object-serialization" class="level2">
+<h2 class="anchored" data-anchor-id="saving-in-memory-object-serialization">Saving In-Memory Object (Serialization)</h2>
+<p>Sometimes, it can be useful to save <em>objects</em> as they existed in RAM in an active programming environment. R users may have experienced this if they’ve used <code>.rds</code>, <code>.rda</code>, or <code>.Rdata</code> files to save individual variables or their entire environment. These objects can often be faster to reload than plaintext and can better preserve information that may be lost in other formats (e.g.&nbsp;storing a dataframe in a way that preserves its datatypes versus writing to a CSV file<sup>4</sup> or storing a complex object that can’t be easily reduced to plaintext like a model with training data, hyperparameters, learned tree splits or weights or whatnot for future predictions.) This is called object serializaton<sup>5</sup></p>
+<p>Python has comparable capabilities in the <a href="https://docs.python.org/3/library/pickle.html"><code>pickle</code> module</a>. There aren’t really style points here, so I’ve not much to add beyond “this exists” and “read the documentation”. But, at a high level, it looks something like this:</p>
+<div id="b7e4b5a6" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># to write a pickle</span></span>
+<span id="cb31-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'my-obj.pickle'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'wb'</span>) <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> handle:</span>
+<span id="cb31-3">    pickle.dump(my_object, handle, protocol <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pickle.HIGHEST_PROTOCOL)</span>
+<span id="cb31-4"></span>
+<span id="cb31-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># to read a pickle</span></span>
+<span id="cb31-6">my_object <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pickle.load(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'my-obj.pickle'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'rb'</span>))</span></code></pre></div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>I defined this odd scope to help limit the infinite number of workflow topics that could be included like “how to write a function” or “how to source code from another script”↩︎</p></li>
+<li id="fn2"><p>This is called “**kwargs”. You can read more about it <a href="https://www.digitalocean.com/community/tutorials/how-to-use-args-and-kwargs-in-python-3">here</a>.↩︎</p></li>
+<li id="fn3"><p>Speaking of non-ergonomic things in R, the <code>*apply()</code> family is notoriously diverse in its number and order of arguments↩︎</p></li>
+<li id="fn4"><p>And yes, you can and should use Parquet and then my example falls apart – but that’s not the point!↩︎</p></li>
+<li id="fn5"><p>And, if you want to go incredibly deep here, check out <a href="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/">this awesome post</a> by Danielle Navarro.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <category>tutorial</category>
+  <guid>https://emilyriederer.com/post/py-rgo-base/</guid>
+  <pubDate>Sat, 20 Jan 2024 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo-base/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>polars’ Rgonomic Patterns</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -8683,831 +9293,6 @@ Subscription                     45         31.0         31.0</code></pre>
   <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/</guid>
   <pubDate>Tue, 01 Sep 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
-</item>
-<item>
-  <title>A beginner’s guide to Shiny modules</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/shiny-modules/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>Recently, I argued the case on Twitter that Shiny modules are not an advanced topic and can actually be a great way for novice Shiny developers to start building more complex applications.</p>
-<blockquote class="twitter-tweet blockquote">
-<p lang="en" dir="ltr">
-My Shiny hot take is that modules are <strong>not</strong> an advanced topic. IMHO it’s so much easier and more natural for <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> users to write small, modular functions that they can independently play with and test than huge monolithic apps (1/3)
-</p>
-— Emily Riederer (<span class="citation" data-cites="EmilyRiederer">@EmilyRiederer</span>) <a href="https://twitter.com/EmilyRiederer/status/1286072799463911424?ref_src=twsrc%5Etfw">July 22, 2020</a>
-</blockquote>
-<script async="" src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<p>The good people of <a href="https://twitter.com/search?q=%23rstats">#rstats Twitter</a> helped me refine this thesis a bit with a few key caveats. If you already are an R user who likes to <strong>think and write functions</strong> and <strong>understand Shiny basics</strong> (i.e.&nbsp;the basics of reactivity come first no matter what), then modules <strong>for certain types of tasks</strong> (discussed at the end of this post) are an excellent way to up your game.</p>
-<p>In fact, when I first tried to learn Shiny, the monolithic scripts and <em>lack</em> of function-based thinking in introductory materials was something that really tripped me up because it felt so unlike normal R programming. So, not only is it <em>possible</em> to learn modules early, it may actually be decidedly easier than the alternative depending on your frame of mind.</p>
-<p>In this post, I walk through a toy example of building a reporting app from the <code>flights</code> data in the <code>nycflights13</code> package to demonstrate how modules help scale basic Shiny skills. The recurring theme we will discuss are that modules help novice developers:</p>
-<ul>
-<li>focus on smaller, narrower tasks at a time</li>
-<li>test out and experiment with small pieces in isolation for easier debugging</li>
-<li>avoid massively nested blocks of code that can arise in Shiny app development</li>
-</ul>
-<p>In effect, I aim to demonstrate a workflow and encourage use of modules for newer Shiny users. I do not aim to <em>teach</em> Shiny or module development itself, persay. For that, I recommend the <a href="https://shiny.rstudio.com/">Shiny documentation</a> and Hadley Wickham’s <a href="https://mastering-shiny.org/">Mastering Shiny book</a>.</p>
-<section id="why-modules" class="level2">
-<h2 class="anchored" data-anchor-id="why-modules">Why Modules?</h2>
-<p>In effect, you can think of modules as the “function-ization” of a set of Shiny UI and server elements. You may wonder why you cannot just accomplish this with the normal functions as you use in other R programming. The reason for this is a bit more technical. If you are interested, it is explained well in <em>Mastering Shiny</em>. However, I believe that it’s only the “why functions won’t work” part of Shiny modules that make them appear to be an advanced topic. If you see the value of writing functions, you are more than ready to take advantage of modules in app development.</p>
-</section>
-<section id="motivating-example" class="level2">
-<h2 class="anchored" data-anchor-id="motivating-example">Motivating Example</h2>
-<p>For the sake of argument, let’s pretend that we work for an airline and are tasked with building a basic dashboard to track various measures of travel delays against preset thresholds. We have the following requirements:</p>
-<ul>
-<li>Let users pick a month of interest to visualize</li>
-<li>For each<sup>1</sup> metric of interest, users should:
-<ul>
-<li>See a time-series plot of the average daily value of the metric</li>
-<li>Click a download button to download a PNG of the plot</li>
-<li>Read a text summary that reports the number of days the value breached the threshold</li>
-</ul></li>
-<li>The metrics of interest are:
-<ul>
-<li>Average departure delay</li>
-<li>Average arrival delay</li>
-<li>Proportion of daily flights with an arrival delay exceeding 5 minutes</li>
-</ul></li>
-</ul>
-<p>The completed application is hosted <a href="https://emilyriederer.shinyapps.io/shiny-modules-demo/">here, on shinyapps.io,</a><sup>2</sup> and the underlying code can be read <a href="https://github.com/emilyriederer/demo-shiny-modules">on GitHub</a>.</p>
-<p>Below is a preview of the final application. It isn’t going to win any beauty contests; I kept the layout and styling to a minimum so we could focus on modules in the code.</p>
-<p><img src="https://emilyriederer.com/post/shiny-modules/app-photo.PNG" class="img-fluid"></p>
-</section>
-<section id="set-up" class="level2">
-<h2 class="anchored" data-anchor-id="set-up">Set-Up</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(shiny)</span>
-<span id="cb1-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(nycflights13)</span>
-<span id="cb1-3"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(dplyr)</span>
-<span id="cb1-4"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(ggplot2)</span></code></pre></div>
-</div>
-<p>For any of the explanation below to make sense, it will help to familiarize yourself with the data. We filter the <code>flights</code> data down to a single airline and aggregate the results by day.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">ua_data <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb2-2">  nycflights13<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>flights <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">filter</span>(carrier <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"UA"</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">ind_arr_delay =</span> (arr_delay <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-5">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(year, month, day) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-6">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize</span>(</span>
-<span id="cb2-7">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">n =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">n</span>(),</span>
-<span id="cb2-8">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"delay"</span>), mean, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>)</span>
-<span id="cb2-9">    ) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-10">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ungroup</span>()</span>
-<span id="cb2-11"></span>
-<span id="cb2-12"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">head</span>(ua_data)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 x 7
-   year month   day     n dep_delay arr_delay ind_arr_delay
-  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
-1  2013     1     1   165      7.65     6.27          0.476
-2  2013     1     2   170     12.8      7.04          0.458
-3  2013     1     3   159      8.66    -2.76          0.357
-4  2013     1     4   161      6.84    -9.86          0.180
-5  2013     1     5   117      9.66     0.786         0.274
-6  2013     1     6   137      9.79     3.53          0.409</code></pre>
-</div>
-</div>
-<p>I’ve also defined the plotting function that we will want to visualize a month-long timeseries of data for each metric.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">viz_monthly <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(df, y_var, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">threshhold =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">NULL</span>) {</span>
-<span id="cb4-2">  </span>
-<span id="cb4-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ggplot</span>(df) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb4-4">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">aes</span>(</span>
-<span id="cb4-5">      <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x =</span> .data[[<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"day"</span>]],</span>
-<span id="cb4-6">      <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y =</span> .data[[y_var]]</span>
-<span id="cb4-7">    ) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb4-8">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">geom_line</span>() <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb4-9">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">geom_hline</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">yintercept =</span> threshhold, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">color =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"red"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">linetype =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb4-10">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">scale_x_continuous</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">breaks =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">29</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">by =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">7</span>)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span></span>
-<span id="cb4-11">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">theme_minimal</span>()</span>
-<span id="cb4-12">}</span></code></pre></div>
-</div>
-<p>For example, to visualize the average arrival delay by day for all of March and compare it to a threshhold of 10 minutes, we can write:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">ua_data <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb5-2">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">filter</span>(month <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">3</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb5-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">viz_monthly</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"arr_delay"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">threshhold =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>)</span></code></pre></div>
-<div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/shiny-modules/index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-<section id="one-module-at-a-time" class="level2">
-<h2 class="anchored" data-anchor-id="one-module-at-a-time">One Module at a Time</h2>
-<p>Modules don’t just help organize your code; they help you organize your <em>thinking</em>. Given our list of requirements, it might feel overwhelming where to start. Filtering the data? Making the plots? Wiring up buttons? Inevitably, when juggling 10+ components (the reactive dataset plus a plot, button, and text summary for each of three metrics), you’re likely to introduce a bug by copy-pasting a line with the wrong <code>id</code> or getting nested parentheses out of whack.</p>
-<p>Instead, modules essentially allow your to write <em>many simple Shiny apps</em> and compose them together.</p>
-<p>For example, we might decide that first we just want to focus on a very simple app: given a monhthly subset of the data, a metric, and a threshold of interest. Let’s write a simple text summary of the flights performance. This task seems relatively straightforward. We now know we just need to define a UI (<code>text_ui</code>) with a single call to <code>textOutput()</code>, a server (<code>text_server</code>) that does a single calculation and calls <code>renderText()</code>. Best of all, we can immediately see whether or not our “app” works by writing a minimalistic testing function (<code>text_demo</code>) which renders the text for a small, fake dataset.<sup>3</sup></p>
-<p>I saved the follow in a file called <code>mod-test.R</code>:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># text module ----</span></span>
-<span id="cb6-2">text_ui <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(id) {</span>
-<span id="cb6-3">  </span>
-<span id="cb6-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">fluidRow</span>(</span>
-<span id="cb6-5">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">textOutput</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">NS</span>(id, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"text"</span>))</span>
-<span id="cb6-6">  )</span>
-<span id="cb6-7">  </span>
-<span id="cb6-8">}</span>
-<span id="cb6-9"></span>
-<span id="cb6-10">text_server <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(id, df, vbl, threshhold) {</span>
-<span id="cb6-11">  </span>
-<span id="cb6-12">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">moduleServer</span>(id, <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(input, output, session) {</span>
-<span id="cb6-13">    </span>
-<span id="cb6-14">    n <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">reactive</span>({<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sum</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">df</span>()[[vbl]] <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span> threshhold)})</span>
-<span id="cb6-15">    output<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>text <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">renderText</span>({</span>
-<span id="cb6-16">      <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"In this month"</span>, </span>
-<span id="cb6-17">            vbl, </span>
-<span id="cb6-18">            <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"exceeded the average daily threshhold of"</span>,</span>
-<span id="cb6-19">            threshhold,</span>
-<span id="cb6-20">            <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"a total of"</span>, </span>
-<span id="cb6-21">            <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">n</span>(), </span>
-<span id="cb6-22">            <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"days"</span>)</span>
-<span id="cb6-23">    })</span>
-<span id="cb6-24">    </span>
-<span id="cb6-25">  })</span>
-<span id="cb6-26">  </span>
-<span id="cb6-27">}</span>
-<span id="cb6-28"></span>
-<span id="cb6-29">text_demo <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>() {</span>
-<span id="cb6-30">  </span>
-<span id="cb6-31">  df <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">day =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">30</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">arr_delay =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">30</span>)</span>
-<span id="cb6-32">  ui <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">fluidPage</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">text_ui</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"x"</span>))</span>
-<span id="cb6-33">  server <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(input, output, session) {</span>
-<span id="cb6-34">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">text_server</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"x"</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">reactive</span>({df}), <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"arr_delay"</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">15</span>)</span>
-<span id="cb6-35">  }</span>
-<span id="cb6-36">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">shinyApp</span>(ui, server)</span>
-<span id="cb6-37">  </span>
-<span id="cb6-38">}</span></code></pre></div>
-</div>
-<p>We can follow the same pattern to create a module for the plot itself consisting of a UI (<code>plot_ui</code>), a server (<code>plot_server</code>), and a testing function (<code>plot_demo</code>). This module is responsible for showing the plot of a single metric and enabling users to download it. You can see this code on GitHub in the file <a href="https://github.com/emilyriederer/demo-shiny-modules/blob/master/mod-plot.R"><code>mod-plot.R</code></a>:</p>
-<p>Once again, we can run that self-contained file and then execute <code>plot_demo()</code> to run our mini-application. This time, it is more interactive. We can click the “Download” button and ensure that our download feature is working.</p>
-<p>We don’t have an application yet, but we have two components that build pretty easily off of our basic Shiny knowledge and that we can see working before our eyes<sup>4</sup>.</p>
-<section id="composing-modules" class="level3">
-<h3 class="anchored" data-anchor-id="composing-modules">Composing Modules</h3>
-<p>We now have a text module and a plot module. However, recall for each metric of interest, we want to produce <em>both</em>. We could do this by simply calling these two modules one after the other in our final app, but if we want to, we can create another module that wraps our first two modules so that we can produce in single commands everything that we need for a given metric.</p>
-<p>With all of the underlying plot and text module logic abstracted, our metric module definition is very clean and simple. I define it in the <code>mod-metr.R</code> file:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># metric module ----</span></span>
-<span id="cb7-2">metric_ui <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(id) {</span>
-<span id="cb7-3">  </span>
-<span id="cb7-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">fluidRow</span>(</span>
-<span id="cb7-5">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">text_ui</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">NS</span>(id, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"metric"</span>)),</span>
-<span id="cb7-6">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">plot_ui</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">NS</span>(id, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"metric"</span>))</span>
-<span id="cb7-7">  )</span>
-<span id="cb7-8">  </span>
-<span id="cb7-9">}</span>
-<span id="cb7-10"></span>
-<span id="cb7-11">metric_server <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(id, df, vbl, threshhold) {</span>
-<span id="cb7-12">  </span>
-<span id="cb7-13">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">moduleServer</span>(id, <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(input, output, session) {</span>
-<span id="cb7-14">    </span>
-<span id="cb7-15">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">text_server</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"metric"</span>, df, vbl, threshhold)</span>
-<span id="cb7-16">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">plot_server</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"metric"</span>, df, vbl, threshhold)</span>
-<span id="cb7-17">    </span>
-<span id="cb7-18">  })</span>
-<span id="cb7-19">  </span>
-<span id="cb7-20">}</span>
-<span id="cb7-21"></span>
-<span id="cb7-22">metric_demo <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>() {</span>
-<span id="cb7-23">  </span>
-<span id="cb7-24">  df <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">data.frame</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">day =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">30</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">arr_delay =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">30</span>)</span>
-<span id="cb7-25">  ui <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">fluidPage</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_ui</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"x"</span>))</span>
-<span id="cb7-26">  server <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(input, output, session) {</span>
-<span id="cb7-27">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_server</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"x"</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">reactive</span>({df}), <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"arr_delay"</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">15</span>)</span>
-<span id="cb7-28">  }</span>
-<span id="cb7-29">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">shinyApp</span>(ui, server)</span>
-<span id="cb7-30">  </span>
-<span id="cb7-31">}</span></code></pre></div>
-</div>
-<p>Again, we can test that these components went together as we intended by running the <code>metric_demo()</code> function. We will see the text from our text module on top of the plot and button from our plot module. Here’s what our module looks like so far:</p>
-<p><img src="https://emilyriederer.com/post/shiny-modules/mod-demo.PNG" class="img-fluid"></p>
-<p>For this app, this might seem like overkill, but I wanted to illustrate the ability to compose modules because it’s very useful as your application grows in complexity. In essence, everything you bundle into a module gives you a license to forget about how the next layer lower is implemented and frees up your mind to take on the next challenge.</p>
-</section>
-<section id="putting-it-all-together" class="level3">
-<h3 class="anchored" data-anchor-id="putting-it-all-together">Putting it all together</h3>
-<p>Finally, we are ready to write our complete application in a file called <code>flights-app.R</code>:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># load libraries ----</span></span>
-<span id="cb8-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(nycflights13)</span>
-<span id="cb8-3"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(shiny)</span>
-<span id="cb8-4"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(ggplot2)</span>
-<span id="cb8-5"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(dplyr)</span>
-<span id="cb8-6"></span>
-<span id="cb8-7"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># load resources ----</span></span>
-<span id="cb8-8"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"viz-mtly.R"</span>)</span>
-<span id="cb8-9"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mod-plot.R"</span>)</span>
-<span id="cb8-10"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mod-text.R"</span>)</span>
-<span id="cb8-11"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mod-metr.R"</span>)</span>
-<span id="cb8-12"></span>
-<span id="cb8-13"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># data prep ----</span></span>
-<span id="cb8-14">ua_data <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb8-15">  nycflights13<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>flights <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb8-16">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">filter</span>(carrier <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"UA"</span>) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb8-17">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">ind_arr_delay =</span> (arr_delay <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>)) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb8-18">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(year, month, day) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb8-19">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize</span>(</span>
-<span id="cb8-20">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">n =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">n</span>(),</span>
-<span id="cb8-21">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"delay"</span>), mean, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>)</span>
-<span id="cb8-22">    ) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb8-23">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ungroup</span>()</span>
-<span id="cb8-24"></span>
-<span id="cb8-25"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># full application ----</span></span>
-<span id="cb8-26">ui <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">fluidPage</span>(</span>
-<span id="cb8-27">  </span>
-<span id="cb8-28">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">titlePanel</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Flight Delay Report"</span>),</span>
-<span id="cb8-29">  </span>
-<span id="cb8-30">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sidebarLayout</span>(</span>
-<span id="cb8-31">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">sidebarPanel =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sidebarPanel</span>(</span>
-<span id="cb8-32">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">selectInput</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"month"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Month"</span>, </span>
-<span id="cb8-33">                <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">choices =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">setNames</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">12</span>, month.abb),</span>
-<span id="cb8-34">                <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">selected =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span></span>
-<span id="cb8-35">    )</span>
-<span id="cb8-36">  ),</span>
-<span id="cb8-37">  <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">mainPanel =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mainPanel</span>(</span>
-<span id="cb8-38">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">h2</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">textOutput</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"title"</span>)),</span>
-<span id="cb8-39">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">h3</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Average Departure Delay"</span>),</span>
-<span id="cb8-40">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_ui</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"dep_delay"</span>),</span>
-<span id="cb8-41">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">h3</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Average Arrival Delay"</span>),</span>
-<span id="cb8-42">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_ui</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"arr_delay"</span>),</span>
-<span id="cb8-43">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">h3</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Proportion Flights with &gt;5 Min Arrival Delay"</span>),</span>
-<span id="cb8-44">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_ui</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"ind_arr_delay"</span>)</span>
-<span id="cb8-45">  )</span>
-<span id="cb8-46">)</span>
-<span id="cb8-47">)</span>
-<span id="cb8-48"></span>
-<span id="cb8-49">server <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">function</span>(input, output, session) {</span>
-<span id="cb8-50">  </span>
-<span id="cb8-51">  output<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>title <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">renderText</span>({<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(month.abb[<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.integer</span>(input<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>month)], <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"Report"</span>)})</span>
-<span id="cb8-52">  df_month <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">reactive</span>({<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">filter</span>(ua_data, month <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> input<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>month)})</span>
-<span id="cb8-53">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_server</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"dep_delay"</span>, df_month, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">vbl =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"dep_delay"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">threshhold =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>)</span>
-<span id="cb8-54">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_server</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"arr_delay"</span>, df_month, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">vbl =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"arr_delay"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">threshhold =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>)</span>
-<span id="cb8-55">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metric_server</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"ind_arr_delay"</span>, df_month, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">vbl =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"ind_arr_delay"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">threshhold =</span> <span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.5</span>)</span>
-<span id="cb8-56">  </span>
-<span id="cb8-57">}</span>
-<span id="cb8-58"></span>
-<span id="cb8-59"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">shinyApp</span>(ui, server)</span></code></pre></div>
-</div>
-<p>Notice how few lines of code this file requires to create all of our various components and interactions! We’ve eliminated much of the dense code, nesting, and potential duplication we might have encountered if trying to write our application without modules. Whether you were trying to maintain this app or reading someone else’s code, the top-level code is accessible, semantic, and declarative. We can fairly easily infer the intent of each line and note which pieces of UI and server logic are responsible for which components.</p>
-<p>Additionally, we also have all of the typical benefits afforded by functions. For example, if we were asked to change the plot download feature to download an <code>.svg</code> file instead of a <code>.png</code>, we could make a single change to the <code>plot_server()</code> function instead of having to change many pieces of our code for each metric.</p>
-</section>
-<section id="caveats" class="level3">
-<h3 class="anchored" data-anchor-id="caveats">Caveats</h3>
-<p>Not all modules are made alike, and in this walk-through I intentionally chose relatively easy pieces of logic to demonstrate. Note that our modules <em>consume</em> a reactive variable (data) from the global environment, but they themselves do not attempt to <em>alter</em> the global environment or <em>exchange</em> information between them. Both of those things are also very possible to do with modules, but they may feel a bit harder or more error prone at first. In my opinion, modules that simply consume reactives are the easiest way to start out.</p>
-<p>I also intentionally did not discuss more advanced features of modules or more formal and automated testing of them. These topics are covered in both <a href="http://mastering-shiny.org/"><em>Mastering Shiny</em></a> and <a href="https://engineering-shiny.org/"><em>Engineering Production Grade Shiny Apps</em></a>. These books also introduce ways to share modules via R packages and to organize them in Shiny app projects built with the excellent <a href="https://cran.r-project.org/web/packages/golem/index.html"><code>golem</code> package</a> (the <code>usethis</code> of Shiny apps).</p>
-
-
-</section>
-</section>
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>In the spirit of “don’t repeat yourself”, any time you have the phrase “for each” in your requirements, it’s a strong signal that modules might make your work a good bit easier.↩︎</p></li>
-<li id="fn2"><p>If I stop hosting the app in the future and this link does not work, the easiest way to run the app is by going to the repo, copying the code in the file <code>flights-app-single-file.R</code> and running it locally.↩︎</p></li>
-<li id="fn3"><p>In <em>Mastering Shiny</em>, Hadley points out its a good practice to always include such a demo function for testing: https://mastering-shiny.org/scaling-modules.html#updated-app↩︎</p></li>
-<li id="fn4"><p>Of course, “working for one use case” is not a substitute for real testing, but that’s out of scope for this post↩︎</p></li>
-</ol>
-</section></div> ]]></description>
-  <category>shiny</category>
-  <category>rstats</category>
-  <category>workflow</category>
-  <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/shiny-modules/</guid>
-  <pubDate>Sun, 26 Jul 2020 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/shiny-modules/featured.png" medium="image" type="image/png" height="65" width="144"/>
 </item>
 </channel>
 </rss>

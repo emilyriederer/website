@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.com/index.html#category=python</link>
+<link>https://emilyriederer.com/#category=python</link>
 <atom:link href="https://emilyriederer.com/index-python.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.3.450</generator>
+<generator>quarto-1.4.542</generator>
 <lastBuildDate>Sat, 13 Jan 2024 06:00:00 GMT</lastBuildDate>
 <item>
   <title>polars’ Rgonomic Patterns</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/py-rgo-polars/index.html</link>
+  <link>https://emilyriederer.com/post/py-rgo-polars/</link>
   <description><![CDATA[ 
 
 
@@ -1075,14 +1075,14 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
   <category>rstats</category>
   <category>python</category>
   <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/py-rgo-polars/index.html</guid>
+  <guid>https://emilyriederer.com/post/py-rgo-polars/</guid>
   <pubDate>Sat, 13 Jan 2024 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/py-rgo-polars/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Python Rgonomics</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/py-rgo/index.html</link>
+  <link>https://emilyriederer.com/post/py-rgo/</link>
   <description><![CDATA[ 
 
 
@@ -1222,14 +1222,14 @@ Note
 </section></div> ]]></description>
   <category>rstats</category>
   <category>python</category>
-  <guid>https://emilyriederer.com/post/py-rgo/index.html</guid>
+  <guid>https://emilyriederer.com/post/py-rgo/</guid>
   <pubDate>Sat, 30 Dec 2023 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/py-rgo/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Oh, I’m sure it’s probably nothing</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/nulls-polyglot/index.html</link>
+  <link>https://emilyriederer.com/post/nulls-polyglot/</link>
   <description><![CDATA[ 
 
 
@@ -2730,14 +2730,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <category>sql</category>
   <category>data</category>
   <category>data-disasters</category>
-  <guid>https://emilyriederer.com/post/nulls-polyglot/index.html</guid>
+  <guid>https://emilyriederer.com/post/nulls-polyglot/</guid>
   <pubDate>Mon, 05 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>A Tale of Six States: Flexible data extraction with scraping and browser automation</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/states-scraping-automation/index.html</link>
+  <link>https://emilyriederer.com/post/states-scraping-automation/</link>
   <description><![CDATA[ 
 
 
@@ -3630,7 +3630,7 @@ font-style: inherit;">False</span>)</span></code></pre></div>
   <category>data</category>
   <category>elt</category>
   <category>python</category>
-  <guid>https://emilyriederer.com/post/states-scraping-automation/index.html</guid>
+  <guid>https://emilyriederer.com/post/states-scraping-automation/</guid>
   <pubDate>Sat, 08 May 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/states-scraping-automation/featured.png" medium="image" type="image/png" height="97" width="144"/>
 </item>

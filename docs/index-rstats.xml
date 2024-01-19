@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.com/index.html#category=rstats</link>
+<link>https://emilyriederer.com/#category=rstats</link>
 <atom:link href="https://emilyriederer.com/index-rstats.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.3.450</generator>
+<generator>quarto-1.4.542</generator>
 <lastBuildDate>Sat, 13 Jan 2024 06:00:00 GMT</lastBuildDate>
 <item>
   <title>polars’ Rgonomic Patterns</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/py-rgo-polars/index.html</link>
+  <link>https://emilyriederer.com/post/py-rgo-polars/</link>
   <description><![CDATA[ 
 
 
@@ -1075,14 +1075,14 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
   <category>rstats</category>
   <category>python</category>
   <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/py-rgo-polars/index.html</guid>
+  <guid>https://emilyriederer.com/post/py-rgo-polars/</guid>
   <pubDate>Sat, 13 Jan 2024 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/py-rgo-polars/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Python Rgonomics</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/py-rgo/index.html</link>
+  <link>https://emilyriederer.com/post/py-rgo/</link>
   <description><![CDATA[ 
 
 
@@ -1222,13 +1222,13 @@ Note
 </section></div> ]]></description>
   <category>rstats</category>
   <category>python</category>
-  <guid>https://emilyriederer.com/post/py-rgo/index.html</guid>
+  <guid>https://emilyriederer.com/post/py-rgo/</guid>
   <pubDate>Sat, 30 Dec 2023 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/py-rgo/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Operationalizing Column-Name Contracts with dbtplyr</title>
-  <link>https://emilyriederer.com/talk/dbtplyr/index.html</link>
+  <link>https://emilyriederer.com/talk/dbtplyr/</link>
   <description><![CDATA[ 
 
 
@@ -1271,13 +1271,13 @@ Note
   <category>workflow</category>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/talk/dbtplyr/index.html</guid>
+  <guid>https://emilyriederer.com/talk/dbtplyr/</guid>
   <pubDate>Thu, 21 Sep 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/dbtplyr/featured.png" medium="image" type="image/png" height="82" width="144"/>
 </item>
 <item>
   <title>Posit Data Science Hangout</title>
-  <link>https://emilyriederer.com/talk/meetup-posit/index.html</link>
+  <link>https://emilyriederer.com/talk/meetup-posit/</link>
   <description><![CDATA[ 
 
 
@@ -1305,13 +1305,13 @@ Note
  ]]></description>
   <category>rstats</category>
   <category>workflow</category>
-  <guid>https://emilyriederer.com/talk/meetup-posit/index.html</guid>
+  <guid>https://emilyriederer.com/talk/meetup-posit/</guid>
   <pubDate>Thu, 13 Apr 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/meetup-posit/featured.png" medium="image" type="image/png" height="74" width="144"/>
 </item>
 <item>
   <title>Taking Flight with Shiny: a Modules-First Approach</title>
-  <link>https://emilyriederer.com/talk/shiny-modules/index.html</link>
+  <link>https://emilyriederer.com/talk/shiny-modules/</link>
   <description><![CDATA[ 
 
 
@@ -1346,14 +1346,14 @@ Note
   <category>workflow</category>
   <category>rstats</category>
   <category>shiny</category>
-  <guid>https://emilyriederer.com/talk/shiny-modules/index.html</guid>
+  <guid>https://emilyriederer.com/talk/shiny-modules/</guid>
   <pubDate>Wed, 15 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/shiny-modules/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 <item>
   <title>Oh, I’m sure it’s probably nothing</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/nulls-polyglot/index.html</link>
+  <link>https://emilyriederer.com/post/nulls-polyglot/</link>
   <description><![CDATA[ 
 
 
@@ -2854,14 +2854,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <category>sql</category>
   <category>data</category>
   <category>data-disasters</category>
-  <guid>https://emilyriederer.com/post/nulls-polyglot/index.html</guid>
+  <guid>https://emilyriederer.com/post/nulls-polyglot/</guid>
   <pubDate>Mon, 05 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Using databases with Shiny</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/shiny-db/index.html</link>
+  <link>https://emilyriederer.com/post/shiny-db/</link>
   <description><![CDATA[ 
 
 
@@ -3188,7 +3188,7 @@ font-style: inherit;">25060</span>)</span></code></pre></div>
 txtSQL = "SELECT * FROM Users WHERE UserId = " + txtUserId;</code></pre>
 <p>If the entered <code>UserId</code> is <code>"UserId = 105 OR 1=1"</code>, then the full SQL string will be <code>"SELECT * FROM Users WHERE UserId = 105 OR 1=1;"</code>.</p>
 <p>SQL injection is also at jokes you make have heard about “little Bobby Drop Tables” (<a href="https://xkcd.com/327/">xkcd</a>).</p>
-<p><img src="https://emilyriederer.com/post/shiny-db/https:/imgs.xkcd.com/comics/exploits_of_a_mom.png" class="img-fluid"></p>
+<p><img src="https://imgs.xkcd.com/comics/exploits_of_a_mom.png" class="img-fluid"></p>
 <p>That joke also, in some odd way, highlights that SQL injection need not be malicious. Rather, whenever we have software opened up to users beyond ourselves, they will likely use it in unexpected ways that push the system to its limit. For example, a user might try to enter or remove values from our database with double quotes, semicolons, or other features that mean something different to SQL than in human parlance and corrupt the code. Regardless of intent, we can protect against bad SQL that will break our application by using the <code>DBI::sqlInterpolate()</code> function.</p>
 <p>A demonstration of this function and how it can protect against bad query generation is shown in <a href="https://shiny.rstudio.com/articles/sql-injections.html">this post</a> by RStudio.</p>
 </section>
@@ -3330,14 +3330,14 @@ font-style: inherit;">return</span>(con)</span>
   <category>rstats</category>
   <category>shiny</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/post/shiny-db/index.html</guid>
+  <guid>https://emilyriederer.com/post/shiny-db/</guid>
   <pubDate>Sun, 02 Jan 2022 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/shiny-db/featured.png" medium="image" type="image/png" height="107" width="144"/>
 </item>
 <item>
   <title>How to Make R Markdown Snow</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/snow/index.html</link>
+  <link>https://emilyriederer.com/post/snow/</link>
   <description><![CDATA[ 
 
 
@@ -3406,13 +3406,13 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
  ]]></description>
   <category>rstats</category>
   <category>rmarkdown</category>
-  <guid>https://emilyriederer.com/post/snow/index.html</guid>
+  <guid>https://emilyriederer.com/post/snow/</guid>
   <pubDate>Sat, 11 Dec 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/snow/featured.gif" medium="image" type="image/gif"/>
 </item>
 <item>
   <title>UIUC STAT447 (Data Science Programming) Guest Lecture</title>
-  <link>https://emilyriederer.com/talk/meetup-stat447/index.html</link>
+  <link>https://emilyriederer.com/talk/meetup-stat447/</link>
   <description><![CDATA[ 
 
 
@@ -3443,14 +3443,14 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
  ]]></description>
   <category>rstats</category>
   <category>workflow</category>
-  <guid>https://emilyriederer.com/talk/meetup-stat447/index.html</guid>
+  <guid>https://emilyriederer.com/talk/meetup-stat447/</guid>
   <pubDate>Wed, 17 Nov 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/meetup-stat447/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 <item>
   <title>Update: column-name contracts with dbtplyr</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/convo-dbt-update/index.html</link>
+  <link>https://emilyriederer.com/post/convo-dbt-update/</link>
   <description><![CDATA[ 
 
 
@@ -3539,14 +3539,14 @@ from {{ ref('mydata') }}</code></pre>
  ]]></description>
   <category>rstats</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/convo-dbt-update/index.html</guid>
+  <guid>https://emilyriederer.com/post/convo-dbt-update/</guid>
   <pubDate>Tue, 21 Sep 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/convo-dbt-update/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>A lightweight data validation ecosystem with R, GitHub, and Slack</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/data-valid-lightweight/index.html</link>
+  <link>https://emilyriederer.com/post/data-valid-lightweight/</link>
   <description><![CDATA[ 
 
 
@@ -3997,14 +3997,14 @@ font-style: inherit;">-</span>repo pulls commits releases deployments</span></co
   <category>rstats</category>
   <category>data</category>
   <category>elt</category>
-  <guid>https://emilyriederer.com/post/data-valid-lightweight/index.html</guid>
+  <guid>https://emilyriederer.com/post/data-valid-lightweight/</guid>
   <pubDate>Thu, 26 Aug 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/data-valid-lightweight/featured.png" medium="image" type="image/png" height="105" width="144"/>
 </item>
 <item>
   <title>Workflows for querying databases via R</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/sql-r-flow/index.html</link>
+  <link>https://emilyriederer.com/post/sql-r-flow/</link>
   <description><![CDATA[ 
 
 
@@ -4574,14 +4574,14 @@ font-style: inherit;">"test_tbl"</span>, test_df)</span></code></pre></div>
   <category>rstats</category>
   <category>workflow</category>
   <category>sql</category>
-  <guid>https://emilyriederer.com/post/sql-r-flow/index.html</guid>
+  <guid>https://emilyriederer.com/post/sql-r-flow/</guid>
   <pubDate>Wed, 14 Jul 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/sql-r-flow/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Building a team of internal R packages</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/team-of-packages/index.html</link>
+  <link>https://emilyriederer.com/post/team-of-packages/</link>
   <description><![CDATA[ 
 
 
@@ -5404,7 +5404,7 @@ font-style: inherit;">vars</span>(COHORT_QUARTER))</span></code></pre></div>
 <h3 class="anchored" data-anchor-id="project-planning">Project Planning</h3>
 <p><span style="color: blue;"></span></p>
 <p>Pieces of code are not the only thing we can modularize for our users. Often, a good bit of work in the early stages of a project is figuring out what the right steps are. This is emphasized in the project management book <a href="https://basecamp.com/shapeup/3.4-chapter-13#work-is-like-a-hill">Shape Up</a> which illustrates the flow of a project with “hill diagrams”:</p>
-<p><img src="https://emilyriederer.com/post/team-of-packages/https:/basecamp.com/assets/books/shapeup/3.4/hill_concept-a0a77c0ebb209b61899b8b4cdb1a315f2807e3fdc2e1d2373e2f19060725f042.png" class="img-fluid"></p>
+<p><img src="https://basecamp.com/assets/books/shapeup/3.4/hill_concept-a0a77c0ebb209b61899b8b4cdb1a315f2807e3fdc2e1d2373e2f19060725f042.png" class="img-fluid"></p>
 <p>Our “tech lead” documentation can already help document some of the learned project steps and help speed up the “hill climbing”. Additionally, a package could play the role of the project manager and make those steps more tangible by embedding a project plan. One option for this is the <a href="https://emilyriederer.github.io/projmgr/"><code>projmgr</code></a> package<sup>6</sup> which allows for specification of main steps as a project as in a <a href="https://emilyriederer.github.io/projmgr/articles/building-custom-plans.html">YAML file</a> which can then be bulk uploaded to GitHub issues and milestones.</p>
 <p>Technically, this would mean writing a project plan, saving it in the <code>inst/</code> folder of your package, and perhaps writing a custom function to wrap <code>system.file()</code> to help users access the plan. Your function might look something like:</p>
 <div class="cell">
@@ -5595,13 +5595,13 @@ font-style: inherit;">"{package name}"</span>)</span>
   <category>rstats</category>
   <category>pkgdev</category>
   <category>jtbd</category>
-  <guid>https://emilyriederer.com/post/team-of-packages/index.html</guid>
+  <guid>https://emilyriederer.com/post/team-of-packages/</guid>
   <pubDate>Thu, 21 Jan 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/team-of-packages/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>oRganization: Design patterns for internal packages</title>
-  <link>https://emilyriederer.com/talk/organization/index.html</link>
+  <link>https://emilyriederer.com/talk/organization/</link>
   <description><![CDATA[ 
 
 
@@ -5636,14 +5636,14 @@ font-style: inherit;">"{package name}"</span>)</span>
   <category>workflow</category>
   <category>pkgdev</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/talk/organization/index.html</guid>
+  <guid>https://emilyriederer.com/talk/organization/</guid>
   <pubDate>Thu, 21 Jan 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/organization/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 <item>
   <title>Generating SQL with {dbplyr} and sqlfluff</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/sql-generation/index.html</link>
+  <link>https://emilyriederer.com/post/sql-generation/</link>
   <description><![CDATA[ 
 
 
@@ -6625,14 +6625,14 @@ GROUP BY `species`</code></pre>
   <category>data</category>
   <category>sql</category>
   <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/sql-generation/index.html</guid>
+  <guid>https://emilyriederer.com/post/sql-generation/</guid>
   <pubDate>Sat, 16 Jan 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/sql-generation/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Introducing the {convo} package</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/convo-intro/index.html</link>
+  <link>https://emilyriederer.com/post/convo-intro/</link>
   <description><![CDATA[ 
 
 
@@ -7118,14 +7118,14 @@ font-style: inherit;">FALSE</span>)</span></code></pre></div>
   <category>rstats</category>
   <category>pkgdev</category>
   <category>data</category>
-  <guid>https://emilyriederer.com/post/convo-intro/index.html</guid>
+  <guid>https://emilyriederer.com/post/convo-intro/</guid>
   <pubDate>Wed, 30 Dec 2020 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/convo-intro/featured.png" medium="image" type="image/png" height="75" width="144"/>
 </item>
 <item>
   <title>crosstalk: Dynamic filtering for R Markdown</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/crosstalk/index.html</link>
+  <link>https://emilyriederer.com/post/crosstalk/</link>
   <description><![CDATA[ 
 
 
@@ -7154,14 +7154,14 @@ font-style: inherit;">FALSE</span>)</span></code></pre></div>
 </section></div> ]]></description>
   <category>rstats</category>
   <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/crosstalk/index.html</guid>
+  <guid>https://emilyriederer.com/post/crosstalk/</guid>
   <pubDate>Sat, 12 Sep 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/crosstalk/featured.png" medium="image" type="image/png" height="128" width="144"/>
 </item>
 <item>
   <title>Column Names as Contracts</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/column-name-contracts/index.html</link>
+  <link>https://emilyriederer.com/post/column-name-contracts/</link>
   <description><![CDATA[ 
 
 
@@ -8663,13 +8663,13 @@ Subscription                     45         31.0         31.0</code></pre>
   <category>data</category>
   <category>workflow</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/post/column-name-contracts/index.html</guid>
+  <guid>https://emilyriederer.com/post/column-name-contracts/</guid>
   <pubDate>Sun, 06 Sep 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/column-name-contracts/featured.png" medium="image" type="image/png" height="152" width="144"/>
 </item>
 <item>
   <title>R Markdown Cookbook</title>
-  <link>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</link>
+  <link>https://emilyriederer.com/publication/rmarkdown-cookbook/</link>
   <description><![CDATA[ 
 
 
@@ -8680,14 +8680,14 @@ Subscription                     45         31.0         31.0</code></pre>
  ]]></description>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</guid>
+  <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/</guid>
   <pubDate>Tue, 01 Sep 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>A beginner’s guide to Shiny modules</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/shiny-modules/index.html</link>
+  <link>https://emilyriederer.com/post/shiny-modules/</link>
   <description><![CDATA[ 
 
 
@@ -9505,7 +9505,7 @@ font-style: inherit;">shinyApp</span>(ui, server)</span></code></pre></div>
   <category>rstats</category>
   <category>workflow</category>
   <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/shiny-modules/index.html</guid>
+  <guid>https://emilyriederer.com/post/shiny-modules/</guid>
   <pubDate>Sun, 26 Jul 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/shiny-modules/featured.png" medium="image" type="image/png" height="65" width="144"/>
 </item>

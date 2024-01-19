@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.com/index.html#category=sql</link>
+<link>https://emilyriederer.com/#category=sql</link>
 <atom:link href="https://emilyriederer.com/index-sql.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.3.450</generator>
+<generator>quarto-1.4.542</generator>
 <lastBuildDate>Sun, 25 Sep 2022 05:00:00 GMT</lastBuildDate>
 <item>
   <title>Goin’ to Carolina in my mind (or on my hard drive)</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/duckdb-carolina/index.html</link>
+  <link>https://emilyriederer.com/post/duckdb-carolina/</link>
   <description><![CDATA[ 
 
 
@@ -637,14 +637,14 @@ order by 1,2
  ]]></description>
   <category>data</category>
   <category>sql</category>
-  <guid>https://emilyriederer.com/post/duckdb-carolina/index.html</guid>
+  <guid>https://emilyriederer.com/post/duckdb-carolina/</guid>
   <pubDate>Sun, 25 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/duckdb-carolina/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Oh, I’m sure it’s probably nothing</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/nulls-polyglot/index.html</link>
+  <link>https://emilyriederer.com/post/nulls-polyglot/</link>
   <description><![CDATA[ 
 
 
@@ -2145,14 +2145,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <category>sql</category>
   <category>data</category>
   <category>data-disasters</category>
-  <guid>https://emilyriederer.com/post/nulls-polyglot/index.html</guid>
+  <guid>https://emilyriederer.com/post/nulls-polyglot/</guid>
   <pubDate>Mon, 05 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Workflows for querying databases via R</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/sql-r-flow/index.html</link>
+  <link>https://emilyriederer.com/post/sql-r-flow/</link>
   <description><![CDATA[ 
 
 
@@ -2722,14 +2722,14 @@ font-style: inherit;">"test_tbl"</span>, test_df)</span></code></pre></div>
   <category>rstats</category>
   <category>workflow</category>
   <category>sql</category>
-  <guid>https://emilyriederer.com/post/sql-r-flow/index.html</guid>
+  <guid>https://emilyriederer.com/post/sql-r-flow/</guid>
   <pubDate>Wed, 14 Jul 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/sql-r-flow/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Embedding column-name contracts in data pipelines with dbt</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/convo-dbt/index.html</link>
+  <link>https://emilyriederer.com/post/convo-dbt/</link>
   <description><![CDATA[ 
 
 
@@ -5735,14 +5735,14 @@ font-style: inherit;">as</span> mm</span></code></pre></div>
   <category>data</category>
   <category>sql</category>
   <category>dbt</category>
-  <guid>https://emilyriederer.com/post/convo-dbt/index.html</guid>
+  <guid>https://emilyriederer.com/post/convo-dbt/</guid>
   <pubDate>Sat, 06 Feb 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/convo-dbt/featured.png" medium="image" type="image/png" height="61" width="144"/>
 </item>
 <item>
   <title>Generating SQL with {dbplyr} and sqlfluff</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/sql-generation/index.html</link>
+  <link>https://emilyriederer.com/post/sql-generation/</link>
   <description><![CDATA[ 
 
 
@@ -6724,7 +6724,7 @@ GROUP BY `species`</code></pre>
   <category>data</category>
   <category>sql</category>
   <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/sql-generation/index.html</guid>
+  <guid>https://emilyriederer.com/post/sql-generation/</guid>
   <pubDate>Sat, 16 Jan 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/sql-generation/featured.jpg" medium="image" type="image/jpeg"/>
 </item>

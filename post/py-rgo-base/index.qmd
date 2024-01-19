@@ -1,0 +1,193 @@
+---
+title: "Base Python Rgonomic Patterns"
+description: "Getting comfortable in a new language is more than the packages you use. Syntactic sugar in base python increases the efficiency, and aesthetics of python code in ways that R users may seek out in packages like `glue` and `purrr`. This post demonstrates a few miscellaneous tools for date manipulation, string interpolation (f-strings), and iteration (list comprehensions)"
+author: "Emily Riederer"
+date: "2024-01-20"
+categories: [rstats, python, tutorial]
+image: "featured.jpg"
+draft: true
+---
+
+![ Photo credit to [David Clode](https://unsplash.com/@davidclode) on Unsplash ](featured.jpg)
+
+In the past few weeks, I've been writing about a [stack of tools](/post/py-rgo) and [specific packages like `polars`](/post/py-rgo-polars/) that may help R users feel "at home" when working in python due to similiar ergonomics. However, one common snag in switching languages is ramping up on common "recipes" for higher-level workflows (e.g. how to build a `sklearn` modeling pipeline) but missing a langugage's fundamentals that make writing glue code feel smooth (and dare I say pleasant?) It's a maddening feeling to get code for a *complex* task to finish only to have the result wrapped in an object that you can't suss out how to save or manipulate. 
+
+This post goes back to the basics. We'll briefly reflect on a few aspects of usability that have led to the success of many workflow packages in R. Then, I'll demonstrate some a grabbag of coding patterns in python that make it feel more elegant to connect bits of code into a coherent workflow. 
+
+We'll look at the kind of functinoality that you didn't know to miss until it was gone, you're may not be quite sure what to search to figure out how to get it back, *and* you wonder if it's even reasonable to hope there's an analog^[I defined this odd scope to help limit the infinite number of workflow topics that could be included like "how to write a function" or "how to source code from another script"]. This won't be anything groundbreaking -- just some nuts and bolts. Specifically: helper functions for data and time manipulation, advanced string interpolation, list comprehensions for more functional programming, and object serialization. 
+
+## What other R ergonomics do we enjoy?
+
+R's passionate user and developer community has invested a lot in building tools that smooth over rough edges and provide slick, concise APIs to rote tasks. Sepcifically, a number of packages are devoted to:
+
+- **Utility functions**: Things that make it easier to "automate the boring stuff" like `fs` for naviating file systems or `lubridate` for more semantic date wrangling
+- **Formatting functions**: Things that help us make things look nice for users like `cli` and `glue` to improve human readability of terminal output and string interpolation
+- **Efficiency functions**: Things that help us write efficient workflows like `purrr` which provides a concise, typesafe interface for iteration
+
+All of these capabilities are things we *could* somewhat trivially write ourselves, but we don't *want* to and we don't *need* to. Fortunately, we don't need to in python either.
+
+## Date Manipulation
+
+I don't know a data person who loves dates. In the R world, many enjoy `lubridate`'s wide range of helper functions for cleaning, formatting, and computing on dates. 
+
+Python's `datetime` module is similarly effective. We can easily create and manage dates in `date` or `datetime` classes which make them easy to work with.
+
+```{python}
+import datetime
+from datetime import date
+today = date.today()
+print(today)
+type(today)
+```
+
+Two of the most important functions are `strftime()` and `strptime()`.
+
+`strftime()` *formats* dates into strings. It accepts both a date and the desired string format. Below, we demonstrate by commiting the cardinal sin of writing a date in non-ISO8601. 
+
+```{python}
+today_str = datetime.datetime.strftime(today, '%m/%d/%Y')
+print(today_str)
+type(today_str)
+```
+
+`strptime()` does the opposite and turns a string encoding a date into an actual date. It can try to guess the format, or we can be nice and provide it guidance.
+
+```{python}
+someday_dtm = datetime.datetime.strptime('2023-01-01', '%Y-%m-%d')
+print(someday_dtm)
+type(someday_dtm)
+```
+
+Date math is also relatively easy with `datetime`. For example, you can see we calculate the date difference simply by... taking the difference! From the resulting delta object, we can access the `days` attribute.
+
+```{python}
+n_days_diff = ( today - someday_dtm.date() )
+print(n_days_diff)
+type(n_days_diff)
+type(n_days_diff.days)
+```
+
+## String Interpolation (f-strings)
+
+R's `glue` is beloved for it's ability to easily combine variables and texts into complex strings without a lot of ugly, nested `paste()` functions.
+
+python has a number of ways of doing this, but the most readable is the newest: f-strings. Simply put an `f` before the string and put any variable names to be interpolated in `{`curly braces`}`.
+
+```{python}
+name = "Emily"
+print(f"This blog post is written by {name}")
+```
+
+f-strings also support formatting with formats specified after a colon. Below, we format a long float to round to 2 digits. 
+
+```{python}
+proportion = 0.123456789
+print(f"The proportion is {proportion:.2f}")
+```
+
+Any python expression -- not just a single variable -- can go in curly braces. So, we can instead format that propotion as a percent. 
+
+```{python}
+proportion = 0.123456789
+print(f"The proportion is {proportion*100:.1f}%")
+```
+
+Despite the slickness of f-strings, sometimes other string interpolation approaches can be useful. For example, if all the variables I want to interpolate are in a dictionary (as often will happen, for example, with REST API responses), the string `format()` method is a nice alternative. It allows us to pass in the dictionary, "unpacking" the argument with `**`^[This is called "**kwargs". You can read more about it [here](https://www.digitalocean.com/community/tutorials/how-to-use-args-and-kwargs-in-python-3).]
+
+```{python}
+result = {
+    'dog_name': 'Squeak',
+    'dog_type': 'Chihuahua'
+}
+print("{dog_name} is a {dog_type}".format(**result))
+```
+
+### Application: Generating File Names
+
+Combining what we've discussed about `datetime` and f-strings, here's a pattern I use frequently. If I am logging results from a run of some script, I might save the results in a file suffixed with the run timestamp. We can generate this easily.
+
+```{python}
+dt_stub = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+file_name = f"output-{dt_stub}.csv"
+print(file_name)
+```
+
+## Iteration
+
+Thanks in part to a modern-day fiction that `for` loops in R are inefficient, R users have gravitated towards concise mapping functions for iteration. These can include the `*apply()` family^[Speaking of non-ergonomic things in R, the `*apply()` family is notoriously diverse in its number and order of arguments], `purrr`'s `map_*()` functions, or the parallelized version of either. 
+
+Python too has a nice pattern for arbitrary iteration in list comprehensions. For any iterable, we can use a list comprehension to make a list of outputs by processing a list of inputs, with optional conditional and default expressions.
+
+Here are some trivial examples:
+
+```{python}
+l = [1,2,3]
+[i+1 for i in l]
+[i+1 for i in l if i % 2 == 1]
+[i+1 if i % 2 == 1 else i for i in l]
+```
+
+There are also closer analogs to `purrr` like python's `map()` function. `map()` takes a function and an iterable object and applies the function to each element. Like with `purrr`, functions can be anonymous (as defined in python with lambda functions) or named. List comprehensions are popular for their concise syntax, but there are many different thoughts on the matter as expressed in [this StackOverflow post](https://stackoverflow.com/questions/1247486/list-comprehension-vs-map). 
+
+```{python}
+def add_one(i): 
+  return i+1
+
+# these are the same
+list(map(lambda i: i+1, l))
+list(map(add_one, l))
+```
+
+### Application: Simulation
+
+As a more realistic example, let's consider how list comprehensions might help us conduct a numerical simulation or sensitivity analysis. 
+
+Suppose we want to simulate 100 draws from a Bernoulli distribution with different success probabilites and see how close our empirically calculated rate is to the true rate.
+
+We can define the probabilites we want to simulate in a list, use a list comprehension to create the simulations. We then have a list-of-lists of results. 
+
+```{python}
+import numpy.random as rnd
+
+probs = [0.1, 0.25, 0.5, 0.75, 0.9]
+coin_flips = [ rnd.binomial(1, p, 100).tolist() for p in probs ]
+len(coin_flips)
+```
+
+To conduct our analysis, we can put these into a `polars` dataframe.
+
+```{python}
+import polars as pl
+
+df_flips = pl.DataFrame({'prob': probs, 'flip': coin_flips})
+df_flips
+```
+
+To analyze our data, we can then "blow up" our list-of-lists (going from a 5-row dataset to a 500-row dataset) and aggregate the results.
+
+```{python}
+(
+df_flips
+  .explode('flip')
+  .group_by('prob')
+  .agg(pl.col('flip').mean().alias('p_hat'))
+  .sort('prob')
+)
+```
+
+## Saving In-Memory Object (Serialization)
+
+Sometimes, it can be useful to save *objects* as they existed in RAM in an active programming environment. R users may have experienced this if they've used `.rds`, `.rda`, or `.Rdata` files to save individual variables or their entire environment. These objects can often be faster to reload than plaintext and can better preserve information that may be lost in other formats (e.g. storing a dataframe in a way that preserves its datatypes versus writing to a CSV file^[And yes, you can and should use Parquet and then my example falls apart -- but that's not the point!] or storing a complex object that can't be easily reduced to plaintext like a model with training data, hyperparameters, learned tree splits or weights or whatnot for future predictions.) This is called object serializaton^[And, if you want to go incredibly deep here, check out [this awesome post](https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/) by Danielle Navarro.]
+
+Python has comparable capabilities in the [`pickle` module](https://docs.python.org/3/library/pickle.html). There aren't really style points here, so I've not much to add beyond "this exists" and "read the documentation". But, at a high level, it looks something like this:
+
+```{python}
+#| eval: false
+
+# to write a pickle
+with open('my-obj.pickle', 'wb') as handle:
+    pickle.dump(my_object, handle, protocol = pickle.HIGHEST_PROTOCOL)
+
+# to read a pickle
+my_object = pickle.load(open('my-obj.pickle','rb'))
+```

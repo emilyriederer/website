@@ -6,14 +6,14 @@
       version="2.0">
 <channel>
 <title>Emily Riederer</title>
-<link>https://emilyriederer.com/index.html#category=rmarkdown</link>
+<link>https://emilyriederer.com/#category=rmarkdown</link>
 <atom:link href="https://emilyriederer.com/index-rmarkdown.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.3.450</generator>
+<generator>quarto-1.4.542</generator>
 <lastBuildDate>Thu, 21 Sep 2023 05:00:00 GMT</lastBuildDate>
 <item>
   <title>Operationalizing Column-Name Contracts with dbtplyr</title>
-  <link>https://emilyriederer.com/talk/dbtplyr/index.html</link>
+  <link>https://emilyriederer.com/talk/dbtplyr/</link>
   <description><![CDATA[ 
 
 
@@ -56,14 +56,14 @@
   <category>workflow</category>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/talk/dbtplyr/index.html</guid>
+  <guid>https://emilyriederer.com/talk/dbtplyr/</guid>
   <pubDate>Thu, 21 Sep 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/dbtplyr/featured.png" medium="image" type="image/png" height="82" width="144"/>
 </item>
 <item>
   <title>How to Make R Markdown Snow</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/snow/index.html</link>
+  <link>https://emilyriederer.com/post/snow/</link>
   <description><![CDATA[ 
 
 
@@ -132,13 +132,13 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
  ]]></description>
   <category>rstats</category>
   <category>rmarkdown</category>
-  <guid>https://emilyriederer.com/post/snow/index.html</guid>
+  <guid>https://emilyriederer.com/post/snow/</guid>
   <pubDate>Sat, 11 Dec 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/snow/featured.gif" medium="image" type="image/gif"/>
 </item>
 <item>
   <title>R Markdown Cookbook</title>
-  <link>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</link>
+  <link>https://emilyriederer.com/publication/rmarkdown-cookbook/</link>
   <description><![CDATA[ 
 
 
@@ -149,14 +149,14 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
  ]]></description>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</guid>
+  <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/</guid>
   <pubDate>Tue, 01 Sep 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>RMarkdown CSS Selector Tips</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/rmarkdown-css-tips/index.html</link>
+  <link>https://emilyriederer.com/post/rmarkdown-css-tips/</link>
   <description><![CDATA[ 
 
 
@@ -487,14 +487,14 @@ font-style: inherit;">pink</span>}</span></code></pre></div>
 </section></div> ]]></description>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/post/rmarkdown-css-tips/index.html</guid>
+  <guid>https://emilyriederer.com/post/rmarkdown-css-tips/</guid>
   <pubDate>Tue, 30 Jun 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/rmarkdown-css-tips/featured.PNG" medium="image"/>
 </item>
 <item>
   <title>RMarkdown Driven Development: the Technical Appendix</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/rmddd-tech-appendix/index.html</link>
+  <link>https://emilyriederer.com/post/rmddd-tech-appendix/</link>
   <description><![CDATA[ 
 
 
@@ -864,13 +864,13 @@ viz_scatter_x &lt;- function(data, vbl) {
   <category>workflow</category>
   <category>rstats</category>
   <category>rmarkdown</category>
-  <guid>https://emilyriederer.com/post/rmddd-tech-appendix/index.html</guid>
+  <guid>https://emilyriederer.com/post/rmddd-tech-appendix/</guid>
   <pubDate>Sat, 01 Feb 2020 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/rmddd-tech-appendix/featured.png" medium="image" type="image/png" height="70" width="144"/>
 </item>
 <item>
   <title>RMarkdown Driven Development</title>
-  <link>https://emilyriederer.com/talk/rmarkdown-driven-development/index.html</link>
+  <link>https://emilyriederer.com/talk/rmarkdown-driven-development/</link>
   <description><![CDATA[ 
 
 
@@ -904,14 +904,14 @@ viz_scatter_x &lt;- function(data, vbl) {
   <category>workflow</category>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/talk/rmarkdown-driven-development/index.html</guid>
+  <guid>https://emilyriederer.com/talk/rmarkdown-driven-development/</guid>
   <pubDate>Thu, 30 Jan 2020 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/rmarkdown-driven-development/featured.png" medium="image" type="image/png" height="75" width="144"/>
 </item>
 <item>
   <title>RMarkdown Driven Development (RmdDD)</title>
   <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/rmarkdown-driven-development/index.html</link>
+  <link>https://emilyriederer.com/post/rmarkdown-driven-development/</link>
   <description><![CDATA[ 
 
 
@@ -1044,13 +1044,13 @@ viz_scatter_x &lt;- function(data, vbl) {
   <category>rmarkdown</category>
   <category>rstats</category>
   <category>workflow</category>
-  <guid>https://emilyriederer.com/post/rmarkdown-driven-development/index.html</guid>
+  <guid>https://emilyriederer.com/post/rmarkdown-driven-development/</guid>
   <pubDate>Sat, 04 May 2019 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/rmarkdown-driven-development/featured.png" medium="image" type="image/png" height="75" width="144"/>
 </item>
 <item>
   <title>Assorted talks on designing analytical tools and communities for enterprise</title>
-  <link>https://emilyriederer.com/talk/ent-pkg-design/index.html</link>
+  <link>https://emilyriederer.com/talk/ent-pkg-design/</link>
   <description><![CDATA[ 
 
 
@@ -1077,7 +1077,7 @@ viz_scatter_x &lt;- function(data, vbl) {
   <category>workflow</category>
   <category>rmarkdown</category>
   <category>rstats</category>
-  <guid>https://emilyriederer.com/talk/ent-pkg-design/index.html</guid>
+  <guid>https://emilyriederer.com/talk/ent-pkg-design/</guid>
   <pubDate>Wed, 01 Nov 2017 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/ent-pkg-design/featured.png" medium="image" type="image/png" height="63" width="144"/>
 </item>

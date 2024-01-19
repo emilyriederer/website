@@ -1,6 +1,6 @@
 ---
 title: "`seaborn`' Rgonomic Patterns"
-description: "`ggplot2`'s excellence and impact on data visualization is undeniable. In this continuation of the Python Rgonomics series, we look at the recently released `seaborn` objects interface. This transports the best of `ggplot2`'s grammar-of-graphics design philosophy into a one of the most common python visualization libraries, creating the perfect on-ramp for users of both languages"
+description: "`ggplot2`'s excellence and impact on data visualization is undeniable. In this continuation of the Python Rgonomics series, we look at the recently released `seaborn` objects interface. This transports the best of `ggplot2`'s design philosophy into a one of the most common python visualization libraries while integrating seamlessly with `matplotlib`"
 author: "Emily Riederer"
 date: "2024-01-20"
 categories: [rstats, python, tutorial]
@@ -16,7 +16,9 @@ Even R's most ardent critics often have to admit that `ggplot2` is a thing of be
 
 > The interface aims to provide a more declarative, composable, and extensible API for making statistical graphics. It is inspired by Wilkinson’s grammar of graphics, offering a Pythonic API that is informed by the design of libraries such as `ggplot2` and `vega-lite` along with lessons from the past 10 years of `seaborn`’s development.
 
-`seaborn.objects`, then, seems to promise a "best of both worlds": a truly pythonic approach^[Unlike other options like `plotnine` which may offer a much closer parallel to `ggplot2` but feel like more of an island than an on-ramp to the python ecosystem] that should easily extend and integrate with python-native workflows while introducing the usability and intuition of `ggplot2`. This post explores the extent to which that promise holds true and how well `seaborn.objects` captures the ergonomics of `ggplot2`.
+`seaborn.objects`, then, seems a "best of both worlds": a truly pythonic approach^[Unlike other options like `plotnine` which may offer a much closer parallel to `ggplot2` but feel like more of an island than an on-ramp to the python ecosystem] that should easily extend and integrate with python-native workflows while introducing the usability and intuition of `ggplot2`. 
+
+This post explores the extent to which that promise holds true and how well `seaborn.objects` captures the ergonomics of `ggplot2`. Beyond similarities to `ggplot2`, we'll see how `seaborn.objects` can be an on ramp for `matplotlib` to mirror more advanced R plotting capabilities like `patchwork`'s ability to compose multiple plots into figures. 
 
 ::: {.callout-warning}
 As-of writing, `seaborn.objects` is still [flagged as experimental](https://seaborn.pydata.org/tutorial/objects_interface.html) in the documentation. 
@@ -42,59 +44,100 @@ This document was made with `seaborn` version `0.13.1`.
 
 ## But first - data 
 
+TODO: How much of this is needed?
+
+To illustrate `seaborn.objects`, we'll use the NYC taxi data provided by `seaborn`, along with `polars` (which I [discussed recently](/post/py-rgo-polars/)). 
+
 ```{python}
 import polars as pl 
 import polars.selectors as cs
 
 df_pd = sns.load_dataset('taxis')
 df = pl.from_pandas(df_pd)
-df.head()
+df.glimpse()
 ```
 
 ```{python}
 df_trips = (
     df
+    .filter( pl.col('pickup_borough') == pl.col('dropoff_borough') )
     .with_columns(
-        date = pl.col('pickup').cast(pl.Date),
+        #date = pl.col('pickup').cast(pl.Date),
         dow = pl.col('pickup').dt.weekday(),
         hod = pl.col('pickup').dt.hour(),
-        duration = (pl.col('dropoff') - pl.col('pickup')).dt.minutes()
+        dur = (pl.col('dropoff') - pl.col('pickup')).dt.total_minutes()
     )
     .with_columns( 
-        cs.by_name('pickup','dropoff').cast(pl.Date).prefix('dt_'),
-        wnd = pl.when( pl.col('dow') > 5).then(True).otherwise(False)
+        #cs.by_name('pickup','dropoff').cast(pl.Date).prefix('dt_'),
+        wnd = pl.when( pl.col('dow') > 5).then(pl.lit('Yes')).otherwise(pl.lit('No'))
         )
 )
 
-df_trips.head()
+df_trips.glimpse()
 ```
 
-## Plots
+## Basics
+
+Just like in `ggplot2`, `seaborn.objects` allows us to build up a plot slowly and incrementally. 
+
+We can start by simply defining a layer with our basic axes - just as we would with a call to `ggplot()`.
 
 ```{python}
 (
-  so.Plot(df_trips, x = 'distance', y = 'fare')
+  so.Plot(df_trips)
+)
+```
+
+The next order of business is to think about the variables of interest in our dataset and how they should be mapped to visual properties. `ggplot2` considers these *aesthetic* properties and wraps them in `aes()`; in `seaborn.objects`, we can insert them directly into `Plot()`.
+
+```{python}
+(
+  so.Plot(df_trips, x = 'distance', y = 'dur')
+)
+```
+
+To visually encode data onto our plot, we next need to consider what geometric objects are best suited to represent the data. In a `ggplot2` workflow, we'd next add a `geom_{type}` layer; here, we call the `.add()` method and pass the corresponding `so.{Type}` as the first argument. 
+
+```{python}
+(
+  so.Plot(df_trips, x = 'distance', y = 'dur')
   .add(so.Dot(alpha = 0.2))
 )
 ```
 
-```{python}
-(
-  so.Plot(df_trips, x = 'distance', y = 'duration', color = 'wnd')
-  .add(so.Dot(alpha = 0.2))
-  .facet(col = 'pickup_borough', wrap = 2)
-)
-```
+By now I've hopefully convinced you that `seaborn.objects` really does layer! So, I'll jump ahead a few steps.
 
 ```{python}
-(
-  so.Plot(df_trips, x = 'distance', y = 'duration', color = 'wnd')
-  .add(so.Dot(alpha = 0.2))
-  .facet(col = 'pickup_borough', 
+p = (
+  so.Plot(df_trips, x = 'distance', y = 'dur')
+  .add(so.Dot(alpha = 0.2), marker = 'wnd', color = 'hod')
+  .facet(col = 'pickup_borough',
          order = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'],
          wrap = 2)
 )
+
+p
 ```
+
+Among the features you'll notice in the above is the facetting. In fact, here `seaborn` has one nice benefit above `ggplot2`. In R, if we want to plot multiple variables in different facets, we need to pivot them into a hyper-long data format^[Essentially, we make the variable names themselves into a column]. Instead in `seaborn.objects`, we can provide multiple `x` or `y` arguments with the `pairs()` method.
+
+```{python}
+(
+  so.Plot(df_trips, x = 'distance')
+  .pair(y = ['dur','fare'])
+  .add(so.Dot(alpha = 0.2), color = 'wnd')
+  .label(x = 'Distance (Mi)', 
+        y0 = 'Duration (Min)', 
+        y1 = 'Fare ($)',
+        color = "Weekend?")
+)
+```
+
+## Polishing
+
+Beyond the core grammar of graphics, `seaborn.objects` provides analogous functionality to `ggplot2` for fine-tuning aesthetics with scales, themes, and labels. Both can be defined as python dictionaries^[Dictionaries are roughly analogous to named lists in R.]
+
+Labels actually work *precisely* as in R and could be passed in directly versus being definied in a separate dictionary. However, for readability, I tend to prefer defining them in a dictionary like with the theme, and then using the `**` to unpack them. 
 
 ```{python}
 theme_spec = {
@@ -103,18 +146,14 @@ theme_spec = {
 }
 
 label_spec = {
-    'x': "Distance (mi)",
-    'y': "Trip Time (min)",
-    'color': "Day or Week"
+  'x': "Distance (mi)",
+  'y': "Trip Time (min)",
+  'color': "Weekend?"
 }
 
 p = (
-  so.Plot(df_trips, x = 'distance', y = 'duration', color = 'wnd')
-  .add(so.Dot(alpha = 0.2))
-  .facet(col = 'pickup_borough', 
-         order = ['Manhattan', 'Brooklyn', 'Queens', 'Bronx'],
-         wrap = 2)
-  .scale(color = "viridis")
+  p
+  .scale(color = "crest")
   .theme(theme_spec)
   .label(**label_spec)
 )
@@ -122,7 +161,9 @@ p = (
 p.show()
 ```
 
-## Convert to Matplotlib for Deeper Dive
+## Going further with `matplotlib`
+
+### Titles
 
 ```{python}
 import matplotlib.pyplot as plt
@@ -131,7 +172,7 @@ f.suptitle("AAA")
 p.on(f).plot()
 ```
 
-## Subfigures 
+### Subfigures 
 
 https://seaborn.pydata.org/generated/seaborn.objects.Plot.on.html
 
@@ -146,6 +187,3 @@ p.on(sf2).plot()
 f
 ```
 
-```{python}
-f
-```

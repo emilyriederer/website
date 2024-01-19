@@ -10,11 +10,11 @@ draft: true
 
 ![ Photo credit to [David Clode](https://unsplash.com/@davidclode) on Unsplash ](featured.jpg)
 
-In the past few weeks, I've been writing about a [stack of tools](/post/py-rgo) and [specific packages like `polars`](/post/py-rgo-polars/) that may help R users feel "at home" when working in python due to similiar ergonomics. However, one common snag in switching languages is ramping up on common "recipes" for higher-level workflows (e.g. how to build a `sklearn` modeling pipeline) but missing a langugage's fundamentals that make writing glue code feel smooth (and dare I say pleasant?) It's a maddening feeling to get code for a *complex* task to finish only to have the result wrapped in an object that you can't suss out how to save or manipulate. 
+In the past few weeks, I've been writing about a [stack of tools](/post/py-rgo) and [specific packages like `polars`](/post/py-rgo-polars/) that may help R users feel "at home" when working in python due to similiar ergonomics. However, one common snag in switching languages is ramping up on common "recipes" for higher-level workflows (e.g. how to build a `sklearn` modeling pipeline) but missing a languages's fundamentals that make writing glue code feel smooth (and dare I say pleasant?) It's a maddening feeling to get code for a *complex* task to finish only to have the result wrapped in an object that you can't suss out how to save or manipulate.
 
-This post goes back to the basics. We'll briefly reflect on a few aspects of usability that have led to the success of many workflow packages in R. Then, I'll demonstrate some a grabbag of coding patterns in python that make it feel more elegant to connect bits of code into a coherent workflow. 
+This post goes back to the basics. We'll briefly reflect on a few aspects of usability that have led to the success of many workflow packages in R. Then, I'll demonstrate a grab bag of coding patterns in python that make it feel more elegant to connect bits of code into a coherent workflow. 
 
-We'll look at the kind of functinoality that you didn't know to miss until it was gone, you're may not be quite sure what to search to figure out how to get it back, *and* you wonder if it's even reasonable to hope there's an analog^[I defined this odd scope to help limit the infinite number of workflow topics that could be included like "how to write a function" or "how to source code from another script"]. This won't be anything groundbreaking -- just some nuts and bolts. Specifically: helper functions for data and time manipulation, advanced string interpolation, list comprehensions for more functional programming, and object serialization. 
+We'll look at the kind of functionality that you didn't know to miss until it was gone, you may not be quite sure what to search to figure out how to get it back, *and* you wonder if it's even reasonable to hope there's an analog^[I defined this odd scope to help limit the infinite number of workflow topics that could be included like "how to write a function" or "how to source code from another script"]. This won't be anything groundbreaking -- just some nuts and bolts. Specifically: helper functions for data and time manipulation, advanced string interpolation, list comprehensions for more functional programming, and object serialization. 
 
 ## What other R ergonomics do we enjoy?
 
@@ -144,16 +144,29 @@ As a more realistic example, let's consider how list comprehensions might help u
 
 Suppose we want to simulate 100 draws from a Bernoulli distribution with different success probabilites and see how close our empirically calculated rate is to the true rate.
 
-We can define the probabilites we want to simulate in a list, use a list comprehension to create the simulations. We then have a list-of-lists of results. 
+We can define the probabilites we want to simulate in a list and use a list comprehension to run the simulations.
 
 ```{python}
+import numpy as np
 import numpy.random as rnd
 
 probs = [0.1, 0.25, 0.5, 0.75, 0.9]
-coin_flips = [ rnd.binomial(1, p, 100).tolist() for p in probs ]
-len(coin_flips)
+coin_flips = [ np.mean(np.random.binomial(1, p, 100)) for p in probs ]
+coin_flips
 ```
 
+Alternatively, instead of returning a list of the same length, our resulting list could include whatever we want -- like a list of lists! If we wanted to keep the raw simulation results, we could. The following code returns a list of 5 lists - one with the raw simulation results.
+
+```{python}
+coin_flips = [ list(np.random.binomial(1, p, 100)) for p in probs ]
+print(f"""
+  coin_flips has {len(coin_flips)} elements
+  Each element is itself a {type(coin_flips[0])}
+  Each element is of length {len(coin_flips[0])}
+  """)
+```
+
+If one wished, they could then
 To conduct our analysis, we can put these into a `polars` dataframe.
 
 ```{python}

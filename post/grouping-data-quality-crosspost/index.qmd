@@ -1,0 +1,14 @@
+---
+title: "Crosspost: Power up your data quality with grouped checks"
+description: "After a prior post on the merits of grouped data quality checks, I demo my newly merged implementation for dbt"
+author: "Emily Riederer"
+date: "2023-01-17"
+categories: [data, dbt, crosspost]
+image: "featured.jpg"
+---
+
+![ Photo credit to [Greyson Joralemon](https://unsplash.com/@greysonjoralemon) on Unsplash ](featured.jpg)
+
+I've written previously about the [unreasonably effectiveness of grouping in data quality checks](/post/grouping-data-quality/) and [implementing such checks in dbt](/post/grouping-data-quality-update/). To publicize my [merged pull request](https://github.com/dbt-labs/dbt-utils/pull/633) for this feature in `dbt-utils` package, I summarized my thinking on the topic on dbt's Developer Blog.
+
+Check out the post [here](https://docs.getdbt.com/blog/grouping-data-tests#grouped-checks).

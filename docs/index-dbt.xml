@@ -10,7 +10,36 @@
 <atom:link href="https://emilyriederer.com/index-dbt.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.542</generator>
-<lastBuildDate>Fri, 26 Aug 2022 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 17 Jan 2023 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Crosspost: Power up your data quality with grouped checks</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/grouping-data-quality-crosspost/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/grouping-data-quality-crosspost/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption>Photo credit to <a href="https://unsplash.com/@greysonjoralemon">Greyson Joralemon</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>I’ve written previously about the <a href="../..\post/grouping-data-quality/">unreasonably effectiveness of grouping in data quality checks</a> and <a href="../..\post/grouping-data-quality-update/">implementing such checks in dbt</a>. To publicize my <a href="https://github.com/dbt-labs/dbt-utils/pull/633">merged pull request</a> for this feature in <code>dbt-utils</code> package, I summarized my thinking on the topic on dbt’s Developer Blog.</p>
+<p>Check out the post <a href="https://docs.getdbt.com/blog/grouping-data-tests#grouped-checks">here</a>.</p>
+
+
+
+ ]]></description>
+  <category>data</category>
+  <category>dbt</category>
+  <category>crosspost</category>
+  <guid>https://emilyriederer.com/post/grouping-data-quality-crosspost/</guid>
+  <pubDate>Tue, 17 Jan 2023 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/grouping-data-quality-crosspost/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Update: grouped data quality check PR merged to dbt-utils</title>
   <dc:creator>Emily Riederer</dc:creator>

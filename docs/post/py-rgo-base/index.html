@@ -331,7 +331,7 @@ cookieconsent.run({
 <h2 class="anchored" data-anchor-id="wrangling-things-date-manipulation">Wrangling Things (Date Manipulation)</h2>
 <p>I don’t know a data person who loves dates. In the R world, many enjoy <code>lubridate</code>’s wide range of helper functions for cleaning, formatting, and computing on dates.</p>
 <p>Python’s <code>datetime</code> module is similarly effective. We can easily create and manage dates in <code>date</code> or <code>datetime</code> classes which make them easy to work with.</p>
-<div id="d0e9b62a" class="cell" data-execution_count="1">
+<div id="5fab6f77" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> date</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>today <span class="op">=</span> date.today()</span>
@@ -346,7 +346,7 @@ cookieconsent.run({
 </div>
 <p>Two of the most important functions are <code>strftime()</code> and <code>strptime()</code>.</p>
 <p><code>strftime()</code> <em>formats</em> dates into strings. It accepts both a date and the desired string format. Below, we demonstrate by commiting the cardinal sin of writing a date in non-ISO8601.</p>
-<div id="9d84582e" class="cell" data-execution_count="2">
+<div id="44894a15" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>today_str <span class="op">=</span> datetime.datetime.strftime(today, <span class="st">'%m/</span><span class="sc">%d</span><span class="st">/%Y'</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(today_str)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(today_str)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -358,7 +358,7 @@ cookieconsent.run({
 </div>
 </div>
 <p><code>strptime()</code> does the opposite and turns a string encoding a date into an actual date. It can try to guess the format, or we can be nice and provide it guidance.</p>
-<div id="1b145b05" class="cell" data-execution_count="3">
+<div id="311c5e5a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>someday_dtm <span class="op">=</span> datetime.datetime.strptime(<span class="st">'2023-01-01'</span>, <span class="st">'%Y-%m-</span><span class="sc">%d</span><span class="st">'</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(someday_dtm)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(someday_dtm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -370,7 +370,7 @@ cookieconsent.run({
 </div>
 </div>
 <p>Date math is also relatively easy with <code>datetime</code>. For example, you can see we calculate the date difference simply by… taking the difference! From the resulting delta object, we can access the <code>days</code> attribute.</p>
-<div id="ac58fb36" class="cell" data-execution_count="4">
+<div id="e2dada67" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>n_days_diff <span class="op">=</span> ( today <span class="op">-</span> someday_dtm.date() )</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(n_days_diff)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(n_days_diff)</span>
@@ -387,7 +387,7 @@ cookieconsent.run({
 <h2 class="anchored" data-anchor-id="formatting-things-f-strings">Formatting Things (f-strings)</h2>
 <p>R’s <code>glue</code> is beloved for it’s ability to easily combine variables and texts into complex strings without a lot of ugly, nested <code>paste()</code> functions.</p>
 <p>python has a number of ways of doing this, but the most readable is the newest: f-strings. Simply put an <code>f</code> before the string and put any variable names to be interpolated in <code>{</code>curly braces<code>}</code>.</p>
-<div id="6340ff92" class="cell" data-execution_count="5">
+<div id="e9a3ac38" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>name <span class="op">=</span> <span class="st">"Emily"</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"This blog post is written by </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -395,7 +395,7 @@ cookieconsent.run({
 </div>
 </div>
 <p>f-strings also support formatting with formats specified after a colon. Below, we format a long float to round to 2 digits.</p>
-<div id="d1ac4ffb" class="cell" data-execution_count="6">
+<div id="cd36dc7a" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>proportion <span class="op">=</span> <span class="fl">0.123456789</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The proportion is </span><span class="sc">{</span>proportion<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -403,7 +403,7 @@ cookieconsent.run({
 </div>
 </div>
 <p>Any python expression – not just a single variable – can go in curly braces. So, we can instead format that propotion as a percent.</p>
-<div id="0903de5e" class="cell" data-execution_count="7">
+<div id="00b368b6" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>proportion <span class="op">=</span> <span class="fl">0.123456789</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"The proportion is </span><span class="sc">{</span>proportion<span class="op">*</span><span class="dv">100</span><span class="sc">:.1f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -411,7 +411,7 @@ cookieconsent.run({
 </div>
 </div>
 <p>Despite the slickness of f-strings, sometimes other string interpolation approaches can be useful. For example, if all the variables I want to interpolate are in a dictionary (as often will happen, for example, with REST API responses), the string <code>format()</code> method is a nice alternative. It allows us to pass in the dictionary, “unpacking” the argument with <code>**</code><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
-<div id="8682ac36" class="cell" data-execution_count="8">
+<div id="edc01047" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> {</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dog_name'</span>: <span class="st">'Squeak'</span>,</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'dog_type'</span>: <span class="st">'Chihuahua'</span></span>
@@ -424,12 +424,12 @@ cookieconsent.run({
 <section id="application-generating-file-names" class="level3">
 <h3 class="anchored" data-anchor-id="application-generating-file-names">Application: Generating File Names</h3>
 <p>Combining what we’ve discussed about <code>datetime</code> and f-strings, here’s a pattern I use frequently. If I am logging results from a run of some script, I might save the results in a file suffixed with the run timestamp. We can generate this easily.</p>
-<div id="b4410a0a" class="cell" data-execution_count="9">
+<div id="a52f392c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dt_stub <span class="op">=</span> datetime.datetime.now().strftime(<span class="st">'%Y%m</span><span class="sc">%d</span><span class="st">_%H%M%S'</span>)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>file_name <span class="op">=</span> <span class="ss">f"output-</span><span class="sc">{</span>dt_stub<span class="sc">}</span><span class="ss">.csv"</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(file_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>output-20240120_054647.csv</code></pre>
+<pre><code>output-20240120_061858.csv</code></pre>
 </div>
 </div>
 </section>
@@ -439,27 +439,27 @@ cookieconsent.run({
 <p>Thanks in part to a modern-day fiction that <code>for</code> loops in R are inefficient, R users have gravitated towards concise mapping functions for iteration. These can include the <code>*apply()</code> family<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, <code>purrr</code>’s <code>map_*()</code> functions, or the parallelized version of either.</p>
 <p>Python too has a nice pattern for arbitrary iteration in list comprehensions. For any iterable, we can use a list comprehension to make a list of outputs by processing a list of inputs, with optional conditional and default expressions.</p>
 <p>Here are some trivial examples:</p>
-<div id="b01653ca" class="cell" data-execution_count="10">
+<div id="e7885c25" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>l <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>[i<span class="op">+</span><span class="dv">1</span> <span class="cf">for</span> i <span class="kw">in</span> l]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>[2, 3, 4]</code></pre>
 </div>
 </div>
-<div id="5114132d" class="cell" data-execution_count="11">
+<div id="3a8923b9" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>[i<span class="op">+</span><span class="dv">1</span> <span class="cf">for</span> i <span class="kw">in</span> l <span class="cf">if</span> i <span class="op">%</span> <span class="dv">2</span> <span class="op">==</span> <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
 <pre><code>[2, 4]</code></pre>
 </div>
 </div>
-<div id="d11713eb" class="cell" data-execution_count="12">
+<div id="6307d9a3" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>[i<span class="op">+</span><span class="dv">1</span> <span class="cf">if</span> i <span class="op">%</span> <span class="dv">2</span> <span class="op">==</span> <span class="dv">1</span> <span class="cf">else</span> i <span class="cf">for</span> i <span class="kw">in</span> l]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>[2, 2, 4]</code></pre>
 </div>
 </div>
 <p>There are also closer analogs to <code>purrr</code> like python’s <code>map()</code> function. <code>map()</code> takes a function and an iterable object and applies the function to each element. Like with <code>purrr</code>, functions can be anonymous (as defined in python with lambda functions) or named. List comprehensions are popular for their concise syntax, but there are many different thoughts on the matter as expressed in <a href="https://stackoverflow.com/questions/1247486/list-comprehension-vs-map">this StackOverflow post</a>.</p>
-<div id="7281c482" class="cell" data-execution_count="13">
+<div id="227dd77a" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_one(i): </span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> i<span class="op">+</span><span class="dv">1</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -475,7 +475,7 @@ cookieconsent.run({
 <p>As a (slightly) more realistic(ish) example, let’s consider how list comprehensions might help us conduct a numerical simulation or sensitivity analysis.</p>
 <p>Suppose we want to simulate 100 draws from a Bernoulli distribution with different success probabilites and see how close our empirically calculated rate is to the true rate.</p>
 <p>We can define the probabilites we want to simulate in a list and use a list comprehension to run the simulations.</p>
-<div id="ea4b3e2e" class="cell" data-execution_count="14">
+<div id="5cf16897" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy.random <span class="im">as</span> rnd</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -483,11 +483,11 @@ cookieconsent.run({
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>coin_flips <span class="op">=</span> [ np.mean(np.random.binomial(<span class="dv">1</span>, p, <span class="dv">100</span>)) <span class="cf">for</span> p <span class="kw">in</span> probs ]</span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>coin_flips</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>[0.1, 0.25, 0.53, 0.68, 0.91]</code></pre>
+<pre><code>[0.13, 0.18, 0.52, 0.75, 0.87]</code></pre>
 </div>
 </div>
 <p>Alternatively, instead of returning a list of the same length, our resulting list could include whatever we want – like a list of lists! If we wanted to keep the raw simulation results, we could. The following code returns a list of 5 lists - one with the raw simulation results.</p>
-<div id="f463a277" class="cell" data-execution_count="15">
+<div id="de2b5e6a" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>coin_flips <span class="op">=</span> [ <span class="bu">list</span>(np.random.binomial(<span class="dv">1</span>, p, <span class="dv">100</span>)) <span class="cf">for</span> p <span class="kw">in</span> probs ]</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"""</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="ss">  coin_flips has </span><span class="sc">{</span><span class="bu">len</span>(coin_flips)<span class="sc">}</span><span class="ss"> elements</span></span>
@@ -503,7 +503,7 @@ cookieconsent.run({
 </div>
 </div>
 <p>If one wished, they could then put these into a <code>polars</code> dataframe and pivot those list-of-lists (going from a 5-row dataset to a 500-row dataset)to conduct whatever sort of analysis with want with all the replicates.</p>
-<div id="c6693923" class="cell" data-execution_count="16">
+<div id="fff0d519" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>df_flips <span class="op">=</span> pl.DataFrame({<span class="st">'prob'</span>: probs, <span class="st">'flip'</span>: coin_flips})</span>
@@ -512,7 +512,7 @@ cookieconsent.run({
 <pre><code>Rows: 500
 Columns: 2
 $ prob &lt;f64&gt; 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1
-$ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+$ flip &lt;i32&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
 </code></pre>
 </div>
 </div>
@@ -525,7 +525,7 @@ $ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 <section id="fake-datasets" class="level3">
 <h3 class="anchored" data-anchor-id="fake-datasets">Fake Datasets</h3>
 <p>For the simplest of datasets, we can manually write a few entries as with <code>data.frame()</code> in R. Here, we define series in a named dictionary where each dictionary key turns into a column name.</p>
-<div id="47377d19" class="cell" data-execution_count="17">
+<div id="af5ce75b" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>pl.DataFrame({</span>
@@ -571,7 +571,7 @@ $ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 </div>
 </div>
 <p>If we need longer datasets, we can use helper functions in packages like <code>numpy</code> to generate the series. Methods like <code>arange</code> and <code>linspace</code> work similarly to R’s <code>seq()</code>.</p>
-<div id="6734d3d5" class="cell" data-execution_count="18">
+<div id="f2596596" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -618,7 +618,7 @@ $ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 </div>
 </div>
 <p>If we need groups in our sample data, we can use <code>np.repeat()</code> which works like R’s <code>rep(each = TRUE)</code>.</p>
-<div id="600e908e" class="cell" data-execution_count="19">
+<div id="4cefdf84" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pl.DataFrame({</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'a'</span>: np.repeat(np.arange(stop <span class="op">=</span> <span class="dv">3</span>), <span class="dv">2</span>),</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'b'</span>: np.linspace(start <span class="op">=</span> <span class="dv">3</span>, stop <span class="op">=</span> <span class="dv">27</span>, num <span class="op">=</span> <span class="dv">6</span>)</span>
@@ -674,7 +674,7 @@ $ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 </div>
 </div>
 <p>Alternatively, for more control and succinct typing, we can created a nested dataset in <code>polars</code> and explode it out.</p>
-<div id="a5635ddd" class="cell" data-execution_count="20">
+<div id="fd81db4c" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  pl.DataFrame({</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'a'</span>: [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>],</span>
@@ -746,7 +746,7 @@ $ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 </div>
 </div>
 <p>Similarly, we could use what we’ve learned about list columns.</p>
-<div id="34ea5349" class="cell" data-execution_count="21">
+<div id="b426a448" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> [ [q<span class="op">*</span>i <span class="cf">for</span> q <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]] <span class="cf">for</span> i <span class="kw">in</span> a]</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>pl.DataFrame({<span class="st">'a'</span>:a,<span class="st">'b'</span>:b}).explode(<span class="st">'b'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -817,7 +817,7 @@ $ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 <h3 class="anchored" data-anchor-id="built-in-data">Built-In Data</h3>
 <p>R has a number of canonical datasets like <code>iris</code> built in to the core language. This can be easy to quickly grab for experimentation<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. While base python doesn’t include such capabilities, many of the exact same or similar datasets can be found in <code>seaborn</code>.</p>
 <p><code>seaborn.get_dataset_names()</code> provides the list of available options. Below, we load the Palmers Penguins data and, if you wish, convert it from <code>pandas</code> to <code>polars</code>.</p>
-<div id="e0326c54" class="cell" data-execution_count="22">
+<div id="ddbf65f8" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -843,7 +843,7 @@ $ sex               &lt;str&gt; 'Male', 'Female', 'Female', None, 'Female', 'Mal
 <h2 class="anchored" data-anchor-id="saving-things-object-serialization">Saving Things (Object Serialization)</h2>
 <p>Sometimes, it can be useful to save <em>objects</em> as they existed in RAM in an active programming environment. R users may have experienced this if they’ve used <code>.rds</code>, <code>.rda</code>, or <code>.Rdata</code> files to save individual variables or their entire environment. These objects can often be faster to reload than plaintext and can better preserve information that may be lost in other formats (e.g.&nbsp;storing a dataframe in a way that preserves its datatypes versus writing to a CSV file<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> or storing a complex object that can’t be easily reduced to plaintext like a model with training data, hyperparameters, learned tree splits or weights or whatnot for future predictions.) This is called object serializaton<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
 <p>Python has comparable capabilities in the <a href="https://docs.python.org/3/library/pickle.html"><code>pickle</code> module</a>. There aren’t really style points here, so I’ve not much to add beyond “this exists” and “read the documentation”. But, at a high level, it looks something like this:</p>
-<div id="c6539c96" class="cell" data-execution_count="23">
+<div id="41b91385" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to write a pickle</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'my-obj.pickle'</span>, <span class="st">'wb'</span>) <span class="im">as</span> handle:</span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    pickle.dump(my_object, handle, protocol <span class="op">=</span> pickle.HIGHEST_PROTOCOL)</span>

@@ -89,13 +89,14 @@
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/convo-dbt-update/featured.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Diff of original dbt model using dbtplyr’s concise, declarative macros</figcaption>
+<figcaption>Diff of original dbt model using dbtplyr’s concise, declarative macros</figcaption>
 </figure>
 </div>
-<p>Earlier this year, I wrote about <a href="https://www.emilyriederer.com/post/convo-dbt/">embedding column-name contracts in data pipelines with dbt</a>. This, in turn, built off my post regarding the general theory of <a href="https://www.emilyriederer.com/post/column-name-contracts/">using controlled vocabularies to define data models</a>.</p>
+<p>Earlier this year, I wrote about <a href="../..\post/convo-dbt/">embedding column-name contracts in data pipelines with dbt</a>. This, in turn, built off my post regarding the general theory of <a href="../..\post/column-name-contracts/">using controlled vocabularies to define data models</a>.</p>
 <p>The general idea of the post was:</p>
 <ul>
 <li>Column names are the “user interface” between data producers and consumers</li>

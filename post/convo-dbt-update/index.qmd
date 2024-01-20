@@ -9,7 +9,7 @@ image: "featured.PNG"
 
 ![Diff of original dbt model using dbtplyr's concise, declarative macros](featured.PNG)
 
-Earlier this year, I wrote about [embedding column-name contracts in data pipelines with dbt](https://www.emilyriederer.com/post/convo-dbt/). This, in turn, built off my post regarding the general theory of [using controlled vocabularies to define data models](https://www.emilyriederer.com/post/column-name-contracts/).
+Earlier this year, I wrote about [embedding column-name contracts in data pipelines with dbt](/post/convo-dbt/). This, in turn, built off my post regarding the general theory of [using controlled vocabularies to define data models](/post/column-name-contracts/).
 
 The general idea of the post was:
 

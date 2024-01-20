@@ -3,7 +3,7 @@ title: "The Art of Abstraction in ETL: Dodging Data Extraction Errors"
 description: "Cross-post from guest post on Airbyte's developer blog"
 author: "Emily Riederer"
 date: "2023-03-22"
-categories: [data, workflow, elt]
+categories: [data, workflow, elt, crosspost]
 image: "featured.PNG"
 ---
 

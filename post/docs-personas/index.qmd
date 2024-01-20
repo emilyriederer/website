@@ -3,7 +3,7 @@ title: "Crosspost: Why You Need Data Documentation in 2024"
 description: "Data documentation isn't a box to check; it's an active member of your team with many jobs-to-be-done. In this cross-post with Select Star, I write about how effective documentation can be your data products' developer advocate for users, project manager for developers, and chief of staff for data leaders"
 author: "Emily Riederer"
 date: "2024-01-15"
-categories: [data, workflow, elt]
+categories: [data, workflow, elt, crosspost]
 image: "featured.PNG"
 ---
 

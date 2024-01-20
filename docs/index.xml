@@ -1068,8 +1068,9 @@ font-style: inherit;">'rb'</span>))</span></code></pre></div>
 
 
 
+
 <p>We’ve all worked with poorly documented dataset, and we all know it isn’t pretty. However, it’s surprisingly easy for teams to continue to fall into “documentation debt” and deprioritize this foundational work in favor of flashy new projects. These tradeoff discussions may become even more painful in 2024 as teams are continually asked to do more with less.</p>
-<p>Recently, I had the opportunity to articulate some of the underappreciated benefits of data documentation in a <a href="https://www.selectstar.com/blog/why-you-need-data-documentation-in-2024">cross-post with Select Star</a>. This builds on my prior post showing that <a href="../../post/docs-closer-than-you-think/">documentation can be strategically created throughout the data development process</a>. To make the case for taking those “raw” documentation resources to a polished final form, I return to the jobs-to-be-done framework that I’ve previously employed to talk about <a href="../../post/team-of-packages/">the value of innersource packages</a>. In this perspective, documentation is like hiring an extra resource (or more!) to your team.</p>
+<p>Recently, I had the opportunity to articulate some of the underappreciated benefits of data documentation in a <a href="https://www.selectstar.com/blog/why-you-need-data-documentation-in-2024">cross-post with Select Star</a>. This builds on my prior post showing that <a href="../..\post/docs-closer-than-you-think/">documentation can be strategically created throughout the data development process</a>. To make the case for taking those “raw” documentation resources to a polished final form, I return to the jobs-to-be-done framework that I’ve previously employed to talk about <a href="../..\post/team-of-packages/">the value of innersource packages</a>. In this perspective, documentation is like hiring an extra resource (or more!) to your team.</p>
 <p>Some of the jobs discussed are:</p>
 <ul>
 <li>Developer Advocacy and Product Evangelism for users
@@ -1097,6 +1098,7 @@ font-style: inherit;">'rb'</span>))</span></code></pre></div>
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
+  <category>crosspost</category>
   <guid>https://emilyriederer.com/post/docs-personas/</guid>
   <pubDate>Mon, 15 Jan 2024 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/docs-personas/featured.PNG" medium="image"/>
@@ -2178,6 +2180,7 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 
 
 
+
 <p>Documentation can be a make-or-break for the success of a data initiative, but it’s too often considered an optional nice-to-have. I’m a big believer that writing is thinking. Similarly, documenting is planning, executing, and validating.</p>
 <p>Previously, I’ve explored how <a href="https://emilyriederer.netlify.app/post/latent-lasting-documentation/">we can create latent and lasting documentation</a> of data products and how <a href="https://emilyriederer.netlify.app/post/column-name-contracts/">column names can be self documenting</a>.</p>
 <p>Recently, I had the opportunity to expand on these ideas in a <a href="https://www.selectstar.com/blog/why-youre-closer-to-data-documentation-than-you-think">cross-post with Select Star</a>. I argue that teams can produce high-quality and maintainable documentation with low overhead with a form of “documentation-driven development”. That is, smartly structuring and re-using artifacts from the development process into long-term documentation. For example:</p>
@@ -2208,6 +2211,7 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
+  <category>crosspost</category>
   <guid>https://emilyriederer.com/post/docs-closer-than-you-think/</guid>
   <pubDate>Fri, 05 Jan 2024 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/docs-closer-than-you-think/featured.PNG" medium="image"/>
@@ -2659,6 +2663,7 @@ Note
 
 
 
+
 <p><img src="https://emilyriederer.com/post/abstraction-airbyte/featured.PNG" class="img-fluid"></p>
 <p>I previously shared the first in my three-part series of guest posts on Airbyte’s developer blog about ETL. The first focused on errors in data extraction. The next two focused on the countless, small decisions one makes when loading data, and finally the DataOps burden to keep things up-and-running.</p>
 <p>This post serves only to serve as a quick reference to those posts:</p>
@@ -2674,6 +2679,7 @@ Note
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
+  <category>crosspost</category>
   <guid>https://emilyriederer.com/post/abstraction-airbyte/</guid>
   <pubDate>Wed, 03 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-airbyte/featured.PNG" medium="image"/>
@@ -2721,11 +2727,12 @@ Note
 
 
 
+
 <p><img src="https://emilyriederer.com/post/abstraction-extraction/featured.png" class="img-fluid"></p>
 <p>Whenever I think about data developer tooling, I always like to take the perspectives of:</p>
 <ol type="1">
-<li>Understanding what higher-level abstractions that it provides that help eliminate rote work or reduce mental overhead for data teams. In the spirit of <a href="../../post/team-of-packages/">my post on the jobs-to-be-done of innersource analysis tools</a>, this can be framed as what ‘jobs’ that tool can be hired to do (and with what level of responsibility and autonomy)</li>
-<li>Interrogating the likely failure modes in the data stack based on the mechanics of the system, in the spirit of my <a href="../../post/grouping-data-quality/">call for hypothesis-driven data quality testing</a></li>
+<li>Understanding what higher-level abstractions that it provides that help eliminate rote work or reduce mental overhead for data teams. In the spirit of <a href="../..\post/team-of-packages/">my post on the jobs-to-be-done of innersource analysis tools</a>, this can be framed as what ‘jobs’ that tool can be hired to do (and with what level of responsibility and autonomy)</li>
+<li>Interrogating the likely failure modes in the data stack based on the mechanics of the system, in the spirit of my <a href="../..\post/grouping-data-quality/">call for hypothesis-driven data quality testing</a></li>
 </ol>
 <p>These two themes motivated my recent guest post for Airbyte’s developer blog on <a href="https://airbyte.com/blog/dodging-data-extraction-errors">The Art of Abstraction in ETL: Dodging Data Extraction Errors</a>. In this post, I argue:</p>
 <blockquote class="blockquote">
@@ -2746,6 +2753,7 @@ Note
   <category>data</category>
   <category>workflow</category>
   <category>elt</category>
+  <category>crosspost</category>
   <guid>https://emilyriederer.com/post/abstraction-extraction/</guid>
   <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-extraction/featured.PNG" medium="image"/>

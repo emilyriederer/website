@@ -3,7 +3,7 @@ title: "Crosspost: Why you're closer to data documentation than you think"
 description: "Writing is thinking; documenting is planning and executing. In this cross-post with Select Star, I write about how teams can produce high-quality and maintainble documentation by smartly structuring planning and development documentation and effeciently recycling them into long-term, user-friendly docs"
 author: "Emily Riederer"
 date: "2024-01-05"
-categories: [data, workflow, elt]
+categories: [data, workflow, elt, crosspost]
 image: "featured.PNG"
 ---
 

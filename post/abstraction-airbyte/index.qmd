@@ -3,7 +3,7 @@ title: "Crosspost: The Art of Abstraction in ETL"
 description: "Rounding out my three-part ETL series form Airbyte's developer blog"
 author: "Emily Riederer"
 date: "2023-05-03"
-categories: [data, workflow, elt]
+categories: [data, workflow, elt, crosspost]
 image: "featured.PNG"
 ---
 

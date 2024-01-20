@@ -2,6 +2,7 @@
   {
     "listing": "/talk/index.html",
     "items": [
+      "/talk/data-downtime/index.html",
       "/talk/dbtplyr/index.html",
       "/talk/midterm-email/index.html",
       "/talk/causal-design-patterns/index.html",
@@ -124,6 +125,7 @@
       "/talk/causal-design-patterns/index.html",
       "/talk/organization/index.html",
       "/talk/rmarkdown-driven-development/index.html",
+      "/talk/data-downtime/index.html",
       "/talk/midterm-email/index.html",
       "/talk/meetup-datafold/index.html",
       "/talk/meetup-posit/index.html",

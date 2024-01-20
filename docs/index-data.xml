@@ -101,6 +101,27 @@
   <media:content url="https://emilyriederer.com/post/docs-closer-than-you-think/featured.PNG" medium="image"/>
 </item>
 <item>
+  <title>Data Downtime Horror Stories Panel</title>
+  <link>https://emilyriederer.com/talk/data-downtime/</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>In October, I joined a Halloween-themed panel along with Chad Sanderson and Joe Reis to discuss our horror stories of data quality gone wrong and how to build successful data quality strategies in large organizations. Key takeaways are summarized on <a href="https://www.montecarlodata.com/blog-scary-data-quality-stories-7-tips-for-preventing-your-own-data-downtime-nightmare/">Monte Carlo’s blog</a>.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>data</category>
+  <guid>https://emilyriederer.com/talk/data-downtime/</guid>
+  <pubDate>Mon, 23 Oct 2023 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/data-downtime/featured.PNG" medium="image"/>
+</item>
+<item>
   <title>Scaling Personalized Volunteer Emails</title>
   <link>https://emilyriederer.com/talk/midterm-email/</link>
   <description><![CDATA[ 
@@ -5378,46 +5399,6 @@ font-style: inherit;">False</span>)</span></code></pre></div>
   <guid>https://emilyriederer.com/post/states-scraping-automation/</guid>
   <pubDate>Sat, 08 May 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/states-scraping-automation/featured.png" medium="image" type="image/png" height="97" width="144"/>
-</item>
-<item>
-  <title>Column Names as Contracts</title>
-  <link>https://emilyriederer.com/talk/col-names-contract/</link>
-  <description><![CDATA[ 
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=BknQ0ZNkMNY">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/column-name-contracts/">Post - Column Names as Contracts</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>Complex software systems make performance guarantees through documentation and unit tests, and they communicate these to users with conscientious interface design. However, published data tables exist in a gray area; they are static enough not to be considered a “service” or “software”, yet too raw to earn attentive user interface design. This ambiguity creates a disconnect between data producers and consumers and poses a risk for analytical correctness and reproducibility.</p>
-<p>In this talk, I will explain how controlled vocabularies can be used to form contracts between data producers and data consumers. Explicitly embedding meaning in each component of variable names is a low-tech and low-friction approach which builds a shared understanding of how each field in the dataset is intended to work.</p>
-<p>Doing so can offload the burden of data producers by facilitating automated data validation and metadata management. At the same time, data consumers benefit by a reduction in the cognitive load to remember names, a deeper understanding of variable encoding, and opportunities to more efficiently analyze the resulting dataset.</p>
-<p>After discussing the theory of controlled vocabulary column-naming and related workflows, I illustrate how to implement these ideas at various stages in the data management lifecycle, either with the R package <code>convo</code> or with the SQL-based tool <code>dbt</code>.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<div id="slides" style="width:100%; aspect-ratio:16/11;">
-<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
-</div>
-</div>
-<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/BknQ0ZNkMNY" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>data</category>
-  <guid>https://emilyriederer.com/talk/col-names-contract/</guid>
-  <pubDate>Fri, 26 Feb 2021 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/col-names-contract/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 </channel>
 </rss>

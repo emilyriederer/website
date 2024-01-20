@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.542">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -53,7 +53,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -62,6 +68,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -118,6 +125,8 @@ cookieconsent.run({
   "notice_banner_reject_button_hide":false,
   "preferences_center_close_button_hide":false,
   "website_name":""
+  ,
+"language":"en"
   });
 });
 </script> 
@@ -125,6 +134,33 @@ cookieconsent.run({
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 <meta name="twitter:title" content="Talks | Emily Riederer">
@@ -138,10 +174,10 @@ cookieconsent.run({
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Emily Riederer</span>
     </a>
@@ -153,72 +189,72 @@ cookieconsent.run({
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Posts</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
         <li>
-    <a class="dropdown-item" href="../post/index.html" rel="" target="">
+    <a class="dropdown-item" href="../post/index.html">
  <span class="dropdown-text">Recent</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../post/featured.html" rel="" target="">
+    <a class="dropdown-item" href="../post/featured.html">
  <span class="dropdown-text">Favorites</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-talks" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-talks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Talks</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-talks">    
         <li>
-    <a class="dropdown-item" href="../talk/index.html" rel="" target="">
+    <a class="dropdown-item" href="../talk/index.html">
  <span class="dropdown-text">Recent</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../talk/featured.html" rel="" target="">
+    <a class="dropdown-item" href="../talk/featured.html">
  <span class="dropdown-text">Favorites</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../publication/index.html" rel="" target="">
- <span class="menu-text">Publications</span></a>
+    <a class="nav-link" href="../publication/index.html"> 
+<span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../project/index.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../project/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/emilyriederer" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/emilyriederer"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com/emilyriederer" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://twitter.com/emilyriederer"> <i class="bi bi-twitter" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://linkedin.com/in/emilyriederer" rel="" target=""><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer"> <i class="bi bi-linkedin" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../index.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools">
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -231,7 +267,7 @@ cookieconsent.run({
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-left">
 
       
     
@@ -244,9 +280,10 @@ cookieconsent.run({
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(16)</span></div><div class="category" data-category="causal">causal <span class="quarto-category-count">(2)</span></div><div class="category" data-category="data">data <span class="quarto-category-count">(5)</span></div><div class="category" data-category="elt">elt <span class="quarto-category-count">(2)</span></div><div class="category" data-category="pkgdev">pkgdev <span class="quarto-category-count">(3)</span></div><div class="category" data-category="rmarkdown">rmarkdown <span class="quarto-category-count">(3)</span></div><div class="category" data-category="rstats">rstats <span class="quarto-category-count">(9)</span></div><div class="category" data-category="shiny">shiny <span class="quarto-category-count">(1)</span></div><div class="category" data-category="workflow">workflow <span class="quarto-category-count">(9)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(17)</span></div><div class="category" data-category="causal">causal <span class="quarto-category-count">(2)</span></div><div class="category" data-category="data">data <span class="quarto-category-count">(6)</span></div><div class="category" data-category="elt">elt <span class="quarto-category-count">(2)</span></div><div class="category" data-category="pkgdev">pkgdev <span class="quarto-category-count">(3)</span></div><div class="category" data-category="rmarkdown">rmarkdown <span class="quarto-category-count">(3)</span></div><div class="category" data-category="rstats">rstats <span class="quarto-category-count">(9)</span></div><div class="category" data-category="shiny">shiny <span class="quarto-category-count">(1)</span></div><div class="category" data-category="workflow">workflow <span class="quarto-category-count">(9)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+
 
 
 
@@ -264,19 +301,52 @@ cookieconsent.run({
     </div>
 </div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-left" data-index="0" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1695272400000" data-listing-file-modified-sort="1704140173174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="0" data-categories="data" data-listing-date-sort="1698037200000" data-listing-file-modified-sort="1705754521222" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="43">
 <div class="thumbnail">
-<p><a href="../talk/dbtplyr/index.html"> <img src="../talk/dbtplyr/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/data-downtime/index.html" class="no-external"></a></p><a href="../talk/data-downtime/index.html" class="no-external">
+<p><img src="../talk/data-downtime/featured.PNG" class="thumbnail-image"></p>
+</a><p><a href="../talk/data-downtime/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/dbtplyr/index.html">
 <h3 class="no-anchor listing-title">
-Operationalizing Column-Name Contracts with dbtplyr
+<a href="../talk/data-downtime/index.html" class="no-external">Data Downtime Horror Stories Panel</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/data-downtime/index.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('data'); return false;">
+data
+</div>
+</div>
+<div class="listing-description">
+<a href="../talk/data-downtime/index.html" class="no-external">Panel discussion with Chad Sanderson and Joe Reis, hosted by Monte Carlo Data, on our thorniest brushes with data downtime, leading data teams to tackle data quality at scale with testing, contracts, observability and monitoring, and more.</a>
+</div>
+</div>
+<div class="metadata">
+<a href="../talk/data-downtime/index.html" class="no-external">
+<div class="listing-date">
+Oct 23, 2023
+</div>
+<div class="metadata-value listing-location">
+Monte Carlo Data Panel
 </div>
 </a>
+</div>
+</div>
+<div class="quarto-post image-left" data-index="1" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1695272400000" data-listing-file-modified-sort="1704140173174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="327">
+<div class="thumbnail">
+<p><a href="../talk/dbtplyr/index.html" class="no-external"></a></p><a href="../talk/dbtplyr/index.html" class="no-external">
+<p><img src="../talk/dbtplyr/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/dbtplyr/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../talk/dbtplyr/index.html" class="no-external">Operationalizing Column-Name Contracts with dbtplyr</a>
+</h3>
+<div class="listing-subtitle">
+<a href="../talk/dbtplyr/index.html" class="no-external"></a>
+</div>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('workflow'); return false;">
 workflow
@@ -288,14 +358,12 @@ rmarkdown
 rstats
 </div>
 </div>
-<a href="../talk/dbtplyr/index.html">
 <div class="listing-description">
-<p>An exploration of how data producers and consumers can use column names as interfaces, configuations, and code to improve data quality and discoverability. The second half of the talk demonstrates how to implement these ideas with my <code>dbtplyr</code> dbt package.</p>
+<a href="../talk/dbtplyr/index.html" class="no-external">An exploration of how data producers and consumers can use column names as interfaces, configuations, and code to improve data quality and discoverability. The second half of the talk demonstrates how to implement these ideas with my <code>dbtplyr</code> dbt package.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/dbtplyr/index.html">
+<a href="../talk/dbtplyr/index.html" class="no-external">
 <div class="listing-date">
 Sep 21, 2023
 </div>
@@ -305,19 +373,19 @@ dbt Labs Coalesce (2021) | NYR (2023) | posit::conf(2023)
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="1" data-categories="data,elt" data-listing-date-sort="1687323600000" data-listing-file-modified-sort="1704140173221" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="2" data-categories="data,elt" data-listing-date-sort="1687323600000" data-listing-file-modified-sort="1704140173221" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="94">
 <div class="thumbnail">
-<p><a href="../talk/midterm-email/index.html"> <img src="../talk/midterm-email/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/midterm-email/index.html" class="no-external"></a></p><a href="../talk/midterm-email/index.html" class="no-external">
+<p><img src="../talk/midterm-email/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/midterm-email/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/midterm-email/index.html">
 <h3 class="no-anchor listing-title">
-Scaling Personalized Volunteer Emails
+<a href="../talk/midterm-email/index.html" class="no-external">Scaling Personalized Volunteer Emails</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/midterm-email/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('data'); return false;">
 data
@@ -326,14 +394,12 @@ data
 elt
 </div>
 </div>
-<a href="../talk/midterm-email/index.html">
 <div class="listing-description">
-<p>An overview of the data stack used to automate over 50,000 personalized emails to voter turnout volunteers using BigQuery, dbt, Census, and MailChimp</p>
+<a href="../talk/midterm-email/index.html" class="no-external">An overview of the data stack used to automate over 50,000 personalized emails to voter turnout volunteers using BigQuery, dbt, Census, and MailChimp</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/midterm-email/index.html">
+<a href="../talk/midterm-email/index.html" class="no-external">
 <div class="listing-date">
 Jun 21, 2023
 </div>
@@ -343,32 +409,30 @@ Data for Progress Data Engineering Open Mic (Jun 2023)
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="2" data-categories="causal" data-listing-date-sort="1686114000000" data-listing-file-modified-sort="1704140173143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="3" data-categories="causal" data-listing-date-sort="1686114000000" data-listing-file-modified-sort="1704140173143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="224">
 <div class="thumbnail">
-<p><a href="../talk/causal-design-patterns/index.html"> <img src="../talk/causal-design-patterns/featured.jpg" class="thumbnail-image"> </a></p>
+<p><a href="../talk/causal-design-patterns/index.html" class="no-external"></a></p><a href="../talk/causal-design-patterns/index.html" class="no-external">
+<p><img src="../talk/causal-design-patterns/featured.jpg" class="thumbnail-image"></p>
+</a><p><a href="../talk/causal-design-patterns/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/causal-design-patterns/index.html">
 <h3 class="no-anchor listing-title">
-Causal Design Patterns
+<a href="../talk/causal-design-patterns/index.html" class="no-external">Causal Design Patterns</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/causal-design-patterns/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('causal'); return false;">
 causal
 </div>
 </div>
-<a href="../talk/causal-design-patterns/index.html">
 <div class="listing-description">
-<p>An overview of basic research design patterns in causal inference, modern extensions, and data management strategies to set up a causal inference initiative for success</p>
+<a href="../talk/causal-design-patterns/index.html" class="no-external">An overview of basic research design patterns in causal inference, modern extensions, and data management strategies to set up a causal inference initiative for success</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/causal-design-patterns/index.html">
+<a href="../talk/causal-design-patterns/index.html" class="no-external">
 <div class="listing-date">
 Jun 7, 2023
 </div>
@@ -378,19 +442,19 @@ Data Science Salon NYC (2023) | Pivigo Data Meet-Up (2021) | Toronto Data Worksh
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="3" data-categories="elt,data" data-listing-date-sort="1683867600000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="4" data-categories="elt,data" data-listing-date-sort="1683867600000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="175">
 <div class="thumbnail">
-<p><a href="../talk/meetup-datafold/index.html"> <img src="../talk/meetup-datafold/featured.jpg" class="thumbnail-image"> </a></p>
+<p><a href="../talk/meetup-datafold/index.html" class="no-external"></a></p><a href="../talk/meetup-datafold/index.html" class="no-external">
+<p><img src="../talk/meetup-datafold/featured.jpg" class="thumbnail-image"></p>
+</a><p><a href="../talk/meetup-datafold/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/meetup-datafold/index.html">
 <h3 class="no-anchor listing-title">
-DataFold Data Quality Meet Up
+<a href="../talk/meetup-datafold/index.html" class="no-external">DataFold Data Quality Meet Up</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/meetup-datafold/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('elt'); return false;">
 elt
@@ -399,14 +463,12 @@ elt
 data
 </div>
 </div>
-<a href="../talk/meetup-datafold/index.html">
 <div class="listing-description">
-<p>Joined a panel of speakers to discuss tips and tricks for running dbt at scale</p>
+<a href="../talk/meetup-datafold/index.html" class="no-external">Joined a panel of speakers to discuss tips and tricks for running dbt at scale</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/meetup-datafold/index.html">
+<a href="../talk/meetup-datafold/index.html" class="no-external">
 <div class="listing-date">
 May 12, 2023
 </div>
@@ -416,19 +478,19 @@ DataFold Data Quality Meetup (2023)
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="4" data-categories="rstats,workflow" data-listing-date-sort="1681362000000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="5" data-categories="rstats,workflow" data-listing-date-sort="1681362000000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68">
 <div class="thumbnail">
-<p><a href="../talk/meetup-posit/index.html"> <img src="../talk/meetup-posit/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/meetup-posit/index.html" class="no-external"></a></p><a href="../talk/meetup-posit/index.html" class="no-external">
+<p><img data-src="../talk/meetup-posit/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/meetup-posit/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/meetup-posit/index.html">
 <h3 class="no-anchor listing-title">
-Posit Data Science Hangout
+<a href="../talk/meetup-posit/index.html" class="no-external">Posit Data Science Hangout</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/meetup-posit/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('rstats'); return false;">
 rstats
@@ -437,14 +499,12 @@ rstats
 workflow
 </div>
 </div>
-<a href="../talk/meetup-posit/index.html">
 <div class="listing-description">
-<p>Each week, host Rachael Dempsey invites an accomplished data science leader to talk about their experience and answer questions from the audience. The discussion focuses mainly on the human elements of data science leadership. There’s no sales or marketing fluff, just great insights from inspiring professionals.</p>
+<a href="../talk/meetup-posit/index.html" class="no-external">Each week, host Rachael Dempsey invites an accomplished data science leader to talk about their experience and answer questions from the audience. The discussion focuses mainly on the human elements of data science leadership. There’s no sales or marketing fluff, just great insights from inspiring professionals.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/meetup-posit/index.html">
+<a href="../talk/meetup-posit/index.html" class="no-external">
 <div class="listing-date">
 Apr 13, 2023
 </div>
@@ -454,32 +514,30 @@ Posit Data Science Hangout (2023)
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="5" data-categories="causal" data-listing-date-sort="1679461200000" data-listing-file-modified-sort="1704140173221" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="6" data-categories="causal" data-listing-date-sort="1679461200000" data-listing-file-modified-sort="1704140173221" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="133">
 <div class="thumbnail">
-<p><a href="../talk/midterm-iptw/index.html"> <img data-src="../talk/midterm-iptw/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/midterm-iptw/index.html" class="no-external"></a></p><a href="../talk/midterm-iptw/index.html" class="no-external">
+<p><img data-src="../talk/midterm-iptw/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/midterm-iptw/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/midterm-iptw/index.html">
 <h3 class="no-anchor listing-title">
-Evaluation without Experimentation
+<a href="../talk/midterm-iptw/index.html" class="no-external">Evaluation without Experimentation</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/midterm-iptw/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('causal'); return false;">
 causal
 </div>
 </div>
-<a href="../talk/midterm-iptw/index.html">
 <div class="listing-description">
-<p>An introduction to inverse propensity of treatment weighting for program evaluation with applications to Two Million Texans’ relational organizing campaign during the 2022 midterms</p>
+<a href="../talk/midterm-iptw/index.html" class="no-external">An introduction to inverse propensity of treatment weighting for program evaluation with applications to Two Million Texans’ relational organizing campaign during the 2022 midterms</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/midterm-iptw/index.html">
+<a href="../talk/midterm-iptw/index.html" class="no-external">
 <div class="listing-date">
 Mar 22, 2023
 </div>
@@ -489,19 +547,19 @@ Data for Progress Data Engineering Open Mic (Mar 2023)
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="6" data-categories="workflow,rstats,shiny" data-listing-date-sort="1678856400000" data-listing-file-modified-sort="1704140173598" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="7" data-categories="workflow,rstats,shiny" data-listing-date-sort="1678856400000" data-listing-file-modified-sort="1704140173598" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="256">
 <div class="thumbnail">
-<p><a href="../talk/shiny-modules/index.html"> <img data-src="../talk/shiny-modules/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/shiny-modules/index.html" class="no-external"></a></p><a href="../talk/shiny-modules/index.html" class="no-external">
+<p><img data-src="../talk/shiny-modules/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/shiny-modules/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/shiny-modules/index.html">
 <h3 class="no-anchor listing-title">
-Taking Flight with Shiny: a Modules-First Approach
+<a href="../talk/shiny-modules/index.html" class="no-external">Taking Flight with Shiny: a Modules-First Approach</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/shiny-modules/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('workflow'); return false;">
 workflow
@@ -513,14 +571,12 @@ rstats
 shiny
 </div>
 </div>
-<a href="../talk/shiny-modules/index.html">
 <div class="listing-description">
-<p>An argument for the individual and organization-wide benefits of teaching new developers Shiny with a modules-first paradigm.</p>
+<a href="../talk/shiny-modules/index.html" class="no-external">An argument for the individual and organization-wide benefits of teaching new developers Shiny with a modules-first paradigm.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/shiny-modules/index.html">
+<a href="../talk/shiny-modules/index.html" class="no-external">
 <div class="listing-date">
 Mar 15, 2023
 </div>
@@ -530,32 +586,30 @@ Appsilon ShinyConf 2023
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="7" data-categories="data" data-listing-date-sort="1668232800000" data-listing-file-modified-sort="1704140173174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="8" data-categories="data" data-listing-date-sort="1668232800000" data-listing-file-modified-sort="1704140173174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205">
 <div class="thumbnail">
-<p><a href="../talk/data-error-gen/index.html"> <img data-src="../talk/data-error-gen/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/data-error-gen/index.html" class="no-external"></a></p><a href="../talk/data-error-gen/index.html" class="no-external">
+<p><img data-src="../talk/data-error-gen/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/data-error-gen/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/data-error-gen/index.html">
 <h3 class="no-anchor listing-title">
-The Data (error) Generating Process
+<a href="../talk/data-error-gen/index.html" class="no-external">The Data (error) Generating Process</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/data-error-gen/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('data'); return false;">
 data
 </div>
 </div>
-<a href="../talk/data-error-gen/index.html">
 <div class="listing-description">
-<p>Interrogating the data generating process to devise better data quality tests.</p>
+<a href="../talk/data-error-gen/index.html" class="no-external">Interrogating the data generating process to devise better data quality tests.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/data-error-gen/index.html">
+<a href="../talk/data-error-gen/index.html" class="no-external">
 <div class="listing-date">
 Nov 12, 2022
 </div>
@@ -565,32 +619,30 @@ Airbyte move(data) (2022) | CANSSI Ontario (2022)
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="8" data-categories="data" data-listing-date-sort="1641967200000" data-listing-file-modified-sort="1704140173237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="9" data-categories="data" data-listing-date-sort="1641967200000" data-listing-file-modified-sort="1704140173237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="141">
 <div class="thumbnail">
-<p><a href="../talk/pod-tdep-colnames/index.html"> <img data-src="../talk/pod-tdep-colnames/featured.PNG" class="thumbnail-image"> </a></p>
+<p><a href="../talk/pod-tdep-colnames/index.html" class="no-external"></a></p><a href="../talk/pod-tdep-colnames/index.html" class="no-external">
+<p><img data-src="../talk/pod-tdep-colnames/featured.PNG" class="thumbnail-image"></p>
+</a><p><a href="../talk/pod-tdep-colnames/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/pod-tdep-colnames/index.html">
 <h3 class="no-anchor listing-title">
-The Data Engineering Podcast: Column Names as Contracts
+<a href="../talk/pod-tdep-colnames/index.html" class="no-external">The Data Engineering Podcast: Column Names as Contracts</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/pod-tdep-colnames/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('data'); return false;">
 data
 </div>
 </div>
-<a href="../talk/pod-tdep-colnames/index.html">
 <div class="listing-description">
-<p>Discussing how column names can serve as a light-weight alternative to data catalogs and contracts and how to implement this approach with dbtplyr</p>
+<a href="../talk/pod-tdep-colnames/index.html" class="no-external">Discussing how column names can serve as a light-weight alternative to data catalogs and contracts and how to implement this approach with dbtplyr</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/pod-tdep-colnames/index.html">
+<a href="../talk/pod-tdep-colnames/index.html" class="no-external">
 <div class="listing-date">
 Jan 12, 2022
 </div>
@@ -600,19 +652,19 @@ The Data Engineering Podcast
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="9" data-categories="rstats,workflow" data-listing-date-sort="1637128800000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="10" data-categories="rstats,workflow" data-listing-date-sort="1637128800000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="74">
 <div class="thumbnail">
-<p><a href="../talk/meetup-stat447/index.html"> <img data-src="../talk/meetup-stat447/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/meetup-stat447/index.html" class="no-external"></a></p><a href="../talk/meetup-stat447/index.html" class="no-external">
+<p><img data-src="../talk/meetup-stat447/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/meetup-stat447/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/meetup-stat447/index.html">
 <h3 class="no-anchor listing-title">
-UIUC STAT447 (Data Science Programming) Guest Lecture
+<a href="../talk/meetup-stat447/index.html" class="no-external">UIUC STAT447 (Data Science Programming) Guest Lecture</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/meetup-stat447/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('rstats'); return false;">
 rstats
@@ -621,14 +673,12 @@ rstats
 workflow
 </div>
 </div>
-<a href="../talk/meetup-stat447/index.html">
 <div class="listing-description">
-<p>Discussing how to move from scripting to tool development, designing tools in enterprise, and navigating diverse data career paths</p>
+<a href="../talk/meetup-stat447/index.html" class="no-external">Discussing how to move from scripting to tool development, designing tools in enterprise, and navigating diverse data career paths</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/meetup-stat447/index.html">
+<a href="../talk/meetup-stat447/index.html" class="no-external">
 <div class="listing-date">
 Nov 17, 2021
 </div>
@@ -638,32 +688,30 @@ University of Illinois Urbana Champaign (2021)
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="10" data-categories="data" data-listing-date-sort="1614319200000" data-listing-file-modified-sort="1704140173158" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="11" data-categories="data" data-listing-date-sort="1614319200000" data-listing-file-modified-sort="1704140173158" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="259">
 <div class="thumbnail">
-<p><a href="../talk/col-names-contract/index.html"> <img data-src="../talk/col-names-contract/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/col-names-contract/index.html" class="no-external"></a></p><a href="../talk/col-names-contract/index.html" class="no-external">
+<p><img data-src="../talk/col-names-contract/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/col-names-contract/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/col-names-contract/index.html">
 <h3 class="no-anchor listing-title">
-Column Names as Contracts
+<a href="../talk/col-names-contract/index.html" class="no-external">Column Names as Contracts</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/col-names-contract/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('data'); return false;">
 data
 </div>
 </div>
-<a href="../talk/col-names-contract/index.html">
 <div class="listing-description">
-<p>Exploring the benefits of using controlled vocabularies to encode metadata in column names, and demonstrations of implementing this approach with the <code>convo</code> R package or <code>dbt</code> extensions of SQL.</p>
+<a href="../talk/col-names-contract/index.html" class="no-external">Exploring the benefits of using controlled vocabularies to encode metadata in column names, and demonstrations of implementing this approach with the <code>convo</code> R package or <code>dbt</code> extensions of SQL.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/col-names-contract/index.html">
+<a href="../talk/col-names-contract/index.html" class="no-external">
 <div class="listing-date">
 Feb 26, 2021
 </div>
@@ -673,19 +721,19 @@ Toronto Data Workshop on Reproducibility (2021) | Good Tech Fest (2021) | LA R U
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="11" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1611208800000" data-listing-file-modified-sort="1704140173237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="12" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1611208800000" data-listing-file-modified-sort="1704140173237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="158">
 <div class="thumbnail">
-<p><a href="../talk/organization/index.html"> <img data-src="../talk/organization/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/organization/index.html" class="no-external"></a></p><a href="../talk/organization/index.html" class="no-external">
+<p><img data-src="../talk/organization/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/organization/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/organization/index.html">
 <h3 class="no-anchor listing-title">
-oRganization: Design patterns for internal packages
+<a href="../talk/organization/index.html" class="no-external">oRganization: Design patterns for internal packages</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/organization/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('workflow'); return false;">
 workflow
@@ -697,14 +745,12 @@ pkgdev
 rstats
 </div>
 </div>
-<a href="../talk/organization/index.html">
 <div class="listing-description">
-<p>An overview of the unique design challenges and opportunities when building R packages for use inside of a single organization versus open-source. By using the jobs-to-be-done framework, this talk explores how internal packages can be better teammates by following specific design patterns for API design, testing, documentaiton, and more.</p>
+<a href="../talk/organization/index.html" class="no-external">An overview of the unique design challenges and opportunities when building R packages for use inside of a single organization versus open-source. By using the jobs-to-be-done framework, this talk explores how internal packages can be better teammates by following specific design patterns for API design, testing, documentaiton, and more.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/organization/index.html">
+<a href="../talk/organization/index.html" class="no-external">
 <div class="listing-date">
 Jan 21, 2021
 </div>
@@ -714,19 +760,19 @@ rstudio::conf(2021) | csv,conf,v6 | EARL Boston 2021
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="12" data-categories="workflow,rstats,pkgdev" data-listing-date-sort="1594011600000" data-listing-file-modified-sort="1704140173585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="13" data-categories="workflow,rstats,pkgdev" data-listing-date-sort="1594011600000" data-listing-file-modified-sort="1704140173585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="225">
 <div class="thumbnail">
-<p><a href="../talk/projmgr/index.html"> <img data-src="../talk/projmgr/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/projmgr/index.html" class="no-external"></a></p><a href="../talk/projmgr/index.html" class="no-external">
+<p><img data-src="../talk/projmgr/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/projmgr/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/projmgr/index.html">
 <h3 class="no-anchor listing-title">
-projmgr: Managing the human dependencies of your project
+<a href="../talk/projmgr/index.html" class="no-external">projmgr: Managing the human dependencies of your project</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/projmgr/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('workflow'); return false;">
 workflow
@@ -738,14 +784,12 @@ rstats
 pkgdev
 </div>
 </div>
-<a href="../talk/projmgr/index.html">
 <div class="listing-description">
-<p>A lightning talk on key features of the projmgr package which brings enables code-based planning and reporting workflows grounded in GitHub issues and milestones</p>
+<a href="../talk/projmgr/index.html" class="no-external">A lightning talk on key features of the projmgr package which brings enables code-based planning and reporting workflows grounded in GitHub issues and milestones</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/projmgr/index.html">
+<a href="../talk/projmgr/index.html" class="no-external">
 <div class="listing-date">
 Jul 6, 2020
 </div>
@@ -755,19 +799,19 @@ UseR!2020
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="13" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1580364000000" data-listing-file-modified-sort="1704140173585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="14" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1580364000000" data-listing-file-modified-sort="1704140173585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="212">
 <div class="thumbnail">
-<p><a href="../talk/rmarkdown-driven-development/index.html"> <img data-src="../talk/rmarkdown-driven-development/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/rmarkdown-driven-development/index.html" class="no-external"></a></p><a href="../talk/rmarkdown-driven-development/index.html" class="no-external">
+<p><img data-src="../talk/rmarkdown-driven-development/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/rmarkdown-driven-development/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/rmarkdown-driven-development/index.html">
 <h3 class="no-anchor listing-title">
-RMarkdown Driven Development
+<a href="../talk/rmarkdown-driven-development/index.html" class="no-external">RMarkdown Driven Development</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/rmarkdown-driven-development/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('workflow'); return false;">
 workflow
@@ -779,14 +823,12 @@ rmarkdown
 rstats
 </div>
 </div>
-<a href="../talk/rmarkdown-driven-development/index.html">
 <div class="listing-description">
-<p>How and why to refactor one time analyses in RMarkdown into sustainable data products</p>
+<a href="../talk/rmarkdown-driven-development/index.html" class="no-external">How and why to refactor one time analyses in RMarkdown into sustainable data products</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/rmarkdown-driven-development/index.html">
+<a href="../talk/rmarkdown-driven-development/index.html" class="no-external">
 <div class="listing-date">
 Jan 30, 2020
 </div>
@@ -796,19 +838,19 @@ rstudio::conf(2020) | csv,conf,v5
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="14" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1">
+<div class="quarto-post image-left" data-index="15" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="144">
 <div class="thumbnail">
-<p><a href="../talk/ent-pkg-design/index.html"> <img data-src="../talk/ent-pkg-design/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/ent-pkg-design/index.html" class="no-external"></a></p><a href="../talk/ent-pkg-design/index.html" class="no-external">
+<p><img data-src="../talk/ent-pkg-design/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/ent-pkg-design/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/ent-pkg-design/index.html">
 <h3 class="no-anchor listing-title">
-Assorted talks on designing analytical tools and communities for enterprise
+<a href="../talk/ent-pkg-design/index.html" class="no-external">Assorted talks on designing analytical tools and communities for enterprise</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/ent-pkg-design/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('workflow'); return false;">
 workflow
@@ -820,14 +862,12 @@ rmarkdown
 rstats
 </div>
 </div>
-<a href="../talk/ent-pkg-design/index.html">
 <div class="listing-description">
-<p>A variety of related talks to creating innersource culture with R packages and related tools</p>
+<a href="../talk/ent-pkg-design/index.html" class="no-external">A variety of related talks to creating innersource culture with R packages and related tools</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/ent-pkg-design/index.html">
+<a href="../talk/ent-pkg-design/index.html" class="no-external">
 <div class="listing-date">
 Nov 1, 2017
 </div>
@@ -837,19 +877,19 @@ O’Reilly Strata NYC (2018) | data.world Afternoon of Data (2019) | IDEASS Chic
 </a>
 </div>
 </div>
-<div class="quarto-post image-left" data-index="15" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1704140173614" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2">
+<div class="quarto-post image-left" data-index="16" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1704140173614" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="204">
 <div class="thumbnail">
-<p><a href="../talk/tidycf/index.html"> <img data-src="../talk/tidycf/featured.png" class="thumbnail-image"> </a></p>
+<p><a href="../talk/tidycf/index.html" class="no-external"></a></p><a href="../talk/tidycf/index.html" class="no-external">
+<p><img data-src="../talk/tidycf/featured.png" class="thumbnail-image"></p>
+</a><p><a href="../talk/tidycf/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="../talk/tidycf/index.html">
 <h3 class="no-anchor listing-title">
-tidycf: Turning analysis on its head by turning cashflows on their side
+<a href="../talk/tidycf/index.html" class="no-external">tidycf: Turning analysis on its head by turning cashflows on their side</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="../talk/tidycf/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('workflow'); return false;">
 workflow
@@ -861,14 +901,12 @@ pkgdev
 rstats
 </div>
 </div>
-<a href="../talk/tidycf/index.html">
 <div class="listing-description">
-<p>A case study on building an internal R package for customer lifetime value modeling at Capital One and leading broader analyst adoption of open-source tooling and reproducible workflows through a community of practice.</p>
+<a href="../talk/tidycf/index.html" class="no-external">A case study on building an internal R package for customer lifetime value modeling at Capital One and leading broader analyst adoption of open-source tooling and reproducible workflows through a community of practice.</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="../talk/tidycf/index.html">
+<a href="../talk/tidycf/index.html" class="no-external">
 <div class="listing-date">
 Nov 1, 2017
 </div>
@@ -927,6 +965,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -995,13 +1060,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1080,10 +1147,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.com\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1093,8 +1177,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1107,6 +1200,120 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1150,6 +1357,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1175,6 +1383,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1232,33 +1466,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp("https:\/\/emilyriederer\.com\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-      }
-    }
 });
 </script>
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left"><span class="faux-block"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> Creative Commons CC BY 4.0</a></span><br>
+    <div class="nav-footer-left">
+<p><span class="faux-block"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> Creative Commons CC BY 4.0</a></span></p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
     <div class="cookie-consent-footer"><a href="#" id="open_preferences_center">Cookie Preferences</a></div></div>
-    <div class="nav-footer-right"><span class="faux-block">Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at <i class="fa-brands fa-github" aria-label="github"></i> GitHub</a></span></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at <i class="fa-brands fa-github" aria-label="github"></i> GitHub</a></span></p>
+</div>
   </div>
 </footer>
+
 
 
 

@@ -1,0 +1,12 @@
+---
+title: "Data Downtime Horror Stories Panel"
+description: "Panel discussion with Chad Sanderson and Joe Reis, hosted by Monte Carlo Data, on our thorniest brushes with data downtime, leading data teams to tackle data quality at scale with testing, contracts, observability and monitoring, and more."
+location: Monte Carlo Data Panel
+image: featured.PNG
+categories: [data]
+date: 2023-10-23
+---
+
+## Abstract 
+
+In October, I joined a Halloween-themed panel along with Chad Sanderson and Joe Reis to discuss our horror stories of data quality gone wrong and how to build successful data quality strategies in large organizations. Key takeaways are summarized on [Monte Carlo's blog](https://www.montecarlodata.com/blog-scary-data-quality-stories-7-tips-for-preventing-your-own-data-downtime-nightmare/).

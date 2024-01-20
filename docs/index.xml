@@ -10,7 +10,1055 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.542</generator>
-<lastBuildDate>Mon, 15 Jan 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 20 Jan 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Base Python Rgonomic Patterns</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo-base/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/py-rgo-base/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption>Photo credit to <a href="https://unsplash.com/@davidclode">David Clode</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p>In the past few weeks, I’ve been writing about a <a href="../..\post/py-rgo">stack of tools</a> and <a href="../..\post/py-rgo-polars/">specific packages like <code>polars</code></a> that may help R users feel “at home” when working in python due to similiar ergonomics. However, one common snag in switching languages is ramping up on common “recipes” for higher-level workflows (e.g.&nbsp;how to build a <code>sklearn</code> modeling pipeline) but missing a languages’s fundamentals that make writing glue code feel smooth (and dare I say pleasant?) It’s a maddening feeling to get code for a <em>complex</em> task to finish only to have the result wrapped in an object that you can’t suss out how to save or manipulate.</p>
+<p>This post goes back to the basics. We’ll briefly reflect on a few aspects of usability that have led to the success of many workflow packages in R. Then, I’ll demonstrate a grab bag of coding patterns in python that make it feel more elegant to connect bits of code into a coherent workflow.</p>
+<p>We’ll look at the kind of functionality that you didn’t know to miss until it was gone, you may not be quite sure what to search to figure out how to get it back, <em>and</em> you wonder if it’s even reasonable to hope there’s an analog<sup>1</sup>. This won’t be anything groundbreaking – just some nuts and bolts. Specifically: helper functions for data and time manipulation, advanced string interpolation, list comprehensions for more functional programming, and object serialization.</p>
+<section id="what-other-r-ergonomics-do-we-enjoy" class="level2">
+<h2 class="anchored" data-anchor-id="what-other-r-ergonomics-do-we-enjoy">What other R ergonomics do we enjoy?</h2>
+<p>R’s passionate user and developer community has invested a lot in building tools that smooth over rough edges and provide slick, concise APIs to rote tasks. Sepcifically, a number of packages are devoted to:</p>
+<ul>
+<li><strong>Utility functions</strong>: Things that make it easier to “automate the boring stuff” like <code>fs</code> for naviating file systems or <code>lubridate</code> for more semantic date wrangling</li>
+<li><strong>Formatting functions</strong>: Things that help us make things look nice for users like <code>cli</code> and <code>glue</code> to improve human readability of terminal output and string interpolation</li>
+<li><strong>Efficiency functions</strong>: Things that help us write efficient workflows like <code>purrr</code> which provides a concise, typesafe interface for iteration</li>
+</ul>
+<p>All of these capabilities are things we <em>could</em> somewhat trivially write ourselves, but we don’t <em>want</em> to and we don’t <em>need</em> to. Fortunately, we don’t need to in python either.</p>
+</section>
+<section id="wrangling-things-date-manipulation" class="level2">
+<h2 class="anchored" data-anchor-id="wrangling-things-date-manipulation">Wrangling Things (Date Manipulation)</h2>
+<p>I don’t know a data person who loves dates. In the R world, many enjoy <code>lubridate</code>’s wide range of helper functions for cleaning, formatting, and computing on dates.</p>
+<p>Python’s <code>datetime</code> module is similarly effective. We can easily create and manage dates in <code>date</code> or <code>datetime</code> classes which make them easy to work with.</p>
+<div id="d0e9b62a" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datetime <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> date</span>
+<span id="cb1-3">today <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> date.today()</span>
+<span id="cb1-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(today)</span>
+<span id="cb1-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(today)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2024-01-20</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<pre><code>datetime.date</code></pre>
+</div>
+</div>
+<p>Two of the most important functions are <code>strftime()</code> and <code>strptime()</code>.</p>
+<p><code>strftime()</code> <em>formats</em> dates into strings. It accepts both a date and the desired string format. Below, we demonstrate by commiting the cardinal sin of writing a date in non-ISO8601.</p>
+<div id="9d84582e" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">today_str <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.strftime(today, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%m/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/%Y'</span>)</span>
+<span id="cb4-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(today_str)</span>
+<span id="cb4-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(today_str)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>01/20/2024</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>str</code></pre>
+</div>
+</div>
+<p><code>strptime()</code> does the opposite and turns a string encoding a date into an actual date. It can try to guess the format, or we can be nice and provide it guidance.</p>
+<div id="1b145b05" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">someday_dtm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.strptime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2023-01-01'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb7-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(someday_dtm)</span>
+<span id="cb7-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(someday_dtm)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2023-01-01 00:00:00</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>datetime.datetime</code></pre>
+</div>
+</div>
+<p>Date math is also relatively easy with <code>datetime</code>. For example, you can see we calculate the date difference simply by… taking the difference! From the resulting delta object, we can access the <code>days</code> attribute.</p>
+<div id="ac58fb36" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">n_days_diff <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ( today <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> someday_dtm.date() )</span>
+<span id="cb10-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(n_days_diff)</span>
+<span id="cb10-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(n_days_diff)</span>
+<span id="cb10-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(n_days_diff.days)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>384 days, 0:00:00</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>int</code></pre>
+</div>
+</div>
+</section>
+<section id="formatting-things-f-strings" class="level2">
+<h2 class="anchored" data-anchor-id="formatting-things-f-strings">Formatting Things (f-strings)</h2>
+<p>R’s <code>glue</code> is beloved for it’s ability to easily combine variables and texts into complex strings without a lot of ugly, nested <code>paste()</code> functions.</p>
+<p>python has a number of ways of doing this, but the most readable is the newest: f-strings. Simply put an <code>f</code> before the string and put any variable names to be interpolated in <code>{</code>curly braces<code>}</code>.</p>
+<div id="6340ff92" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Emily"</span></span>
+<span id="cb13-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"This blog post is written by </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>This blog post is written by Emily</code></pre>
+</div>
+</div>
+<p>f-strings also support formatting with formats specified after a colon. Below, we format a long float to round to 2 digits.</p>
+<div id="d1ac4ffb" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">proportion <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.123456789</span></span>
+<span id="cb15-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"The proportion is </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>proportion<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The proportion is 0.12</code></pre>
+</div>
+</div>
+<p>Any python expression – not just a single variable – can go in curly braces. So, we can instead format that propotion as a percent.</p>
+<div id="0903de5e" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">proportion <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.123456789</span></span>
+<span id="cb17-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"The proportion is </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>proportion<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.1f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">%"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The proportion is 12.3%</code></pre>
+</div>
+</div>
+<p>Despite the slickness of f-strings, sometimes other string interpolation approaches can be useful. For example, if all the variables I want to interpolate are in a dictionary (as often will happen, for example, with REST API responses), the string <code>format()</code> method is a nice alternative. It allows us to pass in the dictionary, “unpacking” the argument with <code>**</code><sup>2</sup></p>
+<div id="8682ac36" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">result <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb19-2">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dog_name'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Squeak'</span>,</span>
+<span id="cb19-3">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dog_type'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Chihuahua'</span></span>
+<span id="cb19-4">}</span>
+<span id="cb19-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{dog_name}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> is a </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{dog_type}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">format</span>(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>result))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Squeak is a Chihuahua</code></pre>
+</div>
+</div>
+<section id="application-generating-file-names" class="level3">
+<h3 class="anchored" data-anchor-id="application-generating-file-names">Application: Generating File Names</h3>
+<p>Combining what we’ve discussed about <code>datetime</code> and f-strings, here’s a pattern I use frequently. If I am logging results from a run of some script, I might save the results in a file suffixed with the run timestamp. We can generate this easily.</p>
+<div id="b4410a0a" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">dt_stub <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime.datetime.now().strftime(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'%Y%m</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%d</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">_%H%M%S'</span>)</span>
+<span id="cb21-2">file_name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"output-</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>dt_stub<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">.csv"</span></span>
+<span id="cb21-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(file_name)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>output-20240120_054647.csv</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="repeating-things-iteration-functional-programming" class="level2">
+<h2 class="anchored" data-anchor-id="repeating-things-iteration-functional-programming">Repeating Things (Iteration / Functional Programming)</h2>
+<p>Thanks in part to a modern-day fiction that <code>for</code> loops in R are inefficient, R users have gravitated towards concise mapping functions for iteration. These can include the <code>*apply()</code> family<sup>3</sup>, <code>purrr</code>’s <code>map_*()</code> functions, or the parallelized version of either.</p>
+<p>Python too has a nice pattern for arbitrary iteration in list comprehensions. For any iterable, we can use a list comprehension to make a list of outputs by processing a list of inputs, with optional conditional and default expressions.</p>
+<p>Here are some trivial examples:</p>
+<div id="b01653ca" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1">l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>]</span>
+<span id="cb23-2">[i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> l]</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>[2, 3, 4]</code></pre>
+</div>
+</div>
+<div id="5114132d" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1">[i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> l <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>[2, 4]</code></pre>
+</div>
+</div>
+<div id="d11713eb" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1">[i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">else</span> i <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> l]</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>[2, 2, 4]</code></pre>
+</div>
+</div>
+<p>There are also closer analogs to <code>purrr</code> like python’s <code>map()</code> function. <code>map()</code> takes a function and an iterable object and applies the function to each element. Like with <code>purrr</code>, functions can be anonymous (as defined in python with lambda functions) or named. List comprehensions are popular for their concise syntax, but there are many different thoughts on the matter as expressed in <a href="https://stackoverflow.com/questions/1247486/list-comprehension-vs-map">this StackOverflow post</a>.</p>
+<div id="7281c482" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> add_one(i): </span>
+<span id="cb29-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb29-3"></span>
+<span id="cb29-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># these are the same</span></span>
+<span id="cb29-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> i: i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, l))</span>
+<span id="cb29-6"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">map</span>(add_one, l))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>[2, 3, 4]</code></pre>
+</div>
+</div>
+<section id="application-simulation" class="level3">
+<h3 class="anchored" data-anchor-id="application-simulation">Application: Simulation</h3>
+<p>As a (slightly) more realistic(ish) example, let’s consider how list comprehensions might help us conduct a numerical simulation or sensitivity analysis.</p>
+<p>Suppose we want to simulate 100 draws from a Bernoulli distribution with different success probabilites and see how close our empirically calculated rate is to the true rate.</p>
+<p>We can define the probabilites we want to simulate in a list and use a list comprehension to run the simulations.</p>
+<div id="ea4b3e2e" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb31-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy.random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> rnd</span>
+<span id="cb31-3"></span>
+<span id="cb31-4">probs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>]</span>
+<span id="cb31-5">coin_flips <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ np.mean(np.random.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, p, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> probs ]</span>
+<span id="cb31-6">coin_flips</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>[0.1, 0.25, 0.53, 0.68, 0.91]</code></pre>
+</div>
+</div>
+<p>Alternatively, instead of returning a list of the same length, our resulting list could include whatever we want – like a list of lists! If we wanted to keep the raw simulation results, we could. The following code returns a list of 5 lists - one with the raw simulation results.</p>
+<div id="f463a277" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1">coin_flips <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(np.random.binomial(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, p, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> probs ]</span>
+<span id="cb33-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"""</span></span>
+<span id="cb33-3"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  coin_flips has </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(coin_flips)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> elements</span></span>
+<span id="cb33-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  Each element is itself a </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span>(coin_flips[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb33-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  Each element is of length </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(coin_flips[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span></span>
+<span id="cb33-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  """</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  coin_flips has 5 elements
+  Each element is itself a &lt;class 'list'&gt;
+  Each element is of length 100
+  </code></pre>
+</div>
+</div>
+<p>If one wished, they could then put these into a <code>polars</code> dataframe and pivot those list-of-lists (going from a 5-row dataset to a 500-row dataset)to conduct whatever sort of analysis with want with all the replicates.</p>
+<div id="c6693923" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb35" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span>
+<span id="cb35-2"></span>
+<span id="cb35-3">df_flips <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'prob'</span>: probs, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'flip'</span>: coin_flips})</span>
+<span id="cb35-4">df_flips.explode(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'flip'</span>).glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 500
+Columns: 2
+$ prob &lt;f64&gt; 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1
+$ flip &lt;i32&gt; 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
+</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="faking-things-data-generation" class="level2">
+<h2 class="anchored" data-anchor-id="faking-things-data-generation">Faking Things (Data Generation)</h2>
+<p>Creating simple miniature datasets is often useful in analysis. When working with a new packages, it’s an important part of learning, developing, debugging, and eventually unit testing. We can easily run our code on a simplified data object where the desired outcome is easy to determine to sanity-check our work, or we can use fake data to confirm our understanding of how a program will handle edge cases (like the diversity of ways different programs <a href="../..\post/nulls-polyglot/">handle null values</a>).</p>
+<p>In R, <code>data.frame()</code> and <code>expand.grid()</code> are go-to functions, coupled with vector generators like <code>rep()</code> and <code>seq()</code>. Python has many similar options.</p>
+<section id="fake-datasets" class="level3">
+<h3 class="anchored" data-anchor-id="fake-datasets">Fake Datasets</h3>
+<p>For the simplest of datasets, we can manually write a few entries as with <code>data.frame()</code> in R. Here, we define series in a named dictionary where each dictionary key turns into a column name.</p>
+<div id="47377d19" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span>
+<span id="cb37-2"></span>
+<span id="cb37-3">pl.DataFrame({</span>
+<span id="cb37-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>: [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>],</span>
+<span id="cb37-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'z'</span>]</span>
+<span id="cb37-6">})</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (3, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>str</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>"x"</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>"y"</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>"z"</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>If we need longer datasets, we can use helper functions in packages like <code>numpy</code> to generate the series. Methods like <code>arange</code> and <code>linspace</code> work similarly to R’s <code>seq()</code>.</p>
+<div id="6734d3d5" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb38" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span>
+<span id="cb38-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb38-3"></span>
+<span id="cb38-4">pl.DataFrame({</span>
+<span id="cb38-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>: np.arange(stop <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>),</span>
+<span id="cb38-6">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>: np.linspace(start <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>, stop <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span>, num <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span>
+<span id="cb38-7">})</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (3, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+</tr>
+<tr class="odd">
+<th>i32</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>9.0</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>16.5</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>24.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>If we need groups in our sample data, we can use <code>np.repeat()</code> which works like R’s <code>rep(each = TRUE)</code>.</p>
+<div id="600e908e" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1">pl.DataFrame({</span>
+<span id="cb39-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>: np.repeat(np.arange(stop <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>),</span>
+<span id="cb39-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>: np.linspace(start <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, stop <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">27</span>, num <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>)</span>
+<span id="cb39-4">})</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (6, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+</tr>
+<tr class="odd">
+<th>i32</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>3.0</td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td>7.8</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>12.6</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>17.4</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>22.2</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>27.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Alternatively, for more control and succinct typing, we can created a nested dataset in <code>polars</code> and explode it out.</p>
+<div id="a5635ddd" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1">(</span>
+<span id="cb40-2">  pl.DataFrame({</span>
+<span id="cb40-3">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>: [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>],</span>
+<span id="cb40-4">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"a b c"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"d e f"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"g h i"</span>]</span>
+<span id="cb40-5">  })</span>
+<span id="cb40-6">  .with_columns(pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>.split(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" "</span>))</span>
+<span id="cb40-7">  .explode(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>)</span>
+<span id="cb40-8">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (9, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>str</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>"a"</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>"b"</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>"c"</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>"d"</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>"e"</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>"f"</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>"g"</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>"h"</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>"i"</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>Similarly, we could use what we’ve learned about list columns.</p>
+<div id="34ea5349" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1">a <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>]</span>
+<span id="cb41-2">b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ [q<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>i <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> q <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>]] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> a]</span>
+<span id="cb41-3">pl.DataFrame({<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>:a,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>:b}).explode(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (9, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">a</th>
+<th data-quarto-table-cell-role="th">b</th>
+</tr>
+<tr class="odd">
+<th>i64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>6</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>6</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="built-in-data" class="level3">
+<h3 class="anchored" data-anchor-id="built-in-data">Built-In Data</h3>
+<p>R has a number of canonical datasets like <code>iris</code> built in to the core language. This can be easy to quickly grab for experimentation<sup>4</sup>. While base python doesn’t include such capabilities, many of the exact same or similar datasets can be found in <code>seaborn</code>.</p>
+<p><code>seaborn.get_dataset_names()</code> provides the list of available options. Below, we load the Palmers Penguins data and, if you wish, convert it from <code>pandas</code> to <code>polars</code>.</p>
+<div id="e0326c54" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> seaborn <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sns</span>
+<span id="cb42-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span>
+<span id="cb42-3"></span>
+<span id="cb42-4">df_pd <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> sns.load_dataset(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'penguins'</span>)</span>
+<span id="cb42-5">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.from_pandas(df_pd)</span>
+<span id="cb42-6">df.glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 344
+Columns: 7
+$ species           &lt;str&gt; 'Adelie', 'Adelie', 'Adelie', 'Adelie', 'Adelie', 'Adelie', 'Adelie', 'Adelie', 'Adelie', 'Adelie'
+$ island            &lt;str&gt; 'Torgersen', 'Torgersen', 'Torgersen', 'Torgersen', 'Torgersen', 'Torgersen', 'Torgersen', 'Torgersen', 'Torgersen', 'Torgersen'
+$ bill_length_mm    &lt;f64&gt; 39.1, 39.5, 40.3, None, 36.7, 39.3, 38.9, 39.2, 34.1, 42.0
+$ bill_depth_mm     &lt;f64&gt; 18.7, 17.4, 18.0, None, 19.3, 20.6, 17.8, 19.6, 18.1, 20.2
+$ flipper_length_mm &lt;f64&gt; 181.0, 186.0, 195.0, None, 193.0, 190.0, 181.0, 195.0, 193.0, 190.0
+$ body_mass_g       &lt;f64&gt; 3750.0, 3800.0, 3250.0, None, 3450.0, 3650.0, 3625.0, 4675.0, 3475.0, 4250.0
+$ sex               &lt;str&gt; 'Male', 'Female', 'Female', None, 'Female', 'Male', 'Female', 'Male', None, None
+</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="saving-things-object-serialization" class="level2">
+<h2 class="anchored" data-anchor-id="saving-things-object-serialization">Saving Things (Object Serialization)</h2>
+<p>Sometimes, it can be useful to save <em>objects</em> as they existed in RAM in an active programming environment. R users may have experienced this if they’ve used <code>.rds</code>, <code>.rda</code>, or <code>.Rdata</code> files to save individual variables or their entire environment. These objects can often be faster to reload than plaintext and can better preserve information that may be lost in other formats (e.g.&nbsp;storing a dataframe in a way that preserves its datatypes versus writing to a CSV file<sup>5</sup> or storing a complex object that can’t be easily reduced to plaintext like a model with training data, hyperparameters, learned tree splits or weights or whatnot for future predictions.) This is called object serializaton<sup>6</sup></p>
+<p>Python has comparable capabilities in the <a href="https://docs.python.org/3/library/pickle.html"><code>pickle</code> module</a>. There aren’t really style points here, so I’ve not much to add beyond “this exists” and “read the documentation”. But, at a high level, it looks something like this:</p>
+<div id="c6539c96" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb44" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># to write a pickle</span></span>
+<span id="cb44-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">with</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'my-obj.pickle'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'wb'</span>) <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> handle:</span>
+<span id="cb44-3">    pickle.dump(my_object, handle, protocol <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pickle.HIGHEST_PROTOCOL)</span>
+<span id="cb44-4"></span>
+<span id="cb44-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># to read a pickle</span></span>
+<span id="cb44-6">my_object <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pickle.load(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'my-obj.pickle'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'rb'</span>))</span></code></pre></div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>I defined this odd scope to help limit the infinite number of workflow topics that could be included like “how to write a function” or “how to source code from another script”↩︎</p></li>
+<li id="fn2"><p>This is called “**kwargs” and works a bit like <code>do.call()</code> in base R. You can read more about it <a href="https://www.digitalocean.com/community/tutorials/how-to-use-args-and-kwargs-in-python-3">here</a>.↩︎</p></li>
+<li id="fn3"><p>Speaking of non-ergonomic things in R, the <code>*apply()</code> family is notoriously diverse in its number and order of arguments↩︎</p></li>
+<li id="fn4"><p>Particularly if you want to set wildly unrealistic expectations for the efficacy of k-means clustering, but I digress↩︎</p></li>
+<li id="fn5"><p>And yes, you can and should use Parquet and then my example falls apart – but that’s not the point!↩︎</p></li>
+<li id="fn6"><p>And, if you want to go incredibly deep here, check out <a href="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/">this awesome post</a> by Danielle Navarro.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <category>tutorial</category>
+  <guid>https://emilyriederer.com/post/py-rgo-base/</guid>
+  <pubDate>Sat, 20 Jan 2024 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo-base/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Crosspost: Why You Need Data Documentation in 2024</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -3976,75 +5024,6 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <guid>https://emilyriederer.com/post/nulls-polyglot/</guid>
   <pubDate>Mon, 05 Sep 2022 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>Update: grouped data quality check PR merged to dbt-utils</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/grouping-data-quality-update/</link>
-  <description><![CDATA[ 
-
-
-
-
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://emilyriederer.com/post/grouping-data-quality-update/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@greysonjoralemon">Greyson Joralemon</a> on Unsplash</figcaption>
-</figure>
-</div>
-<p>Last fall, I wrote about the <a href="https://www.emilyriederer.com/post/grouping-data-quality/">unreasonably effectiveness of grouping in data quality checks</a>. In this follow-up, I want to share that my <a href="https://github.com/dbt-labs/dbt-utils/pull/633">pull request</a> for such features has just been merged into the development branch of the <code>dbt-utils</code> package, a common add-on to the <code>dbt</code> data transformation stack. This feature will officially “go live” in the 1.0.0 version release that is planned for later this fall.</p>
-<p>In this brief post, I’ll recall the benefits of such checks (which my original post further illustrates with NYC subway data) and demonstrate how these checks can now be implemented in <code>dbt-utils</code>.</p>
-<p>For those interested, I’ll also provide a brief overview of how I implemented this change, but I recommend checking out the PR itself for complete details.</p>
-<section id="recap" class="level2">
-<h2 class="anchored" data-anchor-id="recap">Recap</h2>
-<p>To recap the benefits of such checks from my initial post:</p>
-<ul>
-<li>Some data checks can only be expressed within a group (e.g.&nbsp;ID values should be unique within a group but can be repeated between groups)</li>
-<li>Some data checks are more precise when done by group (e.g.&nbsp;not only should table row-counts be equal but the counts within each group should be equal)</li>
-</ul>
-<p>Of course, these benefits are more or less relevant to different types of data checks. My PR updates the following tests:</p>
-<ul>
-<li>equal_rowcount()</li>
-<li>recency()</li>
-<li>fewer_rows_than()</li>
-<li>at_least_one()</li>
-<li>not_constant()</li>
-<li>non_null_proportion()</li>
-<li>sequential_values()</li>
-</ul>
-<p>Of these checks, most fall in the category of providing more rigor when being conducted at the group level. Only the <code>sequential_values()</code> test is often unable to be expressed without grouping.</p>
-</section>
-<section id="demo" class="level2">
-<h2 class="anchored" data-anchor-id="demo">Demo</h2>
-<p><a href="https://docs.getdbt.com/docs/building-a-dbt-project/tests">Data tests</a> in <code>dbt</code> are specified in the <code>schema.yml</code> file for relevant models. Adding grouping to the tests listed above will now be as simple as adding a <code>group_by_columns</code> key-value pair to the tests, as desired, which accepts either a single variable name or a list of variables to be used for grouping.</p>
-<p><code>{yaml eval = FALSE}   - name: data_test_at_least_one     columns:       - name: field         tests:           - dbt_utils.at_least_one:               group_by_columns: ['grouping_column']</code></p>
-<p>For those that have not used <code>dbt</code>’s data testing framework before, this configuration is then used to generate SQL (now with the custom <code>GROUP BY</code> clause) which are evaluated when <code>dbt test</code> is run.</p>
-</section>
-<section id="implementation" class="level2">
-<h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
-<p>In implementing this PR, I considered a few core principles:</p>
-<ul>
-<li>Make this feature as unobtrusive and isolated as possible with respect to the macros broader implementation</li>
-<li>Follow standard DRY principles (e.g.&nbsp;specifically, render needed text as few times as possible)</li>
-<li>Implement consistently across macros</li>
-</ul>
-<p>With these principles in mind, the majority of implementations are like that of the <code>recency</code> macro where all relevant SQL strings are pre-computed:</p>
-<pre><code>{% set threshold = dbt_utils.dateadd(datepart, interval * -1, dbt_utils.current_timestamp()) %}
-{% if group_by_columns|length() &gt; 0 %}
-  {% set select_gb_cols = group_by_columns|join(' ,') + ', ' %}
-  {% set groupby_gb_cols = 'group by ' + group_by_columns|join(',') %}
-{% endif %}</code></pre>
-<p>The main deviations to this were the sequential() macro (requiring a window function) and the equal_rowcount()/fewer_rows_than() (requiring joins)</p>
-
-
-</section>
-
- ]]></description>
-  <category>data</category>
-  <category>dbt</category>
-  <guid>https://emilyriederer.com/post/grouping-data-quality-update/</guid>
-  <pubDate>Fri, 26 Aug 2022 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/grouping-data-quality-update/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>

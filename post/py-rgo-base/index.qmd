@@ -180,9 +180,11 @@ df_flips = pl.DataFrame({'prob': probs, 'flip': coin_flips})
 df_flips.explode('flip').glimpse()
 ```
 
+We'll return to list comprehensions in the next section.
+
 ## Faking Things (Data Generation)
 
-Creating simple miniature datasets is often useful in analysis. When working with a new packages, it's an important part of learning, developing, debugging, and eventually unit testing. We can easily run our code on a simplified data object where the desired outcome is easy to determine to sanity-check our work, or we can use fake data to confirm our understanding of how a program will handle edge cases (like the diversity of ways different programs [handle null values](/post/nulls-polyglot/)). 
+Creating simple miniature datasets is often useful in analysis. When working with a new packages, it's an important part of learning, developing, debugging, and eventually unit testing. We can easily run our code on a simplified data object where the desired outcome is easy to determine to sanity-check our work, or we can use fake data to confirm our understanding of how a program will handle edge cases (like the diversity of ways different programs [handle null values](/post/nulls-polyglot/)). Simple datasets can also be used and spines and scaffolds for more complex data wrangling tasks (e.g. joining event data onto a date spine).
 
 In R, `data.frame()` and `expand.grid()` are go-to functions, coupled with vector generators like `rep()` and `seq()`. Python has many similar options.
 
@@ -233,12 +235,20 @@ Alternatively, for more control and succinct typing, we can created a nested dat
 )
 ```
 
-Similarly, we could use what we've learned about list columns.
+Similarly, we could use what we've learned about `polars` list columns *and* list comprehensions.
 
 ```{python}
 a = [1, 2, 3]
 b = [ [q*i for q in [1, 2, 3]] for i in a]
 pl.DataFrame({'a':a,'b':b}).explode('b')
+```
+
+In fact, multidimensional list comprehensions can be used to mimic R's `expand.grid()` function.
+```{python}
+pl.DataFrame(
+  [(x, y) for x in range(3) for y in range(3)],
+  schema = ['x','y']
+  )
 ```
 
 ### Built-In Data

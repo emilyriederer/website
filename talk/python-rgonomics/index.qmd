@@ -1,0 +1,38 @@
+---
+title: Python Rgonomics
+description: A survey of modern python tooling that "feels good" to R users
+location: posit::conf(2024) 
+image: featured.png
+categories: [workflow, python, rstats]
+date: 2024-08-15
+---
+
+:::{.panel-tabset}
+
+## Quick Links
+
+<span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
+<span><i class = 'bi bi-play'></i> Video Coming Soon </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Python Rgonomics](/post/py-rgo/) </span>    
+<span><i class = 'bi bi-pencil'></i> [Post - Advanced `polars` versus `dplyr`](/post/py-rgo-polars/) </span>    
+
+## Abstract 
+
+::: {.callout-warning}
+Tooling changes quickly. Since this talk occured, Astral's `uv` project has come out as a very strong contender to replace `pyenv`, `pdm`, and more of the devtools part of a python stack.
+:::
+
+Data science languages are increasingly interoperable with advances like Arrow, Quarto, and Posit Connect. But data scientists are not. Learning the basic syntax of a new language is easy, but relearning the ergonomics that help us be hyperproductive is hard. In this talk, I will explore the influential ergonomics of R's tidyverse. Next, I will recommend a curated stack that mirrors these ergonomics while also being genuinely truly pythonic. In particular, we will explore packages (polars, seaborn objects, greattables), frameworks (Shiny, Quarto), dev tools (pyenv, ruff, and pdm), and IDEs (VS Code extensions). The audience should leave feeling inspired to try python while benefiting from their current knowledge and expertise.
+
+## Slides
+
+<div id='slides' style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height = "100%"/>
+</div>
+
+## Video
+
+Video to come. 
+
+:::
+

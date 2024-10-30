@@ -9,8 +9,62 @@
 <link>https://emilyriederer.com/#category=rstats</link>
 <atom:link href="https://emilyriederer.com/index-rstats.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.542</generator>
-<lastBuildDate>Sat, 20 Jan 2024 06:00:00 GMT</lastBuildDate>
+<generator>quarto-1.4.554</generator>
+<lastBuildDate>Thu, 15 Aug 2024 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Python Rgonomics</title>
+  <link>https://emilyriederer.com/talk/python-rgonomics/</link>
+  <description><![CDATA[ 
+
+
+
+
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
+<span><i class="bi bi-play"></i> Video Coming Soon </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo/">Post - Python Rgonomics</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo-polars/">Post - Advanced <code>polars</code> versus <code>dplyr</code></a> </span></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tooling changes quickly. Since this talk occured, Astral’s <code>uv</code> project has come out as a very strong contender to replace <code>pyenv</code>, <code>pdm</code>, and more of the devtools part of a python stack.</p>
+</div>
+</div>
+<p>Data science languages are increasingly interoperable with advances like Arrow, Quarto, and Posit Connect. But data scientists are not. Learning the basic syntax of a new language is easy, but relearning the ergonomics that help us be hyperproductive is hard. In this talk, I will explore the influential ergonomics of R’s tidyverse. Next, I will recommend a curated stack that mirrors these ergonomics while also being genuinely truly pythonic. In particular, we will explore packages (polars, seaborn objects, greattables), frameworks (Shiny, Quarto), dev tools (pyenv, ruff, and pdm), and IDEs (VS Code extensions). The audience should leave feeling inspired to try python while benefiting from their current knowledge and expertise.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
+<div id="slides" style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
+<p>Video to come.</p>
+</div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>python</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.com/talk/python-rgonomics/</guid>
+  <pubDate>Thu, 15 Aug 2024 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/python-rgonomics/featured.png" medium="image" type="image/png" height="78" width="144"/>
+</item>
 <item>
   <title>Base Python Rgonomic Patterns</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -9806,23 +9860,6 @@ Subscription                     45         31.0         31.0</code></pre>
   <guid>https://emilyriederer.com/post/column-name-contracts/</guid>
   <pubDate>Sun, 06 Sep 2020 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/column-name-contracts/featured.png" medium="image" type="image/png" height="152" width="144"/>
-</item>
-<item>
-  <title>R Markdown Cookbook</title>
-  <link>https://emilyriederer.com/publication/rmarkdown-cookbook/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-
- ]]></description>
-  <category>rmarkdown</category>
-  <category>rstats</category>
-  <guid>https://emilyriederer.com/publication/rmarkdown-cookbook/</guid>
-  <pubDate>Tue, 01 Sep 2020 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/publication/rmarkdown-cookbook/featured.PNG" medium="image"/>
 </item>
 </channel>
 </rss>

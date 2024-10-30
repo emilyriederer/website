@@ -9,8 +9,119 @@
 <link>https://emilyriederer.com/#category=data</link>
 <atom:link href="https://emilyriederer.com/index-data.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.542</generator>
-<lastBuildDate>Mon, 15 Jan 2024 06:00:00 GMT</lastBuildDate>
+<generator>quarto-1.4.554</generator>
+<lastBuildDate>Thu, 18 Jul 2024 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Crosspost: Data discovery doesn’t belong in ad hoc queries</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/data-discovery-ad-hoc/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Credible documentation is the best tool for working with data. Short of that, labor (and computational) intensive validation may be required. Recently, I had the opportunity to expand on these ideas in a <a href="https://www.selectstar.com/resources/data-discovery-doesnt-belong-in-ad-hoc-queries">cross-post with Select Star</a>. I explore how a “good” data analyst can interrogate a dataset with expensive queries and, more importantly, how best-in-class data products eliminate the need for this.</p>
+<p>My post is reproduced below.</p>
+<hr>
+<p>In the current environment of decreasing headcount and rising cloud costs, the benefits of data management are more objective and tangible than ever. Done well, data management can reduce the cognitive and computational costs of working with enterprise-scale data.</p>
+<p>Analysts often jump into new-to-them tables to answer business questions. Without a robust data platform, this constant novelty leads analysts down one of two paths. Either they boldly gamble that they have found intuitive and relevant data or they painstakingly hypothesize and validate assumptions for each new table. The latter approach leads to more trustworthy outcomes, but it comes at the cost of human capital and computational power.</p>
+<p>Consider an analyst at an e-commerce company asking the question “How many invoices did we generate for fulfilled orders to Ohio in June?” while navigating unfamiliar tables. In this post, we explore prototypical queries analysts might have to run to validate a new-to-them table. Many of these are “expensive” queries requiring full table scans. Next, we’ll examine how a data discovery platform can obviate this effort.</p>
+<p>The impact of this inefficiency may range from a minor papercut to a major cost sink depending on the sizes of your analyst community, historical enterprise data, and warehouse.</p>
+<section id="preventable-data-discovery-queries" class="level2">
+<h2 class="anchored" data-anchor-id="preventable-data-discovery-queries">6 Preventable Data Discovery Queries</h2>
+<section id="what-columns-are-in-the-table" class="level3">
+<h3 class="anchored" data-anchor-id="what-columns-are-in-the-table">1. What columns are in the table?</h3>
+<p>Without a good data catalog, analysts will first need to check what fields exist in a table. While there may be lower cost ways to do this like looking at a pre-rendered preview (ala BigQuery), using a DESCRIBE statement (ala Spark), or limiting their query to the first few rows, some analysts may default to requesting all the data.</p>
+<pre><code>select *
+from invoices;</code></pre>
+</section>
+<section id="is-the-table-still-live-and-updating" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-table-still-live-and-updating">2. Is the table still live and updating?</h3>
+<p>After establishing that a table has potentially useful information, analysts should next wonder if the data is still live and updating. First they might check a date field to see if the table seems “fresh”.</p>
+<pre><code>select max(order_date) 
+from invoices;</code></pre>
+<p>But, of course, tables often have multiple date fields. For example, an e-commerce invoice table might have fields for both the date an order was placed and the date the record was last modified. So, analysts may guess-and-check a few of these fields to determine table freshness.</p>
+<pre><code>select max(updated_date) 
+from invoices;</code></pre>
+<p>After identifying the correct field, there’s still a question of refresh cadence. Are records added hourly? Daily? Monthly? Lacking system-level metrics and metadata on the upstream table freshness, analysts are still left in the dark. So, once again, they can check empirically by looking at the frequency of the date field.</p>
+<pre><code>select max(updated_date), count(1) as n
+from invoices
+group by 1;</code></pre>
+</section>
+<section id="what-is-the-grain-of-the-table" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-grain-of-the-table">3. What is the grain of the table?</h3>
+<p>Now that the table is confirmed to be usable, the question becomes how to use it. Specifically, to credibly query and join the table, analysts next must determine its grain. Often, they start with a guess informed by the business context and data modeling conventions, such as assuming an invoice table is unique by order_id.</p>
+<pre><code>select count(1) as n, count(distinct order_id)
+from invoices;</code></pre>
+<p>‍However, if they learn that order_id has a different cardinality then the number of records, they must ask why. So, once again, they scan the full table to find examples of records with shared order_id values.</p>
+<pre><code>select *
+from invoices
+qualify count(1) over (partition by order_id) &gt; 1
+order by order_id
+limit 10;</code></pre>
+<p>Eyeballing the results of this query, the analysts might notice that the same order_id value can coincide with different ship_id values, as a separate invoice is generated for each part of an order when a subset of items is shipped. With this new hypothesis, the analyst iterates on the validation of the grain.</p>
+<pre><code>select count(1) as n, count(distinct order_id, ship_id)
+from invoices;</code></pre>
+</section>
+<section id="what-values-can-categorical-variables-take" class="level3">
+<h3 class="anchored" data-anchor-id="what-values-can-categorical-variables-take">4. What values can categorical variables take?</h3>
+<p>The prior questions all involved table structure. Only now can an analyst finally begin to investigate the table’s content. A first step might be to understand the valid values for categorical variables. For example, if our analyst wanted to ensure only completed orders were queried, they might inspect the potential values of the order_status_id field to determine which values to include in a filter.</p>
+<pre><code>select distinct order_status_id
+from invoices;</code></pre>
+<p>They’ll likely repeat this process for many categorical variables of interest. Since our analyst is interested in shipments specifically to Ohio, they might also inspect the cardinality of the ship_state field to ensure they correctly format the identifier.</p>
+<pre><code>select distinct ship_state
+from invoices;</code></pre>
+</section>
+<section id="do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls" class="level3">
+<h3 class="anchored" data-anchor-id="do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls">5. Do numeric columns have nulls or ‘sentinel’ values to encode nulls?</h3>
+<p>Similarly, analysts may wish to audit other variables for null handling or sentinel values by inspecting column-level statistics.</p>
+<pre><code>select distinct ship_state
+from invoices;</code></pre>
+</section>
+<section id="is-the-data-stored-with-partitioning-or-clustering-keys" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-data-stored-with-partitioning-or-clustering-keys">6. Is the data stored with partitioning or clustering keys?</h3>
+<p>Inefficient queries aren’t only a symptom of ad hoc data validation. More complex and reused logic may also be written wastefully when table metadata like partitioning and clustering keys is not available to analysts. For example, an analyst might be able to construct a reasonable query filtering either on a shipment date or an order date, but if only one of these is a partitioning or clustering key, different queries could have substantial performance differences.</p>
+</section>
+</section>
+<section id="understanding-your-data-without-relying-on-queries" class="level2">
+<h2 class="anchored" data-anchor-id="understanding-your-data-without-relying-on-queries">Understanding Your Data Without Relying on Queries</h2>
+<p>Analysts absolutely should ask themselves these types of questions when working with new data. However, it should not be analysts’ job to individually answer these questions by running SQL queries. Instead, best-in-class data documentation can provide critical information through a data catalog like Select Star.</p>
+<section id="what-columns-are-in-the-table-and-do-we-need-a-table" class="level3">
+<h3 class="anchored" data-anchor-id="what-columns-are-in-the-table-and-do-we-need-a-table">1. What columns are in the table? And do we need a table?</h3>
+<p>Comprehensive search across all of an organization’s assets can help users quickly identify the right resources based on table names, field names, or data descriptions. Even better, search can incorporate observed tribal knowledge of table popularity and common querying patterns to prioritize the most relevant results. Moreover, when search also includes downstream data products like pre-built reports and dashboards, analysts might sometimes find an answer to their question exists off the shelf.</p>
+</section>
+<section id="is-the-table-still-live-and-updating-and-are-its-own-sources-current" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-table-still-live-and-updating-and-are-its-own-sources-current">2. Is the table still live and updating? And are its own sources current?</h3>
+<p>Data is not a static artifact so metadata should not be either. After analysts identify a candidate table, they should have access to real-time operational information like table usage, table size, refresh date, and upstream dependencies to help confirm whether the table is a reliable resource.</p>
+<p>Ideally, analysts can interrogate not just the freshness of a final table but also its dependencies by exploring the table’s data lineage.</p>
+</section>
+<section id="what-is-the-grain-of-the-table-and-how-does-it-relate-to-others" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-grain-of-the-table-and-how-does-it-relate-to-others">3. What is the grain of the table? And how does it relate to others?</h3>
+<p>Table grain should be clearly documented at the table level and emphasized in the data dictionary via references to primary and foreign keys. Beyond basic documentation, entity-relationship (ER) diagrams will help analysts gain a richer mental model of grains of how they can use these primary-foreign key relationships to link tables to craft information with the desired grain and fields. Alternatively, they can glean this information from the wisdom of the crowds if they have access to how others have queried and joined the data previously.</p>
+</section>
+<section id="what-values-can-categorical-variables-take-do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls" class="level3">
+<h3 class="anchored" data-anchor-id="what-values-can-categorical-variables-take-do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls">4. What values can categorical variables take? Do numeric columns have nulls or ‘sentinel’ values to encode nulls?</h3>
+<p>Information about proper expectations and handling of categorical and null values may be published as field definitions, pointed to lookup tables, implied in data tests, or illustrated in past queries. To drive consistency and offload redundant work from data producers, such field definitions can be propagated from upstream tables.</p>
+</section>
+<section id="is-the-data-stored-with-partitioning-or-clustering-keys-1" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-data-stored-with-partitioning-or-clustering-keys-1">‍5. Is the data stored with partitioning or clustering keys?</h3>
+<p>Analysts cannot write efficient code if they don’t know where the efficiency gains lie. Table-level documentation should clearly highlight the use of clustering or partitioning files so analysts can use the most impactful variables in filters and joins. Here, consistency of documentation is paramount; analysts may not always be incented to care about query efficiency, so if this information is hard to find or rarely available, they can be easily dissuaded from looking.</p>
+<p>Beyond a poor user experience, poor data discoverability creates inefficiency and added cost. Even if you don’t have large scale historical data or broad data user communities today, slow queries and tedious work still detract from data team productivity while introducing context-switching and chaos. By focusing on improving data discoverability, you can streamline workflows and enhance the overall efficiency of your data operations.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>data</category>
+  <category>workflow</category>
+  <category>elt</category>
+  <category>crosspost</category>
+  <guid>https://emilyriederer.com/post/data-discovery-ad-hoc/</guid>
+  <pubDate>Thu, 18 Jul 2024 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/data-discovery-ad-hoc/featured.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
 <item>
   <title>Crosspost: Why You Need Data Documentation in 2024</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -4499,906 +4610,6 @@ table strong {
   <guid>https://emilyriederer.com/post/data-error-gen/</guid>
   <pubDate>Thu, 27 May 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/data-error-gen/featured.png" medium="image" type="image/png" height="62" width="144"/>
-</item>
-<item>
-  <title>A Tale of Six States: Flexible data extraction with scraping and browser automation</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/states-scraping-automation/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>Like many Americans, last fall I was captivated by <a href="https://twitter.com/ElectProject">Professor Michael McDonald</a>’s <a href="http://www.electproject.org/">US Elections Project</a> and, in particular, his daily reporting of <a href="https://electproject.github.io/Early-Vote-2020G/">early vote totals</a> across all 50 states. Not only did this reporting provide fuel for anxious speculation and satiate an innate desire for reading the tea leaves, but it was also a quite a feat in data management.</p>
-<p>In many discussions of <a href="https://a16z.com/2020/10/15/the-emerging-architectures-for-modern-data-infrastructure/">modern data management</a>, the extract-load-transform (ELT) process is offered as a solution to data silos. However, these tools largely focus on abstracting away the different REST APIs of common sources (e.g.&nbsp;Salesforce, Google Analytics, Facebook Ads) and destinations (e.g.&nbsp;BigQuery, Redshift, Snowflake). At the same time, many data science resources introduce static web page scraping as a tool in one’s toolkit but discuss less scraping websites rendered with client side JavaScript (as quite a bit of the internet is) or navigating arbitrary applications with browser automation.</p>
-<p>For more “creative”, persay, sources, we need to build our own solutions. And this is particularly true when we’re attempting to access, standardize, and analyze 50 separate data sets published at different cadences, provided with different levels of granularity, partitioned along different dimensions, controlled by different levels of access and permission, and embedded in systems with vastly different underlying architecture. (Oh, and in Dr.&nbsp;McDonald’s case, with a good number of Twitter users starting to tweet at you if you haven’t refreshed your website by 8:02AM!)</p>
-<p>To give an example of some of the diverse data sources used in the Elections Project:</p>
-<ul>
-<li><a href="https://elections.il.gov/VotingAndRegistrationSystems/PreElectionCounts.aspx?MID=l0hlXuSrKL0%3d&amp;T=637317257975604269">IL</a>, <a href="https://elections.wi.gov/index.php/publications/statistics/absentee">WI</a>, and <a href="https://dl.ncsbe.gov/?prefix=ENRS/2020_11_03/">NC</a> provide direct <code>csv</code> downloads with predictable URLs which contain all data to-date</li>
-<li><a href="http://services.sos.wv.gov/Elections/AbsenteeBallotStats">WV</a> and <a href="https://www.elections.alaska.gov/doc/info/statstable.php">AK</a> display data in static tables rendere by server-side PHP</li>
-<li><a href="https://www.vpap.org/elections/early-voting/">VA</a> shows its data in a dashboard rendered by client-side JavaScript (which may superficially sound like the last bullet but has different implications for the types of scraping tools that could lend a hand<sup>1</sup>)</li>
-<li><a href="https://elections.sos.ga.gov/Elections/voterabsenteefile.do">GA</a> and <a href="https://earlyvoting.texas-election.com/Elections/getElectionEVDates.do">TX</a> offer downloadable data which requires navigating through a Java serverlet UI<sup>2</sup> to access</li>
-<li><a href="https://app.powerbigov.us/view?r=eyJrIjoiMGEwN2E0MzUtOTA0OC00ZDA3LThjMTItZDZhYTBjYjU5ZjhjIiwidCI6IjJkMGYxZGI2LWRkNTktNDc3Mi04NjVmLTE5MTQxNzVkMDdjMiJ9">RI</a> publishes data in a PowerBI dashboard</li>
-<li>AL, AZ, MI, IA, and PA were among those that didn’t publish data publicly and required Professor McDonald to directly contact their Secretary of State offices</li>
-</ul>
-<p>The disparities in these data publishing formats and access patterns seemed like an interesting opportunity to compare different tools for data extraction. This posts starts out with a few trivial examples of using <code>requests</code> for HTTP requests and <code>BeautifulSoup</code> for static web scraping in order to understand the strengths and limitations for each tool and the unmet needs that browser automation helps address. We’ll then switch over to <code>Playwright</code> (with a touch of <code>pytesseract</code>) for a sampling of the types of challenges that browser automation can tackle.</p>
-<ul>
-<li>NC: Direct Download with <code>urllib.request</code></li>
-<li>WI: Direct Download with a Dynamic URL</li>
-<li>AK: Web scraping with <code>BeautifulSoup</code></li>
-<li>VA: Web scraping with <code>Playwright</code></li>
-<li>TX: Browser automation with <code>Playwright</code></li>
-<li>RI: Arbitrary UIs with OCR</li>
-</ul>
-<section id="nc-direct-download" class="level2">
-<h2 class="anchored" data-anchor-id="nc-direct-download">NC: Direct Download</h2>
-<p><img src="https://emilyriederer.com/post/states-scraping-automation/nc.PNG" class="img-fluid"></p>
-<p>North Carolina provides one of the simplest paths to accessing paths to downloading its data. Data files live in a public S3 bucket with static file names based on the election date. Granular voter-level data can be downloaded easily with the <code>urllib.request</code> library.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> urllib.request</span>
-<span id="cb1-2"></span>
-<span id="cb1-3">url <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2020_11_03/absentee_counts_county_20201103.csv'</span></span>
-<span id="cb1-4">urllib.request.urlretrieve(url, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'nc.csv'</span>)</span></code></pre></div>
-</div>
-</section>
-<section id="wi-direct-download-with-dynamic-url" class="level2">
-<h2 class="anchored" data-anchor-id="wi-direct-download-with-dynamic-url">WI: Direct Download with Dynamic URL</h2>
-<p><img src="https://emilyriederer.com/post/states-scraping-automation/wi.PNG" class="img-fluid"></p>
-<p>Wisconsin has similarly accessible data files available for download. However, when they update files during an election cycle, each new file is named by publishing date. So, unlike North Carolina, the URL of interest varies and it’s not altogether obvious what the most current one is.</p>
-<p>We can still use <code>requests</code> to download this data, but it requires more caution in constructing the URL. The <code>retrieve_date()</code> function requires an ISO 8601 date to be passed in and attempts to construct a URL from it. Our <code>GET</code> request returns a status code of 500 if no such path exists, at which point we can throw an exception. Some calling program could decrement the date and try again.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> requests</span>
-<span id="cb2-2"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> datetime</span>
-<span id="cb2-3"></span>
-<span id="cb2-4"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> retrieve_date(date): </span>
-<span id="cb2-5"></span>
-<span id="cb2-6">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># format dates as needed</span></span>
-<span id="cb2-7">  dt <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> datetime.datetime.strptime(date, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%d</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'</span>)</span>
-<span id="cb2-8">  yyyy_mm <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> dt.strftime(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%Y-%m'</span>)</span>
-<span id="cb2-9">  mm_d_yyyy <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> dt.strftime(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%m-</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%#d</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">-%Y'</span>)</span>
-<span id="cb2-10">  </span>
-<span id="cb2-11">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># download csv</span></span>
-<span id="cb2-12">  url <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">f'https://elections.wi.gov/sites/elections.wi.gov/files/</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">{</span>yyyy_mm<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">}</span><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">/AbsenteeCounts_County%20</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">{</span>mm_d_yyyy<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">}</span><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">.csv'</span></span>
-<span id="cb2-13">  req <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> requests.get(url)</span>
-<span id="cb2-14">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span> req.status_code <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">500</span>:</span>
-<span id="cb2-15">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">raise</span> <span class="pp" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">Exception</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Resource not found'</span>)</span>
-<span id="cb2-16">  content <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> req.content</span>
-<span id="cb2-17">  </span>
-<span id="cb2-18">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># write to file</span></span>
-<span id="cb2-19">  csv <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'wi.csv'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'wb'</span>)</span>
-<span id="cb2-20">  csv.write(content)</span>
-<span id="cb2-21">  csv.close()</span></code></pre></div>
-</div>
-</section>
-<section id="ak-web-scraping-with-beautifulsoup" class="level2">
-<h2 class="anchored" data-anchor-id="ak-web-scraping-with-beautifulsoup">AK: Web Scraping with <code>BeautifulSoup</code></h2>
-<p><img src="https://emilyriederer.com/post/states-scraping-automation/ak.PNG" class="img-fluid"></p>
-<p>Instead of provided a direct download, Arkansas publishes data to its election website by rendering a static HTML table with server-side PHP. As with before, we can retrieve this content with <code>requests</code>, but now we need to parse the output ourselves. Specifically, we want to iterate over table rows such as this:</p>
-<pre><code>&lt;tr&gt;
-  &lt;td&gt;Online Delivery&lt;/td&gt;
-  &lt;td&gt;16,446&lt;/td&gt;
-  &lt;td&gt;12,026&lt;/td&gt;
-&lt;/tr&gt;</code></pre>
-<p>For this, we can use <code>BeautifulSoup</code> to iterate through the table and save the results to a CSV file with <code>pandas</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">from</span> bs4 <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> BeautifulSoup</span>
-<span id="cb4-2"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> requests</span>
-<span id="cb4-3"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> datetime</span>
-<span id="cb4-4"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> pd</span>
-<span id="cb4-5"></span>
-<span id="cb4-6">url <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"https://www.elections.alaska.gov/doc/info/statstable.php"</span></span>
-<span id="cb4-7">html_content <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> requests.get(url).text</span>
-<span id="cb4-8">soup <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> BeautifulSoup(html_content, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"lxml"</span>)</span>
-<span id="cb4-9">table <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> soup.find(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"table"</span>, attrs <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> {<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"class"</span>:<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"lctbl"</span>})</span>
-<span id="cb4-10"></span>
-<span id="cb4-11">data <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> []</span>
-<span id="cb4-12">rows <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> table.tbody.find_all(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"tr"</span>)</span>
-<span id="cb4-13"></span>
-<span id="cb4-14"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># iterate over rows excluding first (header) and last (total)</span></span>
-<span id="cb4-15"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> r <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">len</span>(rows) <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>): </span>
-<span id="cb4-16"></span>
-<span id="cb4-17">  row <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> rows[r]</span>
-<span id="cb4-18">  vals <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> [d.get_text() <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> row.find_all(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"td"</span>)]</span>
-<span id="cb4-19">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># convert count columns to numeric</span></span>
-<span id="cb4-20">  vals[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">int</span>(vals[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>].replace(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">''</span>))</span>
-<span id="cb4-21">  vals[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>] <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">int</span>(vals[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>].replace(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">''</span>))</span>
-<span id="cb4-22">    </span>
-<span id="cb4-23">  data.append(vals)</span>
-<span id="cb4-24">  </span>
-<span id="cb4-25"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># save resulting data</span></span>
-<span id="cb4-26">df <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> pd.DataFrame(data, columns <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'channel'</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'n_issued'</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'n_returned'</span>])</span>
-<span id="cb4-27">df[<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'dt_updated'</span>] <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> dt_fmt</span>
-<span id="cb4-28">df.to_csv(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'ak.csv'</span>, index <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">False</span>)</span></code></pre></div>
-</div>
-</section>
-<section id="va-web-scraping-with-playwright" class="level2">
-<h2 class="anchored" data-anchor-id="va-web-scraping-with-playwright">VA: Web Scraping with <code>Playwright</code></h2>
-<p><img src="https://emilyriederer.com/post/states-scraping-automation/va.PNG" class="img-fluid"></p>
-<p>Virginia seems superficially similar to Arkansas insomuch as data is provided in an in-browser display. However, since this display is constructed with browser-side JavaScript, it won’t appear in the content that results from a call to <code>requests.get()</code>.</p>
-<p>Many different approaches exist to force JavaScript to update the DOM before accessing the source<sup>3</sup>. Arguably Microsoft’s <code>Playwright</code> is overly complicated for this situation, but I use it for this example since it is a flexible tool for browser automation, and the next three examples help demonstrate the variety of features it offers.</p>
-<p>The following script navigates to Virginia’s website with a headless Firefox browser and then extracts vote counts stored as attributes in the bar chart tooltip. Each bar is create with script like this:</p>
-<pre><code>&lt;rect x="95.333" y="101" width="7.333" height="104" 
-      data-toggle="popever" data-placement="top" title 
-      data-content="In-Person: 140&lt;br /&gt;Mail: 94&lt;br /&gt;Total: 234" 
-      data-original-title="Sep 30"&gt;
-&lt;/rect&gt;</code></pre>
-<p>As before, results are then coerced into a <code>pandas</code> dataframe and written to a <code>csv</code>.</p>
-<p>The following script defines a <code>retrieve_county()</code> function to parse out this information for a single county.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">from</span> playwright.sync_api <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> sync_playwright</span>
-<span id="cb6-2"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> datetime</span>
-<span id="cb6-3"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> re</span>
-<span id="cb6-4"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> pd</span>
-<span id="cb6-5"></span>
-<span id="cb6-6"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> retrieve_county(county, page):</span>
-<span id="cb6-7"></span>
-<span id="cb6-8">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># navigate to county-specific page</span></span>
-<span id="cb6-9">  county_url <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> county.lower().replace(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">' '</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'-'</span>)</span>
-<span id="cb6-10">  page.goto(<span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">f'https://www.vpap.org/elections/early-voting/year-2020/</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">{</span>county_url<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">}</span><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">-va'</span>)</span>
-<span id="cb6-11">  </span>
-<span id="cb6-12">  county_records <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> []</span>
-<span id="cb6-13">  </span>
-<span id="cb6-14">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">100</span>):</span>
-<span id="cb6-15">  </span>
-<span id="cb6-16">    selector <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">f'#timeline g.popovers rect:nth-of-type(</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">{</span>n<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">}</span><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">)'</span></span>
-<span id="cb6-17">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">try</span>:</span>
-<span id="cb6-18">      date <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> page.get_attribute(selector, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'data-original-title'</span>)</span>
-<span id="cb6-19">      vals <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> page.get_attribute(selector, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'data-content'</span>)</span>
-<span id="cb6-20">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">except</span>:</span>
-<span id="cb6-21">      <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">break</span></span>
-<span id="cb6-22"></span>
-<span id="cb6-23">    <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># process data into tabular structure</span></span>
-<span id="cb6-24">    vals_method <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> re.search(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'In-Person: (\d+)&lt;br /&gt;Mail: (\d+)&lt;br /&gt;Total: (\d+)'</span>, vals.replace(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">''</span>))</span>
-<span id="cb6-25">    date_parse <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> datetime.datetime.strptime(date <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">' 2020'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%b </span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%d</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;"> %Y'</span>).strftime(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%d</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'</span>)</span>
-<span id="cb6-26">    county_records.append([county, date_parse, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'In-Person'</span>, vals_method.group(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>)])</span>
-<span id="cb6-27">    county_records.append([county, date_parse, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Mail'</span>, vals_method.group(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>)])</span>
-<span id="cb6-28">    </span>
-<span id="cb6-29">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">return</span> county_records</span></code></pre></div>
-</div>
-<p>As a low fidelity but transparent example of it in operation, I show it looping over a few counties. In reality, we’d add more exception handling or save interim results separately so failures in any one county did not take down the whole process.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">with</span> sync_playwright() <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> p:</span>
-<span id="cb7-2"></span>
-<span id="cb7-3">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># set up</span></span>
-<span id="cb7-4">  browser <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> p.firefox.launch()</span>
-<span id="cb7-5">  context <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> browser.new_context(accept_downloads <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">True</span>)</span>
-<span id="cb7-6">  page <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> context.new_page()</span>
-<span id="cb7-7">  </span>
-<span id="cb7-8">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># iterate over counties</span></span>
-<span id="cb7-9">  county <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Accomack County'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Albemarle County'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Alexandria City'</span>]</span>
-<span id="cb7-10">  records <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> []</span>
-<span id="cb7-11">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> c <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> county:</span>
-<span id="cb7-12">    records <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+=</span> retrieve_county(c, page)</span>
-<span id="cb7-13">  </span>
-<span id="cb7-14">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># save resulting data</span></span>
-<span id="cb7-15">  df <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> pd.DataFrame(records, columns <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'county'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'date'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'channel'</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'n'</span>])</span>
-<span id="cb7-16">  df.to_csv(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'va.csv'</span>, index <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">False</span>)</span>
-<span id="cb7-17"></span>
-<span id="cb7-18">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># cleanup</span></span>
-<span id="cb7-19">  page.close()</span>
-<span id="cb7-20">  context.close()</span>
-<span id="cb7-21">  browser.close()</span></code></pre></div>
-</div>
-<p>This creates the following data structure:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 x 4
-  county          date       channel       n
-  &lt;chr&gt;           &lt;date&gt;     &lt;chr&gt;     &lt;dbl&gt;
-1 Accomack County 2020-09-17 In-Person     0
-2 Accomack County 2020-09-17 Mail          0
-3 Accomack County 2020-09-18 In-Person   212
-4 Accomack County 2020-09-18 Mail          0
-5 Accomack County 2020-09-19 In-Person     0
-6 Accomack County 2020-09-19 Mail          0</code></pre>
-</div>
-</div>
-</section>
-<section id="tx-browser-automation-with-playwright" class="level2">
-<h2 class="anchored" data-anchor-id="tx-browser-automation-with-playwright">TX: Browser Automation with <code>Playwright</code></h2>
-<p><img src="https://emilyriederer.com/post/states-scraping-automation/tx.gif" class="img-fluid"></p>
-<p>Next up, we come to Texas. Texas, somewhat paradoxically, generously provides rich data (by day, by voting method, by county, and even <em>by person</em>) and yet does so in a way that is particularly tedious to access. Navigating to the data download requires selecting an election and then a voting date out of a UI before clicking a button in a Java serverlet<sup>4</sup> that triggers the creation and downloading of a report as shown above.</p>
-<p>This is where <code>Playwright</code> really shines. As with Virginia, it loads the Texas’ data in a headless<sup>5</sup> browser. But beyond just opening a browser, <code>Playwright</code> can interact with it in the same way as a user: selecting options from menus, clicking buttons, and more.</p>
-<p>In the <code>retrieve_date()</code> function below, I tell my browser exactly what I want it to do: go to the website, pick an election, click submit, pick a date, click submit, and then finally click a button to download data.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">from</span> playwright.sync_api <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> sync_playwright</span>
-<span id="cb9-2"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> datetime</span>
-<span id="cb9-3"></span>
-<span id="cb9-4"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">def</span> retrieve_date(date, page):</span>
-<span id="cb9-5"></span>
-<span id="cb9-6">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># navigate to date-specific page </span></span>
-<span id="cb9-7">  target_date <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> datetime.datetime.strptime(date, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%Y%m</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%d</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'</span>)</span>
-<span id="cb9-8">  target_date_str <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> target_date.strftime(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%Y-%m-</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%d</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;"> 00:00:00.0'</span>)</span>
-<span id="cb9-9">  target_file <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'tx-'</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> target_date.strftime(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'%Y%m</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%d</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'</span>) <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'.csv'</span></span>
-<span id="cb9-10">  </span>
-<span id="cb9-11">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># pick election</span></span>
-<span id="cb9-12">  page.goto(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'https://earlyvoting.texas-election.com/Elections/getElectionDetails.do'</span>)</span>
-<span id="cb9-13">  page.select_option(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'#idElection'</span>, label <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"2020 NOVEMBER 3RD GENERAL ELECTION"</span>)</span>
-<span id="cb9-14">  page.click(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'#electionsInfoForm button'</span>)</span>
-<span id="cb9-15">  page.wait_for_selector(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'#selectedDate'</span>)</span>
-<span id="cb9-16">  </span>
-<span id="cb9-17">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># pick day</span></span>
-<span id="cb9-18">  page.select_option(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'#selectedDate'</span>, value <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> target_date_str)</span>
-<span id="cb9-19">  page.click(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'#electionsInfoForm button:nth-child(2)'</span>)</span>
-<span id="cb9-20">  page.wait_for_selector(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'"Generate Statewide Report"'</span>)</span>
-<span id="cb9-21"></span>
-<span id="cb9-22">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># download report  </span></span>
-<span id="cb9-23">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">with</span> page.expect_download() <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> download_info:</span>
-<span id="cb9-24">    page.click(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'"Generate Statewide Report"'</span>)</span>
-<span id="cb9-25">  download <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> download_info.value</span>
-<span id="cb9-26">  download.save_as(target_file)</span></code></pre></div>
-</div>
-<p>This function could then be called for one or more dates of interest:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">with</span> sync_playwright() <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> p:</span>
-<span id="cb10-2"></span>
-<span id="cb10-3">  browser <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> p.firefox.launch()</span>
-<span id="cb10-4">  context <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> browser.new_context(accept_downloads <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">True</span>)</span>
-<span id="cb10-5">  page <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> context.new_page()</span>
-<span id="cb10-6">  </span>
-<span id="cb10-7">  dates <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'20201020'</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'20201021'</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'20201022'</span>]</span>
-<span id="cb10-8">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> dates:</span>
-<span id="cb10-9">    retrieve_date(d, page)</span>
-<span id="cb10-10"></span>
-<span id="cb10-11">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># cleanup</span></span>
-<span id="cb10-12">  page.close()</span>
-<span id="cb10-13">  context.close()</span>
-<span id="cb10-14">  browser.close()</span></code></pre></div>
-</div>
-</section>
-<section id="ri-arbitrary-uis-with-ocr" class="level2">
-<h2 class="anchored" data-anchor-id="ri-arbitrary-uis-with-ocr">RI: Arbitrary UIs with OCR</h2>
-<p><img src="https://emilyriederer.com/post/states-scraping-automation/ri.png" class="img-fluid"></p>
-<p>The ability to navigate around a UI starts to blend the capabilities of <code>Playwright</code>’s <em>browser automation</em> with the more full-fledged concept of robotic process automation (RPA). RPA tools can similarly navigate arbitrary non-browser-based UIs to perform manual tasks with great speed. Abritrary UIs lack many of the features we’ve been using so far such as Xpaths and CSS IDs and classes to tell our tools where to do what. Instead, their often have built-in optical character recognition (OCR) to recognize buttons or input boxes “on sight”.</p>
-<p><code>Playwright</code> doesn’t quite have these capabilities built in natively, but it does offer users the ability to screenshot their browser. This allows us to pass the screenshot to <code>pytesseract</code> for OCR in a similar manner.</p>
-<p>This techniques comes in handy for Rhode Island whose data is hosted in an embedded PowerBI app. The following script navigates to and screenshots the app, converts the resulting image to text, extracts the total vote count, and writes the results to PDFs.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> cv2</span>
-<span id="cb11-2"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> pytesseract</span>
-<span id="cb11-3"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">from</span> playwright.sync_api <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> sync_playwright</span>
-<span id="cb11-4"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> time</span>
-<span id="cb11-5"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> re</span>
-<span id="cb11-6"><span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> pd</span>
-<span id="cb11-7">pytesseract.pytesseract.tesseract_cmd <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'C:</span><span class="ch" style="color: #20794D;
-background-color: null;
-font-style: inherit;">\\</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">Program Files</span><span class="ch" style="color: #20794D;
-background-color: null;
-font-style: inherit;">\\</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">Tesseract-OCR</span><span class="ch" style="color: #20794D;
-background-color: null;
-font-style: inherit;">\\</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">tesseract.exe'</span></span>
-<span id="cb11-8"></span>
-<span id="cb11-9"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">with</span> sync_playwright() <span class="im" style="color: #00769E;
-background-color: null;
-font-style: inherit;">as</span> p:</span>
-<span id="cb11-10"></span>
-<span id="cb11-11">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># set up</span></span>
-<span id="cb11-12">  browser <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> p.firefox.launch()</span>
-<span id="cb11-13">  context <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> browser.new_context(accept_downloads <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">True</span>)</span>
-<span id="cb11-14">  page <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> context.new_page()</span>
-<span id="cb11-15">  page.goto(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'https://app.powerbigov.us/view?r=eyJrIjoiMGEwN2E0MzUtOTA0OC00ZDA3LThjMTItZDZhYTBjYjU5ZjhjIiwidCI6IjJkMGYxZGI2LWRkNTktNDc3Mi04NjVmLTE5MTQxNzVkMDdjMiJ9'</span>)</span>
-<span id="cb11-16">  page.wait_for_load_state(state <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'networkidle'</span>)</span>
-<span id="cb11-17">  time.sleep(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">30</span>)</span>
-<span id="cb11-18">  page.screenshot(path <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'ri.png'</span>)</span>
-<span id="cb11-19">  </span>
-<span id="cb11-20">  <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># cleanup</span></span>
-<span id="cb11-21">  page.close()</span>
-<span id="cb11-22">  context.close()</span>
-<span id="cb11-23">  browser.close()</span>
-<span id="cb11-24"></span>
-<span id="cb11-25"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># extract text</span></span>
-<span id="cb11-26">img <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> cv2.imread(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'ri.png'</span>)</span>
-<span id="cb11-27">text <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> pytesseract.image_to_string(img)</span>
-<span id="cb11-28">n_tot <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> re.search(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Turnout</span><span class="ch" style="color: #20794D;
-background-color: null;
-font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">(\d+)'</span>, text.replace(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">''</span>)).group(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>)</span>
-<span id="cb11-29">n_mail <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> re.search(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'Mail Ballots Received by BOE</span><span class="ch" style="color: #20794D;
-background-color: null;
-font-style: inherit;">\n\n</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">(\d+)'</span>, text.replace(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">','</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">''</span>)).group(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>)</span>
-<span id="cb11-30"></span>
-<span id="cb11-31"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># write output</span></span>
-<span id="cb11-32">df <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> pd.DataFrame([[n_tot, n_mail]], columns <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'n_tot'</span>,<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'n_mail'</span>])</span>
-<span id="cb11-33">df.to_csv(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'ri.csv'</span>, index <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="va" style="color: #111111;
-background-color: null;
-font-style: inherit;">False</span>)</span></code></pre></div>
-</div>
-<p>This creates the following data structure:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1 x 2
-   n_tot n_mail
-   &lt;dbl&gt;  &lt;dbl&gt;
-1 305724 156178</code></pre>
-</div>
-</div>
-</section>
-<section id="what-next" class="level2">
-<h2 class="anchored" data-anchor-id="what-next">What Next?</h2>
-<p>Simply <em>accessing</em> data is only the first in many steps towards unifying and analyzing it. The full scope of the US Elections Project requires far more numerous and challenging steps including:</p>
-<ul>
-<li>Understanding the exact schema and variables of each data set</li>
-<li>Understanding when historical data may be modified or corrected and adjusting accordingly</li>
-<li>Accounting for sudden changes to reporting formats, cadences, or locations</li>
-<li>Obtaining data from states where the <code>robots.txt</code> prevents scraping (I’m looking at you, IL)</li>
-<li>Building relationships with Secretary of States’ offices where data is not publicly available</li>
-</ul>
-<p>Regardless, surveying what different states choose to publish and how they choose to share it provides an interesting opportunity to think about data access, usability, and available technologies for data retrieval.</p>
-
-
-</section>
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>Traditional tools like python’s <code>BeautifulSoup</code> or R’s <code>rvest</code> don’t play nicely with dynamic websites where client-side JavaScript is modifying the DOM↩︎</p></li>
-<li id="fn2"><p>Or so <a href="https://stackoverflow.com/questions/3597582/why-do-java-webapps-use-do-extension-where-did-it-come-from">this StackExchange</a> would suggest based on the <code>.do</code> extension↩︎</p></li>
-<li id="fn3"><p>Selenium and PhantomJS are popular related tools↩︎</p></li>
-<li id="fn4"><p>The significance of this is that this button is not like clicking a link with a specific web URL.↩︎</p></li>
-<li id="fn5"><p>Headless basically just means the browser doesn’t physically open on our computer so we don’t see it. Time and compute resources aren’t wasted on “painting” the browser to show us what is happening. However, if you enjoy watching your computer work in a “Look Mom, no hands!” sort of way, you can use the <code>headless = False</code> option when launching the browser.↩︎</p></li>
-</ol>
-</section></div> ]]></description>
-  <category>data</category>
-  <category>elt</category>
-  <category>python</category>
-  <guid>https://emilyriederer.com/post/states-scraping-automation/</guid>
-  <pubDate>Sat, 08 May 2021 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/states-scraping-automation/featured.png" medium="image" type="image/png" height="97" width="144"/>
 </item>
 </channel>
 </rss>

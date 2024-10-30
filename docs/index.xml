@@ -9,8 +9,173 @@
 <link>https://emilyriederer.com/</link>
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.542</generator>
-<lastBuildDate>Sat, 20 Jan 2024 06:00:00 GMT</lastBuildDate>
+<generator>quarto-1.4.554</generator>
+<lastBuildDate>Thu, 15 Aug 2024 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Python Rgonomics</title>
+  <link>https://emilyriederer.com/talk/python-rgonomics/</link>
+  <description><![CDATA[ 
+
+
+
+
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
+<span><i class="bi bi-play"></i> Video Coming Soon </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo/">Post - Python Rgonomics</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo-polars/">Post - Advanced <code>polars</code> versus <code>dplyr</code></a> </span></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tooling changes quickly. Since this talk occured, Astral’s <code>uv</code> project has come out as a very strong contender to replace <code>pyenv</code>, <code>pdm</code>, and more of the devtools part of a python stack.</p>
+</div>
+</div>
+<p>Data science languages are increasingly interoperable with advances like Arrow, Quarto, and Posit Connect. But data scientists are not. Learning the basic syntax of a new language is easy, but relearning the ergonomics that help us be hyperproductive is hard. In this talk, I will explore the influential ergonomics of R’s tidyverse. Next, I will recommend a curated stack that mirrors these ergonomics while also being genuinely truly pythonic. In particular, we will explore packages (polars, seaborn objects, greattables), frameworks (Shiny, Quarto), dev tools (pyenv, ruff, and pdm), and IDEs (VS Code extensions). The audience should leave feeling inspired to try python while benefiting from their current knowledge and expertise.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
+<div id="slides" style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
+<p>Video to come.</p>
+</div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>python</category>
+  <category>rstats</category>
+  <guid>https://emilyriederer.com/talk/python-rgonomics/</guid>
+  <pubDate>Thu, 15 Aug 2024 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/python-rgonomics/featured.png" medium="image" type="image/png" height="78" width="144"/>
+</item>
+<item>
+  <title>Crosspost: Data discovery doesn’t belong in ad hoc queries</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/data-discovery-ad-hoc/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Credible documentation is the best tool for working with data. Short of that, labor (and computational) intensive validation may be required. Recently, I had the opportunity to expand on these ideas in a <a href="https://www.selectstar.com/resources/data-discovery-doesnt-belong-in-ad-hoc-queries">cross-post with Select Star</a>. I explore how a “good” data analyst can interrogate a dataset with expensive queries and, more importantly, how best-in-class data products eliminate the need for this.</p>
+<p>My post is reproduced below.</p>
+<hr>
+<p>In the current environment of decreasing headcount and rising cloud costs, the benefits of data management are more objective and tangible than ever. Done well, data management can reduce the cognitive and computational costs of working with enterprise-scale data.</p>
+<p>Analysts often jump into new-to-them tables to answer business questions. Without a robust data platform, this constant novelty leads analysts down one of two paths. Either they boldly gamble that they have found intuitive and relevant data or they painstakingly hypothesize and validate assumptions for each new table. The latter approach leads to more trustworthy outcomes, but it comes at the cost of human capital and computational power.</p>
+<p>Consider an analyst at an e-commerce company asking the question “How many invoices did we generate for fulfilled orders to Ohio in June?” while navigating unfamiliar tables. In this post, we explore prototypical queries analysts might have to run to validate a new-to-them table. Many of these are “expensive” queries requiring full table scans. Next, we’ll examine how a data discovery platform can obviate this effort.</p>
+<p>The impact of this inefficiency may range from a minor papercut to a major cost sink depending on the sizes of your analyst community, historical enterprise data, and warehouse.</p>
+<section id="preventable-data-discovery-queries" class="level2">
+<h2 class="anchored" data-anchor-id="preventable-data-discovery-queries">6 Preventable Data Discovery Queries</h2>
+<section id="what-columns-are-in-the-table" class="level3">
+<h3 class="anchored" data-anchor-id="what-columns-are-in-the-table">1. What columns are in the table?</h3>
+<p>Without a good data catalog, analysts will first need to check what fields exist in a table. While there may be lower cost ways to do this like looking at a pre-rendered preview (ala BigQuery), using a DESCRIBE statement (ala Spark), or limiting their query to the first few rows, some analysts may default to requesting all the data.</p>
+<pre><code>select *
+from invoices;</code></pre>
+</section>
+<section id="is-the-table-still-live-and-updating" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-table-still-live-and-updating">2. Is the table still live and updating?</h3>
+<p>After establishing that a table has potentially useful information, analysts should next wonder if the data is still live and updating. First they might check a date field to see if the table seems “fresh”.</p>
+<pre><code>select max(order_date) 
+from invoices;</code></pre>
+<p>But, of course, tables often have multiple date fields. For example, an e-commerce invoice table might have fields for both the date an order was placed and the date the record was last modified. So, analysts may guess-and-check a few of these fields to determine table freshness.</p>
+<pre><code>select max(updated_date) 
+from invoices;</code></pre>
+<p>After identifying the correct field, there’s still a question of refresh cadence. Are records added hourly? Daily? Monthly? Lacking system-level metrics and metadata on the upstream table freshness, analysts are still left in the dark. So, once again, they can check empirically by looking at the frequency of the date field.</p>
+<pre><code>select max(updated_date), count(1) as n
+from invoices
+group by 1;</code></pre>
+</section>
+<section id="what-is-the-grain-of-the-table" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-grain-of-the-table">3. What is the grain of the table?</h3>
+<p>Now that the table is confirmed to be usable, the question becomes how to use it. Specifically, to credibly query and join the table, analysts next must determine its grain. Often, they start with a guess informed by the business context and data modeling conventions, such as assuming an invoice table is unique by order_id.</p>
+<pre><code>select count(1) as n, count(distinct order_id)
+from invoices;</code></pre>
+<p>‍However, if they learn that order_id has a different cardinality then the number of records, they must ask why. So, once again, they scan the full table to find examples of records with shared order_id values.</p>
+<pre><code>select *
+from invoices
+qualify count(1) over (partition by order_id) &gt; 1
+order by order_id
+limit 10;</code></pre>
+<p>Eyeballing the results of this query, the analysts might notice that the same order_id value can coincide with different ship_id values, as a separate invoice is generated for each part of an order when a subset of items is shipped. With this new hypothesis, the analyst iterates on the validation of the grain.</p>
+<pre><code>select count(1) as n, count(distinct order_id, ship_id)
+from invoices;</code></pre>
+</section>
+<section id="what-values-can-categorical-variables-take" class="level3">
+<h3 class="anchored" data-anchor-id="what-values-can-categorical-variables-take">4. What values can categorical variables take?</h3>
+<p>The prior questions all involved table structure. Only now can an analyst finally begin to investigate the table’s content. A first step might be to understand the valid values for categorical variables. For example, if our analyst wanted to ensure only completed orders were queried, they might inspect the potential values of the order_status_id field to determine which values to include in a filter.</p>
+<pre><code>select distinct order_status_id
+from invoices;</code></pre>
+<p>They’ll likely repeat this process for many categorical variables of interest. Since our analyst is interested in shipments specifically to Ohio, they might also inspect the cardinality of the ship_state field to ensure they correctly format the identifier.</p>
+<pre><code>select distinct ship_state
+from invoices;</code></pre>
+</section>
+<section id="do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls" class="level3">
+<h3 class="anchored" data-anchor-id="do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls">5. Do numeric columns have nulls or ‘sentinel’ values to encode nulls?</h3>
+<p>Similarly, analysts may wish to audit other variables for null handling or sentinel values by inspecting column-level statistics.</p>
+<pre><code>select distinct ship_state
+from invoices;</code></pre>
+</section>
+<section id="is-the-data-stored-with-partitioning-or-clustering-keys" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-data-stored-with-partitioning-or-clustering-keys">6. Is the data stored with partitioning or clustering keys?</h3>
+<p>Inefficient queries aren’t only a symptom of ad hoc data validation. More complex and reused logic may also be written wastefully when table metadata like partitioning and clustering keys is not available to analysts. For example, an analyst might be able to construct a reasonable query filtering either on a shipment date or an order date, but if only one of these is a partitioning or clustering key, different queries could have substantial performance differences.</p>
+</section>
+</section>
+<section id="understanding-your-data-without-relying-on-queries" class="level2">
+<h2 class="anchored" data-anchor-id="understanding-your-data-without-relying-on-queries">Understanding Your Data Without Relying on Queries</h2>
+<p>Analysts absolutely should ask themselves these types of questions when working with new data. However, it should not be analysts’ job to individually answer these questions by running SQL queries. Instead, best-in-class data documentation can provide critical information through a data catalog like Select Star.</p>
+<section id="what-columns-are-in-the-table-and-do-we-need-a-table" class="level3">
+<h3 class="anchored" data-anchor-id="what-columns-are-in-the-table-and-do-we-need-a-table">1. What columns are in the table? And do we need a table?</h3>
+<p>Comprehensive search across all of an organization’s assets can help users quickly identify the right resources based on table names, field names, or data descriptions. Even better, search can incorporate observed tribal knowledge of table popularity and common querying patterns to prioritize the most relevant results. Moreover, when search also includes downstream data products like pre-built reports and dashboards, analysts might sometimes find an answer to their question exists off the shelf.</p>
+</section>
+<section id="is-the-table-still-live-and-updating-and-are-its-own-sources-current" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-table-still-live-and-updating-and-are-its-own-sources-current">2. Is the table still live and updating? And are its own sources current?</h3>
+<p>Data is not a static artifact so metadata should not be either. After analysts identify a candidate table, they should have access to real-time operational information like table usage, table size, refresh date, and upstream dependencies to help confirm whether the table is a reliable resource.</p>
+<p>Ideally, analysts can interrogate not just the freshness of a final table but also its dependencies by exploring the table’s data lineage.</p>
+</section>
+<section id="what-is-the-grain-of-the-table-and-how-does-it-relate-to-others" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-grain-of-the-table-and-how-does-it-relate-to-others">3. What is the grain of the table? And how does it relate to others?</h3>
+<p>Table grain should be clearly documented at the table level and emphasized in the data dictionary via references to primary and foreign keys. Beyond basic documentation, entity-relationship (ER) diagrams will help analysts gain a richer mental model of grains of how they can use these primary-foreign key relationships to link tables to craft information with the desired grain and fields. Alternatively, they can glean this information from the wisdom of the crowds if they have access to how others have queried and joined the data previously.</p>
+</section>
+<section id="what-values-can-categorical-variables-take-do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls" class="level3">
+<h3 class="anchored" data-anchor-id="what-values-can-categorical-variables-take-do-numeric-columns-have-nulls-or-sentinel-values-to-encode-nulls">4. What values can categorical variables take? Do numeric columns have nulls or ‘sentinel’ values to encode nulls?</h3>
+<p>Information about proper expectations and handling of categorical and null values may be published as field definitions, pointed to lookup tables, implied in data tests, or illustrated in past queries. To drive consistency and offload redundant work from data producers, such field definitions can be propagated from upstream tables.</p>
+</section>
+<section id="is-the-data-stored-with-partitioning-or-clustering-keys-1" class="level3">
+<h3 class="anchored" data-anchor-id="is-the-data-stored-with-partitioning-or-clustering-keys-1">‍5. Is the data stored with partitioning or clustering keys?</h3>
+<p>Analysts cannot write efficient code if they don’t know where the efficiency gains lie. Table-level documentation should clearly highlight the use of clustering or partitioning files so analysts can use the most impactful variables in filters and joins. Here, consistency of documentation is paramount; analysts may not always be incented to care about query efficiency, so if this information is hard to find or rarely available, they can be easily dissuaded from looking.</p>
+<p>Beyond a poor user experience, poor data discoverability creates inefficiency and added cost. Even if you don’t have large scale historical data or broad data user communities today, slow queries and tedious work still detract from data team productivity while introducing context-switching and chaos. By focusing on improving data discoverability, you can streamline workflows and enhance the overall efficiency of your data operations.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>data</category>
+  <category>workflow</category>
+  <category>elt</category>
+  <category>crosspost</category>
+  <guid>https://emilyriederer.com/post/data-discovery-ad-hoc/</guid>
+  <pubDate>Thu, 18 Jul 2024 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/data-discovery-ad-hoc/featured.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
 <item>
   <title>Base Python Rgonomic Patterns</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -2976,65 +3141,6 @@ Note
   <guid>https://emilyriederer.com/post/grouping-data-quality-crosspost/</guid>
   <pubDate>Tue, 17 Jan 2023 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/grouping-data-quality-crosspost/featured.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>Causal and Associational Language in Observational Health Research: A Systematic Evaluation</title>
-  <dc:creator>Noah Haber, et al</dc:creator>
-  <link>https://emilyriederer.com/publication/causal-language/</link>
-  <description><![CDATA[ 
-
-
-
-<p>We estimated the degree to which language used in the high-profile medical/public health/epidemiology literature implied causality using language linking exposures to outcomes and action recommendations; examined disconnects between language and recommendations; identified the most common linking phrases; and estimated how strongly linking phrases imply causality. We searched for and screened 1,170 articles from 18 high-profile journals (65 per journal) published from 2010-2019. Based on written framing and systematic guidance, 3 reviewers rated the degree of causality implied in abstracts and full text for exposure/outcome linking language and action recommendations. Reviewers rated the causal implication of exposure/outcome linking language as none (no causal implication) in 13.8%, weak in 34.2%, moderate in 33.2%, and strong in 18.7% of abstracts. The implied causality of action recommendations was higher than the implied causality of linking sentences for 44.5% or commensurate for 40.3% of articles. The most common linking word in abstracts was “associate” (45.7%). Reviewers’ ratings of linking word roots were highly heterogeneous; over half of reviewers rated “association” as having at least some causal implication. This research undercuts the assumption that avoiding “causal” words leads to clarity of interpretation in medical research.</p>
-
-
-
- ]]></description>
-  <category>causal</category>
-  <guid>https://emilyriederer.com/publication/causal-language/</guid>
-  <pubDate>Sat, 19 Nov 2022 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/publication/causal-language/featured.jpeg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>The Data (error) Generating Process</title>
-  <link>https://emilyriederer.com/talk/data-error-gen/</link>
-  <description><![CDATA[ 
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=LkfP4dEv11Q">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/grouping-data-quality/">Post - Why Group Data Tests?</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/grouping-data-quality-update/">Post - Grouped Data Tests in dbt-utils</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>Statisticians often approach probabilistic modeling by first understanding the conceptual data generating process. However, when validating messy real-world data, the technical aspects of the data generating process is largely ignored.</p>
-<p>In this talk, I will argue the case for developing more semantically meaningful and well-curated data tests by incorporating both conceptual and technical aspects of “how the data gets made”.</p>
-<p>To illustrate these concepts, we will explore the NYC subway rides open dataset to see how the simple act of reasoning about real-world events their collection through ETL processes can help craft far more sensitive and expressive data quality checks. I will also illustrate how to implement such checks based on new features which I recently contributed to the open-source <code>dbt-utils</code> package.</p>
-<p>Audience members should leave this talk with a clear framework in mind for ideating better tests for their own pipelines.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<div id="slides" style="width:100%; aspect-ratio:16/11;">
-<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
-</div>
-</div>
-<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/LkfP4dEv11Q" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>data</category>
-  <guid>https://emilyriederer.com/talk/data-error-gen/</guid>
-  <pubDate>Sat, 12 Nov 2022 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/data-error-gen/featured.png" medium="image" type="image/png" height="54" width="144"/>
 </item>
 </channel>
 </rss>

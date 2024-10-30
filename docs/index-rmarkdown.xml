@@ -9,7 +9,7 @@
 <link>https://emilyriederer.com/#category=rmarkdown</link>
 <atom:link href="https://emilyriederer.com/index-rmarkdown.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.542</generator>
+<generator>quarto-1.4.554</generator>
 <lastBuildDate>Thu, 21 Sep 2023 05:00:00 GMT</lastBuildDate>
 <item>
   <title>Operationalizing Column-Name Contracts with dbtplyr</title>

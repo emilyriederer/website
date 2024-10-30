@@ -2,6 +2,7 @@
   {
     "listing": "/talk/index.html",
     "items": [
+      "/talk/python-rgonomics/index.html",
       "/talk/data-downtime/index.html",
       "/talk/dbtplyr/index.html",
       "/talk/midterm-email/index.html",
@@ -32,6 +33,7 @@
   {
     "listing": "/post/index.html",
     "items": [
+      "/post/data-discovery-ad-hoc/index.html",
       "/post/py-rgo-base/index.html",
       "/post/docs-personas/index.html",
       "/post/py-rgo-polars/index.html",
@@ -83,6 +85,7 @@
       "/post/causal-design-patterns/index.html",
       "/post/column-name-contracts/index.html",
       "/post/rmarkdown-driven-development/index.html",
+      "/post/data-discovery-ad-hoc/index.html",
       "/post/py-rgo-base/index.html",
       "/post/docs-personas/index.html",
       "/post/py-rgo-polars/index.html",
@@ -125,6 +128,7 @@
       "/talk/causal-design-patterns/index.html",
       "/talk/organization/index.html",
       "/talk/rmarkdown-driven-development/index.html",
+      "/talk/python-rgonomics/index.html",
       "/talk/data-downtime/index.html",
       "/talk/midterm-email/index.html",
       "/talk/meetup-datafold/index.html",

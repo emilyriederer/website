@@ -1,412 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://emilyriederer.github.io/talk/tidycf/index.html</loc>
-    <lastmod>2023-10-19T22:59:59.006Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/index.html</loc>
-    <lastmod>2023-11-22T02:12:02.726Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/publication/index.html</loc>
-    <lastmod>2023-10-22T01:15:52.282Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/publication/causal-language/index.html</loc>
-    <lastmod>2023-10-16T13:50:28.834Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/team-of-packages/index.html</loc>
-    <lastmod>2023-10-16T13:50:25.730Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/sticker-driven-maintenance/index.html</loc>
-    <lastmod>2023-10-16T13:50:18.537Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/sql-r-flow/index.html</loc>
-    <lastmod>2023-10-16T13:50:14.218Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/snow/index.html</loc>
-    <lastmod>2023-10-16T13:50:08.409Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/shiny-db/index.html</loc>
-    <lastmod>2023-10-16T13:50:04.070Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/rmddd-tech-appendix/index.html</loc>
-    <lastmod>2023-10-16T13:49:58.471Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/rmarkdown-css-tips/index.html</loc>
-    <lastmod>2023-10-16T13:49:52.727Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/resource-roundup-r-industry/index.html</loc>
-    <lastmod>2023-10-16T13:49:49.095Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/projmgr/index.html</loc>
-    <lastmod>2023-10-16T13:49:46.053Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/ml-vegetables/index.html</loc>
-    <lastmod>2023-10-16T13:49:39.230Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/index.html</loc>
-    <lastmod>2023-10-13T22:52:22.718Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/grouping-data-quality/index.html</loc>
-    <lastmod>2023-10-16T13:49:27.132Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/duckdb-carolina/index.html</loc>
-    <lastmod>2023-10-16T13:49:21.458Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/data-error-gen/index.html</loc>
-    <lastmod>2023-10-16T13:49:16.193Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/convo-intro/index.html</loc>
-    <lastmod>2023-10-16T13:49:11.329Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/convo-dbt/index.html</loc>
-    <lastmod>2023-10-16T13:49:07.759Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/causal-design-patterns/index.html</loc>
-    <lastmod>2023-10-16T13:48:59.047Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/abstraction-extraction/index.html</loc>
-    <lastmod>2023-10-16T13:48:52.652Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/index.html</loc>
-    <lastmod>2023-12-31T00:03:50.464Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/about.html</loc>
-    <lastmod>2023-10-22T01:15:12.434Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/abstraction-airbyte/index.html</loc>
-    <lastmod>2023-10-16T13:48:51.302Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/causal-data/index.html</loc>
-    <lastmod>2023-10-16T19:24:50.517Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/column-name-contracts/index.html</loc>
-    <lastmod>2023-10-16T13:49:03.267Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/convo-dbt-update/index.html</loc>
-    <lastmod>2023-10-16T13:49:09.012Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/crosstalk/index.html</loc>
-    <lastmod>2023-10-16T13:49:12.916Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/data-valid-lightweight/index.html</loc>
-    <lastmod>2023-10-16T13:49:18.669Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/featured.html</loc>
-    <lastmod>2023-10-13T23:01:25.775Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/grouping-data-quality-update/index.html</loc>
-    <lastmod>2023-10-16T13:49:28.727Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/latent-lasting-documentation/index.html</loc>
-    <lastmod>2023-10-16T13:49:36.683Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/nulls-polyglot/index.html</loc>
-    <lastmod>2023-10-16T13:49:43.597Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/resource-roundup-causal/index.html</loc>
-    <lastmod>2023-10-16T13:49:47.503Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/resource-roundup-reproducible-research/index.html</loc>
-    <lastmod>2023-10-16T13:49:50.931Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/rmarkdown-driven-development/index.html</loc>
-    <lastmod>2023-10-16T13:49:54.811Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/rtistic/index.html</loc>
-    <lastmod>2023-10-16T13:50:01.331Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/shiny-modules/index.html</loc>
-    <lastmod>2023-10-18T01:39:52.974Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/sql-generation/index.html</loc>
-    <lastmod>2023-10-16T13:50:11.261Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/states-scraping-automation/index.html</loc>
-    <lastmod>2023-10-16T13:50:16.491Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/supporting-speakers/index.html</loc>
-    <lastmod>2023-10-16T13:50:20.276Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/writing-a-tech-talk/index.html</loc>
-    <lastmod>2023-10-16T13:50:27.815Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/publication/data-eng-97-things/index.html</loc>
-    <lastmod>2023-10-16T13:50:29.919Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/publication/rmarkdown-cookbook/index.html</loc>
-    <lastmod>2023-10-16T13:50:33.089Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/shiny-modules/index.html</loc>
-    <lastmod>2023-10-19T21:05:28.779Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/rmarkdown-driven-development/index.html</loc>
-    <lastmod>2023-10-19T21:05:27.464Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/projmgr/index.html</loc>
-    <lastmod>2023-10-19T21:05:26.344Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/organization/index.html</loc>
-    <lastmod>2023-10-19T21:04:59.096Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/dbtplyr/index.html</loc>
-    <lastmod>2023-10-19T22:18:24.002Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/midterm-email/index.html</loc>
-    <lastmod>2023-10-19T22:19:02.672Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/col-names-contract/index.html</loc>
-    <lastmod>2023-10-19T23:08:38.460Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/causal-design-patterns/index.html</loc>
-    <lastmod>2023-10-21T00:59:12.760Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/data-error-gen/index.html</loc>
-    <lastmod>2023-10-19T22:19:00.672Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/midterm-iptw/index.html</loc>
-    <lastmod>2023-10-19T22:19:04.230Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/ent-pkg-design/index.html</loc>
-    <lastmod>2023-10-19T22:56:09.859Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/meetup-datafold/index.html</loc>
-    <lastmod>2023-11-22T02:11:32.275Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/docs/talk/posit-meetup/index.html</loc>
-    <lastmod>2023-10-19T23:09:15.063Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/meetup-posit/index.html</loc>
-    <lastmod>2023-10-19T23:09:18.765Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/meetup-stat447/index.html</loc>
-    <lastmod>2023-10-19T23:29:45.970Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/featured.html</loc>
-    <lastmod>2023-10-21T10:20:05.459Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/project/rtistic/index.html</loc>
-    <lastmod>2023-10-21T00:59:48.451Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/project/projmgr/index.html</loc>
-    <lastmod>2023-10-21T00:59:46.823Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/project/dbtplyr/index.html</loc>
-    <lastmod>2023-10-21T00:59:45.752Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/project/index.html</loc>
-    <lastmod>2023-10-21T10:20:13.660Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/talk/pod-tdep-colnames/index.html</loc>
-    <lastmod>2023-10-21T10:18:54.775Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/recap-causal-2023/index.html</loc>
-    <lastmod>2023-11-18T18:35:20.614Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.github.io/post/py-rgo/index.html</loc>
-    <lastmod>2023-12-31T00:12:01.122Z</lastmod>
-  </url>
-  <url>
-    <loc>https://incomparable-bavarois-6f63da.netlify.app/index.html</loc>
-    <lastmod>2023-12-31T01:35:00.535Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/index.html</loc>
-    <lastmod>2024-07-05T17:28:47.455Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/about.html</loc>
-    <lastmod>2023-10-21T00:57:40.897Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/featured.html</loc>
-    <lastmod>2024-01-01T20:19:41.357Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/index.html</loc>
-    <lastmod>2024-01-01T20:16:12.986Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/py-rgo/index.html</loc>
-    <lastmod>2024-01-15T11:40:40.115Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/publication/causal-language/index.html</loc>
-    <lastmod>2024-01-01T20:20:03.778Z</lastmod>
-  </url>
-  <url>
     <loc>https://emilyriederer.com/talk/tidycf/index.html</loc>
-    <lastmod>2024-01-01T20:20:13.638Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.614Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/rmarkdown-driven-development/index.html</loc>
-    <lastmod>2024-01-01T20:20:12.737Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.585Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</loc>
-    <lastmod>2024-01-01T20:20:11.875Z</lastmod>
+    <loc>https://emilyriederer.com/talk/projmgr/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.585Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/midterm-iptw/index.html</loc>
-    <lastmod>2024-01-01T20:20:11.055Z</lastmod>
+    <loc>https://emilyriederer.com/talk/organization/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.237Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/meetup-stat447/index.html</loc>
-    <lastmod>2024-01-01T20:20:10.265Z</lastmod>
+    <loc>https://emilyriederer.com/talk/midterm-email/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.221Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/meetup-datafold/index.html</loc>
-    <lastmod>2024-01-01T20:20:09.445Z</lastmod>
+    <loc>https://emilyriederer.com/talk/meetup-posit/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/featured.html</loc>
-    <lastmod>2024-01-01T20:20:07.957Z</lastmod>
+    <loc>https://emilyriederer.com/talk/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/dbtplyr/index.html</loc>
-    <lastmod>2024-01-01T20:20:06.964Z</lastmod>
+    <loc>https://emilyriederer.com/talk/ent-pkg-design/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/data-error-gen/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.174Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/col-names-contract/index.html</loc>
-    <lastmod>2024-01-01T20:20:06.079Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.158Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</loc>
-    <lastmod>2024-01-01T20:20:05.176Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/publication/data-eng-97-things/index.html</loc>
-    <lastmod>2024-01-01T20:20:04.180Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/project/rtistic/index.html</loc>
-    <lastmod>2024-01-01T20:20:03.390Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/project/index.html</loc>
-    <lastmod>2024-01-01T20:20:02.614Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/writing-a-tech-talk/index.html</loc>
-    <lastmod>2024-01-01T20:20:01.669Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.127Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/supporting-speakers/index.html</loc>
-    <lastmod>2024-01-01T20:19:59.466Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.112Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/states-scraping-automation/index.html</loc>
-    <lastmod>2024-01-01T20:19:58.361Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.084Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/sql-generation/index.html</loc>
-    <lastmod>2024-01-01T20:19:56.928Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.064Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/shiny-modules/index.html</loc>
-    <lastmod>2024-01-01T20:19:55.661Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/rtistic/index.html</loc>
-    <lastmod>2024-01-01T20:19:53.965Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/rmarkdown-driven-development/index.html</loc>
-    <lastmod>2024-01-01T20:19:52.068Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/resource-roundup-reproducible-research/index.html</loc>
-    <lastmod>2024-01-01T20:19:50.813Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/resource-roundup-causal/index.html</loc>
-    <lastmod>2024-01-01T20:19:49.691Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/py-rgo-polars/index.html</loc>
+    <lastmod>2024-01-13T16:45:25.541Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/py-rgo/index.html</loc>
+    <lastmod>2024-01-15T11:40:26.620Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/nulls-polyglot/index.html</loc>
-    <lastmod>2024-01-01T20:19:47.200Z</lastmod>
+    <lastmod>2024-01-01T20:16:13.002Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/latent-lasting-documentation/index.html</loc>
-    <lastmod>2024-01-01T20:19:45.271Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.986Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/grouping-data-quality-update/index.html</loc>
-    <lastmod>2024-01-01T20:19:42.811Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.986Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/post/data-valid-lightweight/index.html</loc>
-    <lastmod>2024-01-01T20:19:39.834Z</lastmod>
+    <loc>https://emilyriederer.com/post/grouping-data-quality/index.html</loc>
+    <lastmod>2024-01-01T20:16:12.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/duckdb-carolina/index.html</loc>
+    <lastmod>2024-01-01T20:16:12.970Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/docs-closer-than-you-think/index.html</loc>
+    <lastmod>2024-01-20T11:49:11.214Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/data-error-gen/index.html</loc>
+    <lastmod>2024-01-01T20:16:12.939Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/crosstalk/index.html</loc>
-    <lastmod>2024-01-01T20:19:38.000Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.876Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/convo-dbt-update/index.html</loc>
@@ -414,15 +138,23 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/post/column-name-contracts/index.html</loc>
-    <lastmod>2024-01-13T11:17:33.095Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.860Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/causal-data/index.html</loc>
-    <lastmod>2024-01-01T20:19:32.097Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.829Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/abstraction-airbyte/index.html</loc>
     <lastmod>2024-01-20T11:49:36.558Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/about.html</loc>
+    <lastmod>2024-01-01T20:16:11.855Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/index.html</loc>
+    <lastmod>2024-07-05T17:28:47.455Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/abstraction-extraction/index.html</loc>
@@ -430,150 +162,142 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/post/causal-design-patterns/index.html</loc>
-    <lastmod>2024-01-01T20:19:33.158Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.860Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/convo-dbt/index.html</loc>
-    <lastmod>2024-01-01T20:19:36.249Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.860Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/convo-intro/index.html</loc>
-    <lastmod>2024-01-01T20:19:37.474Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/data-error-gen/index.html</loc>
-    <lastmod>2024-01-01T20:19:39.013Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/duckdb-carolina/index.html</loc>
-    <lastmod>2024-01-01T20:19:40.721Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/grouping-data-quality/index.html</loc>
-    <lastmod>2024-01-01T20:19:42.259Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/ml-vegetables/index.html</loc>
-    <lastmod>2024-01-01T20:19:46.101Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/projmgr/index.html</loc>
-    <lastmod>2024-01-01T20:19:48.011Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/recap-causal-2023/index.html</loc>
-    <lastmod>2024-01-01T20:19:49.174Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/resource-roundup-r-industry/index.html</loc>
-    <lastmod>2024-01-01T20:19:50.267Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/rmarkdown-css-tips/index.html</loc>
-    <lastmod>2024-01-01T20:19:51.358Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/rmddd-tech-appendix/index.html</loc>
-    <lastmod>2024-01-01T20:19:53.137Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/shiny-db/index.html</loc>
-    <lastmod>2024-01-01T20:19:54.822Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/snow/index.html</loc>
-    <lastmod>2024-01-01T20:19:56.116Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/sql-r-flow/index.html</loc>
-    <lastmod>2024-01-01T20:19:57.628Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/sticker-driven-maintenance/index.html</loc>
-    <lastmod>2024-01-01T20:19:58.858Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/team-of-packages/index.html</loc>
-    <lastmod>2024-01-01T20:20:01.077Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/project/dbtplyr/index.html</loc>
-    <lastmod>2024-01-01T20:20:02.089Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/project/projmgr/index.html</loc>
-    <lastmod>2024-01-01T20:20:03.030Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/publication/index.html</loc>
-    <lastmod>2024-01-01T20:20:04.756Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/causal-design-patterns/index.html</loc>
-    <lastmod>2024-01-01T20:20:05.647Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/data-error-gen/index.html</loc>
-    <lastmod>2024-01-01T20:20:06.526Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/ent-pkg-design/index.html</loc>
-    <lastmod>2024-01-01T20:20:07.366Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/index.html</loc>
-    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/meetup-posit/index.html</loc>
-    <lastmod>2024-01-01T20:20:09.864Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/midterm-email/index.html</loc>
-    <lastmod>2024-01-01T20:20:10.638Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/organization/index.html</loc>
-    <lastmod>2024-01-01T20:20:11.459Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/projmgr/index.html</loc>
-    <lastmod>2024-01-01T20:20:12.311Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/shiny-modules/index.html</loc>
-    <lastmod>2024-01-01T20:20:13.197Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/docs-closer-than-you-think/index.html</loc>
-    <lastmod>2024-01-20T11:49:11.214Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/py-rgo-polars/index.html</loc>
-    <lastmod>2024-01-15T11:08:12.769Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/docs-personas/index.html</loc>
-    <lastmod>2024-01-20T11:49:22.825Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/py-rgo-base/index.html</loc>
-    <lastmod>2024-01-20T13:15:14.127Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/grouping-data-quality-crosspost/index.html</loc>
-    <lastmod>2024-01-20T12:29:26.874Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/data-downtime/index.html</loc>
-    <lastmod>2024-01-20T12:42:01.222Z</lastmod>
+    <lastmod>2024-01-01T20:16:12.860Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/data-discovery-ad-hoc/index.html</loc>
     <lastmod>2024-10-30T16:23:50.151Z</lastmod>
   </url>
   <url>
+    <loc>https://emilyriederer.com/post/data-valid-lightweight/index.html</loc>
+    <lastmod>2024-01-01T20:16:12.954Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/docs-personas/index.html</loc>
+    <lastmod>2024-01-20T11:49:22.825Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/featured.html</loc>
+    <lastmod>2024-01-01T20:16:12.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/grouping-data-quality-crosspost/index.html</loc>
+    <lastmod>2024-01-20T12:29:26.874Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/index.html</loc>
+    <lastmod>2024-01-01T20:16:12.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/ml-vegetables/index.html</loc>
+    <lastmod>2024-01-01T20:16:12.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/projmgr/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.002Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/py-rgo-base/index.html</loc>
+    <lastmod>2024-01-20T13:15:14.127Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/recap-causal-2023/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/resource-roundup-r-industry/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/rmarkdown-css-tips/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/rmddd-tech-appendix/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/shiny-db/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.017Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/snow/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.049Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/sql-r-flow/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.080Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/sticker-driven-maintenance/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.112Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/team-of-packages/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.127Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/project/dbtplyr/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/project/projmgr/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/publication/causal-language/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/publication/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/causal-design-patterns/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/data-downtime/index.html</loc>
+    <lastmod>2024-01-20T12:42:01.222Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/dbtplyr/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.174Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/featured.html</loc>
+    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/meetup-datafold/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/meetup-stat447/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/midterm-iptw/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.221Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/pod-tdep-colnames/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.237Z</lastmod>
+  </url>
+  <url>
     <loc>https://emilyriederer.com/talk/python-rgonomics/index.html</loc>
-    <lastmod>2024-10-30T16:11:52.917Z</lastmod>
+    <lastmod>2024-10-31T15:59:33.381Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/shiny-modules/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.598Z</lastmod>
   </url>
 </urlset>

@@ -24,7 +24,7 @@
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> Video Coming Soon </span><br>
+<span><i class="bi bi-play"></i> https://www.youtube.com/watch?v=ILxK92HDtvU&amp;list=PL9HYL-VRX0oSFkdF4fJeY63eGDvgofcbn </span><br>
 <span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo/">Post - Python Rgonomics</a> </span><br>
 <span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo-polars/">Post - Advanced <code>polars</code> versus <code>dplyr</code></a> </span></p>
 </div>
@@ -50,7 +50,7 @@ Warning
 </div>
 </div>
 <div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<p>Video to come.</p>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/ILxK92HDtvU" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 </div>
 </div>
 </div>
@@ -740,6 +740,7 @@ background-color: null;
 font-style: inherit;">'z'</span>]</span>
 <span id="cb37-6">})</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -774,6 +775,7 @@ font-style: inherit;">'z'</span>]</span>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -815,6 +817,7 @@ background-color: null;
 font-style: inherit;">3</span>)</span>
 <span id="cb38-7">})</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -852,6 +855,7 @@ font-style: inherit;">3</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>If we need groups in our sample data, we can use <code>np.repeat()</code> which works like R’s <code>rep(each = TRUE)</code>.</p>
 <div id="a86edf0b" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1">pl.DataFrame({</span>
@@ -881,6 +885,7 @@ background-color: null;
 font-style: inherit;">6</span>)</span>
 <span id="cb39-4">})</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -930,6 +935,7 @@ font-style: inherit;">6</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>Alternatively, for more control and succinct typing, we can created a nested dataset in <code>polars</code> and explode it out.</p>
 <div id="6ecf467f" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1">(</span>
@@ -965,6 +971,7 @@ background-color: null;
 font-style: inherit;">'b'</span>)</span>
 <span id="cb40-8">)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1026,6 +1033,7 @@ font-style: inherit;">'b'</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>Similarly, we could use what we’ve learned about <code>polars</code> list columns <em>and</em> list comprehensions.</p>
 <div id="10f32c48" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1">a <span class="op" style="color: #5E5E5E;
@@ -1064,6 +1072,7 @@ font-style: inherit;">'b'</span>:b}).explode(<span class="st" style="color: #207
 background-color: null;
 font-style: inherit;">'b'</span>)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1125,6 +1134,7 @@ font-style: inherit;">'b'</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 <p>In fact, multidimensional list comprehensions can be used to mimic R’s <code>expand.grid()</code> function.</p>
 <div id="f6c2c31c" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">pl.DataFrame(</span>
@@ -1154,6 +1164,7 @@ background-color: null;
 font-style: inherit;">'y'</span>]</span>
 <span id="cb42-4">  )</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1212,6 +1223,7 @@ font-style: inherit;">'y'</span>]</span>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -1368,13 +1380,14 @@ font-style: inherit;">'rb'</span>))</span></code></pre></div>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/py-rgo-polars/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
+<figcaption>Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
 </figure>
 </div>
-<p>A few weeks ago, I shared some <a href="../../post/py-rgo/">recommended modern python tools and libraries</a> that I believe have the most similar ergonomics for R (specifically <code>tidyverse</code>) converts. This post expands on that one with a focus on the <code>polars</code> library.</p>
+<p>A few weeks ago, I shared some <a href="../..\post/py-rgo/">recommended modern python tools and libraries</a> that I believe have the most similar ergonomics for R (specifically <code>tidyverse</code>) converts. This post expands on that one with a focus on the <code>polars</code> library.</p>
 <p>At the surface level, all data wrangling libraries have roughly the same functionality. Operations like selecting existing columns and making new ones, subsetting and ordering rows, and summarzing results is tablestakes.</p>
 <p>However, no one falls in love with a specific library because it has the best <code>select()</code> or <code>filter()</code> function the world has ever seen. It’s the ability to easily do more complex transformations that differentiate a package expert versus novice, and the learning curve for everything that happens <em>after</em> the “Getting Started” guide ends is what can leave experts at one tool feeling so disempowered when working with another.</p>
 <p>This deeper sense of intuition and fluency – when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data – is what I aim to capture in the term “ergonomics”. In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by <code>polars</code> and <code>dplyr</code>.</p>
@@ -1561,6 +1574,7 @@ background-color: null;
 font-style: inherit;">0</span>]})</span>
 <span id="cb6-6">df.head()</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1608,6 +1622,7 @@ font-style: inherit;">0</span>]})</span>
 </div>
 </div>
 </div>
+</div>
 <section id="explicit-api-for-row-wise-operations" class="level3">
 <h3 class="anchored" data-anchor-id="explicit-api-for-row-wise-operations">Explicit API for row-wise operations</h3>
 <p>While row-wise operations are relatively easy to write ad-hoc, it can still be nice semantically to have readable and stylistically consistent code for such transformations.</p>
@@ -1623,6 +1638,7 @@ background-color: null;
 font-style: inherit;">'c'</span>)) </span>
 <span id="cb7-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1676,10 +1692,11 @@ font-style: inherit;">'c'</span>)) </span>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="column-selectors" class="level3">
 <h3 class="anchored" data-anchor-id="column-selectors">Column Selectors</h3>
-<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/reference/select.html">column selectors</a> dynamically determine a set of columns based on pattern-matching their names (e.g.&nbsp;<code>starts_with()</code>, <code>ends_with()</code>), data types, or other features. I’ve previously <a href="../../post/column-name-contracts/">written</a> and <a href="../../talk/col-names-contract/">spoken</a> at length about how transformative this functionality can be when paired with</p>
+<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/reference/select.html">column selectors</a> dynamically determine a set of columns based on pattern-matching their names (e.g.&nbsp;<code>starts_with()</code>, <code>ends_with()</code>), data types, or other features. I’ve previously <a href="../..\post/column-name-contracts/">written</a> and <a href="../..\talk/col-names-contract/">spoken</a> at length about how transformative this functionality can be when paired with</p>
 <p><code>polars</code> has a similar set of <a href="https://docs.pola.rs/py-polars/html/reference/selectors.html">column selectors</a>. We’ll import them and see a few examples.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
@@ -1706,6 +1723,7 @@ font-style: inherit;">'b'</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|</span> cs.string())</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1747,12 +1765,14 @@ font-style: inherit;">|</span> cs.string())</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 <p>Negative conditions also work.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">df.select(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">~</span>cs.string())</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1794,6 +1814,7 @@ font-style: inherit;">~</span>cs.string())</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="in-with_columns" class="level4">
 <h4 class="anchored" data-anchor-id="in-with_columns">In <code>with_columns</code></h4>
@@ -1808,6 +1829,7 @@ background-color: null;
 font-style: inherit;">"_plus1"</span>)</span>
 <span id="cb12-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1867,6 +1889,7 @@ font-style: inherit;">"_plus1"</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>We can also use selected variables within transformations, like the rowwise sums that we just saw earlier.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df.with_columns(</span>
@@ -1875,6 +1898,7 @@ background-color: null;
 font-style: inherit;">=</span> pl.sum_horizontal(cs.integer())</span>
 <span id="cb13-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1928,6 +1952,7 @@ font-style: inherit;">=</span> pl.sum_horizontal(cs.integer())</span>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="in-group_by-and-agg" class="level4">
 <h4 class="anchored" data-anchor-id="in-group_by-and-agg">In <code>group_by</code> and <code>agg</code></h4>
@@ -1937,6 +1962,7 @@ font-style: inherit;">=</span> pl.sum_horizontal(cs.integer())</span>
 background-color: null;
 font-style: inherit;">sum</span>())</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1974,6 +2000,7 @@ font-style: inherit;">sum</span>())</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 </section>
 </section>
 <section id="consistent-api-for-window-functions" class="level3">
@@ -1995,6 +2022,7 @@ background-color: null;
 font-style: inherit;">'a'</span>)</span>
 <span id="cb15-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2048,6 +2076,7 @@ font-style: inherit;">'a'</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>The chaining over and aggregate and <code>over()</code> can follow any other arbitrarily complex logic. Here, it follows a basic “case when”-type statement that creates an indicator for whether column b is null.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">df.with_columns(</span>
@@ -2077,6 +2106,7 @@ background-color: null;
 font-style: inherit;">'a'</span>)</span>
 <span id="cb16-6">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2130,6 +2160,7 @@ font-style: inherit;">'a'</span>)</span>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="list-columns-and-nested-frames" class="level3">
 <h3 class="anchored" data-anchor-id="list-columns-and-nested-frames">List Columns and Nested Frames</h3>
@@ -2143,6 +2174,7 @@ font-style: inherit;">'a'</span>)</span>
 background-color: null;
 font-style: inherit;">=</span> pl.struct( cs.integer() ))</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2196,6 +2228,7 @@ font-style: inherit;">=</span> pl.struct( cs.integer() ))</span></code></pre></d
 </div>
 </div>
 </div>
+</div>
 <p>These structs can be further be aggregated across rows into miniature datasets.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">df.group_by(<span class="st" style="color: #20794D;
@@ -2204,6 +2237,7 @@ font-style: inherit;">'a'</span>).agg(list_col <span class="op" style="color: #5
 background-color: null;
 font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2234,6 +2268,7 @@ font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -2253,6 +2288,7 @@ background-color: null;
 font-style: inherit;">~</span>cs.by_name(cols)))</span>
 <span id="cb19-5">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2283,6 +2319,7 @@ font-style: inherit;">~</span>cs.by_name(cols)))</span>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -2305,6 +2342,7 @@ font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></
 background-color: null;
 font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2346,6 +2384,7 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 <p>Then, <code>unnest()</code> unpacks each struct and turns each element back into a column.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">df_nested.explode(<span class="st" style="color: #20794D;
@@ -2354,6 +2393,7 @@ font-style: inherit;">'list_col'</span>).unnest(<span class="st" style="color: #
 background-color: null;
 font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2398,6 +2438,7 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -2481,10 +2522,11 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/py-rgo/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
+<figcaption>Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
 </figure>
 </div>
 <p>Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in <a href="https://arrow.apache.org/">Arrow</a> (a language-agnostic in-memory standard for data storage), growing adoption of <a href="https://quarto.org/">Quarto</a> (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney <a href="https://posit.co/blog/welcome-wes/">joining Posit</a> (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.</p>
@@ -2628,6 +2670,7 @@ Note
 
 
 
+
 <p>Last week, I enjoyed attending parts of the annual virtual <a href="https://www.causalscience.org/">Causal Data Science Meeting</a> organized by researchers from Maastricht University, Netherlands, and Copenhagen Business School, Denmark. This has been one of my favorite virtual events since the first iteration in 2020, and I find it consistently highlights the best of the causal research community: brining together industry and academia with concise talks that are at once thought-provoking, theoretically well-grounded, yet thoroughly pragmatic.</p>
 <p>While I could not join the entire event (running in CET time, some sessions fit snuggly between my first cup of coffee and first work meeting of the day in CST), this year’s conference did not disappoint! Below, I share a sampling with five “big ideas” from the sessions.</p>
 <ol type="1">
@@ -2675,6 +2718,7 @@ Note
 
 
 
+
 <p>url_video: “”</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
@@ -2686,9 +2730,9 @@ Note
 <p>At posit::conf for R user audience:</p>
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides-posit.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> Video - posit::conf for R User Audience <em>coming soon!</em> </span></p>
-<p><span><i class="bi bi-pencil"></i> <a href="../../post/column-name-contracts/">Post - Column Name Contracts</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt/">Post - Column Name Contracts in dbt</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt-update/">Post - Column Name Contracts with dbtplyr</a> </span></p>
+<p><span><i class="bi bi-pencil"></i> <a href="../..\post/column-name-contracts/">Post - Column Name Contracts</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/convo-dbt/">Post - Column Name Contracts in dbt</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/convo-dbt-update/">Post - Column Name Contracts with dbtplyr</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>Complex software systems make performance guarantees through documentation and unit tests, and they communicate these to users with conscientious interface design.</p>
@@ -2721,6 +2765,7 @@ Note
   <title>Scaling Personalized Volunteer Emails</title>
   <link>https://emilyriederer.com/talk/midterm-email/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -2761,6 +2806,7 @@ Note
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
@@ -2768,8 +2814,8 @@ Note
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=0kDjkTB2yZ0">Video</a> </span><br>
 <span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=VP3BBZ7poc0&amp;t=191s">Video - Discussion</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/causal-design-patterns/">Post - Causal Design Patterns</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/causal-data/">Post - Causal Data Management</a> </span></p>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/causal-design-patterns/">Post - Causal Design Patterns</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/causal-data/">Post - Causal Data Management</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>Experimentation is a pillar of product data science and machine learning. But what can you do when experimentation is impractical, costly, risky to customer experience, or too slow to read the desired long-term results?</p>
@@ -2804,16 +2850,17 @@ Note
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/causal-data/featured.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Data strategy motivated by causal methods</figcaption>
+<figcaption>Data strategy motivated by causal methods</figcaption>
 </figure>
 </div>
-<p><em>This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the <a href="../../talk/causal-design-patterns">talk details</a> for more content.</em></p>
+<p><em>This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the <a href="../..\talk/causal-design-patterns">talk details</a> for more content.</em></p>
 <p>Techniques of observational causal inference are becoming increasingly popular in industry as a complement to experimentation. Causal methods offer the promise of accelerating measurement agendas and facilitating the estimation of previously un-measurable targets by allowing analysts to extract causal insights from “found” data (e.g.&nbsp;observational data collected without specific intent). However, if executed without careful attention to their assumptions and limitations, they can lead to spurious conclusions.</p>
 <p>Both experimental and observational methods attempt to address the <strong>fundamental problem of causal inference</strong>: that is, the fact that for a given treatment of interest, we can never “see” the <em>individual-level outcome</em> both for the case when an individual received a treatment and a counterfactual scenario in which <em>for the same individual in the exact same context</em> that treatment was withheld. Some literature casts this as a “missing data” problem.<sup>1</sup> Counterfactual data is uncollectable; however, this fundamental missingness can be partially mitigated by diligent collection of <em>other</em> types of quantitative and qualitative information to control for confounding<sup>2</sup> and interrogate assumptions.</p>
-<p>In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods due to industry’s (theoretically) superior ability to observe and capture relevant supplemental data and context. Examining the implicit assumptions in common <a href="../../post/causal-design-patterns">causal design patterns</a> motivates the types of proactive enterprise information management – including data, metadata, and knowledge management – that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today. By casting an intentionally wide net on what information we observationally collect, we increase the likelihood that the future “found” data will have what those analysts need to succeed.</p>
+<p>In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods due to industry’s (theoretically) superior ability to observe and capture relevant supplemental data and context. Examining the implicit assumptions in common <a href="../..\post/causal-design-patterns">causal design patterns</a> motivates the types of proactive enterprise information management – including data, metadata, and knowledge management – that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today. By casting an intentionally wide net on what information we observationally collect, we increase the likelihood that the future “found” data will have what those analysts need to succeed.</p>
 <section id="why-industry-needs-causal-inference" class="level2">
 <h2 class="anchored" data-anchor-id="why-industry-needs-causal-inference">Why industry needs causal inference</h2>
 <p><img src="https://emilyriederer.com/post/causal-data/why-not-experiment.png" class="img-fluid"></p>
@@ -2823,7 +2870,7 @@ Note
 <h2 class="anchored" data-anchor-id="what-causal-methods-require">What causal methods require</h2>
 <p><img src="https://emilyriederer.com/post/causal-data/patterns-and-variation.png" class="img-fluid"></p>
 <p>These limitations are one of the reasons why observational causal inference is gaining increasing popularity in industry. Methods of observational causal inference allows us to estimate treatment effects without randomized controlled experimentation by using existing historical data. At the highest level, these methods work by replacing <em>randomization</em> with strategies to exploit other forms of <em>semi-random variation</em> in historical exposures of a population to a treatment. Since this semi-random <em>variation</em> could be susceptible to confounding, observational methods supplement variation with <em>additional data</em> to control for other observable sources of bias in our estimates and <em>contextual assumptions</em> about the data generating process.</p>
-<p>My previous post on <a href="../../post/causal-design-patterns">causal design patterns</a> outlines a number of foundational causal methods, but I’ll briefly recap to emphasize the different ways that sources of variation, data, and context are used:</p>
+<p>My previous post on <a href="../..\post/causal-design-patterns">causal design patterns</a> outlines a number of foundational causal methods, but I’ll briefly recap to emphasize the different ways that sources of variation, data, and context are used:</p>
 <ul>
 <li><strong>Stratification and Inverse Propensity Score Weighting</strong>:
 <ul>
@@ -2899,6 +2946,7 @@ Note
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
@@ -2965,6 +3013,7 @@ Note
   <title>Posit Data Science Hangout</title>
   <link>https://emilyriederer.com/talk/meetup-posit/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -3042,16 +3091,17 @@ Note
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> <a href="https://youtu.be/R5Imyf56mhc">Video</a> </span> <span><i class="bi bi-pencil"></i> <a href="../../post/causal-design-patterns/">Post - Causal Design Patterns</a> </span></p>
+<span><i class="bi bi-play"></i> <a href="https://youtu.be/R5Imyf56mhc">Video</a> </span> <span><i class="bi bi-pencil"></i> <a href="../..\post/causal-design-patterns/">Post - Causal Design Patterns</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>In this four-minute lightning talk, I explain the motivation for using observational versus experimental methods when measuring the impact of GOTV (voter turnout) efforts. Next, I provide a high-level explanation of a specific method (inverse propensity of treatment weighting) and demonstrate the method’s ability to balance baseline traits and historical performance of a synthetic control population for credible effect estimation.</p>
-<p>This talk is based on my related <a href="../../post/causal-design-patterns">blog post</a> and summarizes my work as a Bluebonnet Data Fellow with the Two Million Texans relational organizing campaign during the 2022 midterms.</p>
+<p>This talk is based on my related <a href="../..\post/causal-design-patterns">blog post</a> and summarizes my work as a Bluebonnet Data Fellow with the Two Million Texans relational organizing campaign during the 2022 midterms.</p>
 </div>
 <div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
 <div id="slides" style="width:100%; aspect-ratio:16/11;">
@@ -3079,13 +3129,14 @@ Note
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> <a href="https://posit.co/resources/videos/tidycf-turning-analysis-on-its-head-by-turning-cashflows-on-their-sides/">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/shiny-modules/">Post - A beginner’s guide to Shiny modules</a> </span></p>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/shiny-modules/">Post - A beginner’s guide to Shiny modules</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>R users are increasingly trained to develop with good principles such as writing modular functions, testing their code, and decomposing long individual scripts into R projects. In recent years, such approaches have crept earlier into introductory R education with the realization that applying best practices is not an advanced skill but rather empowers beginners with a more robust structure.</p>

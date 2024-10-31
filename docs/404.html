@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.510">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -68,6 +68,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -134,6 +135,33 @@ cookieconsent.run({
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 <link rel="stylesheet" href="/styles.css">
 <meta name="twitter:title" content="Page Not Found | Emily Riederer">
 <meta name="twitter:card" content="summary">
@@ -142,7 +170,7 @@ cookieconsent.run({
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -293,7 +321,73 @@ Description
 </tr>
 </thead>
 <tbody class="list">
-<tr data-index="0" data-categories="rstats,python" data-listing-date-sort="1703916000000" data-listing-file-modified-sort="1704021053413" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2124" data-listing-title-sort="Python Rgonomics" data-listing-filename-sort="index.qmd">
+<tr data-index="0" data-categories="workflow,python,rstats" data-listing-date-sort="1723698000000" data-listing-file-modified-sort="1730390373381" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205" data-listing-title-sort="Python Rgonomics" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Aug 15, 2024</span>
+</td>
+<td>
+<a href="/./talk/python-rgonomics/index.html" class="title listing-title">Python Rgonomics</a>
+</td>
+<td>
+<span class="listing-description">A survey of modern python tooling that “feels good” to R users</span>
+</td>
+</tr>
+<tr data-index="1" data-categories="data,workflow,elt,crosspost" data-listing-date-sort="1721278800000" data-listing-file-modified-sort="1730305430151" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1428" data-listing-title-sort="Crosspost: Data discovery doesn't belong in ad hoc queries" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Jul 18, 2024</span>
+</td>
+<td>
+<a href="/./post/data-discovery-ad-hoc/index.html" class="title listing-title">Crosspost: Data discovery doesn’t belong in ad hoc queries</a>
+</td>
+<td>
+<span class="listing-description">Data teams may struggle to quantify the benefits of good data documentation. But running countless ad hoc validation queries can incur both computational and cognitive cost.</span>
+</td>
+</tr>
+<tr data-index="2" data-categories="rstats,python,tutorial" data-listing-date-sort="1705730400000" data-listing-file-modified-sort="1705756514127" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1952" data-listing-title-sort="Base Python Rgonomic Patterns" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Jan 20, 2024</span>
+</td>
+<td>
+<a href="/./post/py-rgo-base/index.html" class="title listing-title">Base Python Rgonomic Patterns</a>
+</td>
+<td>
+<span class="listing-description">Getting comfortable in a new language is more than the packages you use. Syntactic sugar in base python increases the efficiency, and aesthetics of python code in ways that R users may enjoy in packages like <code>glue</code> and <code>purrr</code>. This post collects a miscellaneous grab bag of tools for wrangling, formatting (f-strings), repeating (list comprehensions), faking data, and saving objects (pickle)</span>
+</td>
+</tr>
+<tr data-index="3" data-categories="data,workflow,elt,crosspost" data-listing-date-sort="1705298400000" data-listing-file-modified-sort="1705751362825" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="333" data-listing-title-sort="Crosspost: Why You Need Data Documentation in 2024" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Jan 15, 2024</span>
+</td>
+<td>
+<a href="/./post/docs-personas/index.html" class="title listing-title">Crosspost: Why You Need Data Documentation in 2024</a>
+</td>
+<td>
+<span class="listing-description">Data documentation isn’t a box to check; it’s an active member of your team with many jobs-to-be-done. In this cross-post with Select Star, I write about how effective documentation can be your data products’ developer advocate for users, project manager for developers, and chief of staff for data leaders</span>
+</td>
+</tr>
+<tr data-index="4" data-categories="rstats,python,tutorial" data-listing-date-sort="1705125600000" data-listing-file-modified-sort="1705164325541" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2169" data-listing-title-sort="`polars`' Rgonomic Patterns" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Jan 13, 2024</span>
+</td>
+<td>
+<a href="/./post/py-rgo-polars/index.html" class="title listing-title"><code>polars</code>’ Rgonomic Patterns</a>
+</td>
+<td>
+<span class="listing-description">In this follow-up post to Python Rgonomics, we deep dive into some of the advanced data wrangling functionality in python’s <code>polars</code> package to see how it’s powertools like column selectors and nested data structures mirror the best of <code>dplyr</code> and <code>tidyr</code>’s expressive and concise syntax</span>
+</td>
+</tr>
+<tr data-index="5" data-categories="data,workflow,elt,crosspost" data-listing-date-sort="1704434400000" data-listing-file-modified-sort="1705751351214" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="287" data-listing-title-sort="Crosspost: Why you're closer to data documentation than you think" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Jan 5, 2024</span>
+</td>
+<td>
+<a href="/./post/docs-closer-than-you-think/index.html" class="title listing-title">Crosspost: Why you’re closer to data documentation than you think</a>
+</td>
+<td>
+<span class="listing-description">Writing is thinking; documenting is planning and executing. In this cross-post with Select Star, I write about how teams can produce high-quality and maintainble documentation by smartly structuring planning and development documentation and effeciently recycling them into long-term, user-friendly docs</span>
+</td>
+</tr>
+<tr data-index="6" data-categories="rstats,python" data-listing-date-sort="1703916000000" data-listing-file-modified-sort="1705318826620" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2218" data-listing-title-sort="Python Rgonomics" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Dec 30, 2023</span>
 </td>
@@ -301,10 +395,10 @@ Description
 <a href="/./post/py-rgo/index.html" class="title listing-title">Python Rgonomics</a>
 </td>
 <td>
-<span class="listing-description">Exploring emerging tools that help R users feel at home</span>
+<span class="listing-description">Switching languages is about switching mindsets - not just syntax. New developments in python data science toolings, like polars and seaborn’s object interface, can capture the ‘feel’ that converts from R/tidyverse love while opening the door to truly pythonic workflows</span>
 </td>
 </tr>
-<tr data-index="1" data-categories="causal" data-listing-date-sort="1700287200000" data-listing-file-modified-sort="1700332492193" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="478" data-listing-title-sort="Big ideas from the 2023 Causal Data Science Meeting" data-listing-filename-sort="index.qmd">
+<tr data-index="7" data-categories="causal" data-listing-date-sort="1700287200000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="478" data-listing-title-sort="Big ideas from the 2023 Causal Data Science Meeting" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Nov 18, 2023</span>
 </td>
@@ -315,7 +409,18 @@ Description
 <span class="listing-description">Five highlights and links to select talks</span>
 </td>
 </tr>
-<tr data-index="2" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1695272400000" data-listing-file-modified-sort="1697753836711" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="327" data-listing-title-sort="Operationalizing Column-Name Contracts with dbtplyr" data-listing-filename-sort="index.qmd">
+<tr data-index="8" data-categories="data" data-listing-date-sort="1698037200000" data-listing-file-modified-sort="1705754521222" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="43" data-listing-title-sort="Data Downtime Horror Stories Panel" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Oct 23, 2023</span>
+</td>
+<td>
+<a href="/./talk/data-downtime/index.html" class="title listing-title">Data Downtime Horror Stories Panel</a>
+</td>
+<td>
+<span class="listing-description">Panel discussion with Chad Sanderson and Joe Reis, hosted by Monte Carlo Data, on our thorniest brushes with data downtime, leading data teams to tackle data quality at scale with testing, contracts, observability and monitoring, and more.</span>
+</td>
+</tr>
+<tr data-index="9" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1695272400000" data-listing-file-modified-sort="1704140173174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="327" data-listing-title-sort="Operationalizing Column-Name Contracts with dbtplyr" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Sep 21, 2023</span>
 </td>
@@ -326,7 +431,7 @@ Description
 <span class="listing-description">An exploration of how data producers and consumers can use column names as interfaces, configuations, and code to improve data quality and discoverability. The second half of the talk demonstrates how to implement these ideas with my <code>dbtplyr</code> dbt package.</span>
 </td>
 </tr>
-<tr data-index="3" data-categories="data,elt" data-listing-date-sort="1687323600000" data-listing-file-modified-sort="1697751200847" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="94" data-listing-title-sort="Scaling Personalized Volunteer Emails" data-listing-filename-sort="index.qmd">
+<tr data-index="10" data-categories="data,elt" data-listing-date-sort="1687323600000" data-listing-file-modified-sort="1704140173221" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="94" data-listing-title-sort="Scaling Personalized Volunteer Emails" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jun 21, 2023</span>
 </td>
@@ -337,7 +442,7 @@ Description
 <span class="listing-description">An overview of the data stack used to automate over 50,000 personalized emails to voter turnout volunteers using BigQuery, dbt, Census, and MailChimp</span>
 </td>
 </tr>
-<tr data-index="4" data-categories="causal" data-listing-date-sort="1686114000000" data-listing-file-modified-sort="1697754508848" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="224" data-listing-title-sort="Causal Design Patterns" data-listing-filename-sort="index.qmd">
+<tr data-index="11" data-categories="causal" data-listing-date-sort="1686114000000" data-listing-file-modified-sort="1704140173143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="224" data-listing-title-sort="Causal Design Patterns" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jun 7, 2023</span>
 </td>
@@ -348,7 +453,7 @@ Description
 <span class="listing-description">An overview of basic research design patterns in causal inference, modern extensions, and data management strategies to set up a causal inference initiative for success</span>
 </td>
 </tr>
-<tr data-index="5" data-categories="causal,data" data-listing-date-sort="1685422800000" data-listing-file-modified-sort="1697160122635" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1826" data-listing-title-sort="Industry information management for causal inference" data-listing-filename-sort="index.qmd">
+<tr data-index="12" data-categories="causal,data" data-listing-date-sort="1685422800000" data-listing-file-modified-sort="1704140172829" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1826" data-listing-title-sort="Industry information management for causal inference" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 30, 2023</span>
 </td>
@@ -359,7 +464,7 @@ Description
 <span class="listing-description">Proactive collection of data to comply or confront assumptions</span>
 </td>
 </tr>
-<tr data-index="6" data-categories="elt,data" data-listing-date-sort="1683867600000" data-listing-file-modified-sort="1700619078261" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="175" data-listing-title-sort="DataFold Data Quality Meet Up" data-listing-filename-sort="index.qmd">
+<tr data-index="13" data-categories="elt,data" data-listing-date-sort="1683867600000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="175" data-listing-title-sort="DataFold Data Quality Meet Up" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 12, 2023</span>
 </td>
@@ -370,7 +475,7 @@ Description
 <span class="listing-description">Joined a panel of speakers to discuss tips and tricks for running dbt at scale</span>
 </td>
 </tr>
-<tr data-index="7" data-categories="data,workflow,elt" data-listing-date-sort="1683090000000" data-listing-file-modified-sort="1697160111600" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="75" data-listing-title-sort="Crosspost: The Art of Abstraction in ETL" data-listing-filename-sort="index.qmd">
+<tr data-index="14" data-categories="data,workflow,elt,crosspost" data-listing-date-sort="1683090000000" data-listing-file-modified-sort="1705751376558" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="75" data-listing-title-sort="Crosspost: The Art of Abstraction in ETL" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 3, 2023</span>
 </td>
@@ -381,7 +486,7 @@ Description
 <span class="listing-description">Rounding out my three-part ETL series form Airbyte’s developer blog</span>
 </td>
 </tr>
-<tr data-index="8" data-categories="rstats,workflow" data-listing-date-sort="1681362000000" data-listing-file-modified-sort="1697756618883" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68" data-listing-title-sort="Posit Data Science Hangout" data-listing-filename-sort="index.qmd">
+<tr data-index="15" data-categories="rstats,workflow" data-listing-date-sort="1681362000000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68" data-listing-title-sort="Posit Data Science Hangout" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Apr 13, 2023</span>
 </td>
@@ -392,7 +497,7 @@ Description
 <span class="listing-description">Each week, host Rachael Dempsey invites an accomplished data science leader to talk about their experience and answer questions from the audience. The discussion focuses mainly on the human elements of data science leadership. There’s no sales or marketing fluff, just great insights from inspiring professionals.</span>
 </td>
 </tr>
-<tr data-index="9" data-categories="data,workflow,elt" data-listing-date-sort="1679461200000" data-listing-file-modified-sort="1697160117350" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="313" data-listing-title-sort="The Art of Abstraction in ETL: Dodging Data Extraction Errors" data-listing-filename-sort="index.qmd">
+<tr data-index="16" data-categories="data,workflow,elt,crosspost" data-listing-date-sort="1679461200000" data-listing-file-modified-sort="1705751370253" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="313" data-listing-title-sort="The Art of Abstraction in ETL: Dodging Data Extraction Errors" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Mar 22, 2023</span>
 </td>
@@ -403,7 +508,7 @@ Description
 <span class="listing-description">Cross-post from guest post on Airbyte’s developer blog</span>
 </td>
 </tr>
-<tr data-index="10" data-categories="causal" data-listing-date-sort="1679461200000" data-listing-file-modified-sort="1697751397316" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="133" data-listing-title-sort="Evaluation without Experimentation" data-listing-filename-sort="index.qmd">
+<tr data-index="17" data-categories="causal" data-listing-date-sort="1679461200000" data-listing-file-modified-sort="1704140173221" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="133" data-listing-title-sort="Evaluation without Experimentation" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Mar 22, 2023</span>
 </td>
@@ -414,7 +519,7 @@ Description
 <span class="listing-description">An introduction to inverse propensity of treatment weighting for program evaluation with applications to Two Million Texans’ relational organizing campaign during the 2022 midterms</span>
 </td>
 </tr>
-<tr data-index="11" data-categories="workflow,rstats,shiny" data-listing-date-sort="1678856400000" data-listing-file-modified-sort="1697749453206" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="256" data-listing-title-sort="Taking Flight with Shiny: a Modules-First Approach" data-listing-filename-sort="index.qmd">
+<tr data-index="18" data-categories="workflow,rstats,shiny" data-listing-date-sort="1678856400000" data-listing-file-modified-sort="1704140173598" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="256" data-listing-title-sort="Taking Flight with Shiny: a Modules-First Approach" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Mar 15, 2023</span>
 </td>
@@ -425,7 +530,18 @@ Description
 <span class="listing-description">An argument for the individual and organization-wide benefits of teaching new developers Shiny with a modules-first paradigm.</span>
 </td>
 </tr>
-<tr data-index="12" data-categories="data" data-listing-date-sort="1668232800000" data-listing-file-modified-sort="1697753135892" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205" data-listing-title-sort="The Data (error) Generating Process" data-listing-filename-sort="index.qmd">
+<tr data-index="19" data-categories="data,dbt,crosspost" data-listing-date-sort="1673935200000" data-listing-file-modified-sort="1705753766874" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="54" data-listing-title-sort="Crosspost: Power up your data quality with grouped checks" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">Jan 17, 2023</span>
+</td>
+<td>
+<a href="/./post/grouping-data-quality-crosspost/index.html" class="title listing-title">Crosspost: Power up your data quality with grouped checks</a>
+</td>
+<td>
+<span class="listing-description">After a prior post on the merits of grouped data quality checks, I demo my newly merged implementation for dbt</span>
+</td>
+</tr>
+<tr data-index="20" data-categories="data" data-listing-date-sort="1668232800000" data-listing-file-modified-sort="1704140173174" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205" data-listing-title-sort="The Data (error) Generating Process" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Nov 12, 2022</span>
 </td>
@@ -436,7 +552,7 @@ Description
 <span class="listing-description">Interrogating the data generating process to devise better data quality tests.</span>
 </td>
 </tr>
-<tr data-index="13" data-categories="data,sql" data-listing-date-sort="1664082000000" data-listing-file-modified-sort="1697160190851" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2209" data-listing-title-sort="Goin' to Carolina in my mind (or on my hard drive)" data-listing-filename-sort="index.qmd">
+<tr data-index="21" data-categories="data,sql" data-listing-date-sort="1664082000000" data-listing-file-modified-sort="1704140172970" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2209" data-listing-title-sort="Goin' to Carolina in my mind (or on my hard drive)" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Sep 25, 2022</span>
 </td>
@@ -447,7 +563,7 @@ Description
 <span class="listing-description">Out-of-memory processing of North Carolina’s voter file with DuckDB and Apache Arrow</span>
 </td>
 </tr>
-<tr data-index="14" data-categories="rstats,python,sql,data,data-disasters" data-listing-date-sort="1662354000000" data-listing-file-modified-sort="1697192846616" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1930" data-listing-title-sort="Oh, I'm sure it's probably nothing" data-listing-filename-sort="index.qmd">
+<tr data-index="22" data-categories="rstats,python,sql,data,data-disasters" data-listing-date-sort="1662354000000" data-listing-file-modified-sort="1704140173002" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1930" data-listing-title-sort="Oh, I'm sure it's probably nothing" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Sep 5, 2022</span>
 </td>
@@ -458,7 +574,7 @@ Description
 <span class="listing-description">How we do (or don’t) think about null values and why the polyglot push makes it all the more important</span>
 </td>
 </tr>
-<tr data-index="15" data-categories="data,dbt" data-listing-date-sort="1661490000000" data-listing-file-modified-sort="1697192714446" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="514" data-listing-title-sort="Update: grouped data quality check PR merged to dbt-utils" data-listing-filename-sort="index.qmd">
+<tr data-index="23" data-categories="data,dbt" data-listing-date-sort="1661490000000" data-listing-file-modified-sort="1704140172986" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="514" data-listing-title-sort="Update: grouped data quality check PR merged to dbt-utils" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Aug 26, 2022</span>
 </td>
@@ -469,7 +585,7 @@ Description
 <span class="listing-description">After a prior post on the merits of grouped data quality checks, I demo my newly merged implementation for dbt</span>
 </td>
 </tr>
-<tr data-index="16" data-categories="data" data-listing-date-sort="1641967200000" data-listing-file-modified-sort="1697883473885" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="141" data-listing-title-sort="The Data Engineering Podcast: Column Names as Contracts" data-listing-filename-sort="index.qmd">
+<tr data-index="24" data-categories="data" data-listing-date-sort="1641967200000" data-listing-file-modified-sort="1704140173237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="141" data-listing-title-sort="The Data Engineering Podcast: Column Names as Contracts" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 12, 2022</span>
 </td>
@@ -480,7 +596,7 @@ Description
 <span class="listing-description">Discussing how column names can serve as a light-weight alternative to data catalogs and contracts and how to implement this approach with dbtplyr</span>
 </td>
 </tr>
-<tr data-index="17" data-categories="rstats,shiny,data" data-listing-date-sort="1641103200000" data-listing-file-modified-sort="1697160360622" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2570" data-listing-title-sort="Using databases with Shiny" data-listing-filename-sort="index.qmd">
+<tr data-index="25" data-categories="rstats,shiny,data" data-listing-date-sort="1641103200000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2570" data-listing-title-sort="Using databases with Shiny" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 2, 2022</span>
 </td>
@@ -491,7 +607,7 @@ Description
 <span class="listing-description">Key issues when adding persistent storage to a Shiny application, featuring {golem} app development and Digital Ocean serving</span>
 </td>
 </tr>
-<tr data-index="18" data-categories="rstats,rmarkdown" data-listing-date-sort="1639202400000" data-listing-file-modified-sort="1697160356690" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="766" data-listing-title-sort="How to Make R Markdown Snow" data-listing-filename-sort="index.qmd">
+<tr data-index="26" data-categories="rstats,rmarkdown" data-listing-date-sort="1639202400000" data-listing-file-modified-sort="1704140173049" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="766" data-listing-title-sort="How to Make R Markdown Snow" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Dec 11, 2021</span>
 </td>
@@ -502,7 +618,7 @@ Description
 <span class="listing-description">Much like ice sculpting, applying powertools to absolutely frivolous pursuits</span>
 </td>
 </tr>
-<tr data-index="19" data-categories="data" data-listing-date-sort="1637992800000" data-listing-file-modified-sort="1697160215316" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3022" data-listing-title-sort="Make grouping a first-class citizen in data quality checks" data-listing-filename-sort="index.qmd">
+<tr data-index="27" data-categories="data" data-listing-date-sort="1637992800000" data-listing-file-modified-sort="1704140172986" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3022" data-listing-title-sort="Make grouping a first-class citizen in data quality checks" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Nov 27, 2021</span>
 </td>
@@ -513,7 +629,7 @@ Description
 <span class="listing-description">Which of these numbers doesn’t belong? -1, 0, 1, NA. You can’t judge data quality without data context, so our tools should enable as much context as possible.</span>
 </td>
 </tr>
-<tr data-index="20" data-categories="rstats,workflow" data-listing-date-sort="1637128800000" data-listing-file-modified-sort="1697757327056" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="74" data-listing-title-sort="UIUC STAT447 (Data Science Programming) Guest Lecture" data-listing-filename-sort="index.qmd">
+<tr data-index="28" data-categories="rstats,workflow" data-listing-date-sort="1637128800000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="74" data-listing-title-sort="UIUC STAT447 (Data Science Programming) Guest Lecture" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Nov 17, 2021</span>
 </td>
@@ -524,7 +640,7 @@ Description
 <span class="listing-description">Discussing how to move from scripting to tool development, designing tools in enterprise, and navigating diverse data career paths</span>
 </td>
 </tr>
-<tr data-index="21" data-categories="data-disasters" data-listing-date-sort="1636524000000" data-listing-file-modified-sort="1697160277826" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2315" data-listing-title-sort="Why machine learning hates vegetables" data-listing-filename-sort="index.qmd">
+<tr data-index="29" data-categories="data-disasters" data-listing-date-sort="1636524000000" data-listing-file-modified-sort="1704140172986" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2315" data-listing-title-sort="Why machine learning hates vegetables" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Nov 10, 2021</span>
 </td>
@@ -535,7 +651,7 @@ Description
 <span class="listing-description">A personal encounter with ‘intelligent’ data products gone wrong</span>
 </td>
 </tr>
-<tr data-index="22" data-categories="rstats,dbt" data-listing-date-sort="1632200400000" data-listing-file-modified-sort="1697192801272" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="620" data-listing-title-sort="Update: column-name contracts with dbtplyr" data-listing-filename-sort="index.qmd">
+<tr data-index="30" data-categories="rstats,dbt" data-listing-date-sort="1632200400000" data-listing-file-modified-sort="1705751505198" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="620" data-listing-title-sort="Update: column-name contracts with dbtplyr" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Sep 21, 2021</span>
 </td>
@@ -546,7 +662,7 @@ Description
 <span class="listing-description">Following up on ‘Embedding Column-Name Contracts… with dbt’ to demo my new dbtplyr package to further streamline the process</span>
 </td>
 </tr>
-<tr data-index="23" data-categories="rstats,data,elt" data-listing-date-sort="1629954000000" data-listing-file-modified-sort="1697160192676" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1956" data-listing-title-sort="A lightweight data validation ecosystem with R, GitHub, and Slack" data-listing-filename-sort="index.qmd">
+<tr data-index="31" data-categories="rstats,data,elt" data-listing-date-sort="1629954000000" data-listing-file-modified-sort="1704140172954" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1956" data-listing-title-sort="A lightweight data validation ecosystem with R, GitHub, and Slack" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Aug 26, 2021</span>
 </td>
@@ -557,7 +673,7 @@ Description
 <span class="listing-description">A right-sized solution to automated data monitoring, alerting, and reporting using R (<code>pointblank</code>, <code>projmgr</code>), GitHub (Actions, Pages, issues), and Slack</span>
 </td>
 </tr>
-<tr data-index="24" data-categories="rstats,workflow,sql" data-listing-date-sort="1626238800000" data-listing-file-modified-sort="1697160384498" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1253" data-listing-title-sort="Workflows for querying databases via R" data-listing-filename-sort="index.qmd">
+<tr data-index="32" data-categories="rstats,workflow,sql" data-listing-date-sort="1626238800000" data-listing-file-modified-sort="1704140173080" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1253" data-listing-title-sort="Workflows for querying databases via R" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jul 14, 2021</span>
 </td>
@@ -568,7 +684,7 @@ Description
 <span class="listing-description">Tricks for modularizing and refactoring your projects SQL/R interface. <em>(Image source <a href="https://techdaily.ca">techdaily.ca</a>)</em></span>
 </td>
 </tr>
-<tr data-index="25" data-categories="data,elt" data-listing-date-sort="1622091600000" data-listing-file-modified-sort="1697160194268" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="23" data-listing-word-count-sort="4461" data-listing-title-sort="Understanding the data (error) generating processes for data validation" data-listing-filename-sort="index.qmd">
+<tr data-index="33" data-categories="data,elt" data-listing-date-sort="1622091600000" data-listing-file-modified-sort="1704140172939" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="23" data-listing-word-count-sort="4461" data-listing-title-sort="Understanding the data (error) generating processes for data validation" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 27, 2021</span>
 </td>
@@ -579,7 +695,7 @@ Description
 <span class="listing-description">A data consumer’s guide to validating data based on the failure modes data producer’s try to avoid</span>
 </td>
 </tr>
-<tr data-index="26" data-categories="data,elt,python" data-listing-date-sort="1620450000000" data-listing-file-modified-sort="1697160389941" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2192" data-listing-title-sort="A Tale of Six States: Flexible data extraction with scraping and browser automation" data-listing-filename-sort="index.qmd">
+<tr data-index="34" data-categories="data,elt,python" data-listing-date-sort="1620450000000" data-listing-file-modified-sort="1704140173084" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2192" data-listing-title-sort="A Tale of Six States: Flexible data extraction with scraping and browser automation" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 8, 2021</span>
 </td>
@@ -590,7 +706,7 @@ Description
 <span class="listing-description">Exploring how <code>Playwright</code>‘s headless browser automation (and its friends) can help unite the states’ data</span>
 </td>
 </tr>
-<tr data-index="27" data-categories="data" data-listing-date-sort="1614319200000" data-listing-file-modified-sort="1697756911191" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="259" data-listing-title-sort="Column Names as Contracts" data-listing-filename-sort="index.qmd">
+<tr data-index="35" data-categories="data" data-listing-date-sort="1614319200000" data-listing-file-modified-sort="1704140173158" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="259" data-listing-title-sort="Column Names as Contracts" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Feb 26, 2021</span>
 </td>
@@ -601,7 +717,7 @@ Description
 <span class="listing-description">Exploring the benefits of using controlled vocabularies to encode metadata in column names, and demonstrations of implementing this approach with the <code>convo</code> R package or <code>dbt</code> extensions of SQL.</span>
 </td>
 </tr>
-<tr data-index="28" data-categories="data,sql,dbt" data-listing-date-sort="1612591200000" data-listing-file-modified-sort="1697160140930" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5636" data-listing-title-sort="Embedding column-name contracts in data pipelines with dbt" data-listing-filename-sort="index.qmd">
+<tr data-index="36" data-categories="data,sql,dbt" data-listing-date-sort="1612591200000" data-listing-file-modified-sort="1704140172860" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="29" data-listing-word-count-sort="5636" data-listing-title-sort="Embedding column-name contracts in data pipelines with dbt" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Feb 6, 2021</span>
 </td>
@@ -612,7 +728,7 @@ Description
 <span class="listing-description">dbt supercharges SQL with Jinja templating, macros, and testing – all of which can be customized to enforce controlled vocabularies and their implied contracts on a data model</span>
 </td>
 </tr>
-<tr data-index="29" data-categories="causal,data,tutorial" data-listing-date-sort="1611986400000" data-listing-file-modified-sort="1697160128164" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4289" data-listing-title-sort="Causal design patterns for data analysts" data-listing-filename-sort="index.qmd">
+<tr data-index="37" data-categories="causal,data,tutorial" data-listing-date-sort="1611986400000" data-listing-file-modified-sort="1704140172860" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="22" data-listing-word-count-sort="4289" data-listing-title-sort="Causal design patterns for data analysts" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 30, 2021</span>
 </td>
@@ -623,7 +739,7 @@ Description
 <span class="listing-description">An informal primer to causal analysis designs and data structures</span>
 </td>
 </tr>
-<tr data-index="30" data-categories="causal,resources" data-listing-date-sort="1611986400000" data-listing-file-modified-sort="1697193090913" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="564" data-listing-title-sort="Resource Round-Up: Causal Inference" data-listing-filename-sort="index.qmd">
+<tr data-index="38" data-categories="causal,resources" data-listing-date-sort="1611986400000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="564" data-listing-title-sort="Resource Round-Up: Causal Inference" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 30, 2021</span>
 </td>
@@ -634,7 +750,7 @@ Description
 <span class="listing-description">Free books, lectures, blogs, papers, and more for a causal inference crash course</span>
 </td>
 </tr>
-<tr data-index="31" data-categories="rstats,pkgdev,jtbd" data-listing-date-sort="1611208800000" data-listing-file-modified-sort="1697160407192" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="37" data-listing-word-count-sort="7215" data-listing-title-sort="Building a team of internal R packages" data-listing-filename-sort="index.qmd">
+<tr data-index="39" data-categories="rstats,pkgdev,jtbd" data-listing-date-sort="1611208800000" data-listing-file-modified-sort="1704140173127" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="37" data-listing-word-count-sort="7215" data-listing-title-sort="Building a team of internal R packages" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 21, 2021</span>
 </td>
@@ -645,7 +761,7 @@ Description
 <span class="listing-description">On the jobs-to-be-done and design principles for internal tools</span>
 </td>
 </tr>
-<tr data-index="32" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1611208800000" data-listing-file-modified-sort="1697749491798" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="158" data-listing-title-sort="oRganization: Design patterns for internal packages" data-listing-filename-sort="index.qmd">
+<tr data-index="40" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1611208800000" data-listing-file-modified-sort="1704140173237" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="158" data-listing-title-sort="oRganization: Design patterns for internal packages" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 21, 2021</span>
 </td>
@@ -656,7 +772,7 @@ Description
 <span class="listing-description">An overview of the unique design challenges and opportunities when building R packages for use inside of a single organization versus open-source. By using the jobs-to-be-done framework, this talk explores how internal packages can be better teammates by following specific design patterns for API design, testing, documentaiton, and more.</span>
 </td>
 </tr>
-<tr data-index="33" data-categories="rstats,data,sql,tutorial" data-listing-date-sort="1610776800000" data-listing-file-modified-sort="1697160376258" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1685" data-listing-title-sort="Generating SQL with {dbplyr} and sqlfluff" data-listing-filename-sort="index.qmd">
+<tr data-index="41" data-categories="rstats,data,sql,tutorial" data-listing-date-sort="1610776800000" data-listing-file-modified-sort="1704140173064" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1685" data-listing-title-sort="Generating SQL with {dbplyr} and sqlfluff" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 16, 2021</span>
 </td>
@@ -667,7 +783,7 @@ Description
 <span class="listing-description">Using the tidyverse’s expressive data wrangling vocabulary as a preprocessor for elegant SQL scripts. <em>(Image source <a href="https://techdaily.ca">techdaily.ca</a>)</em></span>
 </td>
 </tr>
-<tr data-index="34" data-categories="rstats,pkgdev,data" data-listing-date-sort="1609308000000" data-listing-file-modified-sort="1697192665764" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1256" data-listing-title-sort="Introducing the {convo} package" data-listing-filename-sort="index.qmd">
+<tr data-index="42" data-categories="rstats,pkgdev,data" data-listing-date-sort="1609308000000" data-listing-file-modified-sort="1704140172860" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1256" data-listing-title-sort="Introducing the {convo} package" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Dec 30, 2020</span>
 </td>
@@ -678,7 +794,7 @@ Description
 <span class="listing-description">An R package for maintaining controlled vocabularies to encode contracts between data producers and consumers</span>
 </td>
 </tr>
-<tr data-index="35" data-categories="workflow" data-listing-date-sort="1600578000000" data-listing-file-modified-sort="1697160395695" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1326" data-listing-title-sort="Sticker-driven maintenance" data-listing-filename-sort="index.qmd">
+<tr data-index="43" data-categories="workflow" data-listing-date-sort="1600578000000" data-listing-file-modified-sort="1704140173112" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1326" data-listing-title-sort="Sticker-driven maintenance" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Sep 20, 2020</span>
 </td>
@@ -689,7 +805,7 @@ Description
 <span class="listing-description">Marketing maintenance work with irrational exuberance</span>
 </td>
 </tr>
-<tr data-index="36" data-categories="rstats,tutorial" data-listing-date-sort="1599886800000" data-listing-file-modified-sort="1697160195668" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="583" data-listing-title-sort="crosstalk: Dynamic filtering for R Markdown" data-listing-filename-sort="index.qmd">
+<tr data-index="44" data-categories="rstats,tutorial" data-listing-date-sort="1599886800000" data-listing-file-modified-sort="1704140172876" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="583" data-listing-title-sort="crosstalk: Dynamic filtering for R Markdown" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Sep 12, 2020</span>
 </td>
@@ -700,7 +816,7 @@ Description
 <span class="listing-description">An introduction to browser-based interactivity of htmlwidgets – no Shiny server required!</span>
 </td>
 </tr>
-<tr data-index="37" data-categories="data,workflow,rstats" data-listing-date-sort="1599368400000" data-listing-file-modified-sort="1697160135169" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2749" data-listing-title-sort="Column Names as Contracts" data-listing-filename-sort="index.qmd">
+<tr data-index="45" data-categories="data,workflow,rstats" data-listing-date-sort="1599368400000" data-listing-file-modified-sort="1704140172860" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2749" data-listing-title-sort="Column Names as Contracts" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Sep 6, 2020</span>
 </td>
@@ -711,7 +827,7 @@ Description
 <span class="listing-description">Using controlled dictionaries for low-touch documentation, validation, and usability of tabular data</span>
 </td>
 </tr>
-<tr data-index="38" data-categories="shiny,rstats,workflow,tutorial" data-listing-date-sort="1595739600000" data-listing-file-modified-sort="1697160350321" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2286" data-listing-title-sort="A beginner's guide to Shiny modules" data-listing-filename-sort="index.qmd">
+<tr data-index="46" data-categories="shiny,rstats,workflow,tutorial" data-listing-date-sort="1595739600000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="12" data-listing-word-count-sort="2286" data-listing-title-sort="A beginner's guide to Shiny modules" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jul 26, 2020</span>
 </td>
@@ -722,7 +838,7 @@ Description
 <span class="listing-description">Don’t believe the documentation! Shiny modules aren’t just for advanced users; they might just be a great entry point for development</span>
 </td>
 </tr>
-<tr data-index="39" data-categories="workflow,rstats,pkgdev" data-listing-date-sort="1594011600000" data-listing-file-modified-sort="1697749478510" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="225" data-listing-title-sort="projmgr: Managing the human dependencies of your project" data-listing-filename-sort="index.qmd">
+<tr data-index="47" data-categories="workflow,rstats,pkgdev" data-listing-date-sort="1594011600000" data-listing-file-modified-sort="1704140173585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="225" data-listing-title-sort="projmgr: Managing the human dependencies of your project" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jul 6, 2020</span>
 </td>
@@ -733,7 +849,7 @@ Description
 <span class="listing-description">A lightning talk on key features of the projmgr package which brings enables code-based planning and reporting workflows grounded in GitHub issues and milestones</span>
 </td>
 </tr>
-<tr data-index="40" data-categories="resources,rstats" data-listing-date-sort="1593752400000" data-listing-file-modified-sort="1697160234510" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1316" data-listing-title-sort="Resource Round-Up: Latent and Lasting Documentation" data-listing-filename-sort="index.qmd">
+<tr data-index="48" data-categories="resources,rstats" data-listing-date-sort="1593752400000" data-listing-file-modified-sort="1704140172986" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1316" data-listing-title-sort="Resource Round-Up: Latent and Lasting Documentation" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jul 3, 2020</span>
 </td>
@@ -744,7 +860,7 @@ Description
 <span class="listing-description">Readings and assorted ideas about creating and maintaining low-overhead documentation</span>
 </td>
 </tr>
-<tr data-index="41" data-categories="rmarkdown,rstats" data-listing-date-sort="1593493200000" data-listing-file-modified-sort="1697160318958" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1557" data-listing-title-sort="RMarkdown CSS Selector Tips" data-listing-filename-sort="index.qmd">
+<tr data-index="49" data-categories="rmarkdown,rstats" data-listing-date-sort="1593493200000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1557" data-listing-title-sort="RMarkdown CSS Selector Tips" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jun 30, 2020</span>
 </td>
@@ -755,7 +871,7 @@ Description
 <span class="listing-description">A few tips and tools for finding the right selectors to style in RMarkdown</span>
 </td>
 </tr>
-<tr data-index="42" data-categories="rstats,workflow" data-listing-date-sort="1589432400000" data-listing-file-modified-sort="1697160288327" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1685" data-listing-title-sort="projmgr: Managing the human dependencies of your projects" data-listing-filename-sort="index.qmd">
+<tr data-index="50" data-categories="rstats,workflow" data-listing-date-sort="1589432400000" data-listing-file-modified-sort="1704140173002" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1685" data-listing-title-sort="projmgr: Managing the human dependencies of your projects" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 14, 2020</span>
 </td>
@@ -766,7 +882,7 @@ Description
 <span class="listing-description">A walkthrough of using the projmgr package for GitHub-based project management via R</span>
 </td>
 </tr>
-<tr data-index="43" data-categories="pkgdev,workflow,rstats,rmarkdown" data-listing-date-sort="1580536800000" data-listing-file-modified-sort="1697160329102" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4829" data-listing-title-sort="RMarkdown Driven Development: the Technical Appendix" data-listing-filename-sort="index.qmd">
+<tr data-index="51" data-categories="pkgdev,workflow,rstats,rmarkdown" data-listing-date-sort="1580536800000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="25" data-listing-word-count-sort="4829" data-listing-title-sort="RMarkdown Driven Development: the Technical Appendix" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Feb 1, 2020</span>
 </td>
@@ -777,7 +893,7 @@ Description
 <span class="listing-description">A recommended tech stack for implementing RMarkdown Driven Development</span>
 </td>
 </tr>
-<tr data-index="44" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1580364000000" data-listing-file-modified-sort="1697749466449" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="212" data-listing-title-sort="RMarkdown Driven Development" data-listing-filename-sort="index.qmd">
+<tr data-index="52" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1580364000000" data-listing-file-modified-sort="1704140173585" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="212" data-listing-title-sort="RMarkdown Driven Development" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Jan 30, 2020</span>
 </td>
@@ -788,7 +904,7 @@ Description
 <span class="listing-description">How and why to refactor one time analyses in RMarkdown into sustainable data products</span>
 </td>
 </tr>
-<tr data-index="45" data-categories="resources,rstats" data-listing-date-sort="1567141200000" data-listing-file-modified-sort="1697160299060" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1545" data-listing-title-sort="Resource Round-Up: R in Industry Edition" data-listing-filename-sort="index.qmd">
+<tr data-index="53" data-categories="resources,rstats" data-listing-date-sort="1567141200000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1545" data-listing-title-sort="Resource Round-Up: R in Industry Edition" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Aug 30, 2019</span>
 </td>
@@ -799,7 +915,7 @@ Description
 <span class="listing-description">Case studies of the impact of R use on organizational culture and collaboration</span>
 </td>
 </tr>
-<tr data-index="46" data-categories="resources,workflow" data-listing-date-sort="1567141200000" data-listing-file-modified-sort="1697160312690" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1543" data-listing-title-sort="Resource Round-Up: Reproducible Research Edition" data-listing-filename-sort="index.qmd">
+<tr data-index="54" data-categories="resources,workflow" data-listing-date-sort="1567141200000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1543" data-listing-title-sort="Resource Round-Up: Reproducible Research Edition" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Aug 30, 2019</span>
 </td>
@@ -810,7 +926,7 @@ Description
 <span class="listing-description">An annotated bibliography of advice for getting started with reproducible research</span>
 </td>
 </tr>
-<tr data-index="47" data-categories="rstats,pkgdev" data-listing-date-sort="1558760400000" data-listing-file-modified-sort="1697160334845" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2743" data-listing-title-sort="Rtistic: A package-by-numbers repo" data-listing-filename-sort="index.qmd">
+<tr data-index="55" data-categories="rstats,pkgdev" data-listing-date-sort="1558760400000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2743" data-listing-title-sort="Rtistic: A package-by-numbers repo" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 25, 2019</span>
 </td>
@@ -821,7 +937,7 @@ Description
 <span class="listing-description">A walkthrough of a GitHub template for making your own RMarkdown and ggplot2 theme package</span>
 </td>
 </tr>
-<tr data-index="48" data-categories="speaking,notes" data-listing-date-sort="1557205200000" data-listing-file-modified-sort="1697160401143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1438" data-listing-title-sort="Notes on supporting conference speakers" data-listing-filename-sort="index.qmd">
+<tr data-index="56" data-categories="speaking,notes" data-listing-date-sort="1557205200000" data-listing-file-modified-sort="1704140173112" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1438" data-listing-title-sort="Notes on supporting conference speakers" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 7, 2019</span>
 </td>
@@ -832,7 +948,7 @@ Description
 <span class="listing-description">Conference planning tips to design a good speakers experience</span>
 </td>
 </tr>
-<tr data-index="49" data-categories="pkgdev,rmarkdown,rstats,workflow" data-listing-date-sort="1556946000000" data-listing-file-modified-sort="1697160324518" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2653" data-listing-title-sort="RMarkdown Driven Development (RmdDD)" data-listing-filename-sort="index.qmd">
+<tr data-index="57" data-categories="pkgdev,rmarkdown,rstats,workflow" data-listing-date-sort="1556946000000" data-listing-file-modified-sort="1704140173017" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2653" data-listing-title-sort="RMarkdown Driven Development (RmdDD)" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 4, 2019</span>
 </td>
@@ -843,7 +959,7 @@ Description
 <span class="listing-description">A workflow for refactoring one-time analyses to sustainable data products</span>
 </td>
 </tr>
-<tr data-index="50" data-categories="speaking,notes" data-listing-date-sort="1555736400000" data-listing-file-modified-sort="1697160413420" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2459" data-listing-title-sort="Notes on preparing a tech talk" data-listing-filename-sort="index.qmd">
+<tr data-index="58" data-categories="speaking,notes" data-listing-date-sort="1555736400000" data-listing-file-modified-sort="1704140173127" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2459" data-listing-title-sort="Notes on preparing a tech talk" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Apr 20, 2019</span>
 </td>
@@ -854,7 +970,7 @@ Description
 <span class="listing-description">A proposed workflow for methodically developing a good presentations</span>
 </td>
 </tr>
-<tr data-index="51" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1697756066545" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="144" data-listing-title-sort="Assorted talks on designing analytical tools and communities for enterprise" data-listing-filename-sort="index.qmd">
+<tr data-index="59" data-categories="workflow,rmarkdown,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1704140173190" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="144" data-listing-title-sort="Assorted talks on designing analytical tools and communities for enterprise" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Nov 1, 2017</span>
 </td>
@@ -865,7 +981,7 @@ Description
 <span class="listing-description">A variety of related talks to creating innersource culture with R packages and related tools</span>
 </td>
 </tr>
-<tr data-index="52" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1697748915647" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="204" data-listing-title-sort="tidycf: Turning analysis on its head by turning cashflows on their side" data-listing-filename-sort="index.qmd">
+<tr data-index="60" data-categories="workflow,pkgdev,rstats" data-listing-date-sort="1509512400000" data-listing-file-modified-sort="1704140173614" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="204" data-listing-title-sort="tidycf: Turning analysis on its head by turning cashflows on their side" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">Nov 1, 2017</span>
 </td>
@@ -1119,6 +1235,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
           // target, if specified
           link.setAttribute("target", "_blank");
           if (link.getAttribute("rel") === null) {
@@ -1160,7 +1281,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1175,27 +1300,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
@@ -1210,10 +1314,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             break;
           }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1222,8 +1330,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {

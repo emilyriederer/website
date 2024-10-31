@@ -1,8 +1,15 @@
 {
   "listing": "/404.html",
   "items": [
+    "/talk/python-rgonomics/index.html",
+    "/post/data-discovery-ad-hoc/index.html",
+    "/post/py-rgo-base/index.html",
+    "/post/docs-personas/index.html",
+    "/post/py-rgo-polars/index.html",
+    "/post/docs-closer-than-you-think/index.html",
     "/post/py-rgo/index.html",
     "/post/recap-causal-2023/index.html",
+    "/talk/data-downtime/index.html",
     "/talk/dbtplyr/index.html",
     "/talk/midterm-email/index.html",
     "/talk/causal-design-patterns/index.html",
@@ -13,6 +20,7 @@
     "/post/abstraction-extraction/index.html",
     "/talk/midterm-iptw/index.html",
     "/talk/shiny-modules/index.html",
+    "/post/grouping-data-quality-crosspost/index.html",
     "/talk/data-error-gen/index.html",
     "/post/duckdb-carolina/index.html",
     "/post/nulls-polyglot/index.html",

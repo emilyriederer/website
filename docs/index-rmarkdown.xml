@@ -18,6 +18,7 @@
 
 
 
+
 <p>url_video: “”</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
@@ -29,9 +30,9 @@
 <p>At posit::conf for R user audience:</p>
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides-posit.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> Video - posit::conf for R User Audience <em>coming soon!</em> </span></p>
-<p><span><i class="bi bi-pencil"></i> <a href="../../post/column-name-contracts/">Post - Column Name Contracts</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt/">Post - Column Name Contracts in dbt</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt-update/">Post - Column Name Contracts with dbtplyr</a> </span></p>
+<p><span><i class="bi bi-pencil"></i> <a href="../..\post/column-name-contracts/">Post - Column Name Contracts</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/convo-dbt/">Post - Column Name Contracts in dbt</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/convo-dbt-update/">Post - Column Name Contracts with dbtplyr</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>Complex software systems make performance guarantees through documentation and unit tests, and they communicate these to users with conscientious interface design.</p>
@@ -65,6 +66,7 @@
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/snow/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -112,7 +114,7 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
 <pre><code>```{css echo = FALSE}`r ''`
 &lt;&lt;css goes here&gt;&gt;
 ```</code></pre>
-<p>For more tips on writing CSS for R Markown, check out my <a href="../../post/rmarkdown-css-tips/">post</a> on finding the right selectors.</p>
+<p>For more tips on writing CSS for R Markown, check out my <a href="../..\post/rmarkdown-css-tips/">post</a> on finding the right selectors.</p>
 </section>
 <section id="conditional-chunk-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="conditional-chunk-evaluation">Conditional chunk evaluation</h2>
@@ -146,6 +148,7 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
 
 
 
+
  ]]></description>
   <category>rmarkdown</category>
   <category>rstats</category>
@@ -158,6 +161,7 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/rmarkdown-css-tips/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -205,61 +209,85 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
 <section id="code" class="level4">
 <h4 class="anchored" data-anchor-id="code">Code</h4>
 <p>R code chunk blocks are wrapped in <code>&lt;pre&gt;</code> tags with class <code>"r"</code>. The code itself is wrapped in <code>&lt;code&gt;</code> tags with class <code>"hljs"</code> (for highlight.js, the default syntax highlighter). Individual parts of code are wrapped in <code>&lt;span&gt;</code> tags with classes such as <code>"hljs-number"</code>, <code>"hljs-string"</code>, and <code>"hljs-keyword"</code>. For example, the following shows the HTML code representing an R code chunk containing the code <code>1+1</code>:</p>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb2-1"><span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&lt;pre</span> <span class="er" style="color: #AD0000;
+font-style: inherit;">&lt;</span><span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+font-style: inherit;">pre</span><span class="ot" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"r"</span><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&gt;</span></span>
-<span id="cb2-2">  <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;code</span> <span class="er" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+font-style: inherit;"> class </span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"hljs"</span><span class="kw" style="color: #003B4F;
+font-style: inherit;">"r"</span><span class="dt" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">&gt;</span></span>
-<span id="cb2-3">    <span class="kw" style="color: #003B4F;
+<span id="cb2-2">  <span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&lt;span</span> <span class="er" style="color: #AD0000;
+font-style: inherit;">&lt;</span><span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+font-style: inherit;">code</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"> class </span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"hljs"</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">&gt;</span></span>
+<span id="cb2-3">    <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">&lt;</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">span</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"> class </span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"hljs-number"</span><span class="kw" style="color: #003B4F;
+font-style: inherit;">"hljs-number"</span><span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&gt;</span>1<span class="kw" style="color: #003B4F;
+font-style: inherit;">&gt;</span>1<span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&lt;/span&gt;</span></span>
+font-style: inherit;">&lt;/</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">span</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">&gt;</span></span>
 <span id="cb2-4">    "+"</span>
-<span id="cb2-5">    <span class="kw" style="color: #003B4F;
+<span id="cb2-5">    <span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&lt;span</span> <span class="er" style="color: #AD0000;
+font-style: inherit;">&lt;</span><span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">class</span> <span class="ot" style="color: #003B4F;
+font-style: inherit;">span</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"> class </span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"hljs-number"</span><span class="kw" style="color: #003B4F;
+font-style: inherit;">"hljs-number"</span><span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&gt;</span>1<span class="kw" style="color: #003B4F;
+font-style: inherit;">&gt;</span>1<span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&lt;/span&gt;</span></span>
-<span id="cb2-6">  <span class="kw" style="color: #003B4F;
+font-style: inherit;">&lt;/</span><span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">&lt;/code&gt;</span></span>
-<span id="cb2-7"><span class="kw" style="color: #003B4F;
+font-style: inherit;">span</span><span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">&lt;/pre&gt;</span></span></code></pre></div>
+font-style: inherit;">&gt;</span></span>
+<span id="cb2-6">  <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">&lt;/</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">code</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">&gt;</span></span>
+<span id="cb2-7"><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">&lt;/</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">pre</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">&gt;</span></span></code></pre></div>
 <p>Console output such as numeric results, messages, warnings, and errors are similarly wrapped in <code>&lt;pre&gt;</code> and <code>&lt;code&gt;</code> tags.<sup>1</sup> Other types of output are treated differently. For example, the next section describes how plot output is processed.</p>
 </section>
 <section id="figures" class="level4">
@@ -294,7 +322,9 @@ font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+font-style: inherit;">border</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -317,7 +347,9 @@ font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+font-style: inherit;">border</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -342,7 +374,9 @@ font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+font-style: inherit;">border</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -369,7 +403,9 @@ font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+font-style: inherit;">border</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -398,7 +434,9 @@ font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+font-style: inherit;">border</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -429,7 +467,9 @@ font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+font-style: inherit;">border</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -462,7 +502,9 @@ font-style: inherit;">*</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> { <span class="kw" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">border</span>: <span class="dv" style="color: #AD0000;
+font-style: inherit;">border</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span><span class="dt" style="color: #AD0000;
 background-color: null;
@@ -500,16 +542,17 @@ font-style: inherit;">pink</span>}</span></code></pre></div>
 
 
 
+
 <section id="motivation" class="level2">
 <h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
-<p>My initial post on <a href="../../post/rmarkdown-driven-development/">RMarkdown Driven Development</a> focuses on major <em>concepts</em> in the process of evolving a one-time, single-file analysis into a sustainable analytical tool. In the spirit of Etsy’s <a href="https://codeascraft.com/2018/10/10/etsys-experiment-with-immutable-documentation/">immutable documentation</a>, I intentionally minimized references to specific tools or packages. After all, software is transient; principles are evergreen.</p>
+<p>My initial post on <a href="../..\post/rmarkdown-driven-development/">RMarkdown Driven Development</a> focuses on major <em>concepts</em> in the process of evolving a one-time, single-file analysis into a sustainable analytical tool. In the spirit of Etsy’s <a href="https://codeascraft.com/2018/10/10/etsys-experiment-with-immutable-documentation/">immutable documentation</a>, I intentionally minimized references to specific tools or packages. After all, software is transient; principles are evergreen.</p>
 <p>However, RMarkdown Driven Development is more than just a <em>conceptual</em> framework. There are three main components: the main conceptual workflow (the why-to), the technical implementation (the how-to), and the comparison of merits between different destination states (the what-now). I touched on all three of these briefly in my rstudio::conf 2020 presentation<sup>1</sup>, but plan to explore each more deeply in their own post. This post focuses on the second: tools for technical implementation.</p>
 <p>To implement RMarkdown Driven Development (RmdDD), one should take full advantage of the current state-of-the-art in R developer tools and the RStudio IDE. This article surveys helpful some of these helpful packages and tools. As the title implies, this piece is a appendix and not a complete narrative. It is neither a stand-along replacement for the original post, nor does it intend completely explain each referenced package and tool it mentions. This companion piece simply focuses on awareness raising for the plethora of tools that can make your job as a (file / project / package) engineer easier.</p>
 <p>As this is a very lenthy post, please use the visual guide and the table of contents below to jump around as you please:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/rmddd-tech-appendix/featured.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Diagram of packages and tools on RmdDD timeline</figcaption>
+<figcaption>Diagram of packages and tools on RmdDD timeline</figcaption>
 </figure>
 </div>
 </section>
@@ -621,7 +664,7 @@ params:
 <p>If we are knitting our RMarkdown from the RStudio IDE, we can use the parameters UI to prompt a pop-up box in which to enter parameters and replace the dummy values from the header. To do this, click the down arrow on the <code>Knit</code> button and chose <code>Knit with Parameters...</code>.</p>
 <p>Alternatively, this can also be done programmatically with the <code>rmarkdown::render</code> function. The <code>render</code> function can kick-off the process of knitting any RMarkdown when provided its file path, e.g.&nbsp;<code>rmarkdown::render(input = 'my-analysis.Rmd')</code>. <code>render</code> has a <code>params</code> argument which, as stated in the documentation, accepts “a list of named parameters that override custom parameters specified in the YAML front-matter”. That is, we can write:</p>
 <pre><code>rmarkdown::render(input = 'my-analysis.Rmd', params = list(password = {{CODE TO RETRIEVE PASSWORD}}))</code></pre>
-<p>where <code>{{CODE TO RETRIEVE PASSWORD}}</code> is replaced with the relevant code. You could consider retrieving code from an environment variable, a <a href="https://cran.r-project.org/web/packages/keyring/index.html">keychain from the <code>keyring</code> package</a>, or code you may use to interface with other password managers. Credential management is a large topic unto itself and beyond the scope of this post.</p>
+<p>where <code>{CODE TO RETRIEVE PASSWORD}</code> is replaced with the relevant code. You could consider retrieving code from an environment variable, a <a href="https://cran.r-project.org/web/packages/keyring/index.html">keychain from the <code>keyring</code> package</a>, or code you may use to interface with other password managers. Credential management is a large topic unto itself and beyond the scope of this post.</p>
 </section>
 <section id="create-file-paths-with-here" class="level3">
 <h3 class="anchored" data-anchor-id="create-file-paths-with-here">Create file paths with <code>here</code></h3>
@@ -648,7 +691,7 @@ params:
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/rmddd-tech-appendix/rmdd-toc.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Example of RStudio table of contents</figcaption>
+<figcaption>Example of RStudio table of contents</figcaption>
 </figure>
 </div>
 </section>
@@ -719,7 +762,7 @@ viz_scatter_x &lt;- function(data, vbl) {
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/rmddd-tech-appendix/rmdd-lintr.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Example of lintr output</figcaption>
+<figcaption>Example of lintr output</figcaption>
 </figure>
 </div>
 <p><code>styler</code> analyzes code similarly to <code>lintr</code>, but it automatically edits scripts to adhere to a style guide instead of providing suggestion.</p>
@@ -875,14 +918,15 @@ viz_scatter_x &lt;- function(data, vbl) {
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> <a href="https://posit.co/resources/videos/rmarkdown-driven-development/">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/rmarkdown-driven-development/">Post - RMarkown Driven Development</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/rmddd-tech-appendix/">Post - RmdDD Technical Appendix</a> </span></p>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/rmarkdown-driven-development/">Post - RMarkown Driven Development</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/rmddd-tech-appendix/">Post - RmdDD Technical Appendix</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>RMarkdown enables analysts to engage with code interactively, embrace literate programming, and rapidly produce a wide variety of high-quality data products such as documents, emails, dashboards, and websites. However, RMarkdown is less commonly explored and celebrated for the important role it can play in helping R users grow into developers. In this talk, I will provide an overview of RMarkdown Driven Development, a workflow for converting one-off analysis into a well-engineered and well-designed R package with deep empathy for user needs. We will explore how the methodical incorporation of good coding practices such as modularization and testing naturally evolves a single-file RMarkdown into an R project or package. Along the way, we will discuss big-picture questions like “optimal stopping” (why some data products are better left as single files or projects) and concrete details such as the {here} and {testthat} packages which can provide step-change improvements to project sustainability.</p>
@@ -913,6 +957,7 @@ viz_scatter_x &lt;- function(data, vbl) {
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/rmarkdown-driven-development/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1022,7 +1067,7 @@ viz_scatter_x &lt;- function(data, vbl) {
 <p>Since I initially wrote about this topic, I have since continued to explore this idea. Below is a list of more related content:</p>
 <ul>
 <li><a href="https://www.slideshare.net/EmilyRiederer/rmarkdown-driven-development-rstudioconf-2020">Slides</a> and <a href="https://resources.rstudio.com/rstudio-conf-2020/rmarkdown-driven-development-emily-riederer">video</a> from my rstudio::conf 2020 talk</li>
-<li>Follow-up post giving a <a href="../../post/rmddd-tech-appendix/">technical appendix</a> of related R packages and tools that may help with this process</li>
+<li>Follow-up post giving a <a href="../..\post/rmddd-tech-appendix/">technical appendix</a> of related R packages and tools that may help with this process</li>
 </ul>
 
 
@@ -1052,6 +1097,7 @@ viz_scatter_x &lt;- function(data, vbl) {
   <title>Assorted talks on designing analytical tools and communities for enterprise</title>
   <link>https://emilyriederer.com/talk/ent-pkg-design/</link>
   <description><![CDATA[ 
+
 
 
 

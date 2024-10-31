@@ -239,6 +239,7 @@ from invoices;</code></pre>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
@@ -278,16 +279,17 @@ from invoices;</code></pre>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/causal-data/featured.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Data strategy motivated by causal methods</figcaption>
+<figcaption>Data strategy motivated by causal methods</figcaption>
 </figure>
 </div>
-<p><em>This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the <a href="../../talk/causal-design-patterns">talk details</a> for more content.</em></p>
+<p><em>This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the <a href="../..\talk/causal-design-patterns">talk details</a> for more content.</em></p>
 <p>Techniques of observational causal inference are becoming increasingly popular in industry as a complement to experimentation. Causal methods offer the promise of accelerating measurement agendas and facilitating the estimation of previously un-measurable targets by allowing analysts to extract causal insights from “found” data (e.g.&nbsp;observational data collected without specific intent). However, if executed without careful attention to their assumptions and limitations, they can lead to spurious conclusions.</p>
 <p>Both experimental and observational methods attempt to address the <strong>fundamental problem of causal inference</strong>: that is, the fact that for a given treatment of interest, we can never “see” the <em>individual-level outcome</em> both for the case when an individual received a treatment and a counterfactual scenario in which <em>for the same individual in the exact same context</em> that treatment was withheld. Some literature casts this as a “missing data” problem.<sup>1</sup> Counterfactual data is uncollectable; however, this fundamental missingness can be partially mitigated by diligent collection of <em>other</em> types of quantitative and qualitative information to control for confounding<sup>2</sup> and interrogate assumptions.</p>
-<p>In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods due to industry’s (theoretically) superior ability to observe and capture relevant supplemental data and context. Examining the implicit assumptions in common <a href="../../post/causal-design-patterns">causal design patterns</a> motivates the types of proactive enterprise information management – including data, metadata, and knowledge management – that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today. By casting an intentionally wide net on what information we observationally collect, we increase the likelihood that the future “found” data will have what those analysts need to succeed.</p>
+<p>In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods due to industry’s (theoretically) superior ability to observe and capture relevant supplemental data and context. Examining the implicit assumptions in common <a href="../..\post/causal-design-patterns">causal design patterns</a> motivates the types of proactive enterprise information management – including data, metadata, and knowledge management – that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today. By casting an intentionally wide net on what information we observationally collect, we increase the likelihood that the future “found” data will have what those analysts need to succeed.</p>
 <section id="why-industry-needs-causal-inference" class="level2">
 <h2 class="anchored" data-anchor-id="why-industry-needs-causal-inference">Why industry needs causal inference</h2>
 <p><img src="https://emilyriederer.com/post/causal-data/why-not-experiment.png" class="img-fluid"></p>
@@ -297,7 +299,7 @@ from invoices;</code></pre>
 <h2 class="anchored" data-anchor-id="what-causal-methods-require">What causal methods require</h2>
 <p><img src="https://emilyriederer.com/post/causal-data/patterns-and-variation.png" class="img-fluid"></p>
 <p>These limitations are one of the reasons why observational causal inference is gaining increasing popularity in industry. Methods of observational causal inference allows us to estimate treatment effects without randomized controlled experimentation by using existing historical data. At the highest level, these methods work by replacing <em>randomization</em> with strategies to exploit other forms of <em>semi-random variation</em> in historical exposures of a population to a treatment. Since this semi-random <em>variation</em> could be susceptible to confounding, observational methods supplement variation with <em>additional data</em> to control for other observable sources of bias in our estimates and <em>contextual assumptions</em> about the data generating process.</p>
-<p>My previous post on <a href="../../post/causal-design-patterns">causal design patterns</a> outlines a number of foundational causal methods, but I’ll briefly recap to emphasize the different ways that sources of variation, data, and context are used:</p>
+<p>My previous post on <a href="../..\post/causal-design-patterns">causal design patterns</a> outlines a number of foundational causal methods, but I’ll briefly recap to emphasize the different ways that sources of variation, data, and context are used:</p>
 <ul>
 <li><strong>Stratification and Inverse Propensity Score Weighting</strong>:
 <ul>
@@ -370,6 +372,7 @@ from invoices;</code></pre>
   <title>DataFold Data Quality Meet Up</title>
   <link>https://emilyriederer.com/talk/meetup-datafold/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -511,14 +514,15 @@ from invoices;</code></pre>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=LkfP4dEv11Q">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/grouping-data-quality/">Post - Why Group Data Tests?</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/grouping-data-quality-update/">Post - Grouped Data Tests in dbt-utils</a> </span></p>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/grouping-data-quality/">Post - Why Group Data Tests?</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/grouping-data-quality-update/">Post - Grouped Data Tests in dbt-utils</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>Statisticians often approach probabilistic modeling by first understanding the conceptual data generating process. However, when validating messy real-world data, the technical aspects of the data generating process is largely ignored.</p>
@@ -554,10 +558,11 @@ from invoices;</code></pre>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/duckdb-carolina/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo Credit to <a href="https://unsplash.com/@element5digital">Element5 Digital</a> on Unsplash</figcaption>
+<figcaption>Photo Credit to <a href="https://unsplash.com/@element5digital">Element5 Digital</a> on Unsplash</figcaption>
 </figure>
 </div>
 <p>There comes a time in every analyst’s life when data becomes too big for their laptop’s RAM. While open-source tools like R, python, and SQL have made “team of one” data analysts ever more powerful, analysts abilities to derive value from their skillsets are highly interdependent with the tools at their disposal.</p>
@@ -1184,10 +1189,11 @@ order by 1,2
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@davideragusa">Davide Ragusa</a> on Unsplash</figcaption>
+<figcaption>Photo credit to <a href="https://unsplash.com/@davideragusa">Davide Ragusa</a> on Unsplash</figcaption>
 </figure>
 </div>
 <p>Language interoperability and different ways of enabling “polyglot” workflows have seemed to take centerstage in the data world recently:</p>
@@ -2692,10 +2698,11 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/grouping-data-quality-update/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@greysonjoralemon">Greyson Joralemon</a> on Unsplash</figcaption>
+<figcaption>Photo credit to <a href="https://unsplash.com/@greysonjoralemon">Greyson Joralemon</a> on Unsplash</figcaption>
 </figure>
 </div>
 <p>Last fall, I wrote about the <a href="https://www.emilyriederer.com/post/grouping-data-quality/">unreasonably effectiveness of grouping in data quality checks</a>. In this follow-up, I want to share that my <a href="https://github.com/dbt-labs/dbt-utils/pull/633">pull request</a> for such features has just been merged into the development branch of the <code>dbt-utils</code> package, a common add-on to the <code>dbt</code> data transformation stack. This feature will officially “go live” in the 1.0.0 version release that is planned for later this fall.</p>
@@ -2759,13 +2766,14 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Listen</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-play"></i> <a href="https://www.dataengineeringpodcast.com/controlled-vocabulary-with-dbtplyr-episode-252/">Pod</a> </span><br>
 <span><i class="bi bi-download"></i><a href="tdep_col-name-contracts.mp3">Download MP3</a></span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/column-name-contracts/">Post - Column Names as Contracts</a> </span></p>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/column-name-contracts/">Post - Column Names as Contracts</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>Communication and shared context are the hardest part of any data system. In recent years the focus has been on data catalogs as the means for documenting data assets, but those introduce a secondary system of record in order to find the necessary information. In this episode Emily Riederer shares her work to create a controlled vocabulary for managing the semantic elements of the data managed by her team and encoding it in the schema definitions in her data warehouse. She also explains how she created the dbtplyr package to simplify the work of creating and enforcing your own controlled vocabularies.</p>
@@ -2790,6 +2798,7 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/shiny-db/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -3270,10 +3279,11 @@ font-style: inherit;">return</span>(con)</span>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/grouping-data-quality/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@greysonjoralemon">Greyson Joralemon</a> on Unsplash</figcaption>
+<figcaption>Photo credit to <a href="https://unsplash.com/@greysonjoralemon">Greyson Joralemon</a> on Unsplash</figcaption>
 </figure>
 </div>
 <p>Which of these numbers doesn’t belong? -1, 0, 1, NA.</p>
@@ -3833,6 +3843,7 @@ font-style: inherit;">"CA"</span></span></code></pre></div>
 
 
 
+
 <p>Data quality monitoring is an essential part of any data analysis or business intelligence workflow. As such, an increasing number of promising tools<sup>1</sup> have emerged as part of the <a href="https://moderndatastack.xyz/">Modern Data Stack</a> to offer better orchestration, testing, and reporting.</p>
 <p>Although I’m very excited about the developments in this space, I realize that emerging products may not be the best fit for every organization. Enterprise tools can be financial costly, and, more broadly, even free and open-source offerings bring costs in the time and risks associated with vetting tools for security, training associates, and committing to potential lock-in of building workflows around these tools. Additionally, data end-users may not always have the ability to get far enough “upstream” in the production process of their data to make these tools make sense.</p>
 <p>“Right-sizing” technology to the problem at hand is a critical task. A “best” solution with the most polished, professional, exciting product isn’t always the best <em>fit</em> for your needs. Trade-offs must be made between feature completeness and fit-for-purpose. In other words, sometimes its more important for technology to be <em>“good enough”</em>.<sup>2</sup></p>
@@ -4287,6 +4298,7 @@ font-style: inherit;">-</span>repo pulls commits releases deployments</span></co
   <dc:creator>Tobias Macey</dc:creator>
   <link>https://emilyriederer.com/publication/data-eng-97-things/</link>
   <description><![CDATA[ 
+
 
 
 

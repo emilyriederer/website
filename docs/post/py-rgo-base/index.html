@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.542">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -138,7 +138,10 @@ cookieconsent.run({
   
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
+
+
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -534,6 +537,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 <span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'b'</span>: [<span class="st">'x'</span>,<span class="st">'y'</span>,<span class="st">'z'</span>]</span>
 <span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -571,6 +575,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 </div>
 </div>
 </div>
+</div>
 <p>If we need longer datasets, we can use helper functions in packages like <code>numpy</code> to generate the series. Methods like <code>arange</code> and <code>linspace</code> work similarly to R’s <code>seq()</code>.</p>
 <div id="e27be38e" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
@@ -581,6 +586,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 <span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">'b'</span>: np.linspace(start <span class="op">=</span> <span class="dv">9</span>, stop <span class="op">=</span> <span class="dv">24</span>, num <span class="op">=</span> <span class="dv">3</span>)</span>
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -618,6 +624,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 </div>
 </div>
 </div>
+</div>
 <p>If we need groups in our sample data, we can use <code>np.repeat()</code> which works like R’s <code>rep(each = TRUE)</code>.</p>
 <div id="a86edf0b" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pl.DataFrame({</span>
@@ -625,6 +632,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'b'</span>: np.linspace(start <span class="op">=</span> <span class="dv">3</span>, stop <span class="op">=</span> <span class="dv">27</span>, num <span class="op">=</span> <span class="dv">6</span>)</span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -674,6 +682,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 </div>
 </div>
 </div>
+</div>
 <p>Alternatively, for more control and succinct typing, we can created a nested dataset in <code>polars</code> and explode it out.</p>
 <div id="6ecf467f" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(</span>
@@ -685,6 +694,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 <span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  .explode(<span class="st">'b'</span>)</span>
 <span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -746,12 +756,14 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 </div>
 </div>
 </div>
+</div>
 <p>Similarly, we could use what we’ve learned about <code>polars</code> list columns <em>and</em> list comprehensions.</p>
 <div id="10f32c48" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> [ [q<span class="op">*</span>i <span class="cf">for</span> q <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]] <span class="cf">for</span> i <span class="kw">in</span> a]</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>pl.DataFrame({<span class="st">'a'</span>:a,<span class="st">'b'</span>:b}).explode(<span class="st">'b'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -813,6 +825,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 </div>
 </div>
 </div>
+</div>
 <p>In fact, multidimensional list comprehensions can be used to mimic R’s <code>expand.grid()</code> function.</p>
 <div id="f6c2c31c" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>pl.DataFrame(</span>
@@ -820,6 +833,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  schema <span class="op">=</span> [<span class="st">'x'</span>,<span class="st">'y'</span>]</span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -878,6 +892,7 @@ $ flip &lt;i32&gt; 0, 0, 0, 0, 1, 0, 1, 1, 0, 0
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -1170,6 +1185,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
           // target, if specified
           link.setAttribute("target", "_blank");
           if (link.getAttribute("rel") === null) {
@@ -1211,7 +1231,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1259,7 +1283,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      return note.innerHTML;
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {

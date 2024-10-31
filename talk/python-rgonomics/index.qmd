@@ -12,7 +12,7 @@ date: 2024-08-15
 ## Quick Links
 
 <span><i class = 'bi bi-file-bar-graph'></i> [Slides](slides.pdf) </span>    
-<span><i class = 'bi bi-play'></i> Video Coming Soon </span>    
+<span><i class = 'bi bi-play'></i> https://www.youtube.com/watch?v=ILxK92HDtvU&list=PL9HYL-VRX0oSFkdF4fJeY63eGDvgofcbn </span>    
 <span><i class = 'bi bi-pencil'></i> [Post - Python Rgonomics](/post/py-rgo/) </span>    
 <span><i class = 'bi bi-pencil'></i> [Post - Advanced `polars` versus `dplyr`](/post/py-rgo-polars/) </span>    
 
@@ -32,7 +32,7 @@ Data science languages are increasingly interoperable with advances like Arrow, 
 
 ## Video
 
-Video to come. 
+{{< video https://www.youtube.com/watch?v=ILxK92HDtvU >}}
 
 :::
 

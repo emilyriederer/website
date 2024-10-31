@@ -24,7 +24,7 @@
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> Video Coming Soon </span><br>
+<span><i class="bi bi-play"></i> https://www.youtube.com/watch?v=ILxK92HDtvU&amp;list=PL9HYL-VRX0oSFkdF4fJeY63eGDvgofcbn </span><br>
 <span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo/">Post - Python Rgonomics</a> </span><br>
 <span><i class="bi bi-pencil"></i> <a href="../..\post/py-rgo-polars/">Post - Advanced <code>polars</code> versus <code>dplyr</code></a> </span></p>
 </div>
@@ -50,7 +50,7 @@ Warning
 </div>
 </div>
 <div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<p>Video to come.</p>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/ILxK92HDtvU" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 </div>
 </div>
 </div>
@@ -629,6 +629,7 @@ background-color: null;
 font-style: inherit;">'z'</span>]</span>
 <span id="cb37-6">})</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -663,6 +664,7 @@ font-style: inherit;">'z'</span>]</span>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -704,6 +706,7 @@ background-color: null;
 font-style: inherit;">3</span>)</span>
 <span id="cb38-7">})</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -741,6 +744,7 @@ font-style: inherit;">3</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>If we need groups in our sample data, we can use <code>np.repeat()</code> which works like R’s <code>rep(each = TRUE)</code>.</p>
 <div id="a86edf0b" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1">pl.DataFrame({</span>
@@ -770,6 +774,7 @@ background-color: null;
 font-style: inherit;">6</span>)</span>
 <span id="cb39-4">})</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -819,6 +824,7 @@ font-style: inherit;">6</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>Alternatively, for more control and succinct typing, we can created a nested dataset in <code>polars</code> and explode it out.</p>
 <div id="6ecf467f" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1">(</span>
@@ -854,6 +860,7 @@ background-color: null;
 font-style: inherit;">'b'</span>)</span>
 <span id="cb40-8">)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -915,6 +922,7 @@ font-style: inherit;">'b'</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>Similarly, we could use what we’ve learned about <code>polars</code> list columns <em>and</em> list comprehensions.</p>
 <div id="10f32c48" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1">a <span class="op" style="color: #5E5E5E;
@@ -953,6 +961,7 @@ font-style: inherit;">'b'</span>:b}).explode(<span class="st" style="color: #207
 background-color: null;
 font-style: inherit;">'b'</span>)</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1014,6 +1023,7 @@ font-style: inherit;">'b'</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 <p>In fact, multidimensional list comprehensions can be used to mimic R’s <code>expand.grid()</code> function.</p>
 <div id="f6c2c31c" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">pl.DataFrame(</span>
@@ -1043,6 +1053,7 @@ background-color: null;
 font-style: inherit;">'y'</span>]</span>
 <span id="cb42-4">  )</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1101,6 +1112,7 @@ font-style: inherit;">'y'</span>]</span>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -1213,13 +1225,14 @@ font-style: inherit;">'rb'</span>))</span></code></pre></div>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/py-rgo-polars/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
+<figcaption>Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
 </figure>
 </div>
-<p>A few weeks ago, I shared some <a href="../../post/py-rgo/">recommended modern python tools and libraries</a> that I believe have the most similar ergonomics for R (specifically <code>tidyverse</code>) converts. This post expands on that one with a focus on the <code>polars</code> library.</p>
+<p>A few weeks ago, I shared some <a href="../..\post/py-rgo/">recommended modern python tools and libraries</a> that I believe have the most similar ergonomics for R (specifically <code>tidyverse</code>) converts. This post expands on that one with a focus on the <code>polars</code> library.</p>
 <p>At the surface level, all data wrangling libraries have roughly the same functionality. Operations like selecting existing columns and making new ones, subsetting and ordering rows, and summarzing results is tablestakes.</p>
 <p>However, no one falls in love with a specific library because it has the best <code>select()</code> or <code>filter()</code> function the world has ever seen. It’s the ability to easily do more complex transformations that differentiate a package expert versus novice, and the learning curve for everything that happens <em>after</em> the “Getting Started” guide ends is what can leave experts at one tool feeling so disempowered when working with another.</p>
 <p>This deeper sense of intuition and fluency – when your technical brain knows intuitively how to translate in code what your analytical brain wants to see in the data – is what I aim to capture in the term “ergonomics”. In this post, I briefly discuss the surface-level comparison but spend most of the time exploring the deeper similarities in the functionality and workflows enabled by <code>polars</code> and <code>dplyr</code>.</p>
@@ -1406,6 +1419,7 @@ background-color: null;
 font-style: inherit;">0</span>]})</span>
 <span id="cb6-6">df.head()</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1453,6 +1467,7 @@ font-style: inherit;">0</span>]})</span>
 </div>
 </div>
 </div>
+</div>
 <section id="explicit-api-for-row-wise-operations" class="level3">
 <h3 class="anchored" data-anchor-id="explicit-api-for-row-wise-operations">Explicit API for row-wise operations</h3>
 <p>While row-wise operations are relatively easy to write ad-hoc, it can still be nice semantically to have readable and stylistically consistent code for such transformations.</p>
@@ -1468,6 +1483,7 @@ background-color: null;
 font-style: inherit;">'c'</span>)) </span>
 <span id="cb7-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1521,10 +1537,11 @@ font-style: inherit;">'c'</span>)) </span>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="column-selectors" class="level3">
 <h3 class="anchored" data-anchor-id="column-selectors">Column Selectors</h3>
-<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/reference/select.html">column selectors</a> dynamically determine a set of columns based on pattern-matching their names (e.g.&nbsp;<code>starts_with()</code>, <code>ends_with()</code>), data types, or other features. I’ve previously <a href="../../post/column-name-contracts/">written</a> and <a href="../../talk/col-names-contract/">spoken</a> at length about how transformative this functionality can be when paired with</p>
+<p><code>dplyr</code>’s <a href="https://dplyr.tidyverse.org/reference/select.html">column selectors</a> dynamically determine a set of columns based on pattern-matching their names (e.g.&nbsp;<code>starts_with()</code>, <code>ends_with()</code>), data types, or other features. I’ve previously <a href="../..\post/column-name-contracts/">written</a> and <a href="../..\talk/col-names-contract/">spoken</a> at length about how transformative this functionality can be when paired with</p>
 <p><code>polars</code> has a similar set of <a href="https://docs.pola.rs/py-polars/html/reference/selectors.html">column selectors</a>. We’ll import them and see a few examples.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
@@ -1551,6 +1568,7 @@ font-style: inherit;">'b'</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|</span> cs.string())</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1592,12 +1610,14 @@ font-style: inherit;">|</span> cs.string())</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 <p>Negative conditions also work.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">df.select(<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">~</span>cs.string())</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1639,6 +1659,7 @@ font-style: inherit;">~</span>cs.string())</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="in-with_columns" class="level4">
 <h4 class="anchored" data-anchor-id="in-with_columns">In <code>with_columns</code></h4>
@@ -1653,6 +1674,7 @@ background-color: null;
 font-style: inherit;">"_plus1"</span>)</span>
 <span id="cb12-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1712,6 +1734,7 @@ font-style: inherit;">"_plus1"</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>We can also use selected variables within transformations, like the rowwise sums that we just saw earlier.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df.with_columns(</span>
@@ -1720,6 +1743,7 @@ background-color: null;
 font-style: inherit;">=</span> pl.sum_horizontal(cs.integer())</span>
 <span id="cb13-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1773,6 +1797,7 @@ font-style: inherit;">=</span> pl.sum_horizontal(cs.integer())</span>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="in-group_by-and-agg" class="level4">
 <h4 class="anchored" data-anchor-id="in-group_by-and-agg">In <code>group_by</code> and <code>agg</code></h4>
@@ -1782,6 +1807,7 @@ font-style: inherit;">=</span> pl.sum_horizontal(cs.integer())</span>
 background-color: null;
 font-style: inherit;">sum</span>())</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1819,6 +1845,7 @@ font-style: inherit;">sum</span>())</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 </section>
 </section>
 <section id="consistent-api-for-window-functions" class="level3">
@@ -1840,6 +1867,7 @@ background-color: null;
 font-style: inherit;">'a'</span>)</span>
 <span id="cb15-3">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1893,6 +1921,7 @@ font-style: inherit;">'a'</span>)</span>
 </div>
 </div>
 </div>
+</div>
 <p>The chaining over and aggregate and <code>over()</code> can follow any other arbitrarily complex logic. Here, it follows a basic “case when”-type statement that creates an indicator for whether column b is null.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">df.with_columns(</span>
@@ -1922,6 +1951,7 @@ background-color: null;
 font-style: inherit;">'a'</span>)</span>
 <span id="cb16-6">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -1975,6 +2005,7 @@ font-style: inherit;">'a'</span>)</span>
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="list-columns-and-nested-frames" class="level3">
 <h3 class="anchored" data-anchor-id="list-columns-and-nested-frames">List Columns and Nested Frames</h3>
@@ -1988,6 +2019,7 @@ font-style: inherit;">'a'</span>)</span>
 background-color: null;
 font-style: inherit;">=</span> pl.struct( cs.integer() ))</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2041,6 +2073,7 @@ font-style: inherit;">=</span> pl.struct( cs.integer() ))</span></code></pre></d
 </div>
 </div>
 </div>
+</div>
 <p>These structs can be further be aggregated across rows into miniature datasets.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1">df.group_by(<span class="st" style="color: #20794D;
@@ -2049,6 +2082,7 @@ font-style: inherit;">'a'</span>).agg(list_col <span class="op" style="color: #5
 background-color: null;
 font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2079,6 +2113,7 @@ font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -2098,6 +2133,7 @@ background-color: null;
 font-style: inherit;">~</span>cs.by_name(cols)))</span>
 <span id="cb19-5">)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2128,6 +2164,7 @@ font-style: inherit;">~</span>cs.by_name(cols)))</span>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -2150,6 +2187,7 @@ font-style: inherit;">=</span> pl.struct( cs.integer() ) )</span></code></pre></
 background-color: null;
 font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2191,6 +2229,7 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 <p>Then, <code>unnest()</code> unpacks each struct and turns each element back into a column.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">df_nested.explode(<span class="st" style="color: #20794D;
@@ -2199,6 +2238,7 @@ font-style: inherit;">'list_col'</span>).unnest(<span class="st" style="color: #
 background-color: null;
 font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 <div class="cell-output-display">
+<div>
 <div><style>
 .dataframe > thead > tr,
 .dataframe > tbody > tr {
@@ -2246,6 +2286,7 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 </div>
 </div>
 </div>
+</div>
 
 
 </section>
@@ -2281,10 +2322,11 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/py-rgo/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
+<figcaption>Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
 </figure>
 </div>
 <p>Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in <a href="https://arrow.apache.org/">Arrow</a> (a language-agnostic in-memory standard for data storage), growing adoption of <a href="https://quarto.org/">Quarto</a> (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney <a href="https://posit.co/blog/welcome-wes/">joining Posit</a> (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.</p>
@@ -2426,6 +2468,7 @@ Note
 
 
 
+
 <p>url_video: “”</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
@@ -2437,9 +2480,9 @@ Note
 <p>At posit::conf for R user audience:</p>
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides-posit.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> Video - posit::conf for R User Audience <em>coming soon!</em> </span></p>
-<p><span><i class="bi bi-pencil"></i> <a href="../../post/column-name-contracts/">Post - Column Name Contracts</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt/">Post - Column Name Contracts in dbt</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/convo-dbt-update/">Post - Column Name Contracts with dbtplyr</a> </span></p>
+<p><span><i class="bi bi-pencil"></i> <a href="../..\post/column-name-contracts/">Post - Column Name Contracts</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/convo-dbt/">Post - Column Name Contracts in dbt</a> </span><br>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/convo-dbt-update/">Post - Column Name Contracts with dbtplyr</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>Complex software systems make performance guarantees through documentation and unit tests, and they communicate these to users with conscientious interface design.</p>
@@ -2472,6 +2515,7 @@ Note
   <title>Posit Data Science Hangout</title>
   <link>https://emilyriederer.com/talk/meetup-posit/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -2509,13 +2553,14 @@ Note
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> <a href="https://posit.co/resources/videos/tidycf-turning-analysis-on-its-head-by-turning-cashflows-on-their-sides/">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/shiny-modules/">Post - A beginner’s guide to Shiny modules</a> </span></p>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/shiny-modules/">Post - A beginner’s guide to Shiny modules</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>R users are increasingly trained to develop with good principles such as writing modular functions, testing their code, and decomposing long individual scripts into R projects. In recent years, such approaches have crept earlier into introductory R education with the realization that applying best practices is not an advanced skill but rather empowers beginners with a more robust structure.</p>
@@ -2552,10 +2597,11 @@ Note
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Photo credit to <a href="https://unsplash.com/@davideragusa">Davide Ragusa</a> on Unsplash</figcaption>
+<figcaption>Photo credit to <a href="https://unsplash.com/@davideragusa">Davide Ragusa</a> on Unsplash</figcaption>
 </figure>
 </div>
 <p>Language interoperability and different ways of enabling “polyglot” workflows have seemed to take centerstage in the data world recently:</p>
@@ -4060,6 +4106,7 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
 
 
 
+
 <p>Shiny apps are R’s answer to building interface-driven applications that help expose important data, metrics, algorithms, and more with end-users. However, the more interesting work that your Shiny app allows users to do, the more likely users are to want to save, return to, and alter some of the ways that they interacted with your work.</p>
 <p>This creates a need for <strong>persistent storage</strong> in your Shiny application, as opposed to the ephemeral in-memory of basic Shiny applications that “forget” the data that they generated as soon as the application is stopped.</p>
 <p>Relational databases are a classic form of persistent storage for web applications. Many analysts may be familiar with <em>querying</em> relational databases to retrieve data, but <em>managing</em> a database for use with a web application is slightly more complex. You’ll find yourself needing to define tables, secure data, and manage connections. More importantly, you might worry about what things that you do not know you should be worrying about.</p>
@@ -4536,6 +4583,7 @@ font-style: inherit;">return</span>(con)</span>
 
 
 
+
 <p>Last year, I tweeted about how to spread holiday cheer by letting your R Markdown documents snow. After all, what better to put people in the holiday spirit than to add a random 5% probability that whatever part of a document they are trying to read will be covered?</p>
 <blockquote class="twitter-tweet blockquote">
 <p lang="en" dir="ltr">
@@ -4579,7 +4627,7 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
 <pre><code>```{css echo = FALSE}`r ''`
 &lt;&lt;css goes here&gt;&gt;
 ```</code></pre>
-<p>For more tips on writing CSS for R Markown, check out my <a href="../../post/rmarkdown-css-tips/">post</a> on finding the right selectors.</p>
+<p>For more tips on writing CSS for R Markown, check out my <a href="../..\post/rmarkdown-css-tips/">post</a> on finding the right selectors.</p>
 </section>
 <section id="conditional-chunk-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="conditional-chunk-evaluation">Conditional chunk evaluation</h2>
@@ -4607,6 +4655,7 @@ No one:<br><br>Absolutely no one:<br><br>Me: SO, I know we can't have a holiday 
   <title>UIUC STAT447 (Data Science Programming) Guest Lecture</title>
   <link>https://emilyriederer.com/talk/meetup-stat447/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -4742,6 +4791,7 @@ from {{ ref('mydata') }}</code></pre>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/data-valid-lightweight/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -5200,6 +5250,7 @@ font-style: inherit;">-</span>repo pulls commits releases deployments</span></co
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/sql-r-flow/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -5781,14 +5832,19 @@ font-style: inherit;">"test_tbl"</span>, test_df)</span></code></pre></div>
 
 
 
-<p><em>Note: this post is a written version of my <a href="../../talk/organization">rstudio::global 2020 talk</a> on the same topic. Please see the link for the slides and video version. I do elaborate on a few points here that I cut from the talk; if you’ve already watched the talk and just want the delta, please see the sections in <span style="color: blue;">blue</span></em></p>
+
+<p><em>Note: this post is a written version of my <a href="../..\talk/organization">rstudio::global 2020 talk</a> on the same topic. Please see the link for the slides and video version. I do elaborate on a few points here that I cut from the talk; if you’ve already watched the talk and just want the delta, please see the sections in <span style="color: blue;">blue</span></em></p>
 <p>More and more organizations are beginning to write their own internal R packages. These internal tools have great potential to improve an organization’s code quality, promote reproducible analysis frameworks, and enhance knowledge management. Developers of such tools are often inspired by their favorite open-source tools and, consequently, rely on the design patterns and best practices they have observed. Although this is a good starting position, internal packages have unique challenges (such as a smaller developer community) and opportunities (such as an intimate understanding of the problem space and over-arching organizational goals). Internal packages can realize their full potential by engineering to embrace these unique features. In this post, I explore the jobs of internal packages and the types of different design decisions these jobs can inspire – from API design and error handling to documentation to training and testing. <strong>If you’d rather just read the main ideas instead of the full essay, skip to the tl;dr</strong></p>
 <section id="what-differentiates-internal-packages" class="level2">
 <h2 class="anchored" data-anchor-id="what-differentiates-internal-packages">What differentiates internal packages</h2>
 <p>To begin, think about the last time that you joined a new organization. There was so much you had to learn before you could get started – accessing data, intuiting what problems are worth tackling, understanding team norms, and so much more. Thankfully, we only have to descend this learning curve once. However, the off-the-shelf tools we use can’t preserve this context and culture. Every day is like their first day at work.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/team-of-packages/first-day.png" class="img-fluid" style="width:33.0%"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/team-of-packages/first-day.png" class="img-fluid figure-img" style="width:33.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>In open-source, this high level of abstraction is a feature, not a bug. Stripping context from code enables reuse and collaboration across the globe. The <code>survival</code> package, for example, need not care whether one is modeling the time-to-death in a clinical trial or the time-to-attrition of a Netflix subscriber. In contrast, internal packages can drive additional value if they act more like a colleague and embrace institutional knowledge.</p>
@@ -5829,7 +5885,11 @@ font-style: inherit;">"test_tbl"</span>, test_df)</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="the-it-guy---abstraction">The IT Guy - Abstraction</h2>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/team-of-packages/it-guy.png" class="img-fluid" style="width:33.0%"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/team-of-packages/it-guy.png" class="img-fluid figure-img" style="width:33.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>First, let’s meet the IT Guy. IT and DevOps colleagues complement the skills of data analysts by handling all of the things that analysts are generally not the most skilled or experienced at doing independently – production systems, servers, deployments, etc. In that abstraction process, they also take on additional responsibilities to promote good practices like data security and credential management. Ideally, they can save us time and frustration in navigating organization-specific roadblocks than no amount of searching on StackOverflow can help.</p>
@@ -6160,7 +6220,11 @@ font-style: inherit;">return</span>(conn)</span>
 <h2 class="anchored" data-anchor-id="the-junior-analyst---proactive-problem-solving">The Junior Analyst - Proactive Problem-Solving</h2>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/team-of-packages/junior-analyst.png" class="img-fluid" style="width:33.0%"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/team-of-packages/junior-analyst.png" class="img-fluid figure-img" style="width:33.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Of course, strong opinions and complete independence don’t always make a great teammate. Other times, we might want someone more like a junior analyst. They know a good bit about our organization, and we can trust them to execute calculations correctly and make reasonable assumptions. At the same time, we want them to be responsive to feedback and willing to try out things in more ways than one.</p>
@@ -6509,7 +6573,11 @@ font-style: inherit;">vars</span>(COHORT_QUARTER))</span></code></pre></div>
 <p>So far, we have mostly focused on that first dimension of differentiation between internal and open-source tools – making our package teammates targeted to solving specific internal problems. But there’s just as much value in that second dimension: using internal packages as a way to ship not just calculations but workflows and share an understanding of how the broader organization operates. This allows our packages to play leadership and mentorship roles in our org. To illustrate this, consider our intrepid tech lead.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/team-of-packages/tech-lead.png" class="img-fluid" style="width:33.0%"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/team-of-packages/tech-lead.png" class="img-fluid figure-img" style="width:33.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We value this type of teammate because they can draw from a breadth of past experience and institutional knowledge to help you weigh trade-offs, learn from collected wisdom, and inspire you to do your best work.</p>
@@ -6544,7 +6612,11 @@ font-style: inherit;">vars</span>(COHORT_QUARTER))</span></code></pre></div>
 <p>In this case, you can use the <a href="https://pkgdown.r-lib.org/"><code>pkgdown</code> package</a> to automatically (honestly, you just run <code>pkgdown::build_site()</code>) create a package website to share these vignettes with anyone who needs to learn about a specific problem space – whether or not they will ultimately be the data analyst using your package to solve the <em>computational</em> part of this quest for organizational progress. And, unlike their human counterparts, the packaged tech lead can always find time for another meeting.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/team-of-packages/calendar.png" class="img-fluid" style="width:33.0%"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/team-of-packages/calendar.png" class="img-fluid figure-img" style="width:33.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Like other R Markdown output types, <code>pkgdown</code> creates basic HTML output. This means that you can host it on an internal server or (if you organization uses it) GitHub Pages in GitHub enterprise. Alternatively, you may even simply store the HTML files in an internal shared drive and any users may open the site on their own computer in their favorite browser.</p>
@@ -6577,7 +6649,11 @@ font-style: inherit;">vars</span>(COHORT_QUARTER))</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="the-project-manager---coordination">The Project Manager - Coordination</h2>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/team-of-packages/proj-mgr.png" class="img-fluid" style="width:33.0%"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/team-of-packages/proj-mgr.png" class="img-fluid figure-img" style="width:33.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Now, we discussed how a package filling the “tech lead” role can help structure our work with templates and how this can help collaboration between R users. But to think about collaboration more broadly, we must turn to our final teammate – the project manager.</p>
@@ -6675,7 +6751,7 @@ font-style: inherit;">"{package name}"</span>)</span>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://emilyriederer.com/post/team-of-packages/test-1.PNG" class="img-fluid figure-img" style="width:33.0%"></p>
+<p><img src="https://emilyriederer.com/post/team-of-packages/test-1.PNG" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:33.0%"></p>
 </figure>
 </div>
 </div>
@@ -6683,7 +6759,11 @@ font-style: inherit;">"{package name}"</span>)</span>
 <p>This is a good safeguard, but it means that we will only detect problems after they have already been introduced in A. There’s nothing in place to actually stop package A from getting distracted in the first place.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/team-of-packages/contract-meme.png" class="img-fluid" style="width:33.0%"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/team-of-packages/contract-meme.png" class="img-fluid figure-img" style="width:33.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Instead, we’d prefer that both A and B be conscientious of the promises that they have made and stay committed to working towards their shared goals.</p>
@@ -6692,7 +6772,7 @@ font-style: inherit;">"{package name}"</span>)</span>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://emilyriederer.com/post/team-of-packages/test-2.PNG" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="https://emilyriederer.com/post/team-of-packages/test-2.PNG" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
 </figure>
 </div>
 </div>
@@ -6713,8 +6793,8 @@ font-style: inherit;">"{package name}"</span>)</span>
 <p><span style="color: blue;"></span></p>
 <p>Ready to get started? Check out my posts on:</p>
 <ul>
-<li><a href="../../post/rmarkdown-driven-development">R Markdown Driven Development</a> to learn the <em>technical</em> side of converting existing analysis scripts into reusable tools and packages</li>
-<li>my <a href="../../project/rtistic">Rtistic project</a> for a template to make your organization’s first package (for themes and color palettes)</li>
+<li><a href="../..\post/rmarkdown-driven-development">R Markdown Driven Development</a> to learn the <em>technical</em> side of converting existing analysis scripts into reusable tools and packages</li>
+<li>my <a href="../..\project/rtistic">Rtistic project</a> for a template to make your organization’s first package (for themes and color palettes)</li>
 <li>my <a href="https://emilyriederer.netlify.app/post/resource-roundup-r-industry/">round-up</a> of cool examples of R packages in industry.<sup>8</sup></li>
 </ul>
 <p>For general resources on building R packages, check out:</p>
@@ -6800,13 +6880,14 @@ font-style: inherit;">"{package name}"</span>)</span>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
 <span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=E887K1au5ug">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../../post/team-of-packages/">Post - A Team of Packages</a> </span></p>
+<span><i class="bi bi-pencil"></i> <a href="../..\post/team-of-packages/">Post - A Team of Packages</a> </span></p>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <p>Many case studies demonstrate the benefits of organizations developing internal R packages. But how do you move your organization from individual internal packages to a coherent internal ecosystem?</p>
@@ -6819,7 +6900,7 @@ font-style: inherit;">"{package name}"</span>)</span>
 </div>
 </div>
 <div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<p>{{&lt;video https://www.youtube.com/watch?v=E887K1au5ug&gt;}}</p>
+<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/E887K1au5ug" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 </div>
 </div>
 </div>
@@ -6839,6 +6920,7 @@ font-style: inherit;">"{package name}"</span>)</span>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/sql-generation/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -7234,7 +7316,9 @@ font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">==</span> 2009L, ., <span class="dv" style="color: #AD0000;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2009</span>L, ., <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>)),</span>
 <span id="cb22-6">                    <span class="at" style="color: #657422;
@@ -7247,7 +7331,9 @@ font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">==</span> 2008L, ., <span class="dv" style="color: #AD0000;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2008</span>L, ., <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>)),</span>
 <span id="cb22-7">                    <span class="at" style="color: #657422;
@@ -7260,7 +7346,9 @@ font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">==</span> 2007L, ., <span class="dv" style="color: #AD0000;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2007</span>L, ., <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>)))</span>
 <span id="cb22-8">               ) </span>
@@ -7832,7 +7920,8 @@ GROUP BY `species`</code></pre>
 
 
 
-<p>Back in September, I wrote about how <a href="../../post/column-name-contracts">controlled vocabularies</a> can help form contracts between data producers and consumers. In short, I argued that aligning on an ontology of stub names for use naming variables in a dataset can improve data documentation, validation, and wrangling with minimal overhead.</p>
+
+<p>Back in September, I wrote about how <a href="../..\post/column-name-contracts">controlled vocabularies</a> can help form contracts between data producers and consumers. In short, I argued that aligning on an ontology of stub names for use naming variables in a dataset can improve data documentation, validation, and wrangling with minimal overhead.</p>
 <p>However, all of these benefits assume <em>absolute consistency</em> in the use of the controlled vocabulary. As soon as typos creep into variable names or fields violate the supposed data validation checks that their stubs promise, these vocabularies become more of a liability than an asset by luring data consumers into complacency.</p>
 <p>I’m pleased to announced the experimental <a href="https://emilyriederer.github.io/convo/index.html"><code>convo</code></a> package to enable the definition and application of controlled vocabularies. In this post, I briefly describe the key features. Please see the package website for full documentation.</p>
 <div class="cell">
@@ -8029,7 +8118,11 @@ font-style: inherit;">plot</span>(clusts[[<span class="dv" style="color: #AD0000
 background-color: null;
 font-style: inherit;">2</span>]])</span></code></pre></div>
 <div class="cell-output-display">
-<p><img src="https://emilyriederer.com/post/convo-intro/index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/convo-intro/index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -8325,6 +8418,7 @@ font-style: inherit;">FALSE</span>)</span></code></pre></div>
 
 
 
+
 <p>This week, I was pleased to become an official <a href="https://education.rstudio.com/trainers">RStudio Certified Instructor</a> after completing Greg Wilson’s training program, based on his excellent book <a href="http://teachtogether.tech/">Teaching Tech Together</a>. Part of the certification process involved teaching a 10 minute lesson. I chose to create a brief introduction to using the <code>crosstalk</code> package for dynamic interaction and filtering of plots, maps, and tables.</p>
 <p>The primary intent of this post is simply to point out these materials, which are available on <a href="https://github.com/emilyriederer/demo-crosstalk">GitHub</a>. The lesson teaches the skills needed to create an three-panel application like <a href="https://emilyriederer.github.io/demo-crosstalk/analysis/demo.html">this</a> (as shown in the screnshot above) with a scatterplot, map, and table comparing ridership at a sample of Chicago train stations in April of 2019 versus 2020 (not long after COVID shutdowns).</p>
 <p>To make this more accessible, I converted to previous “lecture” component into a <a href="https://emilyriederer.github.io/demo-crosstalk/tutorial/tutorial-rmd.html">step-by-step tutorial</a> hosted on the repo’s GitHub Pages.<sup>1</sup></p>
@@ -8357,6 +8451,7 @@ font-style: inherit;">FALSE</span>)</span></code></pre></div>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/column-name-contracts/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -8599,7 +8694,6 @@ background-color: null;
 font-style: inherit;">interrogate</span>()</span></code></pre></div>
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">agent</span></code></pre></div>
 <div class="cell-output-display">
-
 <div id="pb_agent" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://unpkg.com/balloon-css/balloon.min.css");
@@ -9556,7 +9650,6 @@ font-style: inherit;">clear =</span> <span class="cn" style="color: #8f5902;
 background-color: null;
 font-style: inherit;">FALSE</span>))</span></code></pre></div>
 <div class="cell-output-display">
-
 <div id="htmlwidget-d01ef4a8316905a0a04b" style="width:100%;height:auto;" class="datatables html-widget"></div>
 <script type="application/json" data-for="htmlwidget-d01ef4a8316905a0a04b">{"x":{"filter":"top","filterHTML":"<tr>\n  <td><\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n    <\/div>\n  <\/td>\n  <td data-type=\"character\" style=\"vertical-align: top;\">\n    <div class=\"form-group\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"],["ID_DRIVER","ID_RIDER","ID_TRIP","DT_ORIG","DT_DEST","N_DRIVER_PASSENGERS","N_TRIP_ORIG","N_TRIP_DEST","AMT_TRIP_DIST","IND_SURGE","VAL_DRIVER_RATING","VAL_RIDER_RATING","VAL_ORIG_LAT","VAL_DEST_LAT","VAL_ORIG_LON","VAL_DEST_LON","CAT_TRIP_TYPE","CAT_RIDER_TYPE"],["ID","ID","ID","DT","DT","N","N","N","AMT","IND","VAL","VAL","VAL","VAL","VAL","VAL","CAT","CAT"],["DRIVER","RIDER","TRIP","ORIG","DEST","DRIVER","TRIP","TRIP","TRIP","SURGE","DRIVER","RIDER","ORIG","DEST","ORIG","DEST","TRIP","RIDER"],[null,null,null,null,null,"PASSENGERS","ORIG","DEST","DIST",null,"RATING","RATING","LAT","LAT","LON","LON","TYPE","TYPE"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>variable<\/th>\n      <th>level1<\/th>\n      <th>level2<\/th>\n      <th>level3<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}],"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
 </div>

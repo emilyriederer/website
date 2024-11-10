@@ -37,6 +37,7 @@
       "/post/causal-design-patterns/index.html",
       "/post/column-name-contracts/index.html",
       "/post/rmarkdown-driven-development/index.html",
+      "/post/quarto-auth-netlify/index.html",
       "/post/data-discovery-ad-hoc/index.html",
       "/post/py-rgo-base/index.html",
       "/post/docs-personas/index.html",
@@ -111,6 +112,7 @@
   {
     "listing": "/post/index.html",
     "items": [
+      "/post/quarto-auth-netlify/index.html",
       "/post/data-discovery-ad-hoc/index.html",
       "/post/py-rgo-base/index.html",
       "/post/docs-personas/index.html",

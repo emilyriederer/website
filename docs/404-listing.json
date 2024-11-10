@@ -1,6 +1,7 @@
 {
   "listing": "/404.html",
   "items": [
+    "/post/quarto-auth-netlify/index.html",
     "/talk/python-rgonomics/index.html",
     "/post/data-discovery-ad-hoc/index.html",
     "/post/py-rgo-base/index.html",

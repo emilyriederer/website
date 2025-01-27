@@ -1,0 +1,123 @@
+---
+title: "Python Rgonomics - 2025 Update"
+description: "Switching languages is about switching mindsets - not just syntax. New developments in python data science toolings, like polars and seaborn's object interface, can capture the 'feel' that converts from R/tidyverse love while opening the door to truly pythonic workflows. (Updated from 2025 for new tools)."
+author: "Emily Riederer"
+date: "2025-01-26"
+categories: [rstats, python]
+image: "featured.jpg"
+---
+
+![ Photo credit to the inimitable [Allison Horst](https://allisonhorst.com/)](featured.jpg)
+
+About a year ago, I wrote the [original version of Python Rgonomics](post/py-rgo) to help fellow former R users who were entering into the world of python. The general point of the article was that new python tooling (e.g. `polars` versus `pandas`) has evolved to a point where there are tools that remain truly performant and pythonic while still having a more similar user experience for those coming from the R world. I also discussed this at [posit::conf(2025)](talk/python-rgnomics). 
+
+Ironically, the thesis held so true that it condemned my first 2024 post on the topic. 2024 saw the release of a few game-changing tools that further streamline and simplify the python workflow. This post provides an updated set of recommendations. Specifically, it highlights:
+
+- **Consolidating installation and environment management tooling**: Previously, I recommended `pyenv` for instaling python versions and `pdm` for project and environment management. Then, last year saw the release of [Astral's excellent `uv`](https://docs.astral.sh/uv/) which nicely consolidates this functionality into a single highly performant tool.
+- **Considering multiple IDE options**: In addition to `VS Code`, I submit Posit PBC's [`Positron`](https://positron.posit.co/) for consideration depending on comfort, needs, and use cases. Both are backed by the open-source Code OSS with different layers of flexibility or customization. Positron is mostly interoperable with VS Code extensions, but provides a bit more of a "batteries included" opinionated design for the data analyst persona that may not want to navigate through the customization afforded by VS Code.
+
+It is important to have a stable stack and not always jump to the next bright, shiny object; however, as I've watched these projects evolve throughout 2024, I feel confident to say they are not just a flash in the pan. 
+
+`uv` is supported by the Charlie Marsh's Astral, which formerly made `ruff` to consolidate a number of code quality tools. Astral's commitment to open source, the careful design, and the incredible performance becnhmarks of `uv` speak for itself. Similarly, Positron is backed by the reliable Posit PBC (formerly RStudio) as an open source extension of Code OSS (which is also the open-source skeleton for Microsoft's VS Code). 
+
+The rest of this post is reproduced in full with relevant updates so it reads end-to-end instead of referencing the changes from old to new recommendations.  
+
+## Now let's get started
+
+Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in [Arrow](https://arrow.apache.org/) (a language-agnostic in-memory standard for data storage), growing adoption of [Quarto](https://quarto.org/) (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney [joining Posit](https://posit.co/blog/welcome-wes/) (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.
+
+Despite these advances in *technical* interoperability, individual developers will always face more friction than state-of-the-art tools when moving between languages. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just *feel* good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not "fit", writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it's "feel" from the ground up. 
+
+Fortunately, some of these higher-level paradigms have begun to bleed across languages, enriching previously isolated tribes with the and enabling developers to take their advanced skillsets with them across languages. For any R users who aim to upskill in python in 2024, recent tools and versions of old favorites have made strides in converging the R and python data science stacks. In this post, I will overview some recommended tools that are both truly pythonic while capturing the comfort and familiarity of some favorite R packages of the `tidyverse` variety.^[Of course, languages have their own subcultures too. The `tidyverse` and `data.table` parts of the R world tend to favor different semantics and ergonomics. This post caters more to the former.] 
+
+## What this post is not
+
+Just to be clear:
+
+- This is not a post about why python is better than R so R users should switch all their work to python
+- This is not a post about why R is better than python so R semantics and conventions should be forced into python
+- This is not a post about why python *users* are better than R users so R users need coddling
+- This is not a post about why R *users* are better than python users and have superior tastes for their toolkit
+- This is not a post about why these python tools are the only good tools and others are bad tools
+
+If you told me you liked the New York's Museum of Metropolitan Art, I might say that you might also like Chicago's Art Institute. That doesn't mean you should only go to the museum in Chicago or that you should never go to the Louvre in Paris. That's not how recommendations (by human or recsys) work. This is an "opinionated" post in the sense that "I like this" and not opinionated in the sense that "you must do this". 
+
+## On picking tools
+
+The tools I highlight below tend to have two competing features:
+
+- They have aspects of their workflow and ergonomics that should feel very comfortable to users of favored R tools
+- They should be independently accepted, successful, and well-maintained python projects with the true pythonic spirit
+
+The former is important because otherwise there's nothing tailored about these recommendations; the latter is important so users actually engage with the python language and community instead of dabbling around in its more peripheral edges. In short, these two principles *exclude* tools that are direct ports between languages with that as their sole or main benefit.^[There is no doubt a place for language ports, especially for earlier stage project where no native language-specific standard exists. For example, I like Karandeep Singh's lab work on [a tidyverse for Julia](https://github.com/TidierOrg/Tidier.jl) and maintain my own [`dbtplyr`](https://github.com/emilyriederer/dbtplyr) package to port `dplyr`'s select helpers to `dbt`] 
+
+For example, `siuba` and `plotnine` were written with the direct intent of mirroring R syntax. They have seen some success and adoption, but more niche tools come with liabilities. With smaller user-bases, they tend to lack in the pace of development, community support, prior art, StackOverflow questions, blog posts, conference talks, discussions, others to collaborate with, cache in a portfolio, etc. Instead of enjoying the ergonomics of an old language or embracing the challenge of learning a new one, ports can sometimes force developers to invest energy into a "secret third thing" of learning tools that isolate them from both communities and facing inevitable snags by themselves.
+
+When in Rome, do as the Romans do -- but if you're coming from the U.S. that doesn't mean you can't bring a universal adapter that can help charge your devices in European outlets.
+
+## The stack
+
+WIth that preamble out of the way, below are a few recommendations for the most ergonomic tools for getting set up, conducting core data analysis, and communication results. 
+
+To preview these recommendations:
+
+**Set Up**
+
+- Installation: [`uv`](https://docs.astral.sh/uv/)
+- IDE: 
+  + [VS Code](https://code.visualstudio.com/docs/languages/python), or
+  + [Positron](https://positron.posit.co/)
+
+**Analysis**
+
+- Wrangling: [`polars`](https://pola.rs/)
+- Visualization: [`seaborn`](https://seaborn.pydata.org/)
+
+**Communication**
+
+- Tables: [Great Tables](https://posit-dev.github.io/great-tables/articles/intro.html)
+- Notebooks: [Quarto](https://quarto.org/)
+
+**Miscellaneous**
+
+- Environment Management: [`uv`](https://docs.astral.sh/uv/)
+- Code Quality: [`ruff`](https://docs.astral.sh/ruff/)
+
+### For setting up
+
+The first hurdle is often getting started -- both in terms of installing the tools you'll need and getting into a comfortable IDE to run them.
+
+- **Installation**: R keeps installation simple; there's one way to do it so you do and it's done^[However, to highlight some advances here, Posit's newer [`rig`](https://github.com/r-lib/rig) project seems to be inspired by python install management tools and offers a convenient CLI for managing multiple version of R]. But before python converts can `print("hello world")`, they face a range of options (system Python, Python installer UI, Anaconda, Miniconda, etc.) each with its own kinks. These decisions are made harder in Python since projects tend to have stronger dependencies of the language, requiring one to switch between versions. Fortunately, `uv` now makes this task easy with [many different commands for](https://docs.astral.sh/uv/concepts/python-versions/#installing-a-python-version):
+  + Installing one or more specific versions: `uv python install <version, constraints, etc.>`
+  + Listing all available installations: `uv python list`
+  + Returning path of python executables: `uv python find` 
+  + Spinning up a quick REPL with a [temporary python version](https://valatka.dev/2025/01/12/on-killer-uv-feature.html) and packages: e.g. `uv run --python 3.12 --with pandas python`
+- **Integrated Development Environment**: Once R is install, R users are typically off to the races with the intuitive RStudio IDE which helps them get immediately hands-on with the REPL. With the UI divided into quadrants, users can write an R script, run it to see results in the console, conceptualize what the program "knows" with the variable explorer, and navigate files through a file explorer. Once again, python is not lacking in IDE options, but users are confronted with yet another decision point before they even get started. Pycharm, Sublime, Spyder, Eclipse, Atom, Neovim, oh my! For python, I'd recommend either VS Code or Positron, which are both extensions of Code OSS.
+  + [VS Code](https://code.visualstudio.com/docs/languages/python) is an industry standard tool for software development. This means it has a rich set of features for coding, debugging, navigating large projects, etc. It's rich extension ecosystem also means that most major tools (e.g. Quarto, git, linters and stylers, etc.) have nice add-ons so, like RStudio, you can customize your platform to perform many side-tasks in plaintext or with the support of extra UI components.^[ If anything, the one challenge of VS Code is the sheer number of set up options, but to start out, you can see these excellent tutorials from Rami Krispin on recommended [python](https://github.com/RamiKrispin/vscode-python) and [R](https://github.com/RamiKrispin/vscode-r) configurations ]
+  + [Positron](https://positron.posit.co/) is a newer entrant from Posit PBC (formerly RStudio). It streamlines the offerings of VS Code to center the features most useful for data analysis. Positron may feel easier to go from zero-to-one. It does a great job finding and consistently using the right versions of R, python, Quarto, etc. and prioritizes many of the IDE elements that make RStudio wonderful for working with data (e.g. object preview pane). Additionally, *most* VS Code extensions will work in Positron; however, Positron cannot use extensions [that rely on Microsoft's PyLance](https://mastodon.social/@emilyriederer/112853049023389552) meaning some realtime linting and error detection tools like ErrorLens do not work out-of-the-box. Ultimately, your comfort navigating VS Code and your mix of dev versus data work may determine which is best for you.
+
+### For data analysis
+
+As data practitioners know, we'll spend most of our time on cleaning and wrangling. As such, R users may struggle particularly to abandon their favorite tools for exploratory data analysis like `dplyr` and `ggplot2`. Fans of those packages often appreciate how their functional paradigm helps achieve a "flow state". Precise syntax may differ, but new developments in the python wrangling stack provide increasingly close analogs to some of these beloved Rgonomics. 
+
+- **Data Wrangling**: ([See my separate post on `polars`](post/py-rgo-polars))Although `pandas` is undoubtedly the best-known wrangling tool in the python space, I believe the growing [`polars`](https://pola.rs/) project offers the best experience for a transitioning developer (along with other nice-to-have benefits like being dependency free and blazingly fast). `polars` may feel more natural and less error-prone to R users for may reasons:
+  + it has more internal consistent (and similar to `dplyr`) syntax such as `select`, `filter`, etc. and has demonstrated that the project values a clean API (e.g. recently renaming `groupby` to `group_by`)
+  + it does not rely on the distinction between columns and indexes which can feel unintuitive and introduces a new set of concepts to learn
+  + it consistently returns copies of dataframes (while `pandas` sometimes alters in-place) so code is more idempotent and avoids a whole class of failure modes for new users
+  + it enables many of the same "advanced" wrangling workflows in `dplyr` with high-level, semantic code like making the transformation of multiple variables at once fast with [column selectors](https://docs.pola.rs/py-polars/html/reference/selectors.html), concisely expressing [window functions](https://docs.pola.rs/user-guide/expressions/window/), and working with nested data (or what `dplyr` calls "list columns") with [lists](https://docs.pola.rs/user-guide/expressions/lists/) and [structs](https://docs.pola.rs/user-guide/expressions/structs/)
+  + supporting users working with increasingly large data. Similar to `dplyr`'s many backends (e.g. `dbplyr`), `polars` can be used to write lazily-evaluated, optimized transformations and it's syntax is reminiscent of `pyspark` should users ever need to switch between
+- **Visualization**: Even some of R's critics will acknowledge the strength of `ggplot2` for visualization, both in terms of it's intuitive and incremental API and the stunning graphics it can produce. [`seaborn`'s object interface](https://seaborn.pydata.org/tutorial/objects_interface) seems to strike a great balance between offering a similar workflow (which [cites `ggplot2` as an inspiration](https://seaborn.pydata.org/whatsnew/v0.12.0.html)) while bringing all the benefits of using an industry-standard tool 
+
+### For communication
+
+Historically, one possible dividing line between R and python has been framed as "python is good at working with computers, R is good at working with people". While that is partially inspired by reductive takes that R is not production-grade, it is not without truth that the R's academic roots spurred it to overinvest in a rich "communication stack" and translating analytical outputs into human-readable, publishable outputs. Here, too, the gaps have begun to close.
+
+- **Tables**: R has no shortage of packages for creating nicely formatted tables, an area that has historically lacked a bit in python both in workflow and outcomes. Barring strong competition from the native python space, the one "port" I am bullish about is the recently announced [Great Tables](https://posit-dev.github.io/great-tables/articles/intro.html) package. This is a pythonic clone of R's `gt` package. I'm more comfortable recommending this since it's maintained by the same developer as the R version (to support long-term feature parity), backed by an institution not just an individual (to ensure it's not a short-lived hobby project), and the design feels like it does a good job balancing R inspiration with pythonic practices
+- **Computational notebooks**: Jupyter Notebooks are widely used, widely critiqued parts of many python workflows. While the ability to mix markdown and code chunks. However, notebooks can introduce new types of bugs for the uninitiated; for example, they are hard to version control and easy to execute in the wrong environment. For those coming from the world of R Markdown, plaintext computational notebooks like [Quarto](https://quarto.org/) may provide a more transparent development experience. While Quarto allows users to write in `.qmd` files which are more like their `.rmd` predecessors, its renderer can also handle Jupyter notebooks to enable collaboration across team members with different preferences
+
+### Miscellaneous
+
+A few more tools may be helpful and familiar to *some* R users who tend towards the more "developer" versus "analyst" side of the spectrum. These, in my mind, have even more varied pros and cons, but I'll leave them for consideration:
+
+- **Environment Management**: There's a truly overwhelming number of ways^[`pdm`, `virtualenv`, `conda`, `piptools`, `pipenv`, `poetry`, and that doesn't even scratch the surface] to manage project-level dependencies in python. As a consequence, there's also a lot of outdated advice weighing pros and cons of feature sets that have since evolved. Here again, `uv` takes the cake as a swiss army knife tool. It features fast installation, auto-updating of the `pyproject.toml` and `uv.lock` files (so you don't need to remember to `pip freeze`), separate trakcing of primary dependencies from the fully resolved environment (so you can cleanly and completely remove dependencies-of-dependencies you no longer need), and so much more. `uv` can operate as a drop in replacement for `pip` and generate a `requirements.txt` if needed for compatability; however, given it's explosive popularity and ergonomic design, I doubt you'll have trouble convincing collaborators to adopt the same.
+- **Developer Tools**: [`ruff`](https://docs.astral.sh/ruff/) (another Astral project) provides a range of linting and styling options (think R's `lintr` and `styler`) and provides a one-stop-shop over what can be an overwhelming number of atomic tools in this space (`isort`, `black`, `flake8`, etc.). `ruff` is super fast, has a nice VS Code extension, and, while this class of tools is generally considered more advanced, I think linters can be a fantastic "coach" for new users about best practices

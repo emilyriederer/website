@@ -9,6 +9,10 @@ image: "featured.jpg"
 
 ![ Photo credit to the inimitable [Allison Horst](https://allisonhorst.com/)](featured.jpg)
 
+::: {.callout-warning}
+Some advice in this post has gone stale regarding IDEs, installers, and environment management tools. Please see me [2025 update](post/py-rgo-2025) for more recent thoughts following the release of `uv` and `Positron`
+:::
+
 Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in [Arrow](https://arrow.apache.org/) (a language-agnostic in-memory standard for data storage), growing adoption of [Quarto](https://quarto.org/) (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney [joining Posit](https://posit.co/blog/welcome-wes/) (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.
 
 Despite these advances in *technical* interoperability, individual developers will always face more friction than state-of-the-art tools when moving between languages. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just *feel* good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not "fit", writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it's "feel" from the ground up. 

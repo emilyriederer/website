@@ -38,8 +38,7 @@
 <p>The rest of this post is reproduced in full with relevant updates so it reads end-to-end instead of referencing the changes from old to new recommendations.</p>
 <section id="now-lets-get-started" class="level2">
 <h2 class="anchored" data-anchor-id="now-lets-get-started">Now let’s get started</h2>
-<p>Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in <a href="https://arrow.apache.org/">Arrow</a> (a language-agnostic in-memory standard for data storage), growing adoption of <a href="https://quarto.org/">Quarto</a> (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney <a href="https://posit.co/blog/welcome-wes/">joining Posit</a> (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.</p>
-<p>Despite these advances in <em>technical</em> interoperability, individual developers will always face more friction than state-of-the-art tools when moving between languages. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just <em>feel</em> good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not “fit”, writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it’s “feel” from the ground up.</p>
+<p>The “expert-novice” duality is an uncomfortable part of switching between languages like R and python. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just <em>feel</em> good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not “fit”, writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it’s “feel” from the ground up.</p>
 <p>Fortunately, some of these higher-level paradigms have begun to bleed across languages, enriching previously isolated tribes with the and enabling developers to take their advanced skillsets with them across languages. For any R users who aim to upskill in python in 2024, recent tools and versions of old favorites have made strides in converging the R and python data science stacks. In this post, I will overview some recommended tools that are both truly pythonic while capturing the comfort and familiarity of some favorite R packages of the <code>tidyverse</code> variety.<sup>1</sup></p>
 </section>
 <section id="what-this-post-is-not" class="level2">
@@ -2815,6 +2814,19 @@ font-style: inherit;">'list_col'</span>)</span></code></pre></div>
 <p><img src="https://emilyriederer.com/post/py-rgo/featured.jpg" class="img-fluid figure-img"></p>
 <figcaption>Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
 </figure>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Some advice in this post has gone stale regarding IDEs, installers, and environment management tools. Please see me <a href="post/py-rgo-2025">2025 update</a> for more recent thoughts following the release of <code>uv</code> and <code>Positron</code></p>
+</div>
 </div>
 <p>Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in <a href="https://arrow.apache.org/">Arrow</a> (a language-agnostic in-memory standard for data storage), growing adoption of <a href="https://quarto.org/">Quarto</a> (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney <a href="https://posit.co/blog/welcome-wes/">joining Posit</a> (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.</p>
 <p>Despite these advances in <em>technical</em> interoperability, individual developers will always face more friction than state-of-the-art tools when moving between languages. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just <em>feel</em> good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not “fit”, writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it’s “feel” from the ground up.</p>

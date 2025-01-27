@@ -93,12 +93,16 @@
     <lastmod>2024-01-01T20:16:13.017Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/post/py-rgo-polars/index.html</loc>
-    <lastmod>2024-01-13T16:45:25.541Z</lastmod>
+    <loc>https://emilyriederer.com/post/quarto-auth-netlify/index.html</loc>
+    <lastmod>2024-11-10T12:49:40.352Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/py-rgo-base/index.html</loc>
+    <lastmod>2024-01-20T13:15:14.127Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/py-rgo/index.html</loc>
-    <lastmod>2025-01-27T02:57:35.446Z</lastmod>
+    <lastmod>2025-01-27T03:08:30.851Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/nulls-polyglot/index.html</loc>
@@ -205,8 +209,12 @@
     <lastmod>2024-01-01T20:16:13.002Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/post/py-rgo-base/index.html</loc>
-    <lastmod>2024-01-20T13:15:14.127Z</lastmod>
+    <loc>https://emilyriederer.com/post/py-rgo-2025/index.html</loc>
+    <lastmod>2025-01-27T03:07:29.806Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/py-rgo-polars/index.html</loc>
+    <lastmod>2024-01-13T16:45:25.541Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/recap-causal-2023/index.html</loc>
@@ -299,13 +307,5 @@
   <url>
     <loc>https://emilyriederer.com/talk/shiny-modules/index.html</loc>
     <lastmod>2024-01-01T20:16:13.598Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/quarto-auth-netlify/index.html</loc>
-    <lastmod>2024-11-10T12:49:40.352Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/post/py-rgo-2025/index.html</loc>
-    <lastmod>2025-01-27T02:53:47.784Z</lastmod>
   </url>
 </urlset>

@@ -10,7 +10,159 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Sun, 10 Nov 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 26 Jan 2025 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Python Rgonomics - 2025 Update</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo-2025/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/py-rgo-2025/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption>Photo credit to the inimitable <a href="https://allisonhorst.com/">Allison Horst</a></figcaption>
+</figure>
+</div>
+<p>About a year ago, I wrote the <a href="post/py-rgo">original version of Python Rgonomics</a> to help fellow former R users who were entering into the world of python. The general point of the article was that new python tooling (e.g.&nbsp;<code>polars</code> versus <code>pandas</code>) has evolved to a point where there are tools that remain truly performant and pythonic while still having a more similar user experience for those coming from the R world. I also discussed this at <a href="talk/python-rgnomics">posit::conf(2025)</a>.</p>
+<p>Ironically, the thesis held so true that it condemned my first 2024 post on the topic. 2024 saw the release of a few game-changing tools that further streamline and simplify the python workflow. This post provides an updated set of recommendations. Specifically, it highlights:</p>
+<ul>
+<li><strong>Consolidating installation and environment management tooling</strong>: Previously, I recommended <code>pyenv</code> for instaling python versions and <code>pdm</code> for project and environment management. Then, last year saw the release of <a href="https://docs.astral.sh/uv/">Astral’s excellent <code>uv</code></a> which nicely consolidates this functionality into a single highly performant tool.</li>
+<li><strong>Considering multiple IDE options</strong>: In addition to <code>VS Code</code>, I submit Posit PBC’s <a href="https://positron.posit.co/"><code>Positron</code></a> for consideration depending on comfort, needs, and use cases. Both are backed by the open-source Code OSS with different layers of flexibility or customization. Positron is mostly interoperable with VS Code extensions, but provides a bit more of a “batteries included” opinionated design for the data analyst persona that may not want to navigate through the customization afforded by VS Code.</li>
+</ul>
+<p>It is important to have a stable stack and not always jump to the next bright, shiny object; however, as I’ve watched these projects evolve throughout 2024, I feel confident to say they are not just a flash in the pan.</p>
+<p><code>uv</code> is supported by the Charlie Marsh’s Astral, which formerly made <code>ruff</code> to consolidate a number of code quality tools. Astral’s commitment to open source, the careful design, and the incredible performance becnhmarks of <code>uv</code> speak for itself. Similarly, Positron is backed by the reliable Posit PBC (formerly RStudio) as an open source extension of Code OSS (which is also the open-source skeleton for Microsoft’s VS Code).</p>
+<p>The rest of this post is reproduced in full with relevant updates so it reads end-to-end instead of referencing the changes from old to new recommendations.</p>
+<section id="now-lets-get-started" class="level2">
+<h2 class="anchored" data-anchor-id="now-lets-get-started">Now let’s get started</h2>
+<p>Interoperability was a key theme in open-source data languages in 2023. Ongoing innovations in <a href="https://arrow.apache.org/">Arrow</a> (a language-agnostic in-memory standard for data storage), growing adoption of <a href="https://quarto.org/">Quarto</a> (the language-agnostic heir apparent to R Markdown), and even pandas creator Wes McKinney <a href="https://posit.co/blog/welcome-wes/">joining Posit</a> (the language-agnostic rebranding of RStudio) all illustrate the ongoing investment in breaking down barriers between different programming languages and paradigms.</p>
+<p>Despite these advances in <em>technical</em> interoperability, individual developers will always face more friction than state-of-the-art tools when moving between languages. Learning a new language is easily enough done; programming 101 concepts like truth tables and control flow translate seamlessly. But ergonomics of a language do not. The tips and tricks we learn to be hyper productive in a primary language are comfortable, familiar, elegant, and effective. They just <em>feel</em> good. Working in a new language, developers often face a choice between forcing their favored workflows into a new tool where they may not “fit”, writing technically correct yet plodding code to get the job done, or approaching a new language as a true beginner to learn it’s “feel” from the ground up.</p>
+<p>Fortunately, some of these higher-level paradigms have begun to bleed across languages, enriching previously isolated tribes with the and enabling developers to take their advanced skillsets with them across languages. For any R users who aim to upskill in python in 2024, recent tools and versions of old favorites have made strides in converging the R and python data science stacks. In this post, I will overview some recommended tools that are both truly pythonic while capturing the comfort and familiarity of some favorite R packages of the <code>tidyverse</code> variety.<sup>1</sup></p>
+</section>
+<section id="what-this-post-is-not" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-post-is-not">What this post is not</h2>
+<p>Just to be clear:</p>
+<ul>
+<li>This is not a post about why python is better than R so R users should switch all their work to python</li>
+<li>This is not a post about why R is better than python so R semantics and conventions should be forced into python</li>
+<li>This is not a post about why python <em>users</em> are better than R users so R users need coddling</li>
+<li>This is not a post about why R <em>users</em> are better than python users and have superior tastes for their toolkit</li>
+<li>This is not a post about why these python tools are the only good tools and others are bad tools</li>
+</ul>
+<p>If you told me you liked the New York’s Museum of Metropolitan Art, I might say that you might also like Chicago’s Art Institute. That doesn’t mean you should only go to the museum in Chicago or that you should never go to the Louvre in Paris. That’s not how recommendations (by human or recsys) work. This is an “opinionated” post in the sense that “I like this” and not opinionated in the sense that “you must do this”.</p>
+</section>
+<section id="on-picking-tools" class="level2">
+<h2 class="anchored" data-anchor-id="on-picking-tools">On picking tools</h2>
+<p>The tools I highlight below tend to have two competing features:</p>
+<ul>
+<li>They have aspects of their workflow and ergonomics that should feel very comfortable to users of favored R tools</li>
+<li>They should be independently accepted, successful, and well-maintained python projects with the true pythonic spirit</li>
+</ul>
+<p>The former is important because otherwise there’s nothing tailored about these recommendations; the latter is important so users actually engage with the python language and community instead of dabbling around in its more peripheral edges. In short, these two principles <em>exclude</em> tools that are direct ports between languages with that as their sole or main benefit.<sup>2</sup></p>
+<p>For example, <code>siuba</code> and <code>plotnine</code> were written with the direct intent of mirroring R syntax. They have seen some success and adoption, but more niche tools come with liabilities. With smaller user-bases, they tend to lack in the pace of development, community support, prior art, StackOverflow questions, blog posts, conference talks, discussions, others to collaborate with, cache in a portfolio, etc. Instead of enjoying the ergonomics of an old language or embracing the challenge of learning a new one, ports can sometimes force developers to invest energy into a “secret third thing” of learning tools that isolate them from both communities and facing inevitable snags by themselves.</p>
+<p>When in Rome, do as the Romans do – but if you’re coming from the U.S. that doesn’t mean you can’t bring a universal adapter that can help charge your devices in European outlets.</p>
+</section>
+<section id="the-stack" class="level2">
+<h2 class="anchored" data-anchor-id="the-stack">The stack</h2>
+<p>WIth that preamble out of the way, below are a few recommendations for the most ergonomic tools for getting set up, conducting core data analysis, and communication results.</p>
+<p>To preview these recommendations:</p>
+<p><strong>Set Up</strong></p>
+<ul>
+<li>Installation: <a href="https://docs.astral.sh/uv/"><code>uv</code></a></li>
+<li>IDE:
+<ul>
+<li><a href="https://code.visualstudio.com/docs/languages/python">VS Code</a>, or</li>
+<li><a href="https://positron.posit.co/">Positron</a></li>
+</ul></li>
+</ul>
+<p><strong>Analysis</strong></p>
+<ul>
+<li>Wrangling: <a href="https://pola.rs/"><code>polars</code></a></li>
+<li>Visualization: <a href="https://seaborn.pydata.org/"><code>seaborn</code></a></li>
+</ul>
+<p><strong>Communication</strong></p>
+<ul>
+<li>Tables: <a href="https://posit-dev.github.io/great-tables/articles/intro.html">Great Tables</a></li>
+<li>Notebooks: <a href="https://quarto.org/">Quarto</a></li>
+</ul>
+<p><strong>Miscellaneous</strong></p>
+<ul>
+<li>Environment Management: <a href="https://docs.astral.sh/uv/"><code>uv</code></a></li>
+<li>Code Quality: <a href="https://docs.astral.sh/ruff/"><code>ruff</code></a></li>
+</ul>
+<section id="for-setting-up" class="level3">
+<h3 class="anchored" data-anchor-id="for-setting-up">For setting up</h3>
+<p>The first hurdle is often getting started – both in terms of installing the tools you’ll need and getting into a comfortable IDE to run them.</p>
+<ul>
+<li><strong>Installation</strong>: R keeps installation simple; there’s one way to do it so you do and it’s done<sup>3</sup>. But before python converts can <code>print("hello world")</code>, they face a range of options (system Python, Python installer UI, Anaconda, Miniconda, etc.) each with its own kinks. These decisions are made harder in Python since projects tend to have stronger dependencies of the language, requiring one to switch between versions. Fortunately, <code>uv</code> now makes this task easy with <a href="https://docs.astral.sh/uv/concepts/python-versions/#installing-a-python-version">many different commands for</a>:
+<ul>
+<li>Installing one or more specific versions: <code>uv python install &lt;version, constraints, etc.&gt;</code></li>
+<li>Listing all available installations: <code>uv python list</code></li>
+<li>Returning path of python executables: <code>uv python find</code></li>
+<li>Spinning up a quick REPL with a <a href="https://valatka.dev/2025/01/12/on-killer-uv-feature.html">temporary python version</a> and packages: e.g.&nbsp;<code>uv run --python 3.12 --with pandas python</code></li>
+</ul></li>
+<li><strong>Integrated Development Environment</strong>: Once R is install, R users are typically off to the races with the intuitive RStudio IDE which helps them get immediately hands-on with the REPL. With the UI divided into quadrants, users can write an R script, run it to see results in the console, conceptualize what the program “knows” with the variable explorer, and navigate files through a file explorer. Once again, python is not lacking in IDE options, but users are confronted with yet another decision point before they even get started. Pycharm, Sublime, Spyder, Eclipse, Atom, Neovim, oh my! For python, I’d recommend either VS Code or Positron, which are both extensions of Code OSS.
+<ul>
+<li><a href="https://code.visualstudio.com/docs/languages/python">VS Code</a> is an industry standard tool for software development. This means it has a rich set of features for coding, debugging, navigating large projects, etc. It’s rich extension ecosystem also means that most major tools (e.g.&nbsp;Quarto, git, linters and stylers, etc.) have nice add-ons so, like RStudio, you can customize your platform to perform many side-tasks in plaintext or with the support of extra UI components.<sup>4</sup></li>
+<li><a href="https://positron.posit.co/">Positron</a> is a newer entrant from Posit PBC (formerly RStudio). It streamlines the offerings of VS Code to center the features most useful for data analysis. Positron may feel easier to go from zero-to-one. It does a great job finding and consistently using the right versions of R, python, Quarto, etc. and prioritizes many of the IDE elements that make RStudio wonderful for working with data (e.g.&nbsp;object preview pane). Additionally, <em>most</em> VS Code extensions will work in Positron; however, Positron cannot use extensions <a href="https://mastodon.social/@emilyriederer/112853049023389552">that rely on Microsoft’s PyLance</a> meaning some realtime linting and error detection tools like ErrorLens do not work out-of-the-box. Ultimately, your comfort navigating VS Code and your mix of dev versus data work may determine which is best for you.</li>
+</ul></li>
+</ul>
+</section>
+<section id="for-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="for-data-analysis">For data analysis</h3>
+<p>As data practitioners know, we’ll spend most of our time on cleaning and wrangling. As such, R users may struggle particularly to abandon their favorite tools for exploratory data analysis like <code>dplyr</code> and <code>ggplot2</code>. Fans of those packages often appreciate how their functional paradigm helps achieve a “flow state”. Precise syntax may differ, but new developments in the python wrangling stack provide increasingly close analogs to some of these beloved Rgonomics.</p>
+<ul>
+<li><strong>Data Wrangling</strong>: (<a href="post/py-rgo-polars">See my separate post on <code>polars</code></a>)Although <code>pandas</code> is undoubtedly the best-known wrangling tool in the python space, I believe the growing <a href="https://pola.rs/"><code>polars</code></a> project offers the best experience for a transitioning developer (along with other nice-to-have benefits like being dependency free and blazingly fast). <code>polars</code> may feel more natural and less error-prone to R users for may reasons:
+<ul>
+<li>it has more internal consistent (and similar to <code>dplyr</code>) syntax such as <code>select</code>, <code>filter</code>, etc. and has demonstrated that the project values a clean API (e.g.&nbsp;recently renaming <code>groupby</code> to <code>group_by</code>)</li>
+<li>it does not rely on the distinction between columns and indexes which can feel unintuitive and introduces a new set of concepts to learn</li>
+<li>it consistently returns copies of dataframes (while <code>pandas</code> sometimes alters in-place) so code is more idempotent and avoids a whole class of failure modes for new users</li>
+<li>it enables many of the same “advanced” wrangling workflows in <code>dplyr</code> with high-level, semantic code like making the transformation of multiple variables at once fast with <a href="https://docs.pola.rs/py-polars/html/reference/selectors.html">column selectors</a>, concisely expressing <a href="https://docs.pola.rs/user-guide/expressions/window/">window functions</a>, and working with nested data (or what <code>dplyr</code> calls “list columns”) with <a href="https://docs.pola.rs/user-guide/expressions/lists/">lists</a> and <a href="https://docs.pola.rs/user-guide/expressions/structs/">structs</a></li>
+<li>supporting users working with increasingly large data. Similar to <code>dplyr</code>’s many backends (e.g.&nbsp;<code>dbplyr</code>), <code>polars</code> can be used to write lazily-evaluated, optimized transformations and it’s syntax is reminiscent of <code>pyspark</code> should users ever need to switch between</li>
+</ul></li>
+<li><strong>Visualization</strong>: Even some of R’s critics will acknowledge the strength of <code>ggplot2</code> for visualization, both in terms of it’s intuitive and incremental API and the stunning graphics it can produce. <a href="https://seaborn.pydata.org/tutorial/objects_interface"><code>seaborn</code>’s object interface</a> seems to strike a great balance between offering a similar workflow (which <a href="https://seaborn.pydata.org/whatsnew/v0.12.0.html">cites <code>ggplot2</code> as an inspiration</a>) while bringing all the benefits of using an industry-standard tool</li>
+</ul>
+</section>
+<section id="for-communication" class="level3">
+<h3 class="anchored" data-anchor-id="for-communication">For communication</h3>
+<p>Historically, one possible dividing line between R and python has been framed as “python is good at working with computers, R is good at working with people”. While that is partially inspired by reductive takes that R is not production-grade, it is not without truth that the R’s academic roots spurred it to overinvest in a rich “communication stack” and translating analytical outputs into human-readable, publishable outputs. Here, too, the gaps have begun to close.</p>
+<ul>
+<li><strong>Tables</strong>: R has no shortage of packages for creating nicely formatted tables, an area that has historically lacked a bit in python both in workflow and outcomes. Barring strong competition from the native python space, the one “port” I am bullish about is the recently announced <a href="https://posit-dev.github.io/great-tables/articles/intro.html">Great Tables</a> package. This is a pythonic clone of R’s <code>gt</code> package. I’m more comfortable recommending this since it’s maintained by the same developer as the R version (to support long-term feature parity), backed by an institution not just an individual (to ensure it’s not a short-lived hobby project), and the design feels like it does a good job balancing R inspiration with pythonic practices</li>
+<li><strong>Computational notebooks</strong>: Jupyter Notebooks are widely used, widely critiqued parts of many python workflows. While the ability to mix markdown and code chunks. However, notebooks can introduce new types of bugs for the uninitiated; for example, they are hard to version control and easy to execute in the wrong environment. For those coming from the world of R Markdown, plaintext computational notebooks like <a href="https://quarto.org/">Quarto</a> may provide a more transparent development experience. While Quarto allows users to write in <code>.qmd</code> files which are more like their <code>.rmd</code> predecessors, its renderer can also handle Jupyter notebooks to enable collaboration across team members with different preferences</li>
+</ul>
+</section>
+<section id="miscellaneous" class="level3">
+<h3 class="anchored" data-anchor-id="miscellaneous">Miscellaneous</h3>
+<p>A few more tools may be helpful and familiar to <em>some</em> R users who tend towards the more “developer” versus “analyst” side of the spectrum. These, in my mind, have even more varied pros and cons, but I’ll leave them for consideration:</p>
+<ul>
+<li><strong>Environment Management</strong>: There’s a truly overwhelming number of ways<sup>5</sup> to manage project-level dependencies in python. As a consequence, there’s also a lot of outdated advice weighing pros and cons of feature sets that have since evolved. Here again, <code>uv</code> takes the cake as a swiss army knife tool. It features fast installation, auto-updating of the <code>pyproject.toml</code> and <code>uv.lock</code> files (so you don’t need to remember to <code>pip freeze</code>), separate trakcing of primary dependencies from the fully resolved environment (so you can cleanly and completely remove dependencies-of-dependencies you no longer need), and so much more. <code>uv</code> can operate as a drop in replacement for <code>pip</code> and generate a <code>requirements.txt</code> if needed for compatability; however, given it’s explosive popularity and ergonomic design, I doubt you’ll have trouble convincing collaborators to adopt the same.</li>
+<li><strong>Developer Tools</strong>: <a href="https://docs.astral.sh/ruff/"><code>ruff</code></a> (another Astral project) provides a range of linting and styling options (think R’s <code>lintr</code> and <code>styler</code>) and provides a one-stop-shop over what can be an overwhelming number of atomic tools in this space (<code>isort</code>, <code>black</code>, <code>flake8</code>, etc.). <code>ruff</code> is super fast, has a nice VS Code extension, and, while this class of tools is generally considered more advanced, I think linters can be a fantastic “coach” for new users about best practices</li>
+</ul>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Of course, languages have their own subcultures too. The <code>tidyverse</code> and <code>data.table</code> parts of the R world tend to favor different semantics and ergonomics. This post caters more to the former.↩︎</p></li>
+<li id="fn2"><p>There is no doubt a place for language ports, especially for earlier stage project where no native language-specific standard exists. For example, I like Karandeep Singh’s lab work on <a href="https://github.com/TidierOrg/Tidier.jl">a tidyverse for Julia</a> and maintain my own <a href="https://github.com/emilyriederer/dbtplyr"><code>dbtplyr</code></a> package to port <code>dplyr</code>’s select helpers to <code>dbt</code>↩︎</p></li>
+<li id="fn3"><p>However, to highlight some advances here, Posit’s newer <a href="https://github.com/r-lib/rig"><code>rig</code></a> project seems to be inspired by python install management tools and offers a convenient CLI for managing multiple version of R↩︎</p></li>
+<li id="fn4"><p> If anything, the one challenge of VS Code is the sheer number of set up options, but to start out, you can see these excellent tutorials from Rami Krispin on recommended <a href="https://github.com/RamiKrispin/vscode-python">python</a> and <a href="https://github.com/RamiKrispin/vscode-r">R</a> configurations ↩︎</p></li>
+<li id="fn5"><p><code>pdm</code>, <code>virtualenv</code>, <code>conda</code>, <code>piptools</code>, <code>pipenv</code>, <code>poetry</code>, and that doesn’t even scratch the surface↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <guid>https://emilyriederer.com/post/py-rgo-2025/</guid>
+  <pubDate>Sun, 26 Jan 2025 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo-2025/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Role-Based Access Control for Quarto sites with Netlify Identity</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -3256,48 +3408,6 @@ Note
   <guid>https://emilyriederer.com/talk/midterm-iptw/</guid>
   <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/midterm-iptw/featured.png" medium="image" type="image/png" height="81" width="144"/>
-</item>
-<item>
-  <title>Taking Flight with Shiny: a Modules-First Approach</title>
-  <link>https://emilyriederer.com/talk/shiny-modules/</link>
-  <description><![CDATA[ 
-
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> <a href="https://posit.co/resources/videos/tidycf-turning-analysis-on-its-head-by-turning-cashflows-on-their-sides/">Video</a> </span><br>
-<span><i class="bi bi-pencil"></i> <a href="../..\post/shiny-modules/">Post - A beginner’s guide to Shiny modules</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>R users are increasingly trained to develop with good principles such as writing modular functions, testing their code, and decomposing long individual scripts into R projects. In recent years, such approaches have crept earlier into introductory R education with the realization that applying best practices is not an advanced skill but rather empowers beginners with a more robust structure.</p>
-<p>However, new Shiny developers are confronted with two challenges: they must simultaneously learn new packages and concepts (like reactivity) which introductory tutorials demonstrate how to write their apps as single scripts. This means small changes are harder to test and debug for the groups that need it the most. Although Shiny modules offer a solution to this exact problem, they are regarded as an advanced topic and often not encountered until much later in a developer’s journey.</p>
-<p>In this talk, I will demonstrate a workflow to encourage the use of modules for newer Shiny users. I argue that a ‘module-first’ approach helps to decompose design into more tangible, bite-sized, and testable components and prevent the code sprawl that makes Shiny feel intimidating. Further, this approach can be even more powerful when developing Shiny applications in the enterprise setting and onboarding new team members to existing applications.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<div id="slides" style="width:100%; aspect-ratio:16/11;">
-<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
-</div>
-</div>
-<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/F6I_jXPWFBk" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>workflow</category>
-  <category>rstats</category>
-  <category>shiny</category>
-  <guid>https://emilyriederer.com/talk/shiny-modules/</guid>
-  <pubDate>Wed, 15 Mar 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/shiny-modules/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 </channel>
 </rss>

@@ -10,7 +10,43 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Sun, 26 Jan 2025 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 11 Jun 2025 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>A different type of DAG - data pipelines for epidemiology</title>
+  <link>https://emilyriederer.com/talk/epi-pipes/</link>
+  <description><![CDATA[ 
+
+
+
+
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span></p>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<p>This talk was part of a symposium on data science tools and opportunities for adoption in epidemiology. The full session description is provided below:</p>
+<p>Most applied research and education in epidemiology does not yet benefit from modern data science. Fledgling epidemiologists may receive cutting-edge education on the theory of epidemiologic methods, but remain largely untrained in how to collect data effectively, how to apply modern analytical methods to real data sets, how to reproducibly document code and results, and how to effectively work in teams in a digital workplace. Despite their own nagging concerns, they may rely on Dr.&nbsp;Google as their training on algorithms, document study procedures in e-mail chains, store data in spreadsheets, copy-paste analytical code, hard-code observations per person into separate variables, and manually type out estimates into results tables – only to discover that they are requested to do it all over when three study participants turn out to be ineligible for an analysis.</p>
+<p>This symposium will illustrate success stories on how to efficiently practice data science in epidemiology and how to teach it along the way. There will be no exhortations how Excel is bad and that good people practice code sharing. Instead, the symposium will discuss cutting-edge approaches and real-life use cases of how modern data science has made research and teaching more efficient. The goal is for attendees to bring home a sparkling, vetted toolkit of new ideas and tools for research and teaching.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
+<div id="slides" style="width:100%; aspect-ratio:16/11;">
+<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
+</div>
+</div>
+</div>
+</div>
+
+
+
+ ]]></description>
+  <category>workflow</category>
+  <category>data</category>
+  <guid>https://emilyriederer.com/talk/epi-pipes/</guid>
+  <pubDate>Wed, 11 Jun 2025 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/epi-pipes/featured.png" medium="image" type="image/png" height="82" width="144"/>
+</item>
 <item>
   <title>Python Rgonomics - 2025 Update</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -3382,44 +3418,6 @@ Note
   <guid>https://emilyriederer.com/post/abstraction-extraction/</guid>
   <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-extraction/featured.PNG" medium="image"/>
-</item>
-<item>
-  <title>Evaluation without Experimentation</title>
-  <link>https://emilyriederer.com/talk/midterm-iptw/</link>
-  <description><![CDATA[ 
-
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> <a href="https://youtu.be/R5Imyf56mhc">Video</a> </span> <span><i class="bi bi-pencil"></i> <a href="../..\post/causal-design-patterns/">Post - Causal Design Patterns</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>In this four-minute lightning talk, I explain the motivation for using observational versus experimental methods when measuring the impact of GOTV (voter turnout) efforts. Next, I provide a high-level explanation of a specific method (inverse propensity of treatment weighting) and demonstrate the method’s ability to balance baseline traits and historical performance of a synthetic control population for credible effect estimation.</p>
-<p>This talk is based on my related <a href="../..\post/causal-design-patterns">blog post</a> and summarizes my work as a Bluebonnet Data Fellow with the Two Million Texans relational organizing campaign during the 2022 midterms.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<div id="slides" style="width:100%; aspect-ratio:16/11;">
-<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
-</div>
-</div>
-<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/R5Imyf56mhc" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>causal</category>
-  <guid>https://emilyriederer.com/talk/midterm-iptw/</guid>
-  <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/midterm-iptw/featured.png" medium="image" type="image/png" height="81" width="144"/>
 </item>
 </channel>
 </rss>

@@ -1,6 +1,7 @@
 {
   "listing": "/404.html",
   "items": [
+    "/talk/epi-pipes/index.html",
     "/post/py-rgo-2025/index.html",
     "/post/quarto-auth-netlify/index.html",
     "/talk/python-rgonomics/index.html",

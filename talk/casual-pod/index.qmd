@@ -1,0 +1,14 @@
+---
+title: Casual Inference Pod - Optimizing Data Workflows with Emily Riederer (Season 6, Episode 8)
+description: Casual Inference is a podcast on all things epidemiology, statistics, data science, causal inference, and public health. Sponsored by the American Journal of Epidemiology. As a guest on this episode, I discuss data science communication, the different challenges of causal analysis in industry versus academia, and much more. 
+location: Casual Inferencence Podcast
+image: featured.png
+categories: [causal, data]
+date: 2025-06-25
+---
+
+## Quick Links
+
+<span><i class = 'bi bi-mic'></i> [Podcast Episode](https://casualinfer.libsyn.com/site.pdf) </span>    
+
+Casual Inference is a podcast on all things epidemiology, statistics, data science, causal inference, and public health. Sponsored by the American Journal of Epidemiology. As a guest on this episode, I discuss data science communication, the different challenges of causal analysis in industry versus academia, and much more. 

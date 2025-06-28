@@ -10,7 +10,30 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Wed, 11 Jun 2025 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 25 Jun 2025 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Casual Inference Pod - Optimizing Data Workflows with Emily Riederer (Season 6, Episode 8)</title>
+  <link>https://emilyriederer.com/talk/casual-pod/</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="quick-links" class="level2">
+<h2 class="anchored" data-anchor-id="quick-links">Quick Links</h2>
+<p><span><i class="bi bi-mic"></i> <a href="https://casualinfer.libsyn.com/site.pdf">Podcast Episode</a> </span></p>
+<p>Casual Inference is a podcast on all things epidemiology, statistics, data science, causal inference, and public health. Sponsored by the American Journal of Epidemiology. As a guest on this episode, I discuss data science communication, the different challenges of causal analysis in industry versus academia, and much more.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>causal</category>
+  <category>data</category>
+  <guid>https://emilyriederer.com/talk/casual-pod/</guid>
+  <pubDate>Wed, 25 Jun 2025 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/casual-pod/featured.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>A different type of DAG - data pipelines for epidemiology</title>
   <link>https://emilyriederer.com/talk/epi-pipes/</link>
@@ -3378,46 +3401,6 @@ Note
   <guid>https://emilyriederer.com/talk/meetup-posit/</guid>
   <pubDate>Thu, 13 Apr 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/meetup-posit/featured.png" medium="image" type="image/png" height="74" width="144"/>
-</item>
-<item>
-  <title>The Art of Abstraction in ETL: Dodging Data Extraction Errors</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/abstraction-extraction/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p><img src="https://emilyriederer.com/post/abstraction-extraction/featured.png" class="img-fluid"></p>
-<p>Whenever I think about data developer tooling, I always like to take the perspectives of:</p>
-<ol type="1">
-<li>Understanding what higher-level abstractions that it provides that help eliminate rote work or reduce mental overhead for data teams. In the spirit of <a href="../..\post/team-of-packages/">my post on the jobs-to-be-done of innersource analysis tools</a>, this can be framed as what ‘jobs’ that tool can be hired to do (and with what level of responsibility and autonomy)</li>
-<li>Interrogating the likely failure modes in the data stack based on the mechanics of the system, in the spirit of my <a href="../..\post/grouping-data-quality/">call for hypothesis-driven data quality testing</a></li>
-</ol>
-<p>These two themes motivated my recent guest post for Airbyte’s developer blog on <a href="https://airbyte.com/blog/dodging-data-extraction-errors">The Art of Abstraction in ETL: Dodging Data Extraction Errors</a>. In this post, I argue:</p>
-<blockquote class="blockquote">
-<p>Cooking a meal versus grocery shopping. Interior decorating versus loading the moving van. Transformation versus Extract-Load. It’s human nature to get excited by flashy outcomes and, consequently, the most proximate processes that evidently created them.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>This pattern repeats in the data world. Conferences, blog posts, corporate roadmaps, and even budgets focus on data transformation and the allure of “business insights” that might follow. The steps to extract and load data are sometimes discounted as a trivial exercise of scripting and scheduling a few API calls.</p>
-</blockquote>
-<blockquote class="blockquote">
-<p>However, the elegance of Extract-Load is not just the outcome but the execution – the art of things not going wrong. Just as interior decorating cannot salvage a painting damaged in transit or a carefully planned menu cannot be prepared if half of the ingredients are out-of-stock, the Extract-Load steps of data processing have countless pitfalls which can sideline data teams from their ambitious agendas and aspirations.</p>
-</blockquote>
-<p>I then go on to explore common challenges in successfully extracting data from an API and the abstractions that can aid in this process.</p>
-<p>Please check out the full post on Airbyte’s site! I hope it resonates.</p>
-
-
-
- ]]></description>
-  <category>data</category>
-  <category>workflow</category>
-  <category>elt</category>
-  <category>crosspost</category>
-  <guid>https://emilyriederer.com/post/abstraction-extraction/</guid>
-  <pubDate>Wed, 22 Mar 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/abstraction-extraction/featured.PNG" medium="image"/>
 </item>
 </channel>
 </rss>

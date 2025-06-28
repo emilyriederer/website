@@ -10,7 +10,30 @@
 <atom:link href="https://emilyriederer.com/index-data.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Wed, 11 Jun 2025 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 25 Jun 2025 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Casual Inference Pod - Optimizing Data Workflows with Emily Riederer (Season 6, Episode 8)</title>
+  <link>https://emilyriederer.com/talk/casual-pod/</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="quick-links" class="level2">
+<h2 class="anchored" data-anchor-id="quick-links">Quick Links</h2>
+<p><span><i class="bi bi-mic"></i> <a href="https://casualinfer.libsyn.com/site.pdf">Podcast Episode</a> </span></p>
+<p>Casual Inference is a podcast on all things epidemiology, statistics, data science, causal inference, and public health. Sponsored by the American Journal of Epidemiology. As a guest on this episode, I discuss data science communication, the different challenges of causal analysis in industry versus academia, and much more.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>causal</category>
+  <category>data</category>
+  <guid>https://emilyriederer.com/talk/casual-pod/</guid>
+  <pubDate>Wed, 25 Jun 2025 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/casual-pod/featured.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>A different type of DAG - data pipelines for epidemiology</title>
   <link>https://emilyriederer.com/talk/epi-pipes/</link>
@@ -4328,33 +4351,6 @@ font-style: inherit;">-</span>repo pulls commits releases deployments</span></co
   <guid>https://emilyriederer.com/post/data-valid-lightweight/</guid>
   <pubDate>Thu, 26 Aug 2021 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/data-valid-lightweight/featured.png" medium="image" type="image/png" height="105" width="144"/>
-</item>
-<item>
-  <title>97 Things Every Data Engineer Should Know: Collective Wisdom from the Experts</title>
-  <dc:creator>Tobias Macey</dc:creator>
-  <link>https://emilyriederer.com/publication/data-eng-97-things/</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>I contributed six chapters to the book:</p>
-<ul>
-<li><strong>Develop communities - not just code</strong>: On building developing communities along with code bases and empowering versus patronizing your data product’s customers</li>
-<li><strong>Give data products a front-end with latent documentation</strong>: On low effort practices for improving data documentation and usability</li>
-<li><strong>There’s no such thing as data quality</strong>: On the value of data “fit for purpose”</li>
-<li><strong>The many meanings of missingness</strong>: On causes and consequences of null field encoding</li>
-<li><strong>Column names as contracts</strong>: On embedding metadata and performance “contracts” in column names</li>
-<li><strong>Data validation needs more than summary statistics</strong>: On the importance of context-informed data validation</li>
-</ul>
-
-
-
- ]]></description>
-  <category>data</category>
-  <guid>https://emilyriederer.com/publication/data-eng-97-things/</guid>
-  <pubDate>Sun, 01 Aug 2021 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/publication/data-eng-97-things/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>

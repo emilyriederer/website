@@ -2,6 +2,7 @@
   {
     "listing": "/talk/index.html",
     "items": [
+      "/talk/casual-pod/index.html",
       "/talk/epi-pipes/index.html",
       "/talk/python-rgonomics/index.html",
       "/talk/data-downtime/index.html",
@@ -83,6 +84,7 @@
       "/talk/causal-design-patterns/index.html",
       "/talk/organization/index.html",
       "/talk/rmarkdown-driven-development/index.html",
+      "/talk/casual-pod/index.html",
       "/talk/epi-pipes/index.html",
       "/talk/python-rgonomics/index.html",
       "/talk/data-downtime/index.html",

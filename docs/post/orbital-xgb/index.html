@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2025-07-19">
+<meta name="description" content="The orbital package offers an interface for translating a fitted SciKitLearn pipeline to pure SQL for scaling predictions. In this tech note, I explore how this framework can (mostly) be used for xgboost models, as well, with a bit of wrangling (and a few limitations).">
+
+<title>In my orbit: hacking orbital’s ML-to-SQL for xgboost | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/cookie-consent/cookie-consent.js"></script>
+<link href="../../site_libs/cookie-consent/cookie-consent.css" rel="stylesheet">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z15TN5VYXJ"></script>
+
+<script type="text/plain" cookie-consent="tracking">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-Z15TN5VYXJ', { 'anonymize_ip': true});
+</script>
+
+<script type="text/javascript" charset="UTF-8">
+document.addEventListener('DOMContentLoaded', function () {
+cookieconsent.run({
+  "notice_banner_type":"simple",
+  "consent_type":"implied",
+  "palette":"light",
+  "language":"en",
+  "page_load_consent_levels":["strictly-necessary","functionality","tracking","targeting"],
+  "notice_banner_reject_button_hide":false,
+  "preferences_center_close_button_hide":false,
+  "website_name":""
+  ,
+"language":"en"
+  });
+});
+</script> 
+  
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="In my orbit: hacking orbital’s ML-to-SQL for xgboost | Emily Riederer">
+<meta name="twitter:description" content="The orbital package offers an interface for translating a fitted SciKitLearn pipeline to pure SQL for scaling predictions. In this tech note, I explore how this framework can (mostly) be used for xgboost models, as well, with a bit of wrangling (and a few limitations).">
+<meta name="twitter:image" content="https://emilyriederer.com/post/orbital-xgb/featured.PNG">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/index.html">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html">
+ <span class="dropdown-text">Favorites</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-talks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Talks</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-talks">    
+        <li>
+    <a class="dropdown-item" href="../../talk/index.html">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../talk/featured.html">
+ <span class="dropdown-text">Favorites</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html"> 
+<span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">In my orbit: hacking orbital’s ML-to-SQL for xgboost</h1>
+                  <div>
+        <div class="description">
+          The <code>orbital</code> package offers an interface for translating a fitted SciKitLearn pipeline to pure SQL for scaling predictions. In this tech note, I explore how this framework can (mostly) be used for xgboost models, as well, with a bit of wrangling (and a few limitations).
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">python</div>
+                <div class="quarto-category">ml</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 19, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#step-by-step-guide" id="toc-step-by-step-guide" class="nav-link active" data-scroll-target="#step-by-step-guide">Step-by-Step Guide</a>
+  <ul class="collapse">
+  <li><a href="#converting-xgboost-model-to-an-xgbclassifier-pipeline" id="toc-converting-xgboost-model-to-an-xgbclassifier-pipeline" class="nav-link" data-scroll-target="#converting-xgboost-model-to-an-xgbclassifier-pipeline">Converting <code>xgboost</code> model to an <code>XGBClassifier</code> pipeline</a></li>
+  <li><a href="#enabling-onnxmltools-for-xgbclassifier-conversion" id="toc-enabling-onnxmltools-for-xgbclassifier-conversion" class="nav-link" data-scroll-target="#enabling-onnxmltools-for-xgbclassifier-conversion">Enabling <code>onnxmltools</code> for <code>XGBClassifier</code> conversion</a></li>
+  <li><a href="#run-orbital" id="toc-run-orbital" class="nav-link" data-scroll-target="#run-orbital">Run <code>orbital</code>!</a></li>
+  <li><a href="#validate-results" id="toc-validate-results" class="nav-link" data-scroll-target="#validate-results">Validate results</a></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="orbital-xgb-preview.html"><i class="bi bi-journal-code"></i>End-to-end notebook</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>Posit’s recently-announced project <a href="https://github.com/posit-dev/orbital"><code>orbital</code></a> translates fitted SciKitLearn pipelines to SQL for easy prediction scoring at scale. This project has many exciting applications to deploy models for batch prediction with near-zero dependencies or custom infrastructure and have scores accessible to operatilize from their data warehouse.</p>
+<p>As soon as I heard about the project, I was eager to test it out. However, much of my recent work is in pure <code>xgboost</code> and neither <code>xgboost</code>’s learning API nor the scikit-learn compatible <code>XGBClassifier()</code> and inherently supported by <code>orbital</code>. This post describes a number of workarounds to get <code>orbital</code> working with <code>xgboost</code>. This <em>mostly</em> works, so we’ll also cover the known limitations.</p>
+<p>Just want the code? The source notebook for this post is linked throughout and available to run end-to-end.</p>
+<p>(Separately, I’m planning to write about my current test-drive of <code>orbital</code>, possible applicatons/workflows, and current pitfalls. It would have been imminently logical to write that post first. However, I saw others requesting <code>xgboost</code> support for <code>orbital</code> on LinkedIn and began a conversation, so I wanted to pull forward this post.)</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ready for Production?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By <code>orbital</code>’s own admission in its <code>README</code>, it is still under development. The vision is exciting enough, I think it’s more than worth digging it, but be aware that it is likely not production-ready for enterprise-grade application without rigorous independent validation. I’ve found some corner cases (logged on <a href="https://github.com/posit-dev/orbital/issues?q=is%3Aissue%20state%3Aopen%20author%3Aemilyriederer">GitHub issues</a>) and will share more thoughts in other posts.</p>
+</div>
+</div>
+<section id="step-by-step-guide" class="level2">
+<h2 class="anchored" data-anchor-id="step-by-step-guide">Step-by-Step Guide</h2>
+<p>Preparing an <code>xgboost</code> model for use in <code>orbital</code> requires a number of transformations. Specifically, this quick “tech note” will cover:</p>
+<ul>
+<li>Converting a trained <code>xgboost</code> model into an <code>XGBClassifier</code></li>
+<li>Adding a pre-trained classifier to a scikit-learn pipeline</li>
+<li>Enabling <code>XGBClassifier</code> translation from <code>onnxmltools</code> for <code>orbital</code></li>
+<li>Getting final SQL</li>
+<li>Validating our results after this hop-scotch game of transformations</li>
+</ul>
+<p>Executing this sucessfully requires dealing with a handful of rough edges, largely driven by <code>onnxmltools</code>:</p>
+<ul>
+<li><code>onnxmltools</code> requires variables names of format <code>f{number}</code></li>
+<li><code>xgboost</code> and <code>XGBClassifier</code> must use <code>base_score</code> of 0.5 (no longer the default!)</li>
+<li><code>orbital</code> seems to complain if the pipeline does not include at least one column transformation</li>
+<li><code>XGBClassifier</code> converter must be registered from <code>onnxmltools</code></li>
+<li><code>orbital</code>’s parse function must be overwritten to hard-code the ONNX version for compatibility</li>
+<li>in rare cases, final predictions vary due to different floating point logic in python and SQL (&lt;0.1% of our test cases)</li>
+</ul>
+<p>As we go, we’ll see how to address each of these challenges.</p>
+<p>First, we’ll grab some sample data to work with:</p>
+<div class="quarto-embed-nb-cell">
+<div id="data-prep" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make data dataset</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> make_classification(<span class="dv">10000</span>, random_state <span class="op">=</span> <span class="dv">102</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> X_train.<span class="bu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># get column names for use in pipeline</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">## onnxmltools forces these to be formatted as "f&lt;number&gt;"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>n_cols <span class="op">=</span> <span class="bu">len</span>(X_train[<span class="dv">0</span>])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>nm_cols <span class="op">=</span> [<span class="ss">f"f</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_cols)]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>feat_dict <span class="op">=</span> {c:orbital.types.DoubleColumnType() <span class="cf">for</span> c <span class="kw">in</span> nm_cols}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-1" href="orbital-xgb-preview.html#cell-data-prep">Source: End-to-end notebook</a></div>
+<section id="converting-xgboost-model-to-an-xgbclassifier-pipeline" class="level3">
+<h3 class="anchored" data-anchor-id="converting-xgboost-model-to-an-xgbclassifier-pipeline">Converting <code>xgboost</code> model to an <code>XGBClassifier</code> pipeline</h3>
+<p><code>xgboost</code> provides two interfaces: a native learning API and a scikit-learn compatible API. The learning API is sometimes favored for performance advantages. However, since <code>orbital</code> can only work with scikit-learn pipelines, it’s necessary to move to a compatible API.</p>
+<p>The strategy here is to fit an <code>xgboost</code> model (assuming that’s what you wanted to do in the first place), initialize a <code>XGBClassifier</code>, and set its attributes. Then, we can directly put our trained <code>XGBClassifier</code> into the a pipeline.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Base Score/Magin
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Currently, we must use a <code>base_score</code> of 0.5 for training <code>xgboost</code> and set the same value for the <code>XGBClassifier</code>. Current versions of <code>xgboost</code> pick smarter values by default, but currently <code>orbital</code> (or perhaps <code>onnxmltools</code>) does not know how to correctly incorporate other base margins into SQL, resulting in incorrect predictions.</p>
+<p>This is probably currently the biggest weakness of this overall approach because it’s the only blocker where the fix requires fundamentally changing a modeling decision.</p>
+</div>
+</div>
+<div class="quarto-embed-nb-cell">
+<div id="xgb-to-pipe" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># train with xgb learning api</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">## keeping parameters super simple so it trains fast and easy to compare</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">## important: this only works for now with base_score=0.5 </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">## this is the default assumed by orbital's logic, and I haven't figured out how to convince it otherwise</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dtrain <span class="op">=</span> xgb.DMatrix(X_train, y_train, feature_names <span class="op">=</span> nm_cols)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {<span class="st">'max_depth'</span>:<span class="dv">2</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>          <span class="st">'objective'</span>:<span class="st">'binary:logistic'</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>          <span class="st">'base_score'</span>:<span class="fl">0.5</span>, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">'seed'</span>:<span class="dv">504</span>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> xgb.train(params, num_boost_round <span class="op">=</span> <span class="dv">1</span>, dtrain <span class="op">=</span> dtrain)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>preds_xgb <span class="op">=</span> model.predict(xgb.DMatrix(X_train, feature_names <span class="op">=</span> nm_cols))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># convert back to skl interface &amp; rebuild needed metadata</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>clf <span class="op">=</span> xgb.XGBClassifier()</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>clf._Booster <span class="op">=</span> model</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>clf.n_classes_ <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>clf.base_score <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>preds_skl <span class="op">=</span> clf.predict_proba(X_train)[:,<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># validate that the results are the same</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"xgb and skl match: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">all</span>(np.isclose(preds_xgb, preds_skl))<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># add to skl pipeline</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>ppl <span class="op">=</span> Pipeline([(<span class="st">"gbm"</span>, clf)])</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>preds_ppl <span class="op">=</span> ppl.predict_proba(X_train)[:,<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># validate that the results are the same</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"xgb and ppl match: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">all</span>(np.isclose(preds_xgb, preds_ppl))<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>xgb and skl match: True
+xgb and ppl match: True
+xgb and skl match: True
+xgb and ppl match: True</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-2" href="orbital-xgb-preview.html#cell-xgb-to-pipe">Source: End-to-end notebook</a></div>
+<p>We see all three approaches produce the same predictions.</p>
+<p>Unfortunately, things aren’t quite that simple.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Add multiple pipeline steps
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>orbital</code> seems to complain if it does not have at least one column-transformation pipeline step. I’ve yet to figure out exactly why, but in the meantime it’s no-cost to make a “fake” step that changes no columns.</p>
+</div>
+</div>
+<p>Below, I remake the pipeline with a column transformer, ask it to apply to an empty list of variables, and request the rest (i.e.&nbsp;all of them) be passed through untouched.</p>
+<div class="quarto-embed-nb-cell">
+<div id="xgb-to-pipe-v2" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now we actually make a slightly more complicated pipeline</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># orbital seems unhappy if there isn't at least one preprocessing step,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># so we make one that processes no variables and passes through the rest</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    [</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"preprocess"</span>, ColumnTransformer([(<span class="st">"scaler"</span>, StandardScaler(), [])], remainder<span class="op">=</span><span class="st">"passthrough"</span>)),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>pipeline.fit(X_train)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>pipeline.steps.append((<span class="st">"gbm"</span>, clf))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>preds_ppl2 <span class="op">=</span> pipeline.predict_proba(X_train)[:,<span class="dv">1</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"xgb and ppl2 matches: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">all</span>(np.isclose(preds_xgb, preds_ppl2))<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>xgb and ppl2 matches: True
+xgb and ppl2 matches: True</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-3" href="orbital-xgb-preview.html#cell-xgb-to-pipe-v2">Source: End-to-end notebook</a></div>
+<p>Again, we see this “null” step does not change our predictions.</p>
+</section>
+<section id="enabling-onnxmltools-for-xgbclassifier-conversion" class="level3">
+<h3 class="anchored" data-anchor-id="enabling-onnxmltools-for-xgbclassifier-conversion">Enabling <code>onnxmltools</code> for <code>XGBClassifier</code> conversion</h3>
+<p><code>orbital</code> depends on <code>skl2onnx</code> which implements a smaller set of model types. <code>onnxmltools</code> offers many additional model converters. However, for <code>skl2onnx</code> to correctly find and apply these converters, they must be registered.</p>
+<div class="quarto-embed-nb-cell">
+<div id="register" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `options` copied straight from `onnxmltools` docs</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>update_registered_converter(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    XGBClassifier,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"XGBoostXGBClassifier"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    calculate_linear_classifier_output_shapes,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    convert_xgboost,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    options<span class="op">=</span>{<span class="st">"nocl"</span>: [<span class="va">True</span>, <span class="va">False</span>], </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>             <span class="st">"zipmap"</span>: [<span class="va">True</span>, <span class="va">False</span>, <span class="st">"columns"</span>], </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-4" href="orbital-xgb-preview.html#cell-register">Source: End-to-end notebook</a></div>
+<p>However, there’s another nuance here. We all know the challenges of python package versioning, but both <code>skl2onnx</code> and <code>onnxmltools</code> also require coordinating on a version of the ONNX spec’s version as a universal way to represent model objects. The <code>skl2onnx</code> function that allows us to request a version is wrapped in <code>orbital</code> without the ability to pass in parameters. So, we must override that function.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Override <code>orbital</code>’s <code>parse_pipeline()</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is required to set an ONNX version compatible between <code>skl2onnx</code> and <code>onnxmltools</code>. This is a lightweight function and not a class method, so we can just steal the code from the <code>orbital</code> package, modify it, and call it for ourselves. There is no need to monkeypatch.</p>
+</div>
+</div>
+<div class="quarto-embed-nb-cell">
+<div id="override-parse" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_pipeline_local(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    pipeline: Pipeline, features: orbital.types.FeaturesTypes</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> orbital.ast.ParsedPipeline:</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    onnx_model <span class="op">=</span> skl2onnx.to_onnx(</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        pipeline,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        initial_types<span class="op">=</span>[</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>            (fname, ftype._to_onnxtype())</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> fname, ftype <span class="kw">in</span> features.items()</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">not</span> ftype.is_passthrough</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        ],</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        target_opset<span class="op">=</span>{<span class="st">""</span>: <span class="dv">15</span>,<span class="st">'ai.onnx.ml'</span>:<span class="dv">3</span>}</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> orbital.ast.ParsedPipeline._from_onnx_model(onnx_model, features)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-5" href="orbital-xgb-preview.html#cell-override-parse">Source: End-to-end notebook</a></div>
+</section>
+<section id="run-orbital" class="level3">
+<h3 class="anchored" data-anchor-id="run-orbital">Run <code>orbital</code>!</h3>
+<p>If you’ve made it this far, you’ll be happy to know the next step is straightforward. We can now run <code>orbital</code> to generate the SQL representation of our model prediction logic.</p>
+<div class="quarto-embed-nb-cell">
+<div id="translate" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># translate into an Orbital Pipeline</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>orbital_pipeline <span class="op">=</span> parse_pipeline_local(pipeline, features<span class="op">=</span>feat_dict)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>sql_raw <span class="op">=</span> orbital.export_sql(<span class="st">"DATA_TABLE"</span>, orbital_pipeline, dialect<span class="op">=</span><span class="st">"duckdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-6" href="orbital-xgb-preview.html#cell-translate">Source: End-to-end notebook</a></div>
+</section>
+<section id="validate-results" class="level3">
+<h3 class="anchored" data-anchor-id="validate-results">Validate results</h3>
+<p>So, after all that, did we get the right result? One way we can confirm (especially because we kept the initial <code>xgboost</code> model very simple) is to compare the visual of our tree with the resulting SQL.</p>
+<p>Here’s the tree grown by <code>xgboost</code>:</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-xgb-viz" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/orbital-xgb-xgb-viz-output-1.png" id="xgb-viz" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-7" href="orbital-xgb-preview.html#cell-xgb-viz">Source: End-to-end notebook</a></div>
+<p>Here’s the SQL developed by <code>orbital</code>:</p>
+<div class="quarto-embed-nb-cell">
+<div id="orb-txt" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-stdout">
+<pre><code>SELECT
+  1 / (
+    EXP(
+      -CASE
+        WHEN "t0"."f4" &lt; -0.04800000041723251
+        THEN CASE
+          WHEN "t0"."f4" &lt; -0.8119999766349792
+          THEN -0.5087512135505676
+          ELSE -0.21405750513076782
+        END
+        ELSE CASE
+          WHEN "t0"."f18" &lt; -0.4269999861717224
+          THEN -0.3149999976158142
+          ELSE 0.5008015036582947
+        END
+      END
+    ) + 1
+  ) AS "pred",
+  "f1"
+FROM "DATA_TABLE" AS "t0"
+SELECT
+  1 / (
+    EXP(
+      -CASE
+        WHEN "t0"."f4" &lt; -0.04800000041723251
+        THEN CASE
+          WHEN "t0"."f4" &lt; -0.8119999766349792
+          THEN -0.5087512135505676
+          ELSE -0.21405750513076782
+        END
+        ELSE CASE
+          WHEN "t0"."f18" &lt; -0.4269999861717224
+          THEN -0.3149999976158142
+          ELSE 0.5008015036582947
+        END
+      END
+    ) + 1
+  ) AS "pred",
+  "f1"
+FROM "DATA_TABLE" AS "t0"</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-8" href="orbital-xgb-preview.html#cell-orb-txt">Source: End-to-end notebook</a></div>
+<p>These appear to match!</p>
+<p>However, if we go to use the results, we find that there are some non-equal predictions.</p>
+<div class="quarto-embed-nb-cell">
+<div id="final-validation" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>DATA_TABLE <span class="op">=</span> pd.DataFrame(X_train, columns <span class="op">=</span> nm_cols)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>db_preds <span class="op">=</span> duckdb.sql(sql_mod).df()</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>preds_orb <span class="op">=</span> db_preds[<span class="st">'pred'</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"xgb and orb match: </span><span class="sc">{</span>np<span class="sc">.</span><span class="bu">all</span>(np.isclose(preds_xgb, preds_orb))<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>xgb and orb match: False
+xgb and orb match: False</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-9" href="orbital-xgb-preview.html#cell-final-validation">Source: End-to-end notebook</a></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Floating point math
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Predictions may differ slightly across platforms due to floating point precision. Below, we see 5 of 10K predictions were non-equal. We can pull out the values of <code>f4</code> and <code>f18</code> for those 5 records (the only variables used in the model) and compare them to either the SQL or the flowchart. All 5 misses lie right at the cutpoint for one of the nodes.</p>
+</div>
+</div>
+<div class="quarto-embed-nb-cell">
+<div id="cell-misses" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># isolate and size misses</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>misses <span class="op">=</span> np.where(<span class="op">~</span>np.isclose(preds_xgb, preds_orb))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Different predictions (N): </span><span class="sc">{</span><span class="bu">len</span>(misses[<span class="dv">0</span>])<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Different predictions (P): </span><span class="sc">{</span><span class="bu">len</span>(misses[<span class="dv">0</span>]) <span class="op">/</span> <span class="bu">len</span>(X_train)<span class="sc">:.4f}</span><span class="ss">'</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># pull out f4 and f18; notice that all discrepancies lie exactly at the splitting points</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>X_train[misses][:,[<span class="dv">4</span>,<span class="dv">18</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Different predictions (N): 5
+Different predictions (P): 0.0005
+Different predictions (N): 5
+Different predictions (P): 0.0005</code></pre>
+</div>
+<div id="misses" class="cell-output cell-output-display">
+<pre><code>array([[-0.812, -0.515],
+       [-0.812, -0.739],
+       [ 1.715, -0.427],
+       [ 0.025, -0.427],
+       [ 2.119, -0.427]])</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-10" href="orbital-xgb-preview.html#cell-misses">Source: End-to-end notebook</a></div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.com\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><span class="faux-block"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> Creative Commons CC BY 4.0</a></span></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="cookie-consent-footer"><a href="#" id="open_preferences_center">Cookie Preferences</a></div></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at <i class="fa-brands fa-github" aria-label="github"></i> GitHub</a></span></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

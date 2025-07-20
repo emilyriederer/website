@@ -30,7 +30,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/epi-pipes/index.html</loc>
-    <lastmod>2025-06-11T18:01:12.686Z</lastmod>
+    <lastmod>2025-07-20T15:29:04.934Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/dbtplyr/index.html</loc>
@@ -210,7 +210,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/post/orbital-xgb/index.html</loc>
-    <lastmod>2025-07-20T01:37:28.220Z</lastmod>
+    <lastmod>2025-07-20T23:38:27.253Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/projmgr/index.html</loc>
@@ -278,7 +278,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/casual-pod/index.html</loc>
-    <lastmod>2025-06-28T18:11:51.849Z</lastmod>
+    <lastmod>2025-07-20T15:29:04.928Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/col-names-contract/index.html</loc>
@@ -314,10 +314,18 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/python-rgonomics/index.html</loc>
-    <lastmod>2024-10-31T19:36:44.651Z</lastmod>
+    <lastmod>2025-07-20T15:29:04.934Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/shiny-modules/index.html</loc>
     <lastmod>2024-01-01T20:16:13.598Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/post/quarto-comms/raw-analysis.html</loc>
+    <lastmod>2025-07-20T23:38:47.208Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/docs/post/orbital-xgb/orbital-xgb.out.html</loc>
+    <lastmod>2025-07-20T23:39:07.571Z</lastmod>
   </url>
 </urlset>

@@ -15,7 +15,7 @@ Posit's recently-announced project [`orbital`](https://github.com/posit-dev/orbi
 
 As soon as I heard about the project, I was eager to test it out. However, much of my recent work is in pure `xgboost` and neither `xgboost`'s learning API nor the scikit-learn compatible `XGBClassifier()` and inherently supported by `orbital`. This post describes a number of workarounds to get `orbital` working with `xgboost`. This *mostly* works, so we'll also cover the known limitations. 
 
-Just want the code? The source notebook for this post is linked throughout and available to run end-to-end.
+Just want the code? The source notebook for this post is linked throughout and available to run end-to-end. I'm also stashing this and other ongoing explorations of wins, snags, and workflows with `orbital` in [this repo](https://github.com/emilyriederer/orbital-exploration).
 
 (Separately, I'm planning to write about my current test-drive of `orbital`, possible applicatons/workflows, and current pitfalls. It would have been imminently logical to write that post first. However, I saw others requesting `xgboost` support for `orbital` on LinkedIn and began a conversation, so I wanted to pull forward this post.)
 

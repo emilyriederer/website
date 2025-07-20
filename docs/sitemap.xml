@@ -29,16 +29,20 @@
     <lastmod>2024-01-01T20:16:13.190Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/ent-pkg-design/index.html</loc>
-    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
+    <loc>https://emilyriederer.com/talk/epi-pipes/index.html</loc>
+    <lastmod>2025-06-11T18:01:12.686Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/data-error-gen/index.html</loc>
+    <loc>https://emilyriederer.com/talk/dbtplyr/index.html</loc>
     <lastmod>2024-01-01T20:16:13.174Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/col-names-contract/index.html</loc>
-    <lastmod>2024-01-01T20:16:13.158Z</lastmod>
+    <loc>https://emilyriederer.com/talk/data-downtime/index.html</loc>
+    <lastmod>2024-01-20T12:42:01.222Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/causal-design-patterns/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/publication/rmarkdown-cookbook/index.html</loc>
@@ -205,6 +209,10 @@
     <lastmod>2024-01-01T20:16:12.986Z</lastmod>
   </url>
   <url>
+    <loc>https://emilyriederer.com/post/orbital-xgb/index.html</loc>
+    <lastmod>2025-07-20T01:37:28.220Z</lastmod>
+  </url>
+  <url>
     <loc>https://emilyriederer.com/post/projmgr/index.html</loc>
     <lastmod>2024-01-01T20:16:13.002Z</lastmod>
   </url>
@@ -269,16 +277,20 @@
     <lastmod>2024-01-01T20:16:13.143Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/causal-design-patterns/index.html</loc>
-    <lastmod>2024-01-01T20:16:13.143Z</lastmod>
+    <loc>https://emilyriederer.com/talk/casual-pod/index.html</loc>
+    <lastmod>2025-06-28T18:11:51.849Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/data-downtime/index.html</loc>
-    <lastmod>2024-01-20T12:42:01.222Z</lastmod>
+    <loc>https://emilyriederer.com/talk/col-names-contract/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.158Z</lastmod>
   </url>
   <url>
-    <loc>https://emilyriederer.com/talk/dbtplyr/index.html</loc>
+    <loc>https://emilyriederer.com/talk/data-error-gen/index.html</loc>
     <lastmod>2024-01-01T20:16:13.174Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/ent-pkg-design/index.html</loc>
+    <lastmod>2024-01-01T20:16:13.190Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/talk/featured.html</loc>
@@ -307,13 +319,5 @@
   <url>
     <loc>https://emilyriederer.com/talk/shiny-modules/index.html</loc>
     <lastmod>2024-01-01T20:16:13.598Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/epi-pipes/index.html</loc>
-    <lastmod>2025-06-11T18:01:12.686Z</lastmod>
-  </url>
-  <url>
-    <loc>https://emilyriederer.com/talk/casual-pod/index.html</loc>
-    <lastmod>2025-06-28T18:09:35.024Z</lastmod>
   </url>
 </urlset>

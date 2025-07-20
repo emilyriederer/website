@@ -1,0 +1,131 @@
+---
+title: "In my orbit: hacking orbital's ML-to-SQL for xgboost"
+description: "The `orbital` package offers an interface for translating a fitted SciKitLearn pipeline to pure SQL for scaling predictions. In this tech note, I explore how this framework can (mostly) be used for xgboost models, as well, with a bit of wrangling (and a few limitations)."
+author: "Emily Riederer"
+date: "2025-07-19"
+categories: [python, ml]
+image: "featured.PNG"
+notebook-view:
+  - notebook: orbital-xgb.ipynb
+    title: "End-to-end notebook"
+    url: https://github.com/emilyriederer/website/blob/master/post/orbital-xgb/orbital-xgb.ipynb
+---
+
+Posit's recently-announced project [`orbital`](https://github.com/posit-dev/orbital) translates fitted SciKitLearn pipelines to SQL for easy prediction scoring at scale. This project has many exciting applications to deploy models for batch prediction with near-zero dependencies or custom infrastructure and have scores accessible to operatilize from their data warehouse. 
+
+As soon as I heard about the project, I was eager to test it out. However, much of my recent work is in pure `xgboost` and neither `xgboost`'s learning API nor the scikit-learn compatible `XGBClassifier()` and inherently supported by `orbital`. This post describes a number of workarounds to get `orbital` working with `xgboost`. This *mostly* works, so we'll also cover the known limitations. 
+
+Just want the code? The source notebook for this post is linked throughout and available to run end-to-end.
+
+(Separately, I'm planning to write about my current test-drive of `orbital`, possible applicatons/workflows, and current pitfalls. It would have been imminently logical to write that post first. However, I saw others requesting `xgboost` support for `orbital` on LinkedIn and began a conversation, so I wanted to pull forward this post.)
+
+::: {.callout-warning}
+## Ready for Production?
+
+By `orbital`'s own admission in its `README`, it is still under development. The vision is exciting enough, I think it's more than worth digging it, but be aware that it is likely not production-ready for enterprise-grade application without rigorous independent validation. I've found some corner cases (logged on [GitHub issues](https://github.com/posit-dev/orbital/issues?q=is%3Aissue%20state%3Aopen%20author%3Aemilyriederer)) and will share more thoughts in other posts. 
+:::
+
+## Step-by-Step Guide
+
+Preparing an `xgboost` model for use in `orbital` requires a number of transformations. Specifically, this quick "tech note" will cover:
+
+- Converting a trained `xgboost` model into an `XGBClassifier`
+- Adding a pre-trained classifier to a scikit-learn pipeline
+- Enabling `XGBClassifier` translation from `onnxmltools` for `orbital`
+- Getting final SQL
+- Validating our results after this hop-scotch game of transformations
+
+Executing this sucessfully requires dealing with a handful of rough edges, largely driven by `onnxmltools`:
+
+- `onnxmltools` requires variables names of format `f{number}`
+- `xgboost` and `XGBClassifier` must use `base_score` of 0.5 (no longer the default!)
+- `orbital` seems to complain if the pipeline does not include at least one column transformation
+- `XGBClassifier` converter must be registered from `onnxmltools`
+- `orbital`'s parse function must be overwritten to hard-code the ONNX version for compatibility
+- in rare cases, final predictions vary due to different floating point logic in python and SQL (<0.1% of our test cases)
+
+As we go, we'll see how to address each of these challenges.
+
+First, we'll grab some sample data to work with:
+
+{{< embed orbital-xgb.ipynb#data-prep echo=true >}}
+
+### Converting `xgboost` model to an `XGBClassifier` pipeline
+
+`xgboost` provides two interfaces: a native learning API and a scikit-learn compatible API. The learning API is sometimes favored for performance advantages. However, since `orbital` can only work with scikit-learn pipelines, it's necessary to move to a compatible API. 
+
+The strategy here is to fit an `xgboost` model (assuming that's what you wanted to do in the first place), initialize a `XGBClassifier`, and set its attributes. Then, we can directly put our trained `XGBClassifier` into the a pipeline.
+
+::: {.callout-important}
+## Base Score/Magin
+
+Currently, we must use a `base_score` of 0.5 for training `xgboost` and set the same value for the `XGBClassifier`. Current versions of `xgboost` pick smarter values by default, but currently `orbital` (or perhaps `onnxmltools`) does not know how to correctly incorporate other base margins into SQL, resulting in incorrect predictions.
+
+This is probably currently the biggest weakness of this overall approach because it's the only blocker where the fix requires fundamentally changing a modeling decision.
+:::
+
+{{< embed orbital-xgb.ipynb#xgb-to-pipe echo=true >}}
+
+We see all three approaches produce the same predictions. 
+
+Unfortunately, things aren't quite that simple. 
+
+::: {.callout-important}
+## Add multiple pipeline steps
+
+`orbital` seems to complain if it does not have at least one column-transformation pipeline step. I've yet to figure out exactly why, but in the meantime it's no-cost to make a "fake" step that changes no columns. 
+:::
+
+Below, I remake the pipeline with a column transformer, ask it to apply to an empty list of variables, and request the rest (i.e. all of them) be passed through untouched. 
+
+{{< embed orbital-xgb.ipynb#xgb-to-pipe-v2 echo=true >}}
+
+Again, we see this "null" step does not change our predictions.
+
+### Enabling `onnxmltools` for `XGBClassifier` conversion
+
+`orbital` depends on `skl2onnx` which implements a smaller set of model types. `onnxmltools` offers many additional model converters. However, for `skl2onnx` to correctly find and apply these converters, they must be registered.
+
+{{< embed orbital-xgb.ipynb#register echo=true >}}
+
+However, there's another nuance here. We all know the challenges of python package versioning, but both `skl2onnx` and `onnxmltools` also require coordinating on a version of the ONNX spec's version as a universal way to represent model objects. The `skl2onnx` function that allows us to request a version is wrapped in `orbital` without the ability to pass in parameters. So, we must override that function. 
+
+::: {.callout-important}
+## Override `orbital`'s `parse_pipeline()`
+
+This is required to set an ONNX version compatible between `skl2onnx` and `onnxmltools`. This is a lightweight function and not a class method, so we can just steal the code from the `orbital` package, modify it, and call it for ourselves. There is no need to monkeypatch.
+:::
+
+{{< embed orbital-xgb.ipynb#override-parse echo=true >}}
+
+### Run `orbital`!
+
+If you've made it this far, you'll be happy to know the next step is straightforward. We can now run `orbital` to generate the SQL representation of our model prediction logic.
+
+{{< embed orbital-xgb.ipynb#translate echo=true >}}
+
+### Validate results
+
+So, after all that, did we get the right result? One way we can confirm (especially because we kept the initial `xgboost` model very simple) is to compare the visual of our tree with the resulting SQL.
+
+Here's the tree grown by `xgboost`:
+
+{{< embed orbital-xgb.ipynb#xgb-viz >}}
+
+Here's the SQL developed by `orbital`:
+
+{{< embed orbital-xgb.ipynb#orb-txt >}}
+
+These appear to match! 
+
+However, if we go to use the results, we find that there are some non-equal predictions.
+
+{{< embed orbital-xgb.ipynb#final-validation echo=true >}}
+
+::: {.callout-important}
+## Floating point math
+
+Predictions may differ slightly across platforms due to floating point precision. Below, we see 5 of 10K predictions were non-equal. We can pull out the values of `f4` and `f18` for those 5 records (the only variables used in the model) and compare them to either the SQL or the flowchart. All 5 misses lie right at the cutpoint for one of the nodes.
+:::
+
+{{< embed orbital-xgb.ipynb#misses echo=true >}}

@@ -1,0 +1,19 @@
+[project]
+name = "orbital-exploration"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "duckdb>=1.3.1",
+    "graphviz>=0.21",
+    "ipykernel>=6.29.5",
+    "matplotlib>=3.10.3",
+    "onnxmltools>=1.14.0",
+    "orbital>=0.2.2",
+    "pandas>=2.3.0",
+    "pyarrow>=20.0.0",
+    "scikit-learn>=1.7.0",
+    "sqlglot[rs]>=26.33.0",
+    "xgboost>=3.0.2",
+]

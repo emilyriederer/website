@@ -10,7 +10,668 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Wed, 25 Jun 2025 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 19 Jul 2025 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>In my orbit: hacking orbital’s ML-to-SQL for xgboost</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/orbital-xgb/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Posit’s recently-announced project <a href="https://github.com/posit-dev/orbital"><code>orbital</code></a> translates fitted SciKitLearn pipelines to SQL for easy prediction scoring at scale. This project has many exciting applications to deploy models for batch prediction with near-zero dependencies or custom infrastructure and have scores accessible to operatilize from their data warehouse.</p>
+<p>As soon as I heard about the project, I was eager to test it out. However, much of my recent work is in pure <code>xgboost</code> and neither <code>xgboost</code>’s learning API nor the scikit-learn compatible <code>XGBClassifier()</code> and inherently supported by <code>orbital</code>. This post describes a number of workarounds to get <code>orbital</code> working with <code>xgboost</code>. This <em>mostly</em> works, so we’ll also cover the known limitations.</p>
+<p>Just want the code? The source notebook for this post is linked throughout and available to run end-to-end.</p>
+<p>(Separately, I’m planning to write about my current test-drive of <code>orbital</code>, possible applicatons/workflows, and current pitfalls. It would have been imminently logical to write that post first. However, I saw others requesting <code>xgboost</code> support for <code>orbital</code> on LinkedIn and began a conversation, so I wanted to pull forward this post.)</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Ready for Production?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>By <code>orbital</code>’s own admission in its <code>README</code>, it is still under development. The vision is exciting enough, I think it’s more than worth digging it, but be aware that it is likely not production-ready for enterprise-grade application without rigorous independent validation. I’ve found some corner cases (logged on <a href="https://github.com/posit-dev/orbital/issues?q=is%3Aissue%20state%3Aopen%20author%3Aemilyriederer">GitHub issues</a>) and will share more thoughts in other posts.</p>
+</div>
+</div>
+<section id="step-by-step-guide" class="level2">
+<h2 class="anchored" data-anchor-id="step-by-step-guide">Step-by-Step Guide</h2>
+<p>Preparing an <code>xgboost</code> model for use in <code>orbital</code> requires a number of transformations. Specifically, this quick “tech note” will cover:</p>
+<ul>
+<li>Converting a trained <code>xgboost</code> model into an <code>XGBClassifier</code></li>
+<li>Adding a pre-trained classifier to a scikit-learn pipeline</li>
+<li>Enabling <code>XGBClassifier</code> translation from <code>onnxmltools</code> for <code>orbital</code></li>
+<li>Getting final SQL</li>
+<li>Validating our results after this hop-scotch game of transformations</li>
+</ul>
+<p>Executing this sucessfully requires dealing with a handful of rough edges, largely driven by <code>onnxmltools</code>:</p>
+<ul>
+<li><code>onnxmltools</code> requires variables names of format <code>f{number}</code></li>
+<li><code>xgboost</code> and <code>XGBClassifier</code> must use <code>base_score</code> of 0.5 (no longer the default!)</li>
+<li><code>orbital</code> seems to complain if the pipeline does not include at least one column transformation</li>
+<li><code>XGBClassifier</code> converter must be registered from <code>onnxmltools</code></li>
+<li><code>orbital</code>’s parse function must be overwritten to hard-code the ONNX version for compatibility</li>
+<li>in rare cases, final predictions vary due to different floating point logic in python and SQL (&lt;0.1% of our test cases)</li>
+</ul>
+<p>As we go, we’ll see how to address each of these challenges.</p>
+<p>First, we’ll grab some sample data to work with:</p>
+<div class="quarto-embed-nb-cell">
+<div id="data-prep" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># make data dataset</span></span>
+<span id="cb1-2">X_train, y_train <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> make_classification(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10000</span>, random_state <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">102</span>)</span>
+<span id="cb1-3">X_train <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> X_train.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">round</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span>
+<span id="cb1-4"></span>
+<span id="cb1-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># get column names for use in pipeline</span></span>
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## onnxmltools forces these to be formatted as "f&lt;number&gt;"</span></span>
+<span id="cb1-7">n_cols <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(X_train[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])</span>
+<span id="cb1-8">nm_cols <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"f</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>i<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(n_cols)]</span>
+<span id="cb1-9">feat_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {c:orbital.types.DoubleColumnType() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> c <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> nm_cols}</span></code></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-1" href="orbital-xgb-preview.html#cell-data-prep">Source: End-to-end notebook</a></div>
+<section id="converting-xgboost-model-to-an-xgbclassifier-pipeline" class="level3">
+<h3 class="anchored" data-anchor-id="converting-xgboost-model-to-an-xgbclassifier-pipeline">Converting <code>xgboost</code> model to an <code>XGBClassifier</code> pipeline</h3>
+<p><code>xgboost</code> provides two interfaces: a native learning API and a scikit-learn compatible API. The learning API is sometimes favored for performance advantages. However, since <code>orbital</code> can only work with scikit-learn pipelines, it’s necessary to move to a compatible API.</p>
+<p>The strategy here is to fit an <code>xgboost</code> model (assuming that’s what you wanted to do in the first place), initialize a <code>XGBClassifier</code>, and set its attributes. Then, we can directly put our trained <code>XGBClassifier</code> into the a pipeline.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Base Score/Magin
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Currently, we must use a <code>base_score</code> of 0.5 for training <code>xgboost</code> and set the same value for the <code>XGBClassifier</code>. Current versions of <code>xgboost</code> pick smarter values by default, but currently <code>orbital</code> (or perhaps <code>onnxmltools</code>) does not know how to correctly incorporate other base margins into SQL, resulting in incorrect predictions.</p>
+<p>This is probably currently the biggest weakness of this overall approach because it’s the only blocker where the fix requires fundamentally changing a modeling decision.</p>
+</div>
+</div>
+<div class="quarto-embed-nb-cell">
+<div id="xgb-to-pipe" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># train with xgb learning api</span></span>
+<span id="cb2-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## keeping parameters super simple so it trains fast and easy to compare</span></span>
+<span id="cb2-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## important: this only works for now with base_score=0.5 </span></span>
+<span id="cb2-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## this is the default assumed by orbital's logic, and I haven't figured out how to convince it otherwise</span></span>
+<span id="cb2-5">dtrain <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> xgb.DMatrix(X_train, y_train, feature_names <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nm_cols)</span>
+<span id="cb2-6">params <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'max_depth'</span>:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, </span>
+<span id="cb2-7">          <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'objective'</span>:<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'binary:logistic'</span>, </span>
+<span id="cb2-8">          <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'base_score'</span>:<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, </span>
+<span id="cb2-9">          <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'seed'</span>:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">504</span>}</span>
+<span id="cb2-10">model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> xgb.train(params, num_boost_round <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, dtrain <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dtrain)</span>
+<span id="cb2-11">preds_xgb <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model.predict(xgb.DMatrix(X_train, feature_names <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nm_cols))</span>
+<span id="cb2-12"></span>
+<span id="cb2-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># convert back to skl interface &amp; rebuild needed metadata</span></span>
+<span id="cb2-14">clf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> xgb.XGBClassifier()</span>
+<span id="cb2-15">clf._Booster <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> model</span>
+<span id="cb2-16">clf.n_classes_ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-17">clf.base_score <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span></span>
+<span id="cb2-18">preds_skl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> clf.predict_proba(X_train)[:,<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-19"></span>
+<span id="cb2-20"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># validate that the results are the same</span></span>
+<span id="cb2-21"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"xgb and skl match: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>(np.isclose(preds_xgb, preds_skl))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb2-22"></span>
+<span id="cb2-23"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># add to skl pipeline</span></span>
+<span id="cb2-24">ppl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Pipeline([(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gbm"</span>, clf)])</span>
+<span id="cb2-25">preds_ppl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ppl.predict_proba(X_train)[:,<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-26"></span>
+<span id="cb2-27"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># validate that the results are the same</span></span>
+<span id="cb2-28"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"xgb and ppl match: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>(np.isclose(preds_xgb, preds_ppl))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>xgb and skl match: True
+xgb and ppl match: True
+xgb and skl match: True
+xgb and ppl match: True</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-2" href="orbital-xgb-preview.html#cell-xgb-to-pipe">Source: End-to-end notebook</a></div>
+<p>We see all three approaches produce the same predictions.</p>
+<p>Unfortunately, things aren’t quite that simple.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Add multiple pipeline steps
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>orbital</code> seems to complain if it does not have at least one column-transformation pipeline step. I’ve yet to figure out exactly why, but in the meantime it’s no-cost to make a “fake” step that changes no columns.</p>
+</div>
+</div>
+<p>Below, I remake the pipeline with a column transformer, ask it to apply to an empty list of variables, and request the rest (i.e.&nbsp;all of them) be passed through untouched.</p>
+<div class="quarto-embed-nb-cell">
+<div id="xgb-to-pipe-v2" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># now we actually make a slightly more complicated pipeline</span></span>
+<span id="cb4-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># orbital seems unhappy if there isn't at least one preprocessing step,</span></span>
+<span id="cb4-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># so we make one that processes no variables and passes through the rest</span></span>
+<span id="cb4-4">pipeline <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Pipeline(</span>
+<span id="cb4-5">    [</span>
+<span id="cb4-6">        (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"preprocess"</span>, ColumnTransformer([(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"scaler"</span>, StandardScaler(), [])], remainder<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"passthrough"</span>)),</span>
+<span id="cb4-7">    ]</span>
+<span id="cb4-8">)</span>
+<span id="cb4-9">pipeline.fit(X_train)</span>
+<span id="cb4-10">pipeline.steps.append((<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gbm"</span>, clf))</span>
+<span id="cb4-11">preds_ppl2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pipeline.predict_proba(X_train)[:,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb4-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"xgb and ppl2 matches: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>(np.isclose(preds_xgb, preds_ppl2))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>xgb and ppl2 matches: True
+xgb and ppl2 matches: True</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-3" href="orbital-xgb-preview.html#cell-xgb-to-pipe-v2">Source: End-to-end notebook</a></div>
+<p>Again, we see this “null” step does not change our predictions.</p>
+</section>
+<section id="enabling-onnxmltools-for-xgbclassifier-conversion" class="level3">
+<h3 class="anchored" data-anchor-id="enabling-onnxmltools-for-xgbclassifier-conversion">Enabling <code>onnxmltools</code> for <code>XGBClassifier</code> conversion</h3>
+<p><code>orbital</code> depends on <code>skl2onnx</code> which implements a smaller set of model types. <code>onnxmltools</code> offers many additional model converters. However, for <code>skl2onnx</code> to correctly find and apply these converters, they must be registered.</p>
+<div class="quarto-embed-nb-cell">
+<div id="register" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># `options` copied straight from `onnxmltools` docs</span></span>
+<span id="cb6-2">update_registered_converter(</span>
+<span id="cb6-3">    XGBClassifier,</span>
+<span id="cb6-4">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"XGBoostXGBClassifier"</span>,</span>
+<span id="cb6-5">    calculate_linear_classifier_output_shapes,</span>
+<span id="cb6-6">    convert_xgboost,</span>
+<span id="cb6-7">    options<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"nocl"</span>: [<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>], </span>
+<span id="cb6-8">             <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"zipmap"</span>: [<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"columns"</span>], </span>
+<span id="cb6-9">            },</span>
+<span id="cb6-10">)</span></code></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-4" href="orbital-xgb-preview.html#cell-register">Source: End-to-end notebook</a></div>
+<p>However, there’s another nuance here. We all know the challenges of python package versioning, but both <code>skl2onnx</code> and <code>onnxmltools</code> also require coordinating on a version of the ONNX spec’s version as a universal way to represent model objects. The <code>skl2onnx</code> function that allows us to request a version is wrapped in <code>orbital</code> without the ability to pass in parameters. So, we must override that function.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Override <code>orbital</code>’s <code>parse_pipeline()</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is required to set an ONNX version compatible between <code>skl2onnx</code> and <code>onnxmltools</code>. This is a lightweight function and not a class method, so we can just steal the code from the <code>orbital</code> package, modify it, and call it for ourselves. There is no need to monkeypatch.</p>
+</div>
+</div>
+<div class="quarto-embed-nb-cell">
+<div id="override-parse" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> parse_pipeline_local(</span>
+<span id="cb7-2">    pipeline: Pipeline, features: orbital.types.FeaturesTypes</span>
+<span id="cb7-3">) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> orbital.ast.ParsedPipeline:</span>
+<span id="cb7-4"></span>
+<span id="cb7-5">    onnx_model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> skl2onnx.to_onnx(</span>
+<span id="cb7-6">        pipeline,</span>
+<span id="cb7-7">        initial_types<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[</span>
+<span id="cb7-8">            (fname, ftype._to_onnxtype())</span>
+<span id="cb7-9">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> fname, ftype <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> features.items()</span>
+<span id="cb7-10">            <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">not</span> ftype.is_passthrough</span>
+<span id="cb7-11">        ],</span>
+<span id="cb7-12">        target_opset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">""</span>: <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ai.onnx.ml'</span>:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>}</span>
+<span id="cb7-13">    )</span>
+<span id="cb7-14">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> orbital.ast.ParsedPipeline._from_onnx_model(onnx_model, features)</span></code></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-5" href="orbital-xgb-preview.html#cell-override-parse">Source: End-to-end notebook</a></div>
+</section>
+<section id="run-orbital" class="level3">
+<h3 class="anchored" data-anchor-id="run-orbital">Run <code>orbital</code>!</h3>
+<p>If you’ve made it this far, you’ll be happy to know the next step is straightforward. We can now run <code>orbital</code> to generate the SQL representation of our model prediction logic.</p>
+<div class="quarto-embed-nb-cell">
+<div id="translate" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># translate into an Orbital Pipeline</span></span>
+<span id="cb8-2">orbital_pipeline <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> parse_pipeline_local(pipeline, features<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>feat_dict)</span>
+<span id="cb8-3">sql_raw <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> orbital.export_sql(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"DATA_TABLE"</span>, orbital_pipeline, dialect<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"duckdb"</span>)</span></code></pre></div>
+</div>
+<a class="quarto-notebook-link" id="nblink-6" href="orbital-xgb-preview.html#cell-translate">Source: End-to-end notebook</a></div>
+</section>
+<section id="validate-results" class="level3">
+<h3 class="anchored" data-anchor-id="validate-results">Validate results</h3>
+<p>So, after all that, did we get the right result? One way we can confirm (especially because we kept the initial <code>xgboost</code> model very simple) is to compare the visual of our tree with the resulting SQL.</p>
+<p>Here’s the tree grown by <code>xgboost</code>:</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-xgb-viz" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/orbital-xgb/index_files/figure-html/orbital-xgb-xgb-viz-output-1.png" id="xgb-viz" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-7" href="orbital-xgb-preview.html#cell-xgb-viz">Source: End-to-end notebook</a></div>
+<p>Here’s the SQL developed by <code>orbital</code>:</p>
+<div class="quarto-embed-nb-cell">
+<div id="orb-txt" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-stdout">
+<pre><code>SELECT
+  1 / (
+    EXP(
+      -CASE
+        WHEN "t0"."f4" &lt; -0.04800000041723251
+        THEN CASE
+          WHEN "t0"."f4" &lt; -0.8119999766349792
+          THEN -0.5087512135505676
+          ELSE -0.21405750513076782
+        END
+        ELSE CASE
+          WHEN "t0"."f18" &lt; -0.4269999861717224
+          THEN -0.3149999976158142
+          ELSE 0.5008015036582947
+        END
+      END
+    ) + 1
+  ) AS "pred",
+  "f1"
+FROM "DATA_TABLE" AS "t0"
+SELECT
+  1 / (
+    EXP(
+      -CASE
+        WHEN "t0"."f4" &lt; -0.04800000041723251
+        THEN CASE
+          WHEN "t0"."f4" &lt; -0.8119999766349792
+          THEN -0.5087512135505676
+          ELSE -0.21405750513076782
+        END
+        ELSE CASE
+          WHEN "t0"."f18" &lt; -0.4269999861717224
+          THEN -0.3149999976158142
+          ELSE 0.5008015036582947
+        END
+      END
+    ) + 1
+  ) AS "pred",
+  "f1"
+FROM "DATA_TABLE" AS "t0"</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-8" href="orbital-xgb-preview.html#cell-orb-txt">Source: End-to-end notebook</a></div>
+<p>These appear to match!</p>
+<p>However, if we go to use the results, we find that there are some non-equal predictions.</p>
+<div class="quarto-embed-nb-cell">
+<div id="final-validation" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">DATA_TABLE <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pd.DataFrame(X_train, columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nm_cols)</span>
+<span id="cb10-2">db_preds <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> duckdb.sql(sql_mod).df()</span>
+<span id="cb10-3">preds_orb <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> db_preds[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'pred'</span>]</span>
+<span id="cb10-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"xgb and orb match: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>(np.isclose(preds_xgb, preds_orb))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>xgb and orb match: False
+xgb and orb match: False</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-9" href="orbital-xgb-preview.html#cell-final-validation">Source: End-to-end notebook</a></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Floating point math
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Predictions may differ slightly across platforms due to floating point precision. Below, we see 5 of 10K predictions were non-equal. We can pull out the values of <code>f4</code> and <code>f18</code> for those 5 records (the only variables used in the model) and compare them to either the SQL or the flowchart. All 5 misses lie right at the cutpoint for one of the nodes.</p>
+</div>
+</div>
+<div class="quarto-embed-nb-cell">
+<div id="cell-misses" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># isolate and size misses</span></span>
+<span id="cb12-2">misses <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.where(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>np.isclose(preds_xgb, preds_orb))</span>
+<span id="cb12-3"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Different predictions (N): </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(misses[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb12-4"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Different predictions (P): </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(misses[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(X_train)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.4f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb12-5"></span>
+<span id="cb12-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># pull out f4 and f18; notice that all discrepancies lie exactly at the splitting points</span></span>
+<span id="cb12-7">X_train[misses][:,[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">18</span>]]</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Different predictions (N): 5
+Different predictions (P): 0.0005
+Different predictions (N): 5
+Different predictions (P): 0.0005</code></pre>
+</div>
+<div id="misses" class="cell-output cell-output-display">
+<pre><code>array([[-0.812, -0.515],
+       [-0.812, -0.739],
+       [ 1.715, -0.427],
+       [ 0.025, -0.427],
+       [ 2.119, -0.427]])</code></pre>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-10" href="orbital-xgb-preview.html#cell-misses">Source: End-to-end notebook</a></div>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>python</category>
+  <category>ml</category>
+  <guid>https://emilyriederer.com/post/orbital-xgb/</guid>
+  <pubDate>Sat, 19 Jul 2025 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/orbital-xgb/featured.PNG" medium="image"/>
+</item>
 <item>
   <title>Casual Inference Pod - Optimizing Data Workflows with Emily Riederer (Season 6, Episode 8)</title>
   <link>https://emilyriederer.com/talk/casual-pod/</link>
@@ -3366,41 +4027,6 @@ Note
   <guid>https://emilyriederer.com/post/abstraction-airbyte/</guid>
   <pubDate>Wed, 03 May 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/post/abstraction-airbyte/featured.PNG" medium="image"/>
-</item>
-<item>
-  <title>Posit Data Science Hangout</title>
-  <link>https://emilyriederer.com/talk/meetup-posit/</link>
-  <description><![CDATA[ 
-
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-play"></i> <a href="https://www.youtube.com/watch?v=VUgoaNhE4u0">Video</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>We were recently joined by Emily Riederer, Senior Manager - Customer Management Data Science &amp; Analytics at Capital One. We discussed how a strong foundation in high-quality data infrastructure and reproducible tools sets the stage for innovation in modeling, causal inference, and analytics, and so much more.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<p>Not applicable - live conversation</p>
-</div>
-<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/VUgoaNhE4u0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>rstats</category>
-  <category>workflow</category>
-  <guid>https://emilyriederer.com/talk/meetup-posit/</guid>
-  <pubDate>Thu, 13 Apr 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/meetup-posit/featured.png" medium="image" type="image/png" height="74" width="144"/>
 </item>
 </channel>
 </rss>

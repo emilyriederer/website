@@ -1,0 +1,17 @@
+{
+  "hash": "6d0dbb0de732a3022250317da3891a1a",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Data Validation\"\nformat: html\n---\n\n\nThis is my dataset.\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(dplyr)\n```\n\n::: {.cell-output .cell-output-stderr}\n\n```\n\nAttaching package: 'dplyr'\n```\n\n\n:::\n\n::: {.cell-output .cell-output-stderr}\n\n```\nThe following objects are masked from 'package:stats':\n\n    filter, lag\n```\n\n\n:::\n\n::: {.cell-output .cell-output-stderr}\n\n```\nThe following objects are masked from 'package:base':\n\n    intersect, setdiff, setequal, union\n```\n\n\n:::\n\n```{.r .cell-code}\ndf <- data.frame(\n    x = 1:10,\n    y = 1:10,\n    z = c(NA, 2:10)\n)\n```\n:::\n\n\nThis is my data validation.\n\n\n::: {#tbl-dirty .cell}\n\n```{.r .cell-code}\n#| label: tbl-dirty\nsummarize_all(df, ~sum(is.na(.))) \n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n  x y z\n1 0 0 1\n```\n\n\n:::\n:::\n\n\nThis is my data cleaning\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#| label: comp-clean\ndf_out <- filter(df, !is.na(z))\n```\n:::\n\n\nThis is my clean data.\n\n\n::: {#tbl-clean .cell}\n\n```{.r .cell-code}\n#| label: tbl-clean\nsummarize_all(df, ~sum(is.na(.))) \n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n  x y z\n1 0 0 1\n```\n\n\n:::\n:::\n",
+    "supporting": [
+      "fake-analysis_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": null,
+    "postProcess": false
+  }
+}

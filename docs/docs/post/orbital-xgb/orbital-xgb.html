@@ -1,150 +1,62 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="generator" content="quarto-1.4.554">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-    <title>orbital for xgboost | Emily Riederer</title>
-    <style>
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      div.columns{display: flex; gap: min(4vw, 1.5em);}
-      div.column{flex: auto; overflow-x: auto;}
-      div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-      ul.task-list{list-style: none;}
-      ul.task-list li input[type="checkbox"] {
-        width: 0.8em;
-        margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-        vertical-align: middle;
-      }
-      /* CSS for syntax highlighting */
-      pre > code.sourceCode { white-space: pre; position: relative; }
-      pre > code.sourceCode > span { line-height: 1.25; }
-      pre > code.sourceCode > span:empty { height: 1.2em; }
-      .sourceCode { overflow: visible; }
-      code.sourceCode > span { color: inherit; text-decoration: inherit; }
-      div.sourceCode { margin: 1em 0; }
-      pre.sourceCode { margin: 0; }
-      @media screen {
-      div.sourceCode { overflow: auto; }
-      }
-      @media print {
-      pre > code.sourceCode { white-space: pre-wrap; }
-      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-      }
-      pre.numberSource code
-        { counter-reset: source-line 0; }
-      pre.numberSource code > span
-        { position: relative; left: -4em; counter-increment: source-line; }
-      pre.numberSource code > span > a:first-child::before
-        { content: counter(source-line);
-          position: relative; left: -1em; text-align: right; vertical-align: baseline;
-          border: none; display: inline-block;
-          -webkit-touch-callout: none; -webkit-user-select: none;
-          -khtml-user-select: none; -moz-user-select: none;
-          -ms-user-select: none; user-select: none;
-          padding: 0 4px; width: 4em;
-        }
-      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-      div.sourceCode
-        {   }
-      @media screen {
-      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-      }
-    </style>
+<title>orbital for xgboost | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
 
-    <style>
-      body.hypothesis-enabled #quarto-embed-header {
-        padding-right: 36px;
-      }
 
-      #quarto-embed-header {
-        height: 3em;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: solid 1px;
-      }
-
-      #quarto-embed-header h6 {
-        font-size: 1.1em;
-        padding-top: 0.6em;
-        margin-left: 1em;
-        margin-right: 1em;
-        font-weight: 400;
-      }
-
-      #quarto-embed-header a.quarto-back-link,
-      #quarto-embed-header a.quarto-download-embed {
-        font-size: 0.8em;
-        margin-top: 1em;
-        margin-bottom: 1em;
-        margin-left: 1em;
-        margin-right: 1em;
-      }
-
-      .quarto-back-container {
-        padding-left: 0.5em;
-        display: flex;
-      }
-
-      .headroom {
-          will-change: transform;
-          transition: transform 200ms linear;
-      }
-
-      .headroom--pinned {
-          transform: translateY(0%);
-      }
-
-      .headroom--unpinned {
-          transform: translateY(-100%);
-      }      
-    </style>
-
-    <script>
-    window.document.addEventListener("DOMContentLoaded", function () {
-
-      var header = window.document.querySelector("#quarto-embed-header");
-      const titleBannerEl = window.document.querySelector("body > #title-block-header");
-      if (titleBannerEl) {
-        titleBannerEl.style.paddingTop = header.clientHeight + "px";
-      }
-      const contentEl = window.document.getElementById('quarto-content');
-      for (const child of contentEl.children) {
-        child.style.paddingTop = header.clientHeight + "px";
-        child.style.marginTop = "1em";
-      }
-
-      // Use the article root if the `back` call doesn't work. This isn't perfect
-      // but should typically work
-      window.quartoBackToArticle = () => {
-        var currentUrl = window.location.href;
-        window.history.back();
-        setTimeout(() => {
-            // if location was not changed in 100 ms, then there is no history back
-            if(currentUrl === window.location.href){              
-                // redirect to site root
-                window.location.href = '/';
-            }
-        }, 100);
-      }
-
-      const headroom = new window.Headroom(header, {
-        tolerance: 5,
-        onPin: function () {
-        },
-        onUnpin: function () {
-        },
-      });
-      headroom.init();
-    });
-    </script>
-
-    
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -167,7 +79,7 @@
 <link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
 <link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
-     <script id="quarto-search-options" type="application/json">{
+<script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
@@ -193,7 +105,8 @@
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script>  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z15TN5VYXJ"></script>
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z15TN5VYXJ"></script>
 
 <script type="text/plain" cookie-consent="tracking">
 
@@ -201,7 +114,8 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-Z15TN5VYXJ', { 'anonymize_ip': true});
-</script>  
+</script>
+
 <script type="text/javascript" charset="UTF-8">
 document.addEventListener('DOMContentLoaded', function () {
 cookieconsent.run({
@@ -218,22 +132,18 @@ cookieconsent.run({
   });
 });
 </script> 
-    
-        <link rel="stylesheet" href="../../styles.css">
-      <meta name="twitter:title" content="orbital for xgboost | Emily Riederer">
+  
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="orbital for xgboost | Emily Riederer">
+<meta name="twitter:description" content="">
 <meta name="twitter:card" content="summary">
 </head>
 
-  <body class="floating nav-fixed quarto-notebook">
-    <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
-      
-      <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link"><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> End-to-end notebook</h6>
+<body class="nav-fixed">
 
-            <a href="../../post/orbital-xgb/orbital-xgb.ipynb" class="btn btn-primary quarto-download-embed" download="orbital-xgb.ipynb">Download Notebook</a>
-          </div>
-
-     <div id="quarto-search-results"></div>
+<div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
@@ -319,7 +229,7 @@ cookieconsent.run({
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">orbital for xgboost</h1>
@@ -337,8 +247,9 @@ cookieconsent.run({
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <nav id="TOC" role="doc-toc" class="toc-active">
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
@@ -352,22 +263,17 @@ cookieconsent.run({
   <li><a href="#validate-output" id="toc-validate-output" class="nav-link" data-scroll-target="#validate-output">Validate Output</a></li>
   </ul>
 </nav>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
-<!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
     </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">      
-     <div id="cell-1" class="cell markdown">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
-</div>
-<div id="cell-2" class="cell markdown">
+
+
+
+
 <section id="set-up" class="level3">
 <h3 class="anchored" data-anchor-id="set-up">Set Up</h3>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div id="cell-3" class="cell" data-execution_count="1">
+<div id="cell-3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> orbital</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> duckdb</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlglot</span>
@@ -384,8 +290,8 @@ cookieconsent.run({
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skl2onnx <span class="im">import</span> update_registered_converter</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skl2onnx.common.shape_calculator <span class="im">import</span> calculate_linear_classifier_output_shapes</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> onnxmltools.convert.xgboost.operator_converters.XGBoost <span class="im">import</span> convert_xgboost</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div id="data-prep" class="cell" data-execution_count="2">
+</div>
+<div id="data-prep" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make data dataset</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> make_classification(<span class="dv">10000</span>, random_state <span class="op">=</span> <span class="dv">102</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> X_train.<span class="bu">round</span>(<span class="dv">3</span>)</span>
@@ -395,13 +301,11 @@ cookieconsent.run({
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>n_cols <span class="op">=</span> <span class="bu">len</span>(X_train[<span class="dv">0</span>])</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>nm_cols <span class="op">=</span> [<span class="ss">f"f</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_cols)]</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>feat_dict <span class="op">=</span> {c:orbital.types.DoubleColumnType() <span class="cf">for</span> c <span class="kw">in</span> nm_cols}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div id="cell-5" class="cell markdown">
+</div>
+</section>
 <section id="convert-an-xgboost-model-to-a-scikitlearn-pipeline-with-xgbclassifier" class="level3">
 <h3 class="anchored" data-anchor-id="convert-an-xgboost-model-to-a-scikitlearn-pipeline-with-xgbclassifier">Convert an <code>xgboost</code> model to a SciKitLearn pipeline with <code>XGBClassifier</code></h3>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="xgb-to-pipe" class="cell" data-execution_count="3">
+<div id="xgb-to-pipe" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># train with xgb learning api</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">## keeping parameters super simple so it trains fast and easy to compare</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">## important: this only works for now with base_score=0.5 </span></span>
@@ -436,8 +340,8 @@ xgb and ppl match: True
 xgb and skl match: True
 xgb and ppl match: True</code></pre>
 </div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div id="xgb-to-pipe-v2" class="cell" data-execution_count="4">
+</div>
+<div id="xgb-to-pipe-v2" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now we actually make a slightly more complicated pipeline</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># orbital seems unhappy if there isn't at least one preprocessing step,</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># so we make one that processes no variables and passes through the rest</span></span>
@@ -454,14 +358,12 @@ xgb and ppl match: True</code></pre>
 <pre><code>xgb and ppl2 matches: True
 xgb and ppl2 matches: True</code></pre>
 </div>
-</div></div>
-<div id="cell-8" class="cell markdown">
+</div>
+</section>
 <section id="register-translator-for-xgbclassifier" class="level3">
 <h3 class="anchored" data-anchor-id="register-translator-for-xgbclassifier">Register translator for <code>XGBClassifier</code></h3>
 <p><code>XGBClassifier</code> is implemented in <code>onnxmltools</code>. This converter can then be registered to <code>skl2onnx</code>.</p>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div id="register" class="cell" data-execution_count="5">
+<div id="register" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># `options` copied straight from `onnxmltools` docs</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>update_registered_converter(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    XGBClassifier,</span>
@@ -472,15 +374,13 @@ xgb and ppl2 matches: True</code></pre>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>             <span class="st">"zipmap"</span>: [<span class="va">True</span>, <span class="va">False</span>, <span class="st">"columns"</span>], </span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            },</span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div id="cell-10" class="cell markdown">
+</div>
+</section>
 <section id="override-parse_pipeline-function-from-orbital" class="level3">
 <h3 class="anchored" data-anchor-id="override-parse_pipeline-function-from-orbital">Override <code>parse_pipeline</code> function from <code>orbital</code></h3>
 <p>This solves a bit of a niche (?) problem. The ONNNX model spec is versioned, and using <code>onnxmltools</code> in the previous step seems to encourage a <code>target_opset</code> which is not comparible with something in either <code>skl2onnx</code> or <code>orbital</code>. The error message advised explicitly specifying the desired <code>target_opset</code> in <code>skl2onnx.to_onnx()</code>, but <code>orbital</code> doesn’t let us pass this into <code>parse_pipeline()</code>.</p>
 <p>So, we override <code>parse_pipeline()</code>. This is a top-level function and not a class method, so we don’t need to monkey patch; we can just steal the code directly and define our own function.</p>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="override-parse" class="cell" data-execution_count="6">
+<div id="override-parse" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> parse_pipeline_local(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    pipeline: Pipeline, features: orbital.types.FeaturesTypes</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>) <span class="op">-&gt;</span> orbital.ast.ParsedPipeline:</span>
@@ -495,14 +395,12 @@ xgb and ppl2 matches: True</code></pre>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        target_opset<span class="op">=</span>{<span class="st">""</span>: <span class="dv">15</span>,<span class="st">'ai.onnx.ml'</span>:<span class="dv">3</span>}</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> orbital.ast.ParsedPipeline._from_onnx_model(onnx_model, features)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div id="cell-12" class="cell markdown">
+</div>
+</section>
 <section id="run-orbital" class="level3">
 <h3 class="anchored" data-anchor-id="run-orbital">Run <code>orbital</code></h3>
 <p>Still with me? Now, we run <code>orbital</code> which is what we were trying to do all along.</p>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div id="translate" class="cell" data-execution_count="7">
+<div id="translate" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># translate into an Orbital Pipeline</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>orbital_pipeline <span class="op">=</span> parse_pipeline_local(pipeline, features<span class="op">=</span>feat_dict)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>sql_raw <span class="op">=</span> orbital.export_sql(<span class="st">"DATA_TABLE"</span>, orbital_pipeline, dialect<span class="op">=</span><span class="st">"duckdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -512,14 +410,12 @@ xgb and ppl2 matches: True</code></pre>
 c:\Users\emily\Desktop\website\post\orbital-xgb\.venv\Lib\site-packages\orbital\translation\steps\trees\classifier.py:157: FutureWarning: `case` is deprecated as of v10.0.0, removed in v11.0; use ibis.cases()
   ibis.case()</code></pre>
 </div>
-</div></div>
-<div id="cell-14" class="cell markdown">
+</div>
+</section>
 <section id="clean-up-query-optional" class="level3">
 <h3 class="anchored" data-anchor-id="clean-up-query-optional">Clean up query (optional)</h3>
 <p>As we all know, ugly queries still run. But we can use <code>sqlglot</code> (used under the hood already anyway) to clean up the query.</p>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div id="cleanup" class="cell" data-execution_count="8">
+<div id="cleanup" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># parse AST from SQL script</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ast <span class="op">=</span> sqlglot.parse_one(sql_raw)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -534,26 +430,24 @@ c:\Users\emily\Desktop\website\post\orbital-xgb\.venv\Lib\site-packages\orbital\
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>sql_mod <span class="op">=</span> sql_mod.replace(<span class="st">"output_probability.1"</span>, <span class="st">"pred"</span>)</span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">## pretty print -- not important for usage; but we'll take a peak at the output at the end here</span></span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>sql_fmt <span class="op">=</span> sqlglot.transpile(sql_mod, write<span class="op">=</span><span class="st">"duckdb"</span>, identify<span class="op">=</span><span class="va">True</span>, pretty<span class="op">=</span><span class="va">True</span>)[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div id="cell-16" class="cell markdown">
+</div>
+</section>
 <section id="validate-inputs" class="level3">
 <h3 class="anchored" data-anchor-id="validate-inputs">Validate <em>Inputs</em></h3>
 <p>Another fun form of validation – we can visually inspect the beginning of our <code>xgboost</code> tree and compare it to the compile SQL!</p>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div id="cell-xgb-viz" class="cell" data-execution_count="9">
+<div id="cell-xgb-viz" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">30</span>, <span class="dv">30</span>))</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>xgb.plot_tree(model, tree_idx<span class="op">=</span><span class="dv">0</span>, rankdir<span class="op">=</span><span class="st">'LR'</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div>
 <figure class="figure">
-<p class=""><img src="orbital-xgb_files/figure-html/xgb-viz-output-1.png" id="xgb-viz" class="img-fluid figure-img"></p>
+<p><img src="orbital-xgb_files/figure-html/xgb-viz-output-1.png" id="xgb-viz" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div id="orb-txt" class="cell" data-execution_count="10">
+</div>
+<div id="orb-txt" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(sql_fmt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>SELECT
@@ -597,14 +491,12 @@ SELECT
   "f1"
 FROM "DATA_TABLE" AS "t0"</code></pre>
 </div>
-</div></div>
-<div id="cell-19" class="cell markdown">
+</div>
+</section>
 <section id="validate-output" class="level3">
 <h3 class="anchored" data-anchor-id="validate-output">Validate Output</h3>
 <p>Although we can confirm visually this does what we want, we don’t get perfectly matching predictions for observations at the corner cases. Due to floating point math, it seems observations may sometimes end up on dirrect sides of the cutpoints.</p>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div id="final-validation" class="cell" data-execution_count="11">
+<div id="final-validation" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>DATA_TABLE <span class="op">=</span> pd.DataFrame(X_train, columns <span class="op">=</span> nm_cols)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>db_preds <span class="op">=</span> duckdb.sql(sql_mod).df()</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>preds_orb <span class="op">=</span> db_preds[<span class="st">'pred'</span>]</span>
@@ -613,8 +505,8 @@ FROM "DATA_TABLE" AS "t0"</code></pre>
 <pre><code>xgb and orb match: False
 xgb and orb match: False</code></pre>
 </div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div id="cell-misses" class="cell" data-execution_count="12">
+</div>
+<div id="cell-misses" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># isolate and size misses</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>misses <span class="op">=</span> np.where(<span class="op">~</span>np.isclose(preds_xgb, preds_orb))</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Different predictions (N): </span><span class="sc">{</span><span class="bu">len</span>(misses[<span class="dv">0</span>])<span class="sc">}</span><span class="ss">'</span>)</span>
@@ -635,10 +527,13 @@ Different predictions (P): 0.0005</code></pre>
        [ 0.025, -0.427],
        [ 2.119, -0.427]])</code></pre>
 </div>
-</div></div>
+</div>
 
 
-     </main> <!-- /main -->  <script id="quarto-html-after-body" type="application/javascript">
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1195,8 +1090,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  <script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
-</script>  </div> <!-- /content -->
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
@@ -1209,6 +1106,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <p><span class="faux-block">Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at <i class="fa-brands fa-github" aria-label="github"></i> GitHub</a></span></p>
 </div>
   </div>
-</footer> 
-  
+</footer>
+
+
+
+
 </body></html>

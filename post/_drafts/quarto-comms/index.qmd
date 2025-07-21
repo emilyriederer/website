@@ -1,0 +1,48 @@
+---
+title: "How Quarto `embed` fixes data science storytelling"
+description: "Literate programming excels at capturing our stream of conscience. Our stream of conscience does not excel at explaining the impact of our work. Notebooks enable some of data scientists' worst tendencies in technical communication, but Quarto's `embed` feature bridges the gap ebtween reproducible research and resonate story-telling."
+author: "Emily Riederer"
+date: "2025-07-23"
+categories: [workflow, rstats, rmarkdown]
+image: "featured.png"
+draft: true
+---
+
+Data scientists are not always known for their amazing communication. 
+
+x^[I recently had the chance to talk to Dr. Lucy D'Agostino McGowan and Dr. Ellie Murray on their [Casual Inference](https://casualinfer.libsyn.com/optimizing-data-workflows-with-emily-riederer-season-6-episode-8) podcast about related topics.]
+
+## Why data science communication is hard
+
+Reasons:
+- School teaches us the wrong model for communication
+  + audience has more expertise
+  + we are proving selves vs providing value
+  + need to "show our work" to get partial credit
+  + most of technical content we assume has the goal of getting us to same level vs creating trust for delegatino
+- We are presenting to people we don't know
+  + don't know what's interesting, how much background audience has
+  + don't know maybe what is important to business
+  + cannot fathom that we are presenting to people somewhat brainfried from thinking about different things every 15 minutes
+- The value of our craft is not correlated with the work of our craft
+  + story of plumber knowing where to hit the pipes
+  + intricate work; but value is big picture results 
+- Tooling
+  + notebooks /  literate compute
+  + reproducibility / rerun e2e 
+
+All of this results in the wrong kind of story -- the story of how we got to our conclusion and not why it is interesting and important
+
+Finally, exacerbated by our environment:
+  + busy to reformat story
+  + thought we were telling a story; could save time with literate programming
+  + and even my favorite tooling is to blame! 
+
+## Leading with the takeaway
+
+```
+We tried to fit a lot of different types of models. This even required us to go test out features from many different points in the customer lifecycle. And now, that got very difficult because of data quality issues. For example, this dataset about online behavior only covered 20% of our population, so when we use that we have to do a lot of imputation. We also tuned many hyperparameters for all the experiments that we ran. 
+```
+
+## Quarto `embed`  
+

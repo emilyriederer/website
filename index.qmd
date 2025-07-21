@@ -18,6 +18,8 @@ listing:
     contents: 
       - "post"
       - "!post/*.qmd"
+      - "!post/*.ipynb"
+      - "!*.ipynb"
     page-size: 4
     grid-columns: 4
     fields: *fields

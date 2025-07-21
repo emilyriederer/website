@@ -1,0 +1,38 @@
+---
+title: "Data Validation"
+format: html
+---
+
+This is my dataset.
+
+```{r}
+library(dplyr)
+
+df <- data.frame(
+    x = 1:10,
+    y = 1:10,
+    z = c(NA, 2:10)
+)
+```
+
+This is my data validation.
+
+```{r}
+#| label: tbl-dirty
+summarize_all(df, ~sum(is.na(.))) 
+```
+
+This is my data cleaning
+
+```{r}
+#| label: comp-clean
+df_out <- filter(df, !is.na(z))
+```
+
+This is my clean data.
+
+```{r}
+#| label: tbl-clean
+summarize_all(df, ~sum(is.na(.))) 
+```
+

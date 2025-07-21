@@ -39,7 +39,6 @@
       "/post/causal-design-patterns/index.html",
       "/post/column-name-contracts/index.html",
       "/post/rmarkdown-driven-development/index.html",
-      "/docs/post/orbital-xgb/orbital-xgb.out.html",
       "/post/orbital-xgb/index.html",
       "/post/py-rgo-2025/index.html",
       "/post/quarto-auth-netlify/index.html",
@@ -119,7 +118,6 @@
   {
     "listing": "/post/index.html",
     "items": [
-      "/post/quarto-comms/fake-analysis.html",
       "/post/orbital-xgb/index.html",
       "/post/py-rgo-2025/index.html",
       "/post/quarto-auth-netlify/index.html",

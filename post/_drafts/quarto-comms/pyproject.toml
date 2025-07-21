@@ -1,0 +1,15 @@
+[project]
+name = "quarto-comms"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "folktables>=0.0.12",
+    "great-tables>=0.18.0",
+    "ipykernel>=6.29.5",
+    "plotnine>=0.15.0",
+    "polars>=1.31.0",
+    "pyarrow>=21.0.0",
+    "yfinance>=0.2.65",
+]

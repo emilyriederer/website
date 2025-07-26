@@ -1,173 +1,85 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="generator" content="quarto-1.4.554">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-    <title>Demo Notebook | Emily Riederer</title>
-    <style>
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      div.columns{display: flex; gap: min(4vw, 1.5em);}
-      div.column{flex: auto; overflow-x: auto;}
-      div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-      ul.task-list{list-style: none;}
-      ul.task-list li input[type="checkbox"] {
-        width: 0.8em;
-        margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-        vertical-align: middle;
-      }
-      /* CSS for syntax highlighting */
-      pre > code.sourceCode { white-space: pre; position: relative; }
-      pre > code.sourceCode > span { line-height: 1.25; }
-      pre > code.sourceCode > span:empty { height: 1.2em; }
-      .sourceCode { overflow: visible; }
-      code.sourceCode > span { color: inherit; text-decoration: inherit; }
-      div.sourceCode { margin: 1em 0; }
-      pre.sourceCode { margin: 0; }
-      @media screen {
-      div.sourceCode { overflow: auto; }
-      }
-      @media print {
-      pre > code.sourceCode { white-space: pre-wrap; }
-      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-      }
-      pre.numberSource code
-        { counter-reset: source-line 0; }
-      pre.numberSource code > span
-        { position: relative; left: -4em; counter-increment: source-line; }
-      pre.numberSource code > span > a:first-child::before
-        { content: counter(source-line);
-          position: relative; left: -1em; text-align: right; vertical-align: baseline;
-          border: none; display: inline-block;
-          -webkit-touch-callout: none; -webkit-user-select: none;
-          -khtml-user-select: none; -moz-user-select: none;
-          -ms-user-select: none; user-select: none;
-          padding: 0 4px; width: 4em;
-        }
-      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-      div.sourceCode
-        {   }
-      @media screen {
-      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-      }
-    </style>
+<title>Data Retrieval | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
 
-    <style>
-      body.hypothesis-enabled #quarto-embed-header {
-        padding-right: 36px;
-      }
 
-      #quarto-embed-header {
-        height: 3em;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: solid 1px;
-      }
-
-      #quarto-embed-header h6 {
-        font-size: 1.1em;
-        padding-top: 0.6em;
-        margin-left: 1em;
-        margin-right: 1em;
-        font-weight: 400;
-      }
-
-      #quarto-embed-header a.quarto-back-link,
-      #quarto-embed-header a.quarto-download-embed {
-        font-size: 0.8em;
-        margin-top: 1em;
-        margin-bottom: 1em;
-        margin-left: 1em;
-        margin-right: 1em;
-      }
-
-      .quarto-back-container {
-        padding-left: 0.5em;
-        display: flex;
-      }
-
-      .headroom {
-          will-change: transform;
-          transition: transform 200ms linear;
-      }
-
-      .headroom--pinned {
-          transform: translateY(0%);
-      }
-
-      .headroom--unpinned {
-          transform: translateY(-100%);
-      }      
-    </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script>
-    window.document.addEventListener("DOMContentLoaded", function () {
-
-      var header = window.document.querySelector("#quarto-embed-header");
-      const titleBannerEl = window.document.querySelector("body > #title-block-header");
-      if (titleBannerEl) {
-        titleBannerEl.style.paddingTop = header.clientHeight + "px";
-      }
-      const contentEl = window.document.getElementById('quarto-content');
-      for (const child of contentEl.children) {
-        child.style.paddingTop = header.clientHeight + "px";
-        child.style.marginTop = "1em";
-      }
-
-      // Use the article root if the `back` call doesn't work. This isn't perfect
-      // but should typically work
-      window.quartoBackToArticle = () => {
-        var currentUrl = window.location.href;
-        window.history.back();
-        setTimeout(() => {
-            // if location was not changed in 100 ms, then there is no history back
-            if(currentUrl === window.location.href){              
-                // redirect to site root
-                window.location.href = '/';
-            }
-        }, 100);
-      }
-
-      const headroom = new window.Headroom(header, {
-        tolerance: 5,
-        onPin: function () {
-        },
-        onUnpin: function () {
-        },
-      });
-      headroom.init();
-    });
-    </script>
-
-    
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<link href="../../icon.png" rel="icon" type="image/png">
-<script src="../../site_libs/cookie-consent/cookie-consent.js"></script>
-<link href="../../site_libs/cookie-consent/cookie-consent.css" rel="stylesheet">
-<script src="../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
-<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
-     <script id="quarto-search-options" type="application/json">{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../icon.png" rel="icon" type="image/png">
+<script src="../../../site_libs/cookie-consent/cookie-consent.js"></script>
+<link href="../../../site_libs/cookie-consent/cookie-consent.css" rel="stylesheet">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
@@ -193,7 +105,8 @@
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script>  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z15TN5VYXJ"></script>
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z15TN5VYXJ"></script>
 
 <script type="text/plain" cookie-consent="tracking">
 
@@ -201,7 +114,8 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-Z15TN5VYXJ', { 'anonymize_ip': true});
-</script>  
+</script>
+
 <script type="text/javascript" charset="UTF-8">
 document.addEventListener('DOMContentLoaded', function () {
 cookieconsent.run({
@@ -218,29 +132,25 @@ cookieconsent.run({
   });
 });
 </script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>  
-        <link rel="stylesheet" href="../../styles.css">
-      <meta name="twitter:title" content="Demo Notebook | Emily Riederer">
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../../styles.css">
+<meta name="twitter:title" content="Data Retrieval | Emily Riederer">
 <meta name="twitter:card" content="summary">
 </head>
 
-  <body class="floating nav-fixed quarto-notebook">
-    <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
-      
-      <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link"><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> Demo Notebook</h6>
+<body class="nav-fixed fullcontent">
 
-            <a href="../../post/quarto-comms/raw-analysis.ipynb" class="btn btn-primary quarto-download-embed" download="raw-analysis.ipynb">Download Notebook</a>
-          </div>
-
-     <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Emily Riederer</span>
     </a>
   </div>
@@ -251,7 +161,7 @@ cookieconsent.run({
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -260,11 +170,11 @@ cookieconsent.run({
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
         <li>
-    <a class="dropdown-item" href="../../post/index.html">
+    <a class="dropdown-item" href="../../../post/index.html">
  <span class="dropdown-text">Recent</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../post/featured.html">
+    <a class="dropdown-item" href="../../../post/featured.html">
  <span class="dropdown-text">Favorites</span></a>
   </li>  
     </ul>
@@ -275,21 +185,21 @@ cookieconsent.run({
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-talks">    
         <li>
-    <a class="dropdown-item" href="../../talk/index.html">
+    <a class="dropdown-item" href="../../../talk/index.html">
  <span class="dropdown-text">Recent</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../talk/featured.html">
+    <a class="dropdown-item" href="../../../talk/featured.html">
  <span class="dropdown-text">Favorites</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="../../publication/index.html"> 
+    <a class="nav-link" href="../../../publication/index.html"> 
 <span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../project/index.html"> 
+    <a class="nav-link" href="../../../project/index.html"> 
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item compact">
@@ -308,7 +218,7 @@ cookieconsent.run({
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -321,55 +231,39 @@ cookieconsent.run({
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Demo Notebook</h1>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#data-retrieval" id="toc-data-retrieval" class="nav-link active" data-scroll-target="#data-retrieval">Data Retrieval</a></li>
-  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data Cleaning</a></li>
-  </ul>
-</nav>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    </div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">      
-     <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div id="cell-1" class="cell" data-execution_count="1">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Retrieval</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="cell-1" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars.selectors <span class="im">as</span> cs</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div id="cell-2" class="cell markdown">
-
 </div>
-<div id="cell-3" class="cell markdown">
-<section id="data-retrieval" class="level2">
-<h2 class="anchored" data-anchor-id="data-retrieval">Data Retrieval</h2>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [13]:</pre></div><div id="cell-4" class="cell" data-execution_count="13">
+<div id="cell-3" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> []</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://www.federalregister.gov/api/v1/documents.json?fields[]=document_number&amp;fields[]=excerpts&amp;fields[]=page_length&amp;fields[]=president&amp;fields[]=publication_date&amp;fields[]=raw_text_url&amp;fields[]=signing_date&amp;fields[]=title&amp;fields[]=toc_subject&amp;fields[]=topics&amp;per_page=20&amp;conditions[publication_date][gte]=2005-01-20&amp;conditions[presidential_document_type][]=executive_order&amp;conditions[president][]=george-w-bush&amp;conditions[president][]=barack-obama&amp;conditions[president][]=donald-trump&amp;conditions[president][]=joe-biden&amp;conditions[president][]=donald-trump'</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -383,13 +277,10 @@ cookieconsent.run({
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get next url</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> res_temp.get(<span class="st">'next_page_url'</span>,<span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div id="cell-5" class="cell markdown">
+</div>
 <section id="data-cleaning" class="level2">
 <h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
-</section>
-</div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [14]:</pre></div><div id="cell-6" class="cell" data-execution_count="14">
+<div id="cell-5" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_res <span class="op">=</span> (</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    pl.DataFrame(res)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    .select(<span class="st">'results'</span>)</span>
@@ -398,8 +289,8 @@ cookieconsent.run({
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    .unnest(<span class="st">'president'</span>)</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>df_res.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [24]:</pre></div><div id="cell-7" class="cell" data-execution_count="24">
+</div>
+<div id="cell-6" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lookup table</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>term <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>]</span>
@@ -412,89 +303,10 @@ cookieconsent.run({
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                       orient <span class="op">=</span> <span class="st">'col'</span>)</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>df_lkup</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div>
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (7, 5)</small>
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">term</th>
-<th data-quarto-table-cell-role="th">start_year</th>
-<th data-quarto-table-cell-role="th">start_date</th>
-<th data-quarto-table-cell-role="th">end_date</th>
-<th data-quarto-table-cell-role="th">president_lname</th>
-</tr>
-<tr class="odd">
-<th>i64</th>
-<th>i64</th>
-<th>str</th>
-<th>str</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>2001</td>
-<td>"2001-01-20"</td>
-<td>"2005-01-20"</td>
-<td>"Bush"</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>2005</td>
-<td>"2005-01-20"</td>
-<td>"2009-01-20"</td>
-<td>"Bush"</td>
-</tr>
-<tr class="odd">
-<td>1</td>
-<td>2009</td>
-<td>"2009-01-20"</td>
-<td>"2013-01-20"</td>
-<td>"Obama"</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>2013</td>
-<td>"2013-01-20"</td>
-<td>"2017-01-20"</td>
-<td>"Obama"</td>
-</tr>
-<tr class="odd">
-<td>1</td>
-<td>2017</td>
-<td>"2017-01-20"</td>
-<td>"2021-01-20"</td>
-<td>"Trump"</td>
-</tr>
-<tr class="even">
-<td>1</td>
-<td>2021</td>
-<td>"2021-01-20"</td>
-<td>"2025-01-20"</td>
-<td>"Biden"</td>
-</tr>
-<tr class="odd">
-<td>2</td>
-<td>2025</td>
-<td>"2025-01-20"</td>
-<td>"2029-01-20"</td>
-<td>"Trump"</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
-</div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [26]:</pre></div><div id="cell-8" class="cell" data-execution_count="26">
+</section></main></div>
+<div id="cell-7" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> (</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    df_res</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .with_columns(</span>
@@ -548,11 +360,10 @@ $ term                    &lt;i64&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
 $ start_year              &lt;i64&gt; 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025, 2025
 $ start_date              &lt;str&gt; '2025-01-20', '2025-01-20', '2025-01-20', '2025-01-20', '2025-01-20', '2025-01-20', '2025-01-20', '2025-01-20', '2025-01-20', '2025-01-20'
 $ end_date                &lt;str&gt; '2029-01-20', '2029-01-20', '2029-01-20', '2029-01-20', '2029-01-20', '2029-01-20', '2029-01-20', '2029-01-20', '2029-01-20', '2029-01-20'
-$ pres_term               &lt;str&gt; 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2'
-</code></pre>
+$ pres_term               &lt;str&gt; 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2'</code></pre>
 </div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [28]:</pre></div><div id="cell-9" class="cell" data-execution_count="28">
+</div>
+<div id="cell-8" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df_agg <span class="op">=</span> (</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    df_clean</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">'pres_term'</span>)</span>
@@ -564,66 +375,10 @@ $ pres_term               &lt;str&gt; 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Tr
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>df_agg.sort(<span class="st">'start_date'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div>
-<div><style>
-.dataframe > thead > tr,
-.dataframe > tbody > tr {
-  text-align: right;
-  white-space: pre-wrap;
-}
-</style>
-<small>shape: (6, 3)</small>
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th">pres_term</th>
-<th data-quarto-table-cell-role="th">n_eo_issued</th>
-<th data-quarto-table-cell-role="th">start_date</th>
-</tr>
-<tr class="odd">
-<th>str</th>
-<th>u32</th>
-<th>str</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>"Bush - 2"</td>
-<td>118</td>
-<td>"2005-01-31"</td>
-</tr>
-<tr class="even">
-<td>"Obama - 1"</td>
-<td>148</td>
-<td>"2009-01-26"</td>
-</tr>
-<tr class="odd">
-<td>"Obama - 2"</td>
-<td>130</td>
-<td>"2013-02-19"</td>
-</tr>
-<tr class="even">
-<td>"Trump - 1"</td>
-<td>220</td>
-<td>"2017-01-24"</td>
-</tr>
-<tr class="odd">
-<td>"Biden - 1"</td>
-<td>162</td>
-<td>"2021-01-25"</td>
-</tr>
-<tr class="even">
-<td>"Trump - 2"</td>
-<td>174</td>
-<td>"2025-01-28"</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
-</div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [59]:</pre></div><div id="cell-10" class="cell" data-execution_count="59">
+
+<div id="cell-9" class="cell" data-execution_count="59">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_cumul <span class="op">=</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    df_clean</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    .with_columns( cs.ends_with(<span class="st">'date'</span>).cast(pl.Date) )</span>
@@ -653,11 +408,10 @@ $ pres_term       &lt;str&gt; 'Biden - 1', 'Biden - 1', 'Biden - 1', 'Biden - 1'
 $ term_label      &lt;str&gt; '(2021) Biden', '(2021) Biden', '(2021) Biden', '(2021) Biden', '(2021) Biden', '(2021) Biden', '(2021) Biden', '(2021) Biden', '(2021) Biden', '(2021) Biden'
 $ day_since_start &lt;i64&gt; 0, 1, 2, 5, 6, 7, 8, 13, 15, 21
 $ len             &lt;u32&gt; 9, 8, 2, 2, 1, 2, 1, 3, 1, 1
-$ n_cumul         &lt;u32&gt; 9, 17, 19, 21, 22, 24, 25, 28, 29, 30
-</code></pre>
+$ n_cumul         &lt;u32&gt; 9, 17, 19, 21, 22, 24, 25, 28, 29, 30</code></pre>
 </div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [77]:</pre></div><div id="cell-fig-cum-eo" class="cell" data-execution_count="77">
+</div>
+<div id="cell-fig-cum-eo" class="cell" data-execution_count="77">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ggplot(df_cumul) <span class="op">+</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>aes(x <span class="op">=</span> <span class="st">'day_since_start'</span>, y <span class="op">=</span> <span class="st">'n_cumul'</span>, color <span class="op">=</span> <span class="st">'term_label'</span>) <span class="op">+</span></span>
@@ -672,24 +426,29 @@ $ n_cumul         &lt;u32&gt; 9, 17, 19, 21, 22, 24, 25, 28, 29, 30
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>theme(legend_position <span class="op">=</span> <span class="st">'bottom'</span>)</span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div id="fig-cum-eo" class="quarto-figure quarto-figure-center quarto-float anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-cum-eo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<img src="raw-analysis_files/figure-html/fig-cum-eo-output-1.png" id="fig-cum-eo" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cum-eo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
-</figcaption>
-</figure>
+
 </div>
 </div>
-</div></div>
-<div id="cell-txt-md" class="cell markdown">
-<p>I have some thoughts…</p>
-</div>
+<div id="txt-py" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"""</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">I can also add text that I put in my separate notebook.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+I can also add text that I put in my separate notebook.
 
 
-     </main> <!-- /main -->  <script id="quarto-html-after-body" type="application/javascript">
+
+I can also add text that I put in my separate notebook.</code></pre>
+</div>
+</div>
+<p>Test</p>
+
+
+
+
+ <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1246,8 +1005,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  <script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
-</script>  </div> <!-- /content -->
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+ <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
@@ -1260,6 +1021,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <p><span class="faux-block">Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at <i class="fa-brands fa-github" aria-label="github"></i> GitHub</a></span></p>
 </div>
   </div>
-</footer> 
-  
+</footer>
+
+
+
+
 </body></html>

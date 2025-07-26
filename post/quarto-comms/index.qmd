@@ -89,17 +89,17 @@ The `embed` shortcode lets us reference the output of another `.qmd` or `ipynb` 
 
 First, in the original notebook we `label` the top of the chunk whose output we wish to target, e.g. in our notebook `analysis.ipynb`:^[FWIW, I find Quarto can get confused if we don't put the blank line after the label line.]
 
-```
+````
 #| label: my-calc
 
 1+1
-```
+````
 
 Then in our main document we can pull in the output (and optionally the code) of that calculation, e.g. in a final Quarto document `final-writeup.qmd` we could add:
 
-```
+````
 {{< embed analysis.ipynb#my-calc >}}
-```
+````
 
 This works with any sort of cell output including raw `print()` statement output, plots, tables, etc. 
 
@@ -145,4 +145,12 @@ That produces this:
 
 {{< embed raw-analysis.ipynb#fig-cum-eo >}}
 
+If I had done a particularly good job of summarizing my thoughts immediately after seeing this plot, I might have already written them in a markdown cell over there. Embeds technically also work to embed markdown cells, so the following line you see is embedded from my other notebook also:
+
+{{< embed raw-analysis.ipynb#txt-md >}}
+
+However, I don't advocate for embedding text. I think using a final `qmd` file as a single, self-contained spot to document your analysis has a lot of benefits. 
+
 And then I could go on to add my relevant thoughts and analysis of specific to that plot. But, in this case, another part of professional communication is staying on topic. 
+
+

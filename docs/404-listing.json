@@ -2,6 +2,10 @@
   "listing": "/404.html",
   "items": [
     "/docs/post/orbital-xgb/orbital-xgb.html",
+    "/docs/post/quarto-comms/raw-analysis.html",
+    "/docs/post/quarto-comms/raw-analysis.out.html",
+    "/post/quarto-comms/raw-analysis.html",
+    "/post/quarto-comms/index.html",
     "/post/orbital-xgb/index.html",
     "/talk/casual-pod/index.html",
     "/talk/epi-pipes/index.html",

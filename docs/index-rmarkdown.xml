@@ -10,7 +10,177 @@
 <atom:link href="https://emilyriederer.com/index-rmarkdown.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Sun, 10 Nov 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 27 Jul 2025 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>How Quarto embed fixes data science storytelling</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/quarto-comms/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Data scientists communication is hard. On top of cultural nuances and time constraints, typical data tools do not set us up for success. Literate programming excels at capturing our stream of conscience. However, our stream of conscience does not excel at explaining the impact of our work.</p>
+<p>Fortunately, Quarto’s new <code>embed</code> feature bridges the gap between reproducible research and resonate story-telling by allowing us to cross-reference chunk output (tables, plots, text, or anything else) between documents. This helps separate tasks of analysis from summarization and changes our mindset to one of curating our most impactful results.</p>
+<p>In this post, I discuss some of the reasons why I think data science communication goes wrong in structuring the story we want to tell and how <code>embed</code>s can break us of bad habits.</p>
+<p><em>This topic has been on my mind for a while, and I was recently motivated to get this post over the finish line while talking to Dr.&nbsp;Lucy D’Agostino McGowan and Dr.&nbsp;Ellie Murray on their <a href="https://casualinfer.libsyn.com/optimizing-data-workflows-with-emily-riederer-season-6-episode-8">Casual Inference</a> podcast.</em></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This post assumes you know about the basics of <a href="https://quarto.org/">Quarto</a>.</p>
+<p>TLDR: Quarto is a tool for rendering documents, PDFs, blogs, websites, and more from markdown and embedded code chunks. Thus, it supports literate programming, reproducible research, and much more (including this blog).</p>
+</div>
+</div>
+<section id="why-data-science-communication-is-hard" class="level2">
+<h2 class="anchored" data-anchor-id="why-data-science-communication-is-hard">Why data science communication is hard</h2>
+<p>The deck is stacked against good communication of data science outcomes. Most of our experience with communication comes from education where it serves fundamentally different purposes. Most communication we consume in education is linear and step-by-step, but professional communication should often lead with the key takeaway.</p>
+<section id="communication-in-education" class="level3">
+<h3 class="anchored" data-anchor-id="communication-in-education">Communication in education</h3>
+<p>The majority of technical communication consumed and produced by early career professionals happened during their education. However, academic<sup>1</sup> communication has a fundamentally different goal, so it does not provide an effective model.</p>
+<p>Academic communcation leans towards exhaustive knowledge sharing of all the details – either because the target audience needs to know them or the audience needs to know that the communicator knows them.</p>
+<p>When students are communicating (completing problemsets or assignments), they have the goal of proving their mastery. Their audience (professors, TAs) can be assumed to have deeper knowledge of the topic than the presenter, and communication is intended to demonstrate comprehensiveness of knowledge – or at least to “show their work” for partial credit.</p>
+<p>When students are consuming communication (from an instructor or textbook), they experience communication with the goal of exhaustive knowledge transfer. Instructors or textbooks strive to make the audience know what they know and to be able to execute that information in a rigorous step-by-step way.</p>
+</section>
+<section id="communication-in-industry" class="level3">
+<h3 class="anchored" data-anchor-id="communication-in-industry">Communication in industry</h3>
+<p>These are decidedly not the objective of professional communication. We are given a job <em>because</em> we are judged to have the mastery of a topic <em>specifically that no one else has the time, energy, or desire to think about in enough detail</em>. The goal is not to show what you know (or, how much work you did along the way) or to get the audience to your intimacy of understanding.<sup>2</sup></p>
+<p>Instead, the goal is to be an effective abstraction layer between the minute details and what is actually needed to <em>act</em>. Communication is an act of curating the minimal spanning set of relevant facts, context, and supporting evidence or caveats.<sup>3</sup></p>
+</section>
+<section id="story-structuring" class="level3">
+<h3 class="anchored" data-anchor-id="story-structuring">Story structuring</h3>
+<p>Roughly speaking, this means we are used to talking about data science work in the <em>procedural</em> order:</p>
+<pre><code>1. I wondered...
+2. I prepared my data...
+3. I ran this analysis...
+4. This gave me another question...
+5. That {did/not} work...
+6. So finally I ended up with this...
+7. I learned...</code></pre>
+<p>However, for effective communication, it may be more useful to structure our work with <em>progressive disclosure</em>:</p>
+<pre><code>1. I wondered...
+7. I ultimately found...
+6. This is based on trying this...
+(3-5). We also considered other options...
+2. And this is all based on this data, details, etc.</code></pre>
+<p>In short, we want to tell the story of why others should <em>care</em> about our results – not the story of how we got the result.<sup>4</sup> Then, it helps turn a presentation or written document into a “conversation” where they can selectively partake of the details instead of waiting for the main point to be revealed as in a murder mystery.</p>
+</section>
+</section>
+<section id="communicating-and-the-data-science-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="communicating-and-the-data-science-workflow">Communicating and the data science workflow</h2>
+<p>However, moving between story structures isn’t just a matter of changing our mindset. Organizational pressures and tooling also bias us towards poor communication practices. I’ve always loved the phrase “writing is thinking”, but the corrolary is that your writing cannot be clearer than the amount of time you have take to think and synthesize what actually mattered from your own work.</p>
+<p>Timeline pressures push us towards more procedural stories. The story <em>you yourself know</em> about your work is the linear one that you just experienced – what you tried, why, and what happened next. If you need to communicate before you can synthesize and restructure, you will be caught flat-footed sharing anything but a procedural story.</p>
+<p>What’s more, even the best tools don’t set us up for success. I’ve long been a fan of literate programming tools like R Markdown and Quarto. I used to believe that these allowed me to effectively document while developing. This is true for documenting my raw stream of conscience for my own future reference or other colleagues. However, notebooks narratives are by definition in the procedural order.</p>
+<p>This mindset is further embed as we think about working reproducibly and structuring our work into DAGs that can be rerun end-to-end. If I want to create a final manuscript that is fully reproducible with plots and tables generated dynamically (no copy pasting!), literate programming may feel like it is constraining me towards running things in order. (This isn’t entirely true, as I’ve written about before with <a href="post/rmarkdown-driven-development">R Markdown Driven Development</a>.)</p>
+</section>
+<section id="using-quarto-embeds-to-improve-your-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="using-quarto-embeds-to-improve-your-workflow">Using Quarto <code>embed</code>s to improve your workflow</h2>
+<p>So, we need to structure our stories differently for effective communication, but neither our timelines or tooling is conducive to it? That’s where the <a href="https://quarto.org/docs/authoring/notebook-embed.html">Quarto <code>embed</code> feature</a> comes into the picture.</p>
+<section id="quarto-embed-overview" class="level3">
+<h3 class="anchored" data-anchor-id="quarto-embed-overview">Quarto <code>embed</code> overview</h3>
+<p>The <code>embed</code> shortcode lets us reference the output of another <code>.qmd</code> or <code>ipynb</code> Quarto document in a different Quarto file. This requires two steps:</p>
+<p>First, in the original notebook we <code>label</code> the top of the chunk whose output we wish to target, e.g.&nbsp;in our notebook <code>analysis.ipynb</code>:<sup>5</sup></p>
+<pre><code>#| label: my-calc
+
+1+1</code></pre>
+<p>Then in our main document we can pull in the output (and optionally the code) of that calculation, e.g.&nbsp;in a final Quarto document <code>final-writeup.qmd</code> we could add:</p>
+<pre><code>{{&lt; embed analysis.ipynb#my-calc &gt;}}</code></pre>
+<p>This works with any sort of cell output including raw <code>print()</code> statement output, plots, tables, etc.</p>
+</section>
+<section id="usage-patterns" class="level3">
+<h3 class="anchored" data-anchor-id="usage-patterns">Usage patterns</h3>
+<p>Why are embeds a game-changer for data science communication? Because writing is thinking and storytelling is curation. Embeds can help us switch our mindset away from “showing our work” and towards providing persuasive evidence that supports our narrative.</p>
+<p>The workflow I recommend is:</p>
+<ul>
+<li>Still use good practices to modularizes steps like data pulls, separate modules for reusable functions, etc.</li>
+<li>Do the analysis and last-mile transformation you would do in a Jupyter notebook, leaving the commentary that you would along the way</li>
+<li>After you’re done, think about what is important. What does your audience need to see and in what order?</li>
+<li>Then take a step back and write your actual story in a Quarto notebook</li>
+<li>Selectively embed compelling evidence at the right points in your narrative</li>
+</ul>
+<p>This is illustrated in the figure below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/quarto-comms/featured.png" class="img-fluid figure-img"></p>
+<figcaption>Content embedding workflow illustration</figcaption>
+</figure>
+</div>
+<p>This simple shortcode unblocks us from critical storytelling and workflow challenges:</p>
+<ul>
+<li>We can generate content in rerunnable linear notebooks</li>
+<li>We can then <em>selectively curate</em> output worthy of inclusion in a final document</li>
+<li>We can insert these in the order that makes sense <em>for the story</em> versus for generation</li>
+<li>This can exist without deleting our notebooks that capture the full thought process</li>
+<li>As a bonus, our final document need not be a gnarly <code>.ipynb</code> but a plaintext <code>.qmd</code> to make version control, editing, and collaboration easier</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This does not mean you should just cram all your analysis into your notebook and not worry about code quality, organization, or commentary since it’s not the final work product. The goal here is to have two good results for two different audiences without the overhead or reproducibility risks of maintaining them separately.</p>
+</div>
+</div>
+</section>
+<section id="demo" class="level3">
+<h3 class="anchored" data-anchor-id="demo">Demo</h3>
+<p>To give a quick demo, I’ll made <a href="post/quarto-comms/raw-analysis.ipynb">a separate notebook</a> that just pulls some data and makes a few aggregations and plots. But suppose I doubt you’re interested in any of that. If you’ve read this long, you seem to trust me to do some amount of data stuff correctly. So instead, I just put the following line in the <code>.qmd</code> file that is creating this post:</p>
+<pre><code>{{&lt; embed raw-analysis.ipynb#fig-cum-eo &gt;}}</code></pre>
+<p>That produces this:</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-fig-cum-eo" class="cell" data-execution_count="77">
+<div class="cell-output cell-output-display">
+<div id="fig-cum-eo" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cum-eo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://emilyriederer.com/post/quarto-comms/index_files/figure-html/raw-analysis-fig-cum-eo-output-1.png" id="fig-cum-eo" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-cum-eo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-1" href="raw-analysis-preview.html#cell-fig-cum-eo">Source: Data Retrieval</a></div>
+<p>And then I could go on to add my relevant thoughts and analysis of specific to that plot. But another part of professional communication is staying on topic.</p>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Caveat, here I mostly am reflecting on US undergraduate education in STEM-related disciplines. And, yet, even narrowly scoped this is certainly a very sweeping generalization.↩︎</p></li>
+<li id="fn2"><p>The aphorism “You don’t pay the plumber for banging on the pipes. You pay them for knowing where to bang.” really sums of what it means to be a professional. Similarly, you don’t hire them to tell you about why they are banging where.↩︎</p></li>
+<li id="fn3"><p>Personally, my professional communication became a lot better only after I grew senior enough to be on the <em>receiving</em> end of a lot of communication. At the beginning of my career, I wondered: “Didn’t my more senior audiences get to those roles because they were smart? Didn’t they want all the details?” But we must considered the audience’s context – not just their background knowledge but also their environment. Considering your executive audience as people who have thought about 7 different topics at 20 minute intervals before talking to you today frames a whole different set of constraints. My overall philosophy for communication over time has shifted more towards “How to be kind to burned out brains” than “How to get other people excited by all the cool stuff I did”.↩︎</p></li>
+<li id="fn4"><p>I once coached an analyst who kept writing stories in this order. Responding to my feedback, they asked “But aren’t we supposed to tell a story?” This made me realize how overloaded and perhaps misleading the phrase “data storytelling” has become. Yes, we are telling the story <em>from the data</em> and not <em>about analyzing the data</em>. The analyst is not the main character!↩︎</p></li>
+<li id="fn5"><p>FWIW, I find Quarto can get confused if we don’t put the blank line after the label line.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>workflow</category>
+  <category>rstats</category>
+  <category>python</category>
+  <category>quarto</category>
+  <category>rmarkdown</category>
+  <guid>https://emilyriederer.com/post/quarto-comms/</guid>
+  <pubDate>Sun, 27 Jul 2025 05:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/quarto-comms/featured.png" medium="image" type="image/png" height="97" width="144"/>
+</item>
 <item>
   <title>Role-Based Access Control for Quarto sites with Netlify Identity</title>
   <dc:creator>Emily Riederer</dc:creator>

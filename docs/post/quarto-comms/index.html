@@ -275,10 +275,12 @@ cookieconsent.run({
 
 
 
-<p>Data scientists communication is hard. On top of cultural nuances and time constraints, typical data tools do not set us up for success. Literate programming excels at capturing our stream of conscience. However, our stream of conscience does not excel at explaining the impact of our work.</p>
-<p>Fortunately, Quarto’s new <code>embed</code> feature bridges the gap between reproducible research and resonate story-telling by allowing us to cross-reference chunk output (tables, plots, text, or anything else) between documents. This helps separate tasks of analysis from summarization and changes our mindset to one of curating our most impactful results.</p>
-<p>In this post, I discuss some of the reasons why I think data science communication goes wrong in structuring the story we want to tell and how <code>embed</code>s can break us of bad habits.</p>
-<p><em>This topic has been on my mind for a while, and I was recently motivated to get this post over the finish line while talking to Dr.&nbsp;Lucy D’Agostino McGowan and Dr.&nbsp;Ellie Murray on their <a href="https://casualinfer.libsyn.com/optimizing-data-workflows-with-emily-riederer-season-6-episode-8">Casual Inference</a> podcast.</em></p>
+<p>Data science stakeholder communication is hard. The typical explanation of this is to parody data scientists as “too technical” to communicate with their audiences. But I’ve always found it unsatisfying to believe that “being technical” makes it too challenging to connect with the 0.1% of the population so similar to ourselves that we all happen to work in the same organization.</p>
+<p>Instead, I believe communication is rarely taught intentionally and, worse, is modeled poorly by educational communication which has different goals. This leads to an “explain all the things” mindset that is enabled by literate programming tools like notebooks. It’s said that “writing is thinking”, and literate programming excels at capturing our stream of conscience. However, our stream of conscience does not excel at succinct retrospective explanations of our work’s impact.</p>
+<p>Data scientist do not have a communication problem. They have a problem in ordering their story for impact and engagement, driven by their background, context, and tools.</p>
+<p>Fortunately, Quarto’s new <code>embed</code> feature bridges the gap between reproducible research and resonate story-telling. This simple feature allows us to cross-reference chunk output (tables, plots, text, or anything else) between documents. The ability to import reproducible results can completely change our writing workflow. It separates the tasks of analysis from summarization and changes our mindset to one of explaning “all the things” to curating the most persuasive evidence for our plaintxt arguments.</p>
+<p>In this post, I discuss some of the reasons why I think data science communication goes wrong, why changing story orer helps, and how Quarto <code>embed</code>s can help us have reproducible results and a compelling story at the same time.</p>
+<p><em>This topic has been on my mind for a while, and I was recently motivated to get this post over the finish line while talking to Dr.&nbsp;Lucy D’Agostino McGowan and Dr.&nbsp;Ellie Murray on their <a href="https://casualinfer.libsyn.com/optimizing-data-workflows-with-emily-riederer-season-6-episode-8">Casual Inference</a> podcast. Thanks to them for the energy and inspiration!</em></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -295,13 +297,13 @@ Note
 </div>
 <section id="why-data-science-communication-is-hard" class="level2">
 <h2 class="anchored" data-anchor-id="why-data-science-communication-is-hard">Why data science communication is hard</h2>
-<p>The deck is stacked against good communication of data science outcomes. Most of our experience with communication comes from education where it serves fundamentally different purposes. Most communication we consume in education is linear and step-by-step, but professional communication should often lead with the key takeaway.</p>
+<p>The deck is stacked against good communication of data science outcomes. Most of our experience with communication comes from education where it serves fundamentally different purposes. Educational communication tends to be linear and step-by-step, but professional communication should often lead with the key takeaway.</p>
 <section id="communication-in-education" class="level3">
 <h3 class="anchored" data-anchor-id="communication-in-education">Communication in education</h3>
 <p>The majority of technical communication consumed and produced by early career professionals happened during their education. However, academic<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> communication has a fundamentally different goal, so it does not provide an effective model.</p>
 <p>Academic communcation leans towards exhaustive knowledge sharing of all the details – either because the target audience needs to know them or the audience needs to know that the communicator knows them.</p>
 <p>When students are communicating (completing problemsets or assignments), they have the goal of proving their mastery. Their audience (professors, TAs) can be assumed to have deeper knowledge of the topic than the presenter, and communication is intended to demonstrate comprehensiveness of knowledge – or at least to “show their work” for partial credit.</p>
-<p>When students are consuming communication (from an instructor or textbook), they experience communication with the goal of exhaustive knowledge transfer. Instructors or textbooks strive to make the audience know what they know and to be able to execute that information in a rigorous step-by-step way.</p>
+<p>When students are consuming communication (from an instructor or textbook), they experience communication with the goal of exhaustive knowledge transfer. Instructors or textbooks aim to make the audience know what they know and to be able to execute that information independently.</p>
 </section>
 <section id="communication-in-industry" class="level3">
 <h3 class="anchored" data-anchor-id="communication-in-industry">Communication in industry</h3>
@@ -329,8 +331,8 @@ Note
 </section>
 <section id="communicating-and-the-data-science-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="communicating-and-the-data-science-workflow">Communicating and the data science workflow</h2>
-<p>However, moving between story structures isn’t just a matter of changing our mindset. Organizational pressures and tooling also bias us towards poor communication practices. I’ve always loved the phrase “writing is thinking”, but the corrolary is that your writing cannot be clearer than the amount of time you have take to think and synthesize what actually mattered from your own work.</p>
-<p>Timeline pressures push us towards more procedural stories. The story <em>you yourself know</em> about your work is the linear one that you just experienced – what you tried, why, and what happened next. If you need to communicate before you can synthesize and restructure, you will be caught flat-footed sharing anything but a procedural story.</p>
+<p>Moving between story structures isn’t just a matter of changing our mindset. Organizational pressures and tooling also bias us towards poor communication practices. I’ve always loved the phrase “writing is thinking”, but the corrolary is that your writing cannot be clearer than the amount of time you have take to think and synthesize what actually mattered from your own work.</p>
+<p>Timeline pressures push us towards more procedural stories. The story <em>you yourself know</em> about your work is the linear one that you just experienced – what you tried, why, and what happened next. If you need to communicate before you can synthesize and restructure, you will be caught flat-footed sharing anything but a procedural story. It’s likely better to begin drafting your final communication from a clean slate but tempting to reuse what exists.</p>
 <p>What’s more, even the best tools don’t set us up for success. I’ve long been a fan of literate programming tools like R Markdown and Quarto. I used to believe that these allowed me to effectively document while developing. This is true for documenting my raw stream of conscience for my own future reference or other colleagues. However, notebooks narratives are by definition in the procedural order.</p>
 <p>This mindset is further embed as we think about working reproducibly and structuring our work into DAGs that can be rerun end-to-end. If I want to create a final manuscript that is fully reproducible with plots and tables generated dynamically (no copy pasting!), literate programming may feel like it is constraining me towards running things in order. (This isn’t entirely true, as I’ve written about before with <a href="post/rmarkdown-driven-development">R Markdown Driven Development</a>.)</p>
 </section>
@@ -350,7 +352,7 @@ Note
 </section>
 <section id="usage-patterns" class="level3">
 <h3 class="anchored" data-anchor-id="usage-patterns">Usage patterns</h3>
-<p>Why are embeds a game-changer for data science communication? Because writing is thinking and storytelling is curation. Embeds can help us switch our mindset away from “showing our work” and towards providing persuasive evidence that supports our narrative.</p>
+<p>Why are embeds a game-changer for data science communication? <strong>Because writing is thinking and storytelling is curation.</strong> Embeds can help us switch our mindset away from “showing our work” and towards providing persuasive evidence that supports our narrative.</p>
 <p>The workflow I recommend is:</p>
 <ul>
 <li>Still use good practices to modularizes steps like data pulls, separate modules for reusable functions, etc.</li>
@@ -372,8 +374,9 @@ Note
 <li>We can then <em>selectively curate</em> output worthy of inclusion in a final document</li>
 <li>We can insert these in the order that makes sense <em>for the story</em> versus for generation</li>
 <li>This can exist without deleting our notebooks that capture the full thought process</li>
-<li>As a bonus, our final document need not be a gnarly <code>.ipynb</code> but a plaintext <code>.qmd</code> to make version control, editing, and collaboration easier</li>
+<li>As a bonus, our final document need not be a gnarly <code>.ipynb</code> but a plaintext <code>.qmd</code> to make version control, editing, and collaborating with noncoding contributors easier</li>
 </ul>
+<p>It’s not just code output that can be imported either. Perhaps you already wrote up an introduction framed as an experimental design or a proposal? Other full markdown files can similarly be inclued with the <a href="https://quarto.org/docs/authoring/includes.html"><code>includes</code> shortcode</a>. (<code>includes</code> adds the <em>unrendered text</em> of another <code>.qmd</code> file, including any code chunks to be executed, to your main <code>.qmd</code>; whereas, for <code>embeds</code>, we are referencing the <em>output</em> of another file without rerendering.)</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -384,13 +387,14 @@ Tip
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This does not mean you should just cram all your analysis into your notebook and not worry about code quality, organization, or commentary since it’s not the final work product. The goal here is to have two good results for two different audiences without the overhead or reproducibility risks of maintaining them separately.</p>
+<p>This does not mean you should just cram all your analysis into your notebook and not worry about code quality, organization, or commentary!</p>
+<p>The goal here is to have two good results for two different audiences without the overhead or reproducibility risks of maintaining them separately.</p>
 </div>
 </div>
 </section>
 <section id="demo" class="level3">
 <h3 class="anchored" data-anchor-id="demo">Demo</h3>
-<p>To give a quick demo, I’ll made <a href="post/quarto-comms/raw-analysis.ipynb">a separate notebook</a> that just pulls some data and makes a few aggregations and plots. But suppose I doubt you’re interested in any of that. If you’ve read this long, you seem to trust me to do some amount of data stuff correctly. So instead, I just put the following line in the <code>.qmd</code> file that is creating this post:</p>
+<p>To give a quick demo, I’ll made <a href="post/quarto-comms/raw-analysis.html">a separate notebook</a> that just pulls some data and makes a few aggregations and plots. But suppose I doubt you’re interested in any of that. If you’ve read this long, you seem to trust me to do some amount of data stuff correctly. So instead, I just put the following line in the <code>.qmd</code> file that is creating this post:</p>
 <pre><code>{{&lt; embed raw-analysis.ipynb#fig-cum-eo &gt;}}</code></pre>
 <p>That produces this:</p>
 <div class="quarto-embed-nb-cell">
@@ -425,7 +429,7 @@ Figure&nbsp;1
 
 <ol>
 <li id="fn1"><p>Caveat, here I mostly am reflecting on US undergraduate education in STEM-related disciplines. And, yet, even narrowly scoped this is certainly a very sweeping generalization.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>The aphorism “You don’t pay the plumber for banging on the pipes. You pay them for knowing where to bang.” really sums of what it means to be a professional. Similarly, you don’t hire them to tell you about why they are banging where.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The aphorism “You don’t pay the plumber for banging on the pipes. You pay them for knowing where to bang.” really sums up what it means to be a professional. Similarly, you don’t hire them to tell you about why they are banging where.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>Personally, my professional communication became a lot better only after I grew senior enough to be on the <em>receiving</em> end of a lot of communication. At the beginning of my career, I wondered: “Didn’t my more senior audiences get to those roles because they were smart? Didn’t they want all the details?” But we must considered the audience’s context – not just their background knowledge but also their environment. Considering your executive audience as people who have thought about 7 different topics at 20 minute intervals before talking to you today frames a whole different set of constraints. My overall philosophy for communication over time has shifted more towards “How to be kind to burned out brains” than “How to get other people excited by all the cool stuff I did”.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>I once coached an analyst who kept writing stories in this order. Responding to my feedback, they asked “But aren’t we supposed to tell a story?” This made me realize how overloaded and perhaps misleading the phrase “data storytelling” has become. Yes, we are telling the story <em>from the data</em> and not <em>about analyzing the data</em>. The analyst is not the main character!<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn5"><p>FWIW, I find Quarto can get confused if we don’t put the blank line after the label line.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Retrieval | Emily Riederer</title>
+<title>Demo Notebook | Emily Riederer</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -139,7 +139,7 @@ cookieconsent.run({
 
 
 <link rel="stylesheet" href="../../../styles.css">
-<meta name="twitter:title" content="Data Retrieval | Emily Riederer">
+<meta name="twitter:title" content="Demo Notebook | Emily Riederer">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -240,7 +240,7 @@ cookieconsent.run({
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data Retrieval</h1>
+<h1 class="title">Demo Notebook</h1>
 </div>
 
 
@@ -263,7 +263,9 @@ cookieconsent.run({
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-3" class="cell" data-execution_count="13">
+<section id="data-retrieval" class="level2">
+<h2 class="anchored" data-anchor-id="data-retrieval">Data Retrieval</h2>
+<div id="cell-4" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> []</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">'https://www.federalregister.gov/api/v1/documents.json?fields[]=document_number&amp;fields[]=excerpts&amp;fields[]=page_length&amp;fields[]=president&amp;fields[]=publication_date&amp;fields[]=raw_text_url&amp;fields[]=signing_date&amp;fields[]=title&amp;fields[]=toc_subject&amp;fields[]=topics&amp;per_page=20&amp;conditions[publication_date][gte]=2005-01-20&amp;conditions[presidential_document_type][]=executive_order&amp;conditions[president][]=george-w-bush&amp;conditions[president][]=barack-obama&amp;conditions[president][]=donald-trump&amp;conditions[president][]=joe-biden&amp;conditions[president][]=donald-trump'</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -278,9 +280,10 @@ cookieconsent.run({
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># get next url</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> res_temp.get(<span class="st">'next_page_url'</span>,<span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
 <section id="data-cleaning" class="level2">
 <h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
-<div id="cell-5" class="cell" data-execution_count="14">
+<div id="cell-6" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_res <span class="op">=</span> (</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    pl.DataFrame(res)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    .select(<span class="st">'results'</span>)</span>
@@ -290,7 +293,7 @@ cookieconsent.run({
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>df_res.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-6" class="cell" data-execution_count="24">
+<div id="cell-7" class="cell" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lookup table</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>term <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>]</span>
@@ -306,7 +309,7 @@ cookieconsent.run({
 </div>
 </div>
 </section></main></div>
-<div id="cell-7" class="cell" data-execution_count="26">
+<div id="cell-8" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> (</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    df_res</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    .with_columns(</span>
@@ -363,7 +366,7 @@ $ end_date                &lt;str&gt; '2029-01-20', '2029-01-20', '2029-01-20', 
 $ pres_term               &lt;str&gt; 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Trump - 2'</code></pre>
 </div>
 </div>
-<div id="cell-8" class="cell" data-execution_count="28">
+<div id="cell-9" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df_agg <span class="op">=</span> (</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    df_clean</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    .group_by(<span class="st">'pres_term'</span>)</span>
@@ -378,7 +381,7 @@ $ pres_term               &lt;str&gt; 'Trump - 2', 'Trump - 2', 'Trump - 2', 'Tr
 </div>
 </div>
 
-<div id="cell-9" class="cell" data-execution_count="59">
+<div id="cell-10" class="cell" data-execution_count="59">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_cumul <span class="op">=</span> (</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    df_clean</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    .with_columns( cs.ends_with(<span class="st">'date'</span>).cast(pl.Date) )</span>
@@ -429,20 +432,7 @@ $ n_cumul         &lt;u32&gt; 9, 17, 19, 21, 22, 24, 25, 28, 29, 30</code></pre>
 
 </div>
 </div>
-<div id="txt-py" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"""</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">I can also add text that I put in my separate notebook.</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-I can also add text that I put in my separate notebook.
-
-
-
-I can also add text that I put in my separate notebook.</code></pre>
-</div>
-</div>
-<p>Test</p>
+<p>I have some thoughts…</p>
 
 
 

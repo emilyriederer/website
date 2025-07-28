@@ -371,9 +371,10 @@ Note
 <p>This simple shortcode unblocks us from critical storytelling and workflow challenges:</p>
 <ul>
 <li>We can generate content in rerunnable linear notebooks</li>
+<li>We can start writing from a blank slate to ensure that we are focused on <em>substance</em> and not just sheer volume of content</li>
 <li>We can then <em>selectively curate</em> output worthy of inclusion in a final document</li>
 <li>We can insert these in the order that makes sense <em>for the story</em> versus for generation</li>
-<li>This can exist without deleting our notebooks that capture the full thought process</li>
+<li>This can exist without deleting or modifying our notebooks that capture the full thought process</li>
 <li>As a bonus, our final document need not be a gnarly <code>.ipynb</code> but a plaintext <code>.qmd</code> to make version control, editing, and collaborating with noncoding contributors easier</li>
 </ul>
 <p>It’s not just code output that can be imported either. Perhaps you already wrote up an introduction framed as an experimental design or a proposal? Other full markdown files can similarly be inclued with the <a href="https://quarto.org/docs/authoring/includes.html"><code>includes</code> shortcode</a>. (<code>includes</code> adds the <em>unrendered text</em> of another <code>.qmd</code> file, including any code chunks to be executed, to your main <code>.qmd</code>; whereas, for <code>embeds</code>, we are referencing the <em>output</em> of another file without rerendering.)</p>
@@ -394,11 +395,135 @@ Tip
 </section>
 <section id="demo" class="level3">
 <h3 class="anchored" data-anchor-id="demo">Demo</h3>
-<p>To give a quick demo, I’ll made <a href="post/quarto-comms/raw-analysis.html">a separate notebook</a> that just pulls some data and makes a few aggregations and plots. But suppose I doubt you’re interested in any of that. If you’ve read this long, you seem to trust me to do some amount of data stuff correctly. So instead, I just put the following line in the <code>.qmd</code> file that is creating this post:</p>
+<p>To give a quick demo, I’ll made <a href="post/quarto-comms/raw-analysis.html">a separate notebook</a> that just pulls some data from an API, cleans it up, and makes a few aggregations and plots. But suppose I doubt you’re interested in any of that. If you’ve read this long, you seem to trust me to do some amount of data stuff correctly.</p>
+<p>So instead, I just put the following line in the <code>.qmd</code> file that is creating this post:</p>
+<pre><code>{{&lt; embed raw-analysis.ipynb#tbl-pit-eo &gt;}}</code></pre>
+<p>That produces this:</p>
+<div class="quarto-embed-nb-cell">
+<div id="tbl-pit-eo" class="cell anchored" data-execution_count="10">
+<div class="cell-output cell-output-display">
+<div>
+
+
+
+<meta charset="utf-8">
+
+
+<div id="bjovyrnhbw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>
+#bjovyrnhbw table {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+#bjovyrnhbw thead, tbody, tfoot, tr, td, th { border-style: none !important; }
+ tr { background-color: transparent !important; }
+#bjovyrnhbw p { margin: 0 !important; padding: 0 !important; }
+ #bjovyrnhbw .gt_table { display: table !important; border-collapse: collapse !important; line-height: normal !important; margin-left: auto !important; margin-right: auto !important; color: #333333 !important; font-size: 16px !important; font-weight: normal !important; font-style: normal !important; background-color: #FFFFFF !important; width: auto !important; border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #A8A8A8 !important; border-right-style: none !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #A8A8A8 !important; border-left-style: none !important; border-left-width: 2px !important; border-left-color: #D3D3D3 !important; }
+ #bjovyrnhbw .gt_caption { padding-top: 4px !important; padding-bottom: 4px !important; }
+ #bjovyrnhbw .gt_title { color: #333333 !important; font-size: 125% !important; font-weight: initial !important; padding-top: 4px !important; padding-bottom: 4px !important; padding-left: 5px !important; padding-right: 5px !important; border-bottom-color: #FFFFFF !important; border-bottom-width: 0 !important; }
+ #bjovyrnhbw .gt_subtitle { color: #333333 !important; font-size: 85% !important; font-weight: initial !important; padding-top: 3px !important; padding-bottom: 5px !important; padding-left: 5px !important; padding-right: 5px !important; border-top-color: #FFFFFF !important; border-top-width: 0 !important; }
+ #bjovyrnhbw .gt_heading { background-color: #FFFFFF !important; text-align: center !important; border-bottom-color: #FFFFFF !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; }
+ #bjovyrnhbw .gt_bottom_border { border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; }
+ #bjovyrnhbw .gt_col_headings { border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; }
+ #bjovyrnhbw .gt_col_heading { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: normal !important; text-transform: inherit !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; vertical-align: bottom !important; padding-top: 5px !important; padding-bottom: 5px !important; padding-left: 5px !important; padding-right: 5px !important; overflow-x: hidden !important; }
+ #bjovyrnhbw .gt_column_spanner_outer { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: normal !important; text-transform: inherit !important; padding-top: 0 !important; padding-bottom: 0 !important; padding-left: 4px !important; padding-right: 4px !important; }
+ #bjovyrnhbw .gt_column_spanner_outer:first-child { padding-left: 0 !important; }
+ #bjovyrnhbw .gt_column_spanner_outer:last-child { padding-right: 0 !important; }
+ #bjovyrnhbw .gt_column_spanner { border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; vertical-align: bottom !important; padding-top: 5px !important; padding-bottom: 5px !important; overflow-x: hidden !important; display: inline-block !important; width: 100% !important; }
+ #bjovyrnhbw .gt_spanner_row { border-bottom-style: hidden !important; }
+ #bjovyrnhbw .gt_group_heading { padding-top: 8px !important; padding-bottom: 8px !important; padding-left: 5px !important; padding-right: 5px !important; color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; text-transform: inherit !important; border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; vertical-align: middle !important; text-align: left !important; }
+ #bjovyrnhbw .gt_empty_group_heading { padding: 0.5px !important; color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; vertical-align: middle !important; }
+ #bjovyrnhbw .gt_from_md> :first-child { margin-top: 0 !important; }
+ #bjovyrnhbw .gt_from_md> :last-child { margin-bottom: 0 !important; }
+ #bjovyrnhbw .gt_row { padding-top: 8px !important; padding-bottom: 8px !important; padding-left: 5px !important; padding-right: 5px !important; margin: 10px !important; border-top-style: solid !important; border-top-width: 1px !important; border-top-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 1px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 1px !important; border-right-color: #D3D3D3 !important; vertical-align: middle !important; overflow-x: hidden !important; }
+ #bjovyrnhbw .gt_stub { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; text-transform: inherit !important; border-right-style: solid !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; padding-left: 5px !important; padding-right: 5px !important; }
+ #bjovyrnhbw .gt_stub_row_group { color: #333333 !important; background-color: #FFFFFF !important; font-size: 100% !important; font-weight: initial !important; text-transform: inherit !important; border-right-style: solid !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; padding-left: 5px !important; padding-right: 5px !important; vertical-align: top !important; }
+ #bjovyrnhbw .gt_row_group_first td { border-top-width: 2px !important; }
+ #bjovyrnhbw .gt_row_group_first th { border-top-width: 2px !important; }
+ #bjovyrnhbw .gt_striped { background-color: rgba(128,128,128,0.05) !important; }
+ #bjovyrnhbw .gt_table_body { border-top-style: solid !important; border-top-width: 2px !important; border-top-color: #D3D3D3 !important; border-bottom-style: solid !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; }
+ #bjovyrnhbw .gt_sourcenotes { color: #333333 !important; background-color: #FFFFFF !important; border-bottom-style: none !important; border-bottom-width: 2px !important; border-bottom-color: #D3D3D3 !important; border-left-style: none !important; border-left-width: 2px !important; border-left-color: #D3D3D3 !important; border-right-style: none !important; border-right-width: 2px !important; border-right-color: #D3D3D3 !important; }
+ #bjovyrnhbw .gt_sourcenote { font-size: 90% !important; padding-top: 4px !important; padding-bottom: 4px !important; padding-left: 5px !important; padding-right: 5px !important; text-align: left !important; }
+ #bjovyrnhbw .gt_left { text-align: left !important; }
+ #bjovyrnhbw .gt_center { text-align: center !important; }
+ #bjovyrnhbw .gt_right { text-align: right !important; font-variant-numeric: tabular-nums !important; }
+ #bjovyrnhbw .gt_font_normal { font-weight: normal !important; }
+ #bjovyrnhbw .gt_font_bold { font-weight: bold !important; }
+ #bjovyrnhbw .gt_font_italic { font-style: italic !important; }
+ #bjovyrnhbw .gt_super { font-size: 65% !important; }
+ #bjovyrnhbw .gt_footnote_marks { font-size: 75% !important; vertical-align: 0.4em !important; position: initial !important; }
+ #bjovyrnhbw .gt_asterisk { font-size: 100% !important; vertical-align: 0 !important; }
+ 
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_heading">
+<th colspan="3" class="gt_heading gt_title gt_font_normal">Executive Orders Issued by Term</th>
+</tr>
+<tr class="odd gt_heading">
+<th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Normalized for first 184 days in office (12.6% of term)</th>
+</tr>
+<tr class="header gt_col_headings gt_spanner_row">
+<th rowspan="2" id="term_label" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Term</th>
+<th colspan="2" id="Count" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><span class="gt_column_spanner">Count</span></th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="n_ttl_pit" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Point in time</th>
+<th id="n_ttl" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Full term</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center">(2005) Bush</td>
+<td class="gt_row gt_center">13</td>
+<td class="gt_row gt_center">118</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped">(2009) Obama</td>
+<td class="gt_row gt_center gt_striped">22</td>
+<td class="gt_row gt_center gt_striped">148</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">(2013) Obama</td>
+<td class="gt_row gt_center">14</td>
+<td class="gt_row gt_center">130</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped">(2017) Trump</td>
+<td class="gt_row gt_center gt_striped">42</td>
+<td class="gt_row gt_center gt_striped">220</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center">(2021) Biden</td>
+<td class="gt_row gt_center">52</td>
+<td class="gt_row gt_center">162</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center gt_striped">(2025) Trump</td>
+<td class="gt_row gt_center gt_striped">174</td>
+<td class="gt_row gt_center gt_striped">-</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+        
+
+
+            
+</div>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-1" href="raw-analysis-preview.html#cell-tbl-pit-eo">Source: Demo Notebook</a></div>
+<p>Perhaps I thought it was better to show you a simple table first. But, then I want to show you a more complex plot. You don’t have to see that in my original notebook I actually made the plot first. (Actually, I made <em>two</em> plots, but only one seemed important to show.) So, I write:</p>
 <pre><code>{{&lt; embed raw-analysis.ipynb#fig-cum-eo &gt;}}</code></pre>
 <p>That produces this:</p>
 <div class="quarto-embed-nb-cell">
-<div id="cell-fig-cum-eo" class="cell" data-execution_count="77">
+<div id="cell-fig-cum-eo" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
 <div id="fig-cum-eo" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -412,11 +537,11 @@ Figure&nbsp;1
 </div>
 </div>
 </div>
-<a class="quarto-notebook-link" id="nblink-1" href="raw-analysis-preview.html#cell-fig-cum-eo">Source: Demo Notebook</a></div>
+<a class="quarto-notebook-link" id="nblink-2" href="raw-analysis-preview.html#cell-fig-cum-eo">Source: Demo Notebook</a></div>
 <p>If I had done a particularly good job of summarizing my thoughts immediately after seeing this plot, I might have already written them in a markdown cell over there. Embeds technically also work to embed markdown cells, so the following line you see is embedded from my other notebook also:</p>
 <div class="quarto-embed-nb-cell">
 <p>I have some thoughts…</p>
-<a class="quarto-notebook-link" id="nblink-2" href="raw-analysis-preview.html#cell-txt-md">Source: Demo Notebook</a></div>
+<a class="quarto-notebook-link" id="nblink-3" href="raw-analysis-preview.html#cell-txt-md">Source: Demo Notebook</a></div>
 <p>However, I don’t advocate for embedding text. I think using a final <code>qmd</code> file as a single, self-contained spot to document your analysis has a lot of benefits.</p>
 <p>And then I could go on to add my relevant thoughts and analysis of specific to that plot. But, in this case, another part of professional communication is staying on topic.</p>
 

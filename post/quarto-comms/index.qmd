@@ -179,9 +179,10 @@ This is illustrated in the figure below:
 This simple shortcode unblocks us from critical storytelling and workflow challenges:
 
 - We can generate content in rerunnable linear notebooks
+- We can start writing from a blank slate to ensure that we are focused on *substance* and not just sheer volume of content
 - We can then *selectively curate* output worthy of inclusion in a final document 
 - We can insert these in the order that makes sense *for the story* versus for generation
-- This can exist without deleting our notebooks that capture the full thought process
+- This can exist without deleting or modifying our notebooks that capture the full thought process
 - As a bonus, our final document need not be a gnarly `.ipynb` but a plaintext `.qmd` to make version control, editing, and collaborating with noncoding contributors easier
 
 It's not just code output that can be imported either. 
@@ -200,7 +201,19 @@ The goal here is to have two good results for two different audiences without th
 
 ### Demo
 
-To give a quick demo, I'll made [a separate notebook](post/quarto-comms/raw-analysis.html) that just pulls some data and makes a few aggregations and plots. But suppose I doubt you're interested in any of that. If you've read this long, you seem to trust me to do some amount of data stuff correctly. So instead, I just put the following line in the `.qmd` file that is creating this post:
+To give a quick demo, I'll made [a separate notebook](post/quarto-comms/raw-analysis.html) that just pulls some data from an API, cleans it up, and makes a few aggregations and plots. But suppose I doubt you're interested in any of that. If you've read this long, you seem to trust me to do some amount of data stuff correctly. 
+
+So instead, I just put the following line in the `.qmd` file that is creating this post:
+
+```
+{{< embed raw-analysis.ipynb#tbl-pit-eo >}}
+```
+
+That produces this:
+
+{{< embed raw-analysis.ipynb#tbl-pit-eo >}}
+
+Perhaps I thought it was better to show you a simple table first. But, then I want to show you a more complex plot. You don't have to see that in my original notebook I actually made the plot first. (Actually, I made *two* plots, but only one seemed important to show.) So, I write:
 
 ```
 {{< embed raw-analysis.ipynb#fig-cum-eo >}}

@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Emily Riederer">
+<meta name="dcterms.date" content="2025-08-16">
+<meta name="description" content="Playing with the potential, perils, and design principles of deploying ML models into the analytical database using orbital’s sklearn-to-sql translation, sqlglot, and dbt">
+
+<title>MLOrbs?: MLOps in the database with orbital and dbt | Emily Riederer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../icon.png" rel="icon" type="image/png">
+<script src="../../site_libs/cookie-consent/cookie-consent.js"></script>
+<link href="../../site_libs/cookie-consent/cookie-consent.css" rel="stylesheet">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z15TN5VYXJ"></script>
+
+<script type="text/plain" cookie-consent="tracking">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-Z15TN5VYXJ', { 'anonymize_ip': true});
+</script>
+
+<script type="text/javascript" charset="UTF-8">
+document.addEventListener('DOMContentLoaded', function () {
+cookieconsent.run({
+  "notice_banner_type":"simple",
+  "consent_type":"implied",
+  "palette":"light",
+  "language":"en",
+  "page_load_consent_levels":["strictly-necessary","functionality","tracking","targeting"],
+  "notice_banner_reject_button_hide":false,
+  "preferences_center_close_button_hide":false,
+  "website_name":""
+  ,
+"language":"en"
+  });
+});
+</script> 
+  
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta name="twitter:title" content="MLOrbs?: MLOps in the database with orbital and dbt | Emily Riederer">
+<meta name="twitter:description" content="Playing with the potential, perils, and design principles of deploying ML models into the analytical database using orbital’s sklearn-to-sql translation, sqlglot, and dbt">
+<meta name="twitter:image" content="https://emilyriederer.com/post/orbital-mlops/featured.png">
+<meta name="twitter:image-height" content="445">
+<meta name="twitter:image-width" content="474">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Emily Riederer</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-posts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Posts</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-posts">    
+        <li>
+    <a class="dropdown-item" href="../../post/index.html">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../post/featured.html">
+ <span class="dropdown-text">Favorites</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-talks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Talks</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-talks">    
+        <li>
+    <a class="dropdown-item" href="../../talk/index.html">
+ <span class="dropdown-text">Recent</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../talk/featured.html">
+ <span class="dropdown-text">Favorites</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="../../publication/index.html"> 
+<span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../project/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/emilyriederer"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/emilyriederer"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/emilyriederer"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">MLOrbs?: MLOps in the database with <code>orbital</code> and <code>dbt</code></h1>
+                  <div>
+        <div class="description">
+          Playing with the potential, perils, and design principles of deploying ML models into the analytical database using <code>orbital</code>’s <code>sklearn</code>-to-<code>sql</code> translation, <code>sqlglot</code>, and <code>dbt</code>
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">rstats</div>
+                <div class="quarto-category">python</div>
+                <div class="quarto-category">dbt</div>
+                <div class="quarto-category">sql</div>
+                <div class="quarto-category">data</div>
+                <div class="quarto-category">ml</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Emily Riederer </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 16, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mlops-challenges" id="toc-mlops-challenges" class="nav-link active" data-scroll-target="#mlops-challenges">MLOps Challenges</a></li>
+  <li><a href="#deploying-to-the-database" id="toc-deploying-to-the-database" class="nav-link" data-scroll-target="#deploying-to-the-database">Deploying to the database</a></li>
+  <li><a href="#orbital-dbt-pattern" id="toc-orbital-dbt-pattern" class="nav-link" data-scroll-target="#orbital-dbt-pattern"><code>orbital</code> + <code>dbt</code> Pattern</a>
+  <ul class="collapse">
+  <li><a href="#sec-design" id="toc-sec-design" class="nav-link" data-scroll-target="#sec-design">Key Features and Design Choices</a></li>
+  <li><a href="#set-up" id="toc-set-up" class="nav-link" data-scroll-target="#set-up">Set-Up</a></li>
+  <li><a href="#features-training" id="toc-features-training" class="nav-link" data-scroll-target="#features-training">Features &amp; Training</a></li>
+  <li><a href="#sql-cleanup" id="toc-sql-cleanup" class="nav-link" data-scroll-target="#sql-cleanup">SQL Cleanup</a></li>
+  <li><a href="#scoring-preserving-and-activating-predictions" id="toc-scoring-preserving-and-activating-predictions" class="nav-link" data-scroll-target="#scoring-preserving-and-activating-predictions">Scoring, Preserving, and Activating Predictions</a></li>
+  <li><a href="#datamart-preview" id="toc-datamart-preview" class="nav-link" data-scroll-target="#datamart-preview">Datamart Preview</a></li>
+  <li><a href="#dreaming-bigger" id="toc-dreaming-bigger" class="nav-link" data-scroll-target="#dreaming-bigger">Dreaming bigger</a></li>
+  </ul></li>
+  <li><a href="#sec-limitations" id="toc-sec-limitations" class="nav-link" data-scroll-target="#sec-limitations">Limitations</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>So, you build a great predictive model. <em>Now what</em>?</p>
+<p><a href="https://mlops.community/">MLOps</a> is hard. Deploying a model involves different tools, skills, and risks than model development. This dooms some data science projects to die on their creator’s hard drive.</p>
+<p>Tools like <code>dbt</code> and <code>SQLMesh</code> entered the scene to solve a similar problem for data analysts. These tools offer an opinionatee frameowrk for organizing multiple related SQL scripts into fully tested, orchestrated, and version conotrolled projects. Data analysts can deliver end-to-end pipelines by applying their existing business context, SQL experience, and database modeling<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> acumen into existing infrastructure, resulting in the rise of “analytics engineering”.</p>
+<p>So what is the <code>dbt</code> for data scientists doing MLOps? It turns out, it <em>might</em> just be… <code>dbt</code>! (Enter caveats galore).</p>
+<p>Posit’s <a href="https://posit.co/blog/introducing-orbital-for-scikit-learn-pipelines/">recently announced</a> <code>orbital</code> project<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> translates feature enginering and model scoring code training in <code>scikit-learn</code> pipelines (python) and <code>tidymodels</code> workflows into raw SQL code. Similar to <code>dbt</code>, this has the potential to help data scientist’s deploy their own models batch scoring models using existing tools (R, python, SQL) an infrastructure (analytical database) by creating a new table or view in their data warehouse (or pointing <code>duckdb</code> against their data lake!) Coupled with <code>dbt</code>, the combination unlocks baseline “good enough” MLOps practices at no-to-low cost and zero additional infrastructure.</p>
+<p>In this post, I explore a workflow for using <code>orbital</code> and <code>dbt</code> for zero-infrastructure deployment of batch models inside of a <code>dbt</code> pipeline. We’ll discuss:</p>
+<ul>
+<li>what makes MLOps hard</li>
+<li>when database/<code>dbt</code>-based deployment might help</li>
+<li>a reference implementation and workflow for <code>dbt</code> + <code>orbital</code><a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></li>
+<li>how preexisting <code>dbt</code> + <code>orbital</code> features address common MLOps pain points</li>
+<li>limitations and caveats to the above approach</li>
+</ul>
+<p>Along the way, we’ll walk through this <a href="https://github.com/emilyriederer/orbital-exploration/tree/main/dbt_orb_demo">demo implementation of a churn prediction model</a> (wow, what a cliche). The demo is fully self-contained with open data and a <code>duckdb</code> backend if you want to pull it down and play along!</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+R and python compatibility
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>My example in this post uses the <code>orbital</code> python package to translate a <code>scikit-learn</code> pipline to SQL. However, there is also an <code>orbital</code> R package that can translate <code>tidymodels</code>. This post is more about the <em>workflow</em> of preparing and consuming <code>orbital</code> output in <code>dbt</code>, so it’s mostly useful for either language.</p>
+</div>
+</div>
+<section id="mlops-challenges" class="level2">
+<h2 class="anchored" data-anchor-id="mlops-challenges">MLOps Challenges</h2>
+<p>Predictive modeling requires nuanced, detailed thinking; MLOps requires systems thinking. Success requires an unlikely combination of skills including a deep understanding of the business problem, the modeling workflow, and engineering principles. Some key challenges include:<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<ul>
+<li>Data management &amp; testing
+<ul>
+<li>Pre-modeling (not exactly MLOps) – test source data upstream of the initial query for better visibility into quality errors or concept drift</li>
+<li>Scoring time – preventing scoring on features ranges not seen in training when this poses inordinate risk</li>
+</ul></li>
+<li>Recreating the development / evaluation environment
+<ul>
+<li>Feature transformations – ensuring feature availability in prod (no leakage!) and same transformation logic as dev</li>
+<li>Environment management – controling package versions and dependencies for scoring code</li>
+<li>Versioning – tracking changes to the model over time</li>
+</ul></li>
+<li>Serving relevance
+<ul>
+<li>Access – controlling access to intended consumers and delivering to platform they can use</li>
+<li>Reliability – ensuring predictions are retrievable on-demand</li>
+</ul></li>
+<li>Reproducibility / Observability
+<ul>
+<li>Snapshotting – ability to store past predictions for auditability and performance monitoring</li>
+<li>Testing – inserting tests at relevant points in the pipeline, providing observability and automated error handling</li>
+<li>Logging – ensuring general system observability of performance, errors, retries, and latency</li>
+</ul></li>
+</ul>
+<p>These technical challenges are exacerbated by cultural factors. In small companies, data teams may be small (or even a data team-of-one) and lack bandwidth for model deployment, engineering-focused skillsets, access to enterprise-grade tools, or stakeholders who would know how to consume model predictions published in bespoke environments. In large companies, modelers may not be allowed access to production systems required for deployment, so handoffs often require prioritization and context sharing across multiple teams.</p>
+</section>
+<section id="deploying-to-the-database" class="level2">
+<h2 class="anchored" data-anchor-id="deploying-to-the-database">Deploying to the database</h2>
+<p>For the right use cases, publishing predictions back into an analytical warehouse can be an attractive proposition. This approach is best suited for offline batch scoring, such as models that:</p>
+<ul>
+<li>drive bulk actions in downstrean CRMs, e.g.&nbsp;marketing segments to drive targeted emails<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></li>
+<li>inform human decision-making, e.g.&nbsp;individual predictions that rollup into quarterly sales forecast dashboard</li>
+<li>are reincorporated in downstream analysis similar to raw data, e.g.&nbsp;model validation and backtesting, publish a set of propensity scores back into a clinical database</li>
+</ul>
+<p>In such cases, there are many advantages of having model predictions in the database:</p>
+<ul>
+<li><strong>Fast &amp; accurate deployment</strong>: SQL-based deployment means you can deploy your data against exactly the same data is was trained on, reducing the risk of feature drift between dev and prod. Similarly, it reduced ongoing headaches of dependency management since SQL is generally a stable language<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> and does not depend on external packages.</li>
+<li><strong>Data management tools</strong>: Features, scores – at the end of the day <em>its all just data flow</em>. Having predictions in the database unlocks the ability to leverage on other features integrated in your database like access controls, data quality checks, scheduled updates, incremental loads, and snapshots.</li>
+<li><strong>Integration</strong>: Many modern data stacks have their analytical data warehouse connected to many other business-critical systems like dashboards and CRMs (e.g.&nbsp;MailChimp) or are easy to integrate via numerous reverse ETL solutions. Serving predictions to a warehouse is a great first step to syncing them <em>beyond</em> the warehouse in the platforms where they can drive actions like customer contacts.</li>
+<li><strong>Development language agnosticism</strong>: For R users tired of the “we don’t put R in production” conversations, SQL provides a generic abstraction layer to “hand off” a model object regardless of how it was developed</li>
+</ul>
+<p>Conversely, this solution is poorly suited for real-time models where models are scored for single observations on the fly. I share a few more thoughts on when this solution is not well-suited in the final section of this post, <a href="#sec-limitations" class="quarto-xref">Section&nbsp;4</a>.</p>
+</section>
+<section id="orbital-dbt-pattern" class="level2">
+<h2 class="anchored" data-anchor-id="orbital-dbt-pattern"><code>orbital</code> + <code>dbt</code> Pattern</h2>
+<p>To demonstrate how an <code>orbital</code> + <code>dbt</code> pattern could work, I’ll walk through <a href="https://github.com/emilyriederer/orbital-exploration/tree/main/dbt_orb_demo">this example project</a>, using <a href="https://github.com/IBM/telco-customer-churn-on-icp4d/blob/master/data/Telco-Customer-Churn.csv">IBM’s telcom churn dataset</a>. The project mostly is mostly structured like a standard <code>dbt</code> project with most of the model training and <code>orbital</code> code in <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/model_dev/train_and_convert.ipynb">this additional notebook</a>.</p>
+<p>Churn prediction might be a good candidate for batch scoring. Each month, accounts reaching their resubscription date could be scored and published to a database. Scores might then be used analytical use cases like monitoring or revenue forecasting and operational use cases like ingesting segments into a CRM to email targeted retention offers.</p>
+<p>We’ll work up to this final pipeline:</p>
+<p><img src="full.png" class="img-fluid"></p>
+<p>The point of this exercise is to think about the <code>orbital</code> and <code>dbt</code> architecture, so the model we deploy will be quite uninventive. Pull down some features, one-hot encode, fit a random forest, and do it all in a (<em>gasp</em>) Jupyter notebook. (Please dont’ do this.)</p>
+<section id="sec-design" class="level3">
+<h3 class="anchored" data-anchor-id="sec-design">Key Features and Design Choices</h3>
+<p>If you want the TLDR, I’ll briefly explain the key design choices for this pipeline:</p>
+<ul>
+<li>Initial Data Preparation
+<ul>
+<li>Set up <code>dbt test</code>s to test sources before joining your feature table. This can better catch dropout from failed joins, newly emerging encoded categories, etc. Consider what additional filters you want to put in downstream tables (Better to “alert and allow” and “block until fixed”?)</li>
+<li>Prepare feature separately (for normalization) but join different features in database to take advantage of database processing</li>
+<li>Consider adding random number in training table for reproducible test/train split (this has to be linked to hash or something about the entities your randomizing to ensure reproducibility without regard to ordering of data samples)</li>
+</ul></li>
+<li>Feature Engineering
+<ul>
+<li>Create separate <code>scikit-learn</code> pipelines and/or <code>tidymodels</code> workflows for the feature engineering and training steps so you can render these as separate queries. This can enable better data testing and make queries more efficient so <code>orbital</code> does not repeat the feature transformation logic</li>
+<li>Use test-driven development to update <code>dbt</code> data tests as you develop. For example, encoding a categorical? Immediately add an upstream test to check for previously unseen values.</li>
+</ul></li>
+<li>Preparing <code>orbital</code> SQL (supported by <code>sqlglot</code>)
+<ul>
+<li>Add back your identifier column to the query so predictions are joinable</li>
+<li>Add a model version field into the query for better context to users</li>
+<li>Change placeholder table to a <code>dbt</code> <code>ref()</code></li>
+<li>Rename columns to remove <code>.</code>s so you do not have to always quote in queries</li>
+<li>Output nicely formatted version for readability</li>
+</ul></li>
+<li>Deploying as a model
+<ul>
+<li>Consider carefully whether to make a table, view, or macro depending on your specific database, query latency, and desire to score bespoke populations</li>
+</ul></li>
+<li>Observability, logging, and error handling
+<ul>
+<li>Use <code>dbt snapshots</code> to save timestamped past predictions and feature values if these can change over time. This improves auditability and future analysis</li>
+<li>Execute tests to <code>--store-failures</code> to detect changes in your data that might require model retraining or additional error handling</li>
+<li>Check out <code>dbt</code> packages like <a href="https://hub.getdbt.com/elementary-data/elementary/latest/">elementary</a> to log more aspects of the model run process</li>
+</ul></li>
+</ul>
+</section>
+<section id="set-up" class="level3">
+<h3 class="anchored" data-anchor-id="set-up">Set-Up</h3>
+<p>The sample IBM data is provided as “one big table”, so I <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/setup/prep-seeds.py">break things up</a> to look a bit more like normalized database data representing subscription information, billing information, demographics, and churn targets. I also add a few columns to simulate different months, censor data I want to pretend is in the future, and add a few data errors for fun.</p>
+<p>Here’s a preview of the resulting tables, connected by a <code>customer_id</code> primary key:</p>
+<div id="ace4cd8c" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> duckdb</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> duckdb.<span class="ex">connect</span>(<span class="st">'dev.duckdb'</span>) <span class="im">as</span> con:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    df_serv <span class="op">=</span> con.table(<span class="st">'serv'</span>).pl()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    df_bill <span class="op">=</span> con.table(<span class="st">'bill'</span>).pl()</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    df_demo <span class="op">=</span> con.table(<span class="st">'demo'</span>).pl()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    df_chrn <span class="op">=</span> con.table(<span class="st">'chrn'</span>).pl()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Services Enrolled</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Billing Information</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Demographics</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Churn</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="018c10f8" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df_serv.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 7043
+Columns: 12
+$ customer_id        &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ tenure             &lt;i32&gt; 1, 34, 2, 45, 2, 8, 22, 10, 28, 62
+$ phone_service      &lt;str&gt; 'No', 'Yes', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'Yes'
+$ multiple_lines     &lt;str&gt; 'No phone service', 'No', 'No', 'No phone service', 'No', 'Yes', 'Yes', 'No phone service', 'Yes', 'No'
+$ internet_service   &lt;str&gt; 'DSL', 'DSL', 'DSL', 'DSL', 'Fiber optic', 'Fiber optic', 'Fiber optic', 'DSL', 'Fiber optic', 'DSL'
+$ online_security    &lt;str&gt; 'No', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'Yes', 'No', 'Yes'
+$ online_backup      &lt;str&gt; 'Yes', 'No', 'Yes', 'No', 'No', 'No', 'Yes', 'No', 'No', 'Yes'
+$ device_protection  &lt;str&gt; 'No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'No', 'No', 'Yes', 'No'
+$ tech_support       &lt;str&gt; 'No', 'No', 'No', 'Yes', 'No', 'No', 'No', 'No', 'Yes', 'No'
+$ streaming_tv       &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', 'No'
+$ streaming_movies   &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'Yes', 'No', 'No', 'Yes', 'No'
+$ dt_renewal        &lt;date&gt; 2025-07-01, 2025-07-01, 2025-07-01, 2025-07-01, 2025-07-01, 2025-07-01, 2025-08-01, 2025-07-01, 2025-07-01, 2025-07-01
+</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="c3c97fd5" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df_bill.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 7043
+Columns: 6
+$ customer_id       &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ contract          &lt;str&gt; 'Month-to-month', 'One year', 'Month-to-month', 'One year', 'Month-to-month', 'Month-to-month', 'Month-to-month', 'Month-to-month', 'Month-to-month', 'One year'
+$ paperless_billing &lt;str&gt; 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No'
+$ payment_method    &lt;str&gt; 'Electronic check', 'Mailed check', 'Mailed check', 'Bank transfer (automatic)', 'Electronic check', 'Electronic check', 'Credit card (automatic)', 'Mailed check', 'Electronic check', 'Bank transfer (automatic)'
+$ monthly_charges   &lt;f64&gt; 29.85, 56.95, 53.85, 42.3, 70.7, 99.65, 89.1, 29.75, 104.8, 56.15
+$ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1949.4, 301.9, 3046.05, 3487.95
+</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div id="795b373c" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df_demo.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 7043
+Columns: 5
+$ customer_id    &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ gender         &lt;str&gt; 'Female', 'Male', 'Male', 'Male', 'Female', 'Female', 'Male', 'Female', 'Female', 'Male'
+$ senior_citizen &lt;i32&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+$ partner        &lt;str&gt; 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'Yes', 'No'
+$ dependents     &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'No', 'Yes', 'No', 'No', 'Yes'
+</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div id="d80ba20a" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_chrn.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 7043
+Columns: 2
+$ customer_id &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ churn       &lt;str&gt; 'No', 'No', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Yes', 'No'
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Ultimately, these are saved as <code>seeds</code> in the dbt project as a lightweight way to ingest small CSVs; in reality, they would be my <code>sources</code> flowing into my data warehouse from other production sources.</p>
+</section>
+<section id="features-training" class="level3">
+<h3 class="anchored" data-anchor-id="features-training">Features &amp; Training</h3>
+<p>Feature preparation and training are the heart of where <code>orbital</code> fits into our pipelines. I recommend doing these steps one-at-a-time and explain them similarly. However, since the code is closely coupled, I’ll provide it at once for reference. The combination of feature engineering and model training steps look like this:</p>
+<div id="0cbc36d3" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Pipeline to orbital</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># build pipeline(s)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">## feature pipeline does OneHotEncoding on all string columns (all are low/known cardinality)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">## orbital can create some very verbose variable names (for uniqueness) so we clean those up some</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>cols_str <span class="op">=</span> X.select( cs.string() ).columns</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>onho_enc <span class="op">=</span> (<span class="st">'oh'</span>, OneHotEncoder(sparse_output <span class="op">=</span> <span class="va">False</span>), cols_str)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ppl_feat <span class="op">=</span> Pipeline([</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  (<span class="st">"encoder"</span>, ColumnTransformer([onho_enc], remainder<span class="op">=</span><span class="st">'passthrough'</span>))</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>]).set_output(transform<span class="op">=</span><span class="st">"polars"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>X_tran <span class="op">=</span> ppl_feat.fit_transform(X, y)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>X_tran.columns <span class="op">=</span> [c.replace(<span class="st">' '</span>,<span class="st">'_'</span>).replace(<span class="st">'-'</span>,<span class="st">'_'</span>).replace(<span class="st">'('</span>,<span class="st">''</span>).replace(<span class="st">')'</span>,<span class="st">''</span>) <span class="cf">for</span> c <span class="kw">in</span> X_tran.columns]</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">## training pipeline fits actual random forest model</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>ppl_pred <span class="op">=</span> Pipeline([</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  (<span class="st">"prep"</span>, ColumnTransformer([], remainder<span class="op">=</span><span class="st">'passthrough'</span>)),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  (<span class="st">"pred"</span>, RandomForestClassifier(max_depth<span class="op">=</span><span class="dv">3</span>, n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">123</span>))</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>ppl_pred.fit(X_tran, y)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to orbital</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>tbl <span class="op">=</span> <span class="st">"TBL_REF"</span> <span class="co"># placeholder replaced in cleaning</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">## creating mapping of source data types to orbital types </span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>type_map <span class="op">=</span> {</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    pl.String:orbital.types.StringColumnType(),</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    pl.Int32:orbital.types.Int32ColumnType(),</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    pl.Float64:orbital.types.DoubleColumnType()</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>dict_feat <span class="op">=</span> {e: type_map.get(t) <span class="cf">for</span> e, t <span class="kw">in</span> <span class="bu">zip</span>(X.columns, X.dtypes)}</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>dict_pred <span class="op">=</span> {e: type_map.get(t) <span class="cf">for</span> e, t <span class="kw">in</span> <span class="bu">zip</span>(X_tran.columns, X_tran.dtypes)}</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">## features</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>orb_ppl_feat <span class="op">=</span> orbital.parse_pipeline(ppl_feat, features<span class="op">=</span>dict_feat)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>sql_raw_feat <span class="op">=</span> orbital.export_sql(tbl, orb_ppl_feat, dialect<span class="op">=</span><span class="st">"duckdb"</span>)</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="co">## scoring</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>orb_ppl_pred <span class="op">=</span> orbital.parse_pipeline(ppl_pred, features<span class="op">=</span>dict_pred)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>sql_raw_pred <span class="op">=</span> orbital.export_sql(tbl, orb_ppl_pred, dialect<span class="op">=</span><span class="st">"duckdb"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="features" class="level4">
+<h4 class="anchored" data-anchor-id="features">Features</h4>
+<p>Feature prep is the first use case for integrating <code>orbital</code> code in our <code>dbt</code> pipeline. Ultimately, we want to be sure our production features are identical to our development features. To do this, we make three design choices:</p>
+<ul>
+<li>Prepare raw features in the database (pre-joining) to take advantage of database-grade computational power and have preprocessing “published” to fuel different model experimentation
+<ul>
+<li>Adding a <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/models/churn_model/raw_feat.sql">model <code>raw_feat</code></a> to my dbt project that simply pre-joins relevant sources</li>
+</ul></li>
+<li>Make separate <code>scikit-learn</code> pipelines and <code>orbital</code> SQL output for feature and training steps for separate testing and faster scoring (Otherwise, <code>orbital</code>-generated SQL sometimes reproduces feature transformation logic at <em>every use</em> of the feature versus doing it once upfront. Depending one your database’s optimizer, it may or may not be smart enough to reorder this at runtime.)
+<ul>
+<li>In python, fit the <code>ppl_feat</code> pipeline (<a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/model_dev/train_and_convert.ipynb">cell 4</a>) which only fits the feature transformation steps</li>
+<li>Retrieve the resulting SQL code from <code>orbital</code> and clean it up (discussed <a href="#sql-prep">below</a>)</li>
+<li>Deploy it by writing the SQL back to the <code>models/</code> folder as a <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/models/churn_model/prep_feat.sql">model <code>prep_feat</code></a></li>
+</ul></li>
+<li>Noting the assumptions we are making about our data while engineering features and pushing those tests upstream to the source in the database
+<ul>
+<li>For example, one-hot encoding assumes the categories won’t change. So, since we are one-hot encoding the <code>internet_service</code> field from source, we can update our <code>schema.yml</code> file to <a href="https://github.com/emilyriederer/orbital-exploration/blob/b63cf4732cc8a440821ed96339bdb1655e9b9bb5/dbt_orb_demo/seeds/schema.yml#L33">add an <code>accepted_values</code> data test for that field</a> to warn us if our model is beginning to see data is was not prepared to handle<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>. Subsequent data models could, in theory, route these cases away from our scoring table and into a separate logging table for separate handling.</li>
+</ul></li>
+</ul>
+<p>This way, we can deploy our exact features to the database separately from our final model for additional data validation. We can also run our dbt tests before consuming the results to ensure the assumptions that went into feature creation still hold.</p>
+<p>Again, because we are using <code>dbt</code>, we can take advtange of related tools. Using the VS Code extension, we can examine our database’s DAG so far and see that our data test was correctly placed on the source:</p>
+<p><img src="source-test.png" class="img-fluid"></p>
+</section>
+<section id="training" class="level4">
+<h4 class="anchored" data-anchor-id="training">Training</h4>
+<p>Model training follows similarly. We create another sci-kit-learn pipline <code>ppl_pred</code> and train it (<a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/model_dev/train_and_convert.ipynb">cell 4</a>). This time, we just use the preprocessed data that was <code>fit_transform</code>ed in the prior step. Alternatively, we could re-retrieve our newly prepared features from the database.</p>
+<p>In theory, this is where we’d also do a lot of model evaluation and iteration where being <em>outside</em> of the database in a joy. I don’t do this since getting a good model is not my goal.</p>
+</section>
+</section>
+<section id="sql-cleanup" class="level3">
+<h3 class="anchored" data-anchor-id="sql-cleanup">SQL Cleanup</h3>
+<p>While <code>orbital</code> does a lot of heavy lifting, the SQL it produces is not perfect:</p>
+<ul>
+<li>It does not <code>SELECT</code> any metadata or identifier columns, rendering your predictions impossible to join to other data sources. Inserting this column requires care because sometimes the upstream data is being queried within the main query and other times it is queried in a CTE</li>
+<li>Its hard to get <code>orbital</code> to query from a <code>ref()</code> that plays nice with <code>dbt</code>’s Jinja because <code>orbital</code> is rigorous about quoting table and column names. So, it’s easier to put a placeholder table name and edit it in post-processing.</li>
+<li>It uses somewhat long and bulky variable names that reflect <code>scikit-learn</code> internals, including <code>.</code>s in column names which can reduce readability and requires quoting since <code>.</code> usually means something different in SQL</li>
+<li>It includes positive predictions, negative predictions, and labels which may be excessive. I’ve never wanted anything more than the positive predictions</li>
+<li>It’s not formatted which shouldn’t matter but will wrankle anyone who has ever worked with SQL</li>
+</ul>
+<p>To mitigate these multiple issues, <code>sqlglot</code> makes it easy to further parse the query. <code>sqlglot</code> is a package that allows you to turn any SQL script into an AST for ease of programatic modification. I defined a <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/model_dev/clean_sql.py">helper function</a> with <code>sqlglot</code> to fix all of the above.</p>
+<div id="48c78f73" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Cleaning function definition</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlglot</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlglot <span class="im">import</span> parse_one, exp </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_sql(sql_raw: <span class="bu">str</span>, </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>              tbl_ref: <span class="bu">str</span>, </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>              model_version: <span class="bu">str</span> <span class="op">=</span> <span class="va">None</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>              col_id: <span class="bu">str</span> <span class="op">=</span> <span class="st">'id'</span>, </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>              cols_renm: <span class="bu">dict</span>[<span class="bu">str</span>, <span class="bu">str</span>] <span class="op">=</span> {<span class="st">'output_probability.1'</span>:<span class="st">'pred'</span>, </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'output_probability.0'</span>: <span class="st">'0'</span>, </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'output_label'</span>: <span class="st">'0'</span>},</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>              ) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Opinionated clean-up of SQL returned by orbital</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="co">    This function executes the following transformations:</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co">    - Rename desired columns such as the prediction column (per result of cols_renm)</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">    - Remove unwanted variables (those being "renamed" to "0")</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">    - Add back ID variable for joining predictions to other datasets </span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">    - Fix table reference from default TBL_REF to a specific dbt model reference</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">    - Reformats SQL for improved readability</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="co">    sql_raw: SQL string provided by `orbital`</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="co">    tbl_ref: Name of dbt model to be referenced in query's FROM clause</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="co">    model_version: Version number of model to be added as own column. Defaults to None to add no column</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="co">    col_id: Name of the column representing the unique identifier of entities to be predicted</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="co">    cols_renm: Dictionary of {default_name: desired_name} to rename fields</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co">    -------</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="co">    str</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co">        A formatted and updated SQL query</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    ast <span class="op">=</span> parse_one(sql_raw)</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> e <span class="kw">in</span> ast.expressions:</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># rename prediction column</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> cols_renm.get(e.alias) <span class="op">==</span> <span class="st">'0'</span>:</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>            e.<span class="bu">set</span>(arg_key<span class="op">=</span><span class="st">'this'</span>,value<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>            e.<span class="bu">set</span>(arg_key<span class="op">=</span><span class="st">'alias'</span>,value<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> e.alias <span class="kw">in</span> cols_renm.keys():</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>            e.<span class="bu">set</span>(arg_key<span class="op">=</span><span class="st">'alias'</span>,value<span class="op">=</span>cols_renm.get(e.alias))</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add back a variable for reference (typically like an ID for joining to other tables)</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this is tricky because sometimes orbital uses CTEs and other times it doesn't;</span></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># generally, we need to get the identifier inside the CTE if it exists</span></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> exp.Column(this<span class="op">=</span>exp.to_identifier(col_id))</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ast.find(exp.CTE) <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>        cte_select <span class="op">=</span> ast.find(exp.CTE).this</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>        cte_select.expressions.append(col)</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>    ast <span class="op">=</span> ast.select(col_id)</span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># add model version to outer query if desired</span></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> model_version <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>        col_version <span class="op">=</span> exp.Alias(</span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>            this<span class="op">=</span>exp.Literal.string(model_version), </span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>            alias<span class="op">=</span><span class="st">"model_version"</span>)</span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>        ast.find(exp.Select).expressions.append(col_version)</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># pretty print</span></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>    sql_fmt <span class="op">=</span> sqlglot.transpile(ast.sql(), </span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>                                write<span class="op">=</span><span class="st">"duckdb"</span>, </span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>                                identify<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>                                pretty<span class="op">=</span><span class="va">True</span>)[<span class="dv">0</span>]</span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># change out table to dbt reference</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    ref_str <span class="op">=</span> <span class="ss">f"</span><span class="ch">{{{{</span><span class="ss"> ref('</span><span class="sc">{</span>tbl_ref<span class="sc">}</span><span class="ss">')</span><span class="ch">}}}}</span><span class="ss">"</span></span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>    sql_fnl <span class="op">=</span> sql_fmt.replace(<span class="st">'"TBL_REF"'</span>, ref_str) </span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> sql_fnl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>I run the SQL generated from both <code>ppl_feat</code> and <code>ppl_rafo</code> through this function before writing them to <code>models/churn_model/prep_feat.sql</code> and <code>models/churn_model/pred_churn.sql</code> in my <a href="https://github.com/emilyriederer/orbital-exploration/tree/main/dbt_orb_demo/models/churn_model"><code>dbt</code> <code>models/</code> directory</a>.</p>
+<p>This establishes our core model deployment pipeline:</p>
+<p><img src="core-pipe.png" class="img-fluid"></p>
+</section>
+<section id="scoring-preserving-and-activating-predictions" class="level3">
+<h3 class="anchored" data-anchor-id="scoring-preserving-and-activating-predictions">Scoring, Preserving, and Activating Predictions</h3>
+<p>We now have a table in our database that has our churn model predictions! Here is where we can begin to utilize the full benefit of the data management tools that <code>dbt</code> has built in.</p>
+<p>Before scoring, we can run our <code>dbt test</code> to ensure that our features are stable and valid.</p>
+<p>For scoring, depending on our use case we can set the table materialization to be a table (rebuilt on a schedule) or a view (generated on the fly for a specific population).</p>
+<p>For archiving past scores, we can update our <a href="https://github.com/emilyriederer/orbital-exploration/blob/b63cf4732cc8a440821ed96339bdb1655e9b9bb5/dbt_orb_demo/dbt_project.yml#L35">dbt-project.yml to include snapshotting</a> our predictions table. This means even if we publish our tables as a view, we could schedule a call to <code>dbt snapshot</code> on a regular basis to record a timestamped record of what our scores were at any given point in time. This could be useful for model monitoring or auditiability. For example, if we are using our churn model to segment a marketing campaign, we might need these scores later to determine who got what treatment in the campaign.</p>
+<p>For staging analysis, we can use <code>dbt</code> <code>analyses</code> to <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/analyses/churn_model_perf.sql">render the scripts</a> that might be needed to conduct model monitoring (e.g.&nbsp;merging past scores with observed targets.)</p>
+<p>We can see examples of these different artifacts branching off of our DAG:</p>
+<p><img src="artifacts.png" class="img-fluid"></p>
+</section>
+<section id="datamart-preview" class="level3">
+<h3 class="anchored" data-anchor-id="datamart-preview">Datamart Preview</h3>
+<p>Below, we can tour the resulting datasets:</p>
+<div id="4315c981" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> duckdb</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> duckdb.<span class="ex">connect</span>(<span class="st">'dev.duckdb'</span>) <span class="im">as</span> con:</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    df_feat <span class="op">=</span> con.table(<span class="st">'raw_feat'</span>).pl()</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    df_prep <span class="op">=</span> con.table(<span class="st">'prep_feat'</span>).pl()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    df_pred <span class="op">=</span> con.table(<span class="st">'pred_churn'</span>).pl()</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    df_snap <span class="op">=</span> con.table(<span class="st">'main_snapshots.pred_churn_snapshot'</span>).pl()</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    df_fail <span class="op">=</span> con.table(<span class="st">'main_audit.accepted_values_serv_internet_service__DSL__Fiber_optic__No'</span>).pl()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Raw Training Data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Prepared Features</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Predictions</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">Snapshots</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" role="tab" aria-controls="tabset-2-5" aria-selected="false">Failures</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="fad7bf70" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df_feat.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 6944
+Columns: 21
+$ customer_id       &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ cat_train_test    &lt;str&gt; 'Train', 'Train', 'Train', 'Train', 'Train', 'Train', 'Train', 'Train', 'Train', 'Train'
+$ tenure            &lt;i32&gt; 1, 34, 2, 45, 2, 8, 22, 10, 28, 62
+$ phone_service     &lt;str&gt; 'No', 'Yes', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'Yes'
+$ multiple_lines    &lt;str&gt; 'No phone service', 'No', 'No', 'No phone service', 'No', 'Yes', 'Yes', 'No phone service', 'Yes', 'No'
+$ internet_service  &lt;str&gt; 'DSL', 'DSL', 'DSL', 'DSL', 'Fiber optic', 'Fiber optic', 'Fiber optic', 'DSL', 'Fiber optic', 'DSL'
+$ online_security   &lt;str&gt; 'No', 'Yes', 'Yes', 'Yes', 'No', 'No', 'No', 'Yes', 'No', 'Yes'
+$ online_backup     &lt;str&gt; 'Yes', 'No', 'Yes', 'No', 'No', 'No', 'Yes', 'No', 'No', 'Yes'
+$ device_protection &lt;str&gt; 'No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'No', 'No', 'Yes', 'No'
+$ tech_support      &lt;str&gt; 'No', 'No', 'No', 'Yes', 'No', 'No', 'No', 'No', 'Yes', 'No'
+$ streaming_tv      &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'Yes', 'Yes', 'No', 'Yes', 'No'
+$ streaming_movies  &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'Yes', 'No', 'No', 'Yes', 'No'
+$ gender            &lt;str&gt; 'Female', 'Male', 'Male', 'Male', 'Female', 'Female', 'Male', 'Female', 'Female', 'Male'
+$ senior_citizen    &lt;i32&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+$ partner           &lt;str&gt; 'Yes', 'No', 'No', 'No', 'No', 'No', 'No', 'No', 'Yes', 'No'
+$ dependents        &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'No', 'Yes', 'No', 'No', 'Yes'
+$ contract          &lt;str&gt; 'Month-to-month', 'One year', 'Month-to-month', 'One year', 'Month-to-month', 'Month-to-month', 'Month-to-month', 'Month-to-month', 'Month-to-month', 'One year'
+$ paperless_billing &lt;str&gt; 'Yes', 'No', 'Yes', 'No', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'No'
+$ payment_method    &lt;str&gt; 'Electronic check', 'Mailed check', 'Mailed check', 'Bank transfer (automatic)', 'Electronic check', 'Electronic check', 'Credit card (automatic)', 'Mailed check', 'Electronic check', 'Bank transfer (automatic)'
+$ monthly_charges   &lt;f64&gt; 29.85, 56.95, 53.85, 42.3, 70.7, 99.65, 89.1, 29.75, 104.8, 56.15
+$ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1949.4, 301.9, 3046.05, 3487.95
+</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="3783234a" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df_prep.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 6944
+Columns: 47
+$ oh__phone_service_No                       &lt;f64&gt; 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
+$ oh__phone_service_Yes                      &lt;f64&gt; 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0
+$ oh__multiple_lines_No                      &lt;f64&gt; 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
+$ oh__multiple_lines_No_phone_service        &lt;f64&gt; 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
+$ oh__multiple_lines_Yes                     &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0
+$ oh__internet_service_DSL                   &lt;f64&gt; 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0
+$ oh__internet_service_Fiber_optic           &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0
+$ oh__internet_service_No                    &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__online_security_No                     &lt;f64&gt; 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0
+$ oh__online_security_No_internet_service    &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__online_security_Yes                    &lt;f64&gt; 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0
+$ oh__online_backup_No                       &lt;f64&gt; 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0
+$ oh__online_backup_No_internet_service      &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__online_backup_Yes                      &lt;f64&gt; 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0
+$ oh__device_protection_No                   &lt;f64&gt; 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
+$ oh__device_protection_No_internet_service  &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__device_protection_Yes                  &lt;f64&gt; 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0
+$ oh__tech_support_No                        &lt;f64&gt; 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0
+$ oh__tech_support_No_internet_service       &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__tech_support_Yes                       &lt;f64&gt; 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0
+$ oh__streaming_tv_No                        &lt;f64&gt; 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0
+$ oh__streaming_tv_No_internet_service       &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__streaming_tv_Yes                       &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0
+$ oh__streaming_movies_No                    &lt;f64&gt; 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
+$ oh__streaming_movies_No_internet_service   &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__streaming_movies_Yes                   &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0
+$ oh__gender_Female                          &lt;f64&gt; 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0
+$ oh__gender_Male                            &lt;f64&gt; 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0
+$ oh__partner_No                             &lt;f64&gt; 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0
+$ oh__partner_Yes                            &lt;f64&gt; 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0
+$ oh__dependents_No                          &lt;f64&gt; 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0
+$ oh__dependents_Yes                         &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0
+$ oh__contract_Month_to_month                &lt;f64&gt; 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0
+$ oh__contract_One_year                      &lt;f64&gt; 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0
+$ oh__contract_Two_year                      &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ oh__paperless_billing_No                   &lt;f64&gt; 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0
+$ oh__paperless_billing_Yes                  &lt;f64&gt; 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0
+$ oh__payment_method_Bank_transfer_automatic &lt;f64&gt; 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0
+$ oh__payment_method_Credit_card_automatic   &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0
+$ oh__payment_method_Electronic_check        &lt;f64&gt; 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0
+$ oh__payment_method_Mailed_check            &lt;f64&gt; 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0
+$ remainder__tenure                          &lt;f64&gt; 1.0, 34.0, 2.0, 45.0, 2.0, 8.0, 22.0, 10.0, 28.0, 62.0
+$ remainder__senior_citizen                  &lt;f64&gt; 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+$ remainder__monthly_charges                 &lt;f64&gt; 29.85, 56.95, 53.85, 42.3, 70.7, 99.65, 89.1, 29.75, 104.8, 56.15
+$ remainder__total_charges                   &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1949.4, 301.9, 3046.05, 3487.95
+$ customer_id                                &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ model_version                              &lt;str&gt; '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0'
+</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div id="95bd4553" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df_pred.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 6944
+Columns: 3
+$ pred          &lt;f64&gt; 0.4350639304611832, 0.14068829294410534, 0.34994459204608575, 0.10898763570003211, 0.5811184463091195, 0.5483232741244137, 0.4043196897255257, 0.311830934981117, 0.3962726652389392, 0.1372128768125549
+$ customer_id   &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ model_version &lt;str&gt; '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0'
+</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<p>Score versioned and timestamped predictions from snapshots for auditability.</p>
+<div id="9ad523d9" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>df_snap.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 6944
+Columns: 7
+$ pred                    &lt;f64&gt; 0.4350639304611832, 0.14068829294410534, 0.34994459204608575, 0.10898763570003211, 0.5811184463091195, 0.5483232741244137, 0.4043196897255257, 0.311830934981117, 0.3962726652389392, 0.1372128768125549
+$ customer_id             &lt;str&gt; '7590-VHVEG', '5575-GNVDE', '3668-QPYBK', '7795-CFOCW', '9237-HQITU', '9305-CDSKC', '1452-KIOVK', '6713-OKOMC', '7892-POOKP', '6388-TABGU'
+$ model_version           &lt;str&gt; '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0'
+$ dbt_scd_id              &lt;str&gt; 'c4671964ba707c90a41d74f6f2ef75b7', '7dc40efa71bcee4795c7f54b3b5bc783', 'b05d4425f5d07106f1f2f2e782461f44', '3b919e27eb23ba54e200462af172e7da', 'eb6117ba3156a771b0e02e5e7bc644ab', 'ddae31e6abdabdd771ea4bbd1072fe55', 'aa7fe49fcbb5a937b44f7ac589b3ff34', 'da7eb2655934862105e8782e40ca5eb5', '882f945d0e265290e5976d4c8d04679e', '72f44f68e12a53baaf1d9ddd2469a616'
+$ dbt_updated_at &lt;datetime[μs]&gt; 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000
+$ dbt_valid_from &lt;datetime[μs]&gt; 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000, 2025-08-15 19:22:45.830000
+$ dbt_valid_to   &lt;datetime[μs]&gt; 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00, 9999-12-31 00:00:00
+</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
+<p>What happens when the <code>internet_service</code> field is recoded in production data from “Fiber optic” to “Fiber” after training? If we are checking for <code>accepted_values</code>, we capture that change in our failures table before scoring on bad data!</p>
+<div id="ad60aa36" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df_fail.glimpse()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1
+Columns: 2
+$ value_field &lt;str&gt; 'Fiber'
+$ n_records   &lt;i64&gt; 48
+</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="dreaming-bigger" class="level3">
+<h3 class="anchored" data-anchor-id="dreaming-bigger">Dreaming bigger</h3>
+<p>This demo shows just <code>orbital</code> + <code>dbt</code>, but that’s just the beginning. Treating the whole MLOps process just like data processing means you can benefit from a wide range of integrated tools and capabilities, e.g.:</p>
+<ul>
+<li>data ingestion
+<ul>
+<li>retrieve training data for APIs with <code>dlt</code></li>
+<li>ingest features from flatfiles on blob sources via the <code>dbt</code> <a href="https://hub.getdbt.com/dbt-labs/dbt_external_tables/latest/">external-tables</a> package</li>
+</ul></li>
+<li>better testing with dbt packages such as <a href="https://hub.getdbt.com/metaplane/dbt_expectations/latest/"><code>dbt-expectatons</code></a> (from Great Expectations)</li>
+<li>logging and observability
+<ul>
+<li>snapshot features table as well as predictions table</li>
+<li>use <code>dbt</code> packages like <a href="https://hub.getdbt.com/elementary-data/elementary/latest/">elementary</a> to write more run metadata to your warehouse</li>
+</ul></li>
+<li>orchestration with <code>Dagster</code>
+<ul>
+<li>unfurl your local <code>dbt</code> DAG into a broader pipeline</li>
+<li>trigger more model-adjacent tasks from refitting, monitoring, etc.</li>
+</ul></li>
+<li>documentions with <code>dbt docs</code> (which can be <a href="https://github.com/emilyriederer/dbt_duckdb_quarto">enhanced with Quarto</a>)</li>
+<li>reverse ETL with tools like HighTouch or Census to easily sync analytical data models into production systems like CRMs</li>
+</ul>
+</section>
+</section>
+<section id="sec-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="sec-limitations">Limitations</h2>
+<p>While I see a lot of promise in model deployment to the database, it’s currently not without it’s limitations. Tobias Macey of the excellent <a href="https://www.dataengineeringpodcast.com/">Data Engineering Podcast</a> always ends his show by asking his guests (mostly tool developers): “When is <thing> not the right solution?” I’ll conclude by answering the same.</thing></p>
+<p>There are many things I would consider if using <code>orbital</code> today for business use cases versus hobby projects:</p>
+<ul>
+<li><strong>Use Case</strong>: ML in Database only makes sense for batch predictions. <code>orbital</code> is not the right solution if there is a chance you’ll want realtime predictions</li>
+<li><strong>Scale</strong>: SQL is generally good at optimizing large-scale data processing jobs. However, extremely large ensemble models may experience slower runtimes. If such a model was to be run at extreme scale, one would need to consider the relative latency<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> and cost<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> of this versus other solutions</li>
+<li><strong>Algorithms</strong>: Right now <code>orbital</code> is mostly limited to <code>scikit-learn</code> models and select feature engineering steps (or <code>tidymodels</code> in R). This can be a challenge if you want to use other common algorithms. I’ve figured out some workarounds for <a href="../..\post/orbital-xgb"><code>xgboost</code></a> but at some point, the amount of hacking around the periphery reduces the “same code in dev and prod” benefits</li>
+<li><strong>Precision</strong>: <code>orbital</code> uses <code>sklearn-onnx</code> which can create some issues when <a href="https://onnx.ai/sklearn-onnx/auto_tutorial/plot_ebegin_float_double.html">floating point precision</a>. It is easily tested how critical this is for your use case, but you may find corner cases where it is difficult to precisely recreate your local predictions – particularly for tree-based models where tiny perturbations send an observation down a different path.</li>
+<li><strong>Bugs</strong>: <code>orbital</code> still has some bugs it’s working out and seems to still be building out its testing infrastructure. For example, at the time of writing this demo, I started out trying to use the <code>TargetEncoder()</code> which <a href="https://github.com/posit-dev/orbital/issues/62">failed unexpectedly</a> so I switched to the <code>OneHotEncoder()</code>. That’s fine for a demo, but I wouldn’t be so cavelier about letting tool limitations shape my modeling choices in real life.</li>
+<li><strong>Governance</strong>: Similar to the downsides of <code>dbt</code>, the risk of lowering the barriers to entry to deploying a new data model or machine learning model is that it will be done carelessly or prolificly. As the demo above shows, a rigorous approach can add many data artifacts to your datamart and could risk causing bloat if done casually. Having the right controls to determine who should be allowed to deploy models of what materiality is key.</li>
+</ul>
+<p>The good news is, most of these downsides are fully testable. You can quickly and pretty robustly dual-validated <code>orbital</code>’s logic and cross-check prediction speed and accuracy from python and SQL environments. So, if the idea sounds intriguing, take it for a spin! There aren’t too many “unknown unknowns”. These packages are under active development and improving by the day. I am excited to continue following the progress and experimenting with this project.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This post is cursed because “data modeling” and “predictive modeling” are completely different things, one involving data pipelines and the other involve machine learning. Both happen to be relevant here.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>I say project versus package because <code>orbital</code> is really a “concept” with parallel but programmatically unrelated R and python implementations; the R project has been around for a but, but the python version is recently released .<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>Just want a few concrete ideas for stitching these tools together without the wind-up? Jump to <a href="#sec-design" class="quarto-xref">Section&nbsp;3.1</a>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>This list is, of course, non-comprehensive and coincidentally cherry-picked towards the problems which I’ll claim <code>orbital</code> might address. For a thoughtful and comprehensive take on MLOps, check out <a href="https://arxiv.org/abs/2209.09125">this excellent survey</a> by <a href="https://www.sh-reya.com/">Shreya Shankar</a> who, coincidentally enough, made MLOps the focus on her Stanford PhD in… Databases!<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>In my dual life volunteering on downballot campaigns, I also thing this pattern would be very effective to publish partisanship and turnout scores back to BigQuery, the beating heart of campaign data infrastructure.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>Within a given database. SQL is a loosely enforced spec leading to an absurd amount of arbitrary uniqueness on top of ANSI. But, happily, so long as you aren’t switching databases, this does not matter.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>If you run <code>dbt test</code> or <code>dbt test --store-failures</code>, you can find two such failure cases.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>Or mitigate it through off-hours scheduling and materializing as a table versus a view<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>Comparing cost of database compute versus egress/ingress of pulling data from database to execute somewhere else<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/emilyriederer\.com\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="emilyriederer/website" issue-term="title" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p><span class="faux-block"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2016-2023 Emily Riederer</span><br> <span class="faux-block">Licensed under <a href="https://creativecommons.org/licenses/by/4.0/"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> Creative Commons CC BY 4.0</a></span></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="cookie-consent-footer"><a href="#" id="open_preferences_center">Cookie Preferences</a></div></div>
+    <div class="nav-footer-right">
+<p><span class="faux-block">Made with <i class="fa-brands fa-r-project" aria-label="r-project"></i> and <a href="https://quarto.org/">Quarto</a></span><br> <span class="faux-block"><a href="https://www.github.com/emilyriederer/website">View the source at <i class="fa-brands fa-github" aria-label="github"></i> GitHub</a></span></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

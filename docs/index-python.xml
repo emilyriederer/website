@@ -25,7 +25,7 @@
 <p><a href="https://mlops.community/">MLOps</a> is hard. Deploying a model involves different tools, skills, and risks than model development. This dooms some data science projects to die on their creator’s hard drive.</p>
 <p>Tools like <code>dbt</code> and <code>SQLMesh</code> entered the scene to solve a similar problem for data analysts. These tools offer an opinionatee frameowrk for organizing multiple related SQL scripts into fully tested, orchestrated, and version conotrolled projects. Data analysts can deliver end-to-end pipelines by applying their existing business context, SQL experience, and database modeling<sup>1</sup> acumen into existing infrastructure, resulting in the rise of “analytics engineering”.</p>
 <p>So what is the <code>dbt</code> for data scientists doing MLOps? It turns out, it <em>might</em> just be… <code>dbt</code>! (Enter caveats galore).</p>
-<p>Posit’s <a href="https://posit.co/blog/introducing-orbital-for-scikit-learn-pipelines/">recently announced</a> <code>orbital</code> project<sup>2</sup> translates feature enginering and model scoring code training in <code>scikit-learn</code> pipelines (python) and <code>tidymodels</code> workflows into raw SQL code. Similar to <code>dbt</code>, this has the potential to help data scientist’s deploy their own models batch scoring models using existing tools (R, python, SQL) an infrastructure (analytical database) by creating a new table or view in their data warehouse (or pointing <code>duckdb</code> against their data lake!) Coupled with <code>dbt</code>, the combination unlocks baseline “good enough” MLOps practices at no-to-low cost and zero additional infrastructure.</p>
+<p>Posit’s <a href="https://posit.co/blog/introducing-orbital-for-scikit-learn-pipelines/">recently announced</a> <code>orbital</code> project<sup>2</sup> translates feature enginering and model scoring code into raw SQL code for supported model types (e.g.&nbsp;linear, tree-based) trained in <code>scikit-learn</code> pipelines (python) and <code>tidymodels</code> workflows. Similar to <code>dbt</code>, this has the potential to help data scientist’s deploy their own models batch-scoring models using existing tools (R, python, SQL) an infrastructure (analytical database) by creating a new table or view in their data warehouse (or pointing <code>duckdb</code> against their data lake!) Coupled with <code>dbt</code>, could <code>orbital</code> unlock “good enough”, zero-infra MLOps practices in a resource-contrained environment?</p>
 <p>In this post, I explore a workflow for using <code>orbital</code> and <code>dbt</code> for zero-infrastructure deployment of batch models inside of a <code>dbt</code> pipeline. We’ll discuss:</p>
 <ul>
 <li>what makes MLOps hard</li>
@@ -140,7 +140,7 @@ R and python compatibility
 <h3 class="anchored" data-anchor-id="set-up">Set-Up</h3>
 <p>The sample IBM data is provided as “one big table”, so I <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/setup/prep-seeds.py">break things up</a> to look a bit more like normalized database data representing subscription information, billing information, demographics, and churn targets. I also add a few columns to simulate different months, censor data I want to pretend is in the future, and add a few data errors for fun.</p>
 <p>Here’s a preview of the resulting tables, connected by a <code>customer_id</code> primary key:</p>
-<div id="ace4cd8c" class="cell" data-execution_count="1">
+<div id="fd49b6b8" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
@@ -185,7 +185,7 @@ font-style: inherit;">'chrn'</span>).pl()</span></code></pre></div>
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Services Enrolled</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Billing Information</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Demographics</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Churn</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<div id="018c10f8" class="cell" data-execution_count="2">
+<div id="3392b80b" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">df_serv.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
@@ -207,7 +207,7 @@ $ dt_renewal        &lt;date&gt; 2025-07-01, 2025-07-01, 2025-07-01, 2025-07-01,
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<div id="c3c97fd5" class="cell" data-execution_count="3">
+<div id="bef8abfd" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">df_bill.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
@@ -223,7 +223,7 @@ $ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1
 </div>
 </div>
 <div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<div id="795b373c" class="cell" data-execution_count="4">
+<div id="76140c3e" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">df_demo.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
@@ -238,7 +238,7 @@ $ dependents     &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'No', 'Yes', 'No', 'N
 </div>
 </div>
 <div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div id="d80ba20a" class="cell" data-execution_count="5">
+<div id="70ba30c9" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df_chrn.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
@@ -256,7 +256,7 @@ $ churn       &lt;str&gt; 'No', 'No', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Ye
 <section id="features-training" class="level3">
 <h3 class="anchored" data-anchor-id="features-training">Features &amp; Training</h3>
 <p>Feature preparation and training are the heart of where <code>orbital</code> fits into our pipelines. I recommend doing these steps one-at-a-time and explain them similarly. However, since the code is closely coupled, I’ll provide it at once for reference. The combination of feature engineering and model training steps look like this:</p>
-<div id="0cbc36d3" class="cell" data-execution_count="6">
+<div id="321ca8cb" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Pipeline to orbital</summary>
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
@@ -468,7 +468,7 @@ font-style: inherit;">"duckdb"</span>)</span></code></pre></div>
 <li>It’s not formatted which shouldn’t matter but will wrankle anyone who has ever worked with SQL</li>
 </ul>
 <p>To mitigate these multiple issues, <code>sqlglot</code> makes it easy to further parse the query. <code>sqlglot</code> is a package that allows you to turn any SQL script into an AST for ease of programatic modification. I defined a <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/model_dev/clean_sql.py">helper function</a> with <code>sqlglot</code> to fix all of the above.</p>
-<div id="48c78f73" class="cell" data-execution_count="7">
+<div id="f3f49349" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Cleaning function definition</summary>
 <div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
@@ -780,7 +780,7 @@ font-style: inherit;">return</span> sql_fnl</span></code></pre></div>
 <section id="datamart-preview" class="level3">
 <h3 class="anchored" data-anchor-id="datamart-preview">Datamart Preview</h3>
 <p>Below, we can tour the resulting datasets:</p>
-<div id="4315c981" class="cell" data-execution_count="8">
+<div id="b2ea61bd" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
@@ -830,7 +830,7 @@ font-style: inherit;">'main_audit.accepted_values_serv_internet_service__DSL__Fi
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" aria-controls="tabset-2-1" aria-selected="true">Raw Training Data</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" aria-controls="tabset-2-2" aria-selected="false">Prepared Features</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" aria-controls="tabset-2-3" aria-selected="false">Predictions</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" aria-controls="tabset-2-4" aria-selected="false">Snapshots</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" aria-controls="tabset-2-5" aria-selected="false">Failures</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" aria-labelledby="tabset-2-1-tab">
-<div id="fad7bf70" class="cell" data-execution_count="9">
+<div id="ccd80876" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df_feat.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
@@ -861,7 +861,7 @@ $ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" aria-labelledby="tabset-2-2-tab">
-<div id="3783234a" class="cell" data-execution_count="10">
+<div id="ca44dedc" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df_prep.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
@@ -918,7 +918,7 @@ $ model_version                              &lt;str&gt; '1.0', '1.0', '1.0', '1
 </div>
 </div>
 <div id="tabset-2-3" class="tab-pane" aria-labelledby="tabset-2-3-tab">
-<div id="95bd4553" class="cell" data-execution_count="11">
+<div id="20932f04" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df_pred.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
@@ -932,7 +932,7 @@ $ model_version &lt;str&gt; '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.
 </div>
 <div id="tabset-2-4" class="tab-pane" aria-labelledby="tabset-2-4-tab">
 <p>Score versioned and timestamped predictions from snapshots for auditability.</p>
-<div id="9ad523d9" class="cell" data-execution_count="12">
+<div id="69ab0cd9" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">df_snap.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
@@ -950,7 +950,7 @@ $ dbt_valid_to   &lt;datetime[μs]&gt; 9999-12-31 00:00:00, 9999-12-31 00:00:00,
 </div>
 <div id="tabset-2-5" class="tab-pane" aria-labelledby="tabset-2-5-tab">
 <p>What happens when the <code>internet_service</code> field is recoded in production data from “Fiber optic” to “Fiber” after training? If we are checking for <code>accepted_values</code>, we capture that change in our failures table before scoring on bad data!</p>
-<div id="ad60aa36" class="cell" data-execution_count="13">
+<div id="a775d800" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">df_fail.glimpse()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 1
@@ -995,8 +995,9 @@ $ n_records   &lt;i64&gt; 48
 <p>There are many things I would consider if using <code>orbital</code> today for business use cases versus hobby projects:</p>
 <ul>
 <li><strong>Use Case</strong>: ML in Database only makes sense for batch predictions. <code>orbital</code> is not the right solution if there is a chance you’ll want realtime predictions</li>
-<li><strong>Scale</strong>: SQL is generally good at optimizing large-scale data processing jobs. However, extremely large ensemble models may experience slower runtimes. If such a model was to be run at extreme scale, one would need to consider the relative latency<sup>8</sup> and cost<sup>9</sup> of this versus other solutions</li>
 <li><strong>Algorithms</strong>: Right now <code>orbital</code> is mostly limited to <code>scikit-learn</code> models and select feature engineering steps (or <code>tidymodels</code> in R). This can be a challenge if you want to use other common algorithms. I’ve figured out some workarounds for <a href="../..\post/orbital-xgb"><code>xgboost</code></a> but at some point, the amount of hacking around the periphery reduces the “same code in dev and prod” benefits</li>
+<li><strong>Scale/Complexity</strong>: SQL is generally good at optimizing large-scale data processing jobs. However, extremely large ensemble models may experience slower runtimes. If such a model was to be run at extreme scale, one would need to consider the relative latency<sup>8</sup> and cost<sup>9</sup> of this versus other solutions. Depending on your engine, there are also some <a href="https://github.com/tidymodels/orbital/issues/97#issuecomment-3194016548">query optimizations to consider</a></li>
+<li><strong>Platform</strong>: Surprisingly, as I explored this mashup, I came to learn both <a href="https://cloud.google.com/bigquery/quotas">BigQuery</a> and Azure impose maximum query length limits which could pose challenges for large models (e.g.&nbsp;deep trees in random forests or GBMs). One could work around this with a lot of views, but it’s generally better to not pick a fight with your infrastructure.</li>
 <li><strong>Precision</strong>: <code>orbital</code> uses <code>sklearn-onnx</code> which can create some issues when <a href="https://onnx.ai/sklearn-onnx/auto_tutorial/plot_ebegin_float_double.html">floating point precision</a>. It is easily tested how critical this is for your use case, but you may find corner cases where it is difficult to precisely recreate your local predictions – particularly for tree-based models where tiny perturbations send an observation down a different path.</li>
 <li><strong>Bugs</strong>: <code>orbital</code> still has some bugs it’s working out and seems to still be building out its testing infrastructure. For example, at the time of writing this demo, I started out trying to use the <code>TargetEncoder()</code> which <a href="https://github.com/posit-dev/orbital/issues/62">failed unexpectedly</a> so I switched to the <code>OneHotEncoder()</code>. That’s fine for a demo, but I wouldn’t be so cavelier about letting tool limitations shape my modeling choices in real life.</li>
 <li><strong>Governance</strong>: Similar to the downsides of <code>dbt</code>, the risk of lowering the barriers to entry to deploying a new data model or machine learning model is that it will be done carelessly or prolificly. As the demo above shows, a rigorous approach can add many data artifacts to your datamart and could risk causing bloat if done casually. Having the right controls to determine who should be allowed to deploy models of what materiality is key.</li>

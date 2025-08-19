@@ -53,7 +53,8 @@ website:
     center: |
     right: |
       <span class="faux-block">Made with {{< fa brands r-project >}} and [Quarto](https://quarto.org/)</span><br/>
-      <span class="faux-block">[View the source at {{< fa brands github >}} GitHub](https://www.github.com/emilyriederer/website)</span>
+      <span class="faux-block">[View the source at {{< fa brands github >}} GitHub](https://www.github.com/emilyriederer/website)</span><br/>
+      <span class="faux-block">Shared via [R-Bloggers](https://www.r-bloggers.com/) and [R-Weekly](https://rweekly.org/) feeds</span></br>
 
 format:
   html:

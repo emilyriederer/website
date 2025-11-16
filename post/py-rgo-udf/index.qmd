@@ -1,0 +1,331 @@
+---
+title: "Python Rgonomics: User-defined functions in polars"
+description: "Polars provides a consistent API for conducting transformations against a DataFrame. But what do you do when you need to apply a user-defined function beyond the native API? This post surveys the patterns for transformation and aggregation with UDFs, including vector / object output, expression expansion, and when to break the abstraction with partitions and list comprehensions"
+author: "Emily Riederer"
+date: "2025-11-16"
+categories: [rstats, python, tutorial]
+image: "featured.jpg"
+---
+
+![ Photo credit to [Hans-Jurgen Mager](https://unsplash.com/@hansjurgen007) on Unsplash ](featured.jpg)
+
+`polars` API is a delight in part because of its consistency. Transformations are chained sequentially onto the DataFrame in a consistent series of steps without leaving the DataFrame. This helps developers get "in the flow", produces highly readable and well-structured code, and cna make a very natural transition for users coming from R's `tidyverse` who tend to think about data tranformations in a series of "pipes".
+
+While the API has excellent coverage over a wide range of standard transformations that data practitioners need^[Beyond `dplyr`, analogous to much of what an R user might find in `stringr`, `lubridate`, `tidyr`, among others], users may often find the need to incorporate user-defined functions (UDFs) into their logic to leverage other python libraries for domain-specific problems. This can arise frequently in data science where models more germane to modeling and statistical testing are, by design, not built separately into polars. 
+
+This creates multiple points of potential friction:
+
+- `polars` is highly readable due to the API's consistent use of method chaining; applying UDFs shouldn't break the flow
+- users may wish to return more complex "non-scalar" datatypes (e.g. multidimensional arrays, model objects) into the DataFrame^[This is a non-uncommon pattern with R `tidyverse`'s list columns]
+
+This post is a quick reference to demonstrate `polars`' numerous capabilities for integrating different types of external (from other packages) or custom (user modularized) logic without breaking the flow of `polars` transformations. Using examples from data simulation, model evlauation, and inference, we will explore methods for applying UDFs for transformation and aggregation, transforming complex objects within a `polars` pipe, and easy "escape hatches" to break the abstraction when necessary. 
+
+## TLDR
+
+Whenever possible, it is most efficient to express your custom user-defined function (UDF) in the native `polars` API. When the API affords the logic you need to do this, you can modularize that `polars` code into a function that takes an expression or a DataFrame as it's first argument and add it to your `polars` code with: 
+
+- `pipe()` -- allows piping of expressions and DataFrames into UDFs
+- `map_columns()` -- custom pipe function capable of handling contexts like selectors
+
+For arbitrary python logic to transform expressions (i.e. at the column-level), you can use `map_{batches|elemens()}` within `with_columns()`:
+
+- `map_batches()` -- for applying non-polars vectorized functions (preferred)
+- `map_elements()` -- for applying nonvectorized functions (less efficient)
+
+Similarly, for arbitrary expression aggregation, `map_groups()` can be used inside of `agg()`:
+
+- `map_groups()` -- to keep everything in the DataFrame
+
+However, there are numerour hacks and special cases to make your code either more efficient or more readable:
+
+- `polars` extensions may provide a more native Rust implementation of the logic
+- creating a generation function can mimic `polars`'s [expression expansion](https://docs.pola.rs/user-guide/expressions/expression-expansion/), allowing you to apply the same transformation to many columns at once
+- the ability to `map_*()` objects with return type `pl.Object` means you can fit any number of complex objects (e.g. models) into a `polars` pipeline that you wish to keep wrangling
+- `partition_by()` provides an easy off-ramp for breaking out of the DataFrame abstraction for further processing with comfortable python-native patterns like list comprehensions
+
+## Set Up
+
+We'll load a few packages to begin:
+
+```{python}
+import polars as pl
+import polars.selectors as cs
+import polars_ds as pds
+import numpy as np
+from numpy.random import binomial
+from sklearn.metrics import roc_auc_score
+import statsmodels.api as sm
+```
+
+## Applying `polars` UDFs
+
+Now, imagine you simply want to be able to apply and reuse a user-defined function (UDF) writeen with native `polars` logic. This is easily done with the `pipe()` method which can be chained onto either expressions (logic that computes variables in the DataFrame) or full DataFrames. Writing additional transformation logic with the native python API is preferable wherever it is possible since it allows `polars` to use the same data representations and optimizations. 
+
+We'll start with a boring toy dataset.
+
+```{python}
+data_dict = {
+  'group': ['a']*4 + ['b']*4,
+  'x': np.arange(1,9,1),
+  'y': np.arange(8,0,-1), 
+  'p': np.arange(1,9,1)/10
+}
+df = pl.DataFrame(data_dict)
+df.glimpse()
+```
+
+### Columns (`pipe` and `map_columns()`)
+
+```{python}
+def cap(c:pl.Expr, ceil:int = 5) -> pl.Expr: return pl.when( c > ceil).then(ceil).otherwise( c )
+
+df.with_columns( pl.col('x').pipe(cap))
+```
+
+This is also works when applying a transformation to mutliple columns with selectors. However, the pipe can result in a conflict in which all variables have the same name (unlike native chaining). This is fixed by appending `.name.keep()` which access and reapplies the name of the initial column being mapped. 
+
+```{python}
+df.with_columns( cs.numeric().pipe(cap).name.keep() )
+```
+
+If you have no other transformations you wish to do simultaneously, `map_columns()` is a slightly more concise alternative which accepts a column selector and a single transformation to be applied to all passed columns. 
+
+```{python}
+df.map_columns( cs.numeric(), cap)
+```
+
+### Data Frames (`pipe`)
+
+Alternatively, you may wish to encapsulate logic operating at the level of the entire DataFrame versus an individual column.
+
+```{python}
+def calc_diffs(df:pl.DataFrame, threshhold:int = 5) -> pl.DataFrame:
+
+    df_out = (
+        df
+        .with_columns(
+            abs = (pl.col('x') - pl.col('y')).abs(),
+            abs_gt_t = (pl.col('x') - pl.col('y')).abs() > threshhold,
+        )
+    )
+    return df_out 
+```
+
+This too can be chained onto a DataFrame using the `pipe()`:
+
+```{python}
+df.pipe(calc_diffs)
+```
+
+Values of other arguments to your function can be passed with kwargs^[That is, passed as a named argument to `pipe` which will, in turn, pass it to the internal function being piped.]
+
+```{python}
+df.pipe(calc_diffs, threshhold = 3)
+```
+
+This also allows us to write DataFrame-level functions that operate on different variables by passing the variables as parameters.
+
+```{python}
+def calc_diffs(df:pl.DataFrame, var1:str = 'x', var2:str = 'y', threshhold:int = 5) -> pl.DataFrame:
+
+    df_out = (
+        df
+        .with_columns(
+            abs = (pl.col(var1) - pl.col(var2)).abs(),
+            abs_gt_t = (pl.col(var1) - pl.col(var2)).abs() > threshhold,
+        )
+    )
+    return df_out 
+
+df.pipe(calc_diffs, var1 = 'y', var2 = 'x', threshhold = 3)
+```
+
+
+## Applying custom series transformations
+
+Piping is great, but it can break down when you need to apply column transformations requiring multiple columns as inputs or requiring logic outside of the `polars` API. That's where `map_batches()` and `map_elements()` become useful. 
+
+These methods chain onto expressions just like other transformations. However, they can accept as arguments any arbitrary python function, as well as specifications for the type of return (scalar or vector, data types). The two methods differ in that `map_batches()` expects the function to be vectorized whereas `map_elements()` can use any arbitrary function (but assumes it will have to iterate over inputs). 
+
+With these methods, we can input one or more expressions from a DataFrame and return either a scalar or a vector output. 
+
+### Map Batches 
+
+Imagine we want to simulate draws from a binomial distribution, based on the sample size `x` and probability `p` in the dataset above. 
+
+In the simplest case in which our function receives 1 input, we can chain `map_batches()` onto that expression. Here, we simply provide the function of interest and option fields to confirm that our return value is a scalar (the result of a single coin flip) of type integer:
+
+```{python}
+# one column in, one value out
+df.with_columns(
+    coin_flip = pl.col('p').map_batches(function = lambda p: binomial(n = 1, p = p), returns_scalar = True, return_dtype = pl.UInt16)
+)
+```
+
+However, if our function requires multiple expressions as inputs, we must either create a `struct` or internally pass the names of those expressions to `exprs` (which I find cleaner). The function you are mapping must similar assume it is receiving an input containing those expressions in the same order and, thus, accessing them through indexing.
+
+```{python}
+# two column in, one value out - with structs
+df.with_columns(
+    coin_flip = pl.struct('x','p').map_batches(
+                               function = lambda z: binomial(n = z.struct['x'], p = z.struct['p']), 
+                               returns_scalar = True, return_dtype = pl.UInt16)
+)
+
+# two columns in, one value out - with exprs
+df.with_columns(
+    coin_flip = pl.map_batches(exprs = ['x', 'p'],
+                               function = lambda z: binomial(n = z[0], p = z[1]), 
+                               returns_scalar = True, return_dtype = pl.UInt16)
+)
+```
+
+### Multiple Outputs
+
+Finally, you can also return multiple outputs. Suppose we want to simulate 100 draws not just 1. Our internal function can instead return an array. Afterward, we can calculate the average outcome versus the expected value to see that this worked as intended. 
+
+```{python}
+# many columns out
+df.with_columns(
+    coin_flip = pl.struct('x','p').map_batches(
+                               function = lambda z: binomial(n = z.struct['x'], 
+                                                             p = z.struct['p'],
+                                                             size = (100,z.shape[0])
+                                                             ).transpose(), 
+                                return_dtype = pl.Array(pl.UInt16, 100) 
+                                )
+).with_columns( 
+    avg_outcome = pl.col('coin_flip').arr.mean(),
+    exp_value = pl.col('x') * pl.col('p')
+)
+```
+
+## Applying custom aggregations (Map Groups)
+
+Similar to column transformations, `polars` can also handle arbitrary data aggregation logic with `map_groups()`. 
+
+Consider a DataFrame with multiple model scores:
+
+```{python}
+data_dict = {
+  'group': ['a']*4 + ['b']*4,
+  'truth': [1,1,0,0]*2,
+  'mod_bad': [0.25,0.25,0.75,0.75]*2, 
+  'mod_bst': [0.99,0.75,0.25,0.01]*2,
+  'mod_rnd': [0.5]*8,
+  'mod_mix': [0.99,0.75,0.25,0.01]+[0.5]*3+[0.6]
+}
+df = pl.DataFrame(data_dict)
+df.glimpse()
+```
+
+`map_groups()` allows us to conduct arbitrary aggregations, such as calculating AUROC by group from the `scikit-learn` package. As you can see, the approach is largely the same: specifying the expressions required, the function used, the return type, and the return structure.
+
+```{python}
+df.group_by('group').agg (
+    pl.map_groups(
+    exprs = ['truth', 'mod_mix'],
+    function = lambda x: roc_auc_score(x[0], x[1]),
+    return_dtype = pl.Float64,
+    returns_scalar = True
+    )
+)
+```
+
+## Alternatives & extensions 
+
+Once you understand the different mapping capabilities available with `polars`, you can use these effectively both to *expand* the paradigm or to decide when you want to *deviate* from it. We'll conclude by looking at some examples of each.
+
+### Extension libraries
+
+Recall that native Rust and `polars` implementations will generally be faster than the techniques shown. Thus, another good option is to familiarize yourself with the burgeoning ecosystem of `polars` extensions to see if one suits your needs. [Awesome Polars](https://github.com/ddotta/awesome-polars?tab=readme-ov-file#librariespackagesscripts) maintains a growing list of such packages.
+
+For example, the `polars-ds` package can natively handle the AUROC use case above as it provides many useful evaluation functions:
+
+```{python}
+df.group_by('group').agg (
+    auroc = pds.query_roc_auc('truth', 'mod_bst')
+)
+```
+
+### The Generator Trick
+
+While `pds.query_roc_auc()` can calculate AUROC out of the box, it expect string column names as inputs -- not expressions. That means we cannot benefit from `polars`'s selectors and expression expansion to calculate multiple combinations of columns with one line of code (e.g. calculation AUROC for each combination of `truth` and varying model scores). 
+
+To apply an aggregation to multiple column subsets, [the Polars docs recommend](https://docs.pola.rs/user-guide/expressions/expression-expansion/#programmatically-generating-expressions) a pattern like this: 
+
+- write a wrapper function that handles the iteration and acts as a generator yielding the expression of interest 
+- obtain relevant selectors to pass into the function (here, you can use the `cs.expand_selectors()` helpers or any raw parsing of the column names)
+- pass the generator into the standard `df.group_by(...).agg(...)` flow
+
+```{python}
+def auroc_expressions(models):
+    for m in models:
+        yield pds.query_roc_auc( 'truth', m).alias(m)
+
+mods = cs.expand_selector(df, cs.starts_with('mod_')) # could also do: [c for c in df.columns if c[:4] == 'mod_']
+df.group_by('group').agg( auroc_expressions( mods ))
+```
+
+### Complex Object Types 
+
+`polars` DataFrames can hold arbitrary objects (of datatype `pl.Object`) -- not just scalars and vectors. This means, if we so choose, we can do complex multi-step tasks without leaving the DataFrame^[This mirrors patterns from `tidymodel`, `dplyr`, and `purrr` in R.]
+
+Consider one final sample dataset:
+
+```{python}
+data_dict = {
+  'group': ['a']*4 + ['b']*4,
+  'x': [0.99,0.75,0.25,0.01]*2,
+  'y': [0.99,0.75,0.25,0.01]+[0.5]*3+[0.6]
+}
+df = pl.DataFrame(data_dict)
+df.glimpse()
+```
+
+If we wish, we can even use `map_groups()` to create a column that represents complex objects like *models* and then `map_elements()` to extract information from these models. 
+
+```{python}
+(
+df.group_by('group').agg (
+    mod = pl.map_groups(
+    exprs = ['x', 'y'],
+    function = lambda x: sm.OLS( x[0].to_numpy(), sm.add_constant( x[1] )).fit() ,
+    return_dtype = pl.Object,
+    returns_scalar = True
+    )
+)
+.with_columns(
+    params = pl.col('mod').map_elements(lambda x: x.params, return_dtype = pl.List(pl.Float64)),
+    r_sq  = pl.col('mod').map_elements(lambda x: x.rsquared, return_dtype = pl.Float64)
+)
+)
+```
+
+This pattern can be very useful if you are doing something like, for example, bootstrap aggregation. It might not be the most efficient computationally (not parallelized), but for small problems where speed is not a gamechanger, it can make for concise and readable analysis. 
+
+### Partitions 
+
+However, just because you *can* keep everything in a DataFrame does not mean you should. The above pattern is useful if your end goal is to extract a singular quantity like a coefficient back into the DataFrame. However, if you ultimately want to go do other things with the objects you are generating, it may make for cleaner code to go ahead and break the DataFrame abstraction. 
+
+A final pattern I find particularly pleasant and effective is using the `partition_by()` method. This splits a DataFrame into separate frames based on grouping columns and organizes them in either a list (by default) or as a dictionary (when `as_dict = True`) indexed with a tuple containing the values of the grouping variable(s). 
+
+```{python}
+dfs = df.partition_by('group', as_dict = True, include_key = True)
+for k,v in dfs.items():
+    print(f"{k}  : {v}")
+```
+
+This allows up to break up the data in the way we wish to process it, and then do processing in more python-native syntax such as a list comprehension. I find this makes highly concise and readable code and is ultimately a better strategy when further data wrangling is not needed. 
+
+```{python}
+dfs = df.partition_by('group', as_dict = True, include_key = True)
+grps = [ k[0] for k in dfs.keys() ] # turn tuple to scalar bcs only one grouping var in key
+mods = [ sm.OLS( d['x'].to_numpy(), 
+                 sm.add_constant( d['y'].to_numpy() )
+                ).fit() for k,d in dfs.items()]
+coef = [m.params[1] for m in mods]
+dict(zip( grps, coef))
+```
+
+

@@ -10,7 +10,1988 @@
 <atom:link href="https://emilyriederer.com/index-rstats.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Sat, 16 Aug 2025 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 16 Nov 2025 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Python Rgonomics: User-defined functions in polars</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo-udf/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/py-rgo-udf/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption>Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p><code>polars</code> API is a delight in part because of its consistency. Transformations are chained sequentially onto the DataFrame in a consistent series of steps without leaving the DataFrame. This helps developers get “in the flow”, produces highly readable and well-structured code, and cna make a very natural transition for users coming from R’s <code>tidyverse</code> who tend to think about data tranformations in a series of “pipes”.</p>
+<p>While the API has excellent coverage over a wide range of standard transformations that data practitioners need<sup>1</sup>, users may often find the need to incorporate user-defined functions (UDFs) into their logic to leverage other python libraries for domain-specific problems. This can arise frequently in data science where models more germane to modeling and statistical testing are, by design, not built separately into polars.</p>
+<p>This creates multiple points of potential friction:</p>
+<ul>
+<li><code>polars</code> is highly readable due to the API’s consistent use of method chaining; applying UDFs shouldn’t break the flow</li>
+<li>users may wish to return more complex “non-scalar” datatypes (e.g.&nbsp;multidimensional arrays, model objects) into the DataFrame<sup>2</sup></li>
+</ul>
+<p>This post is a quick reference to demonstrate <code>polars</code>’ numerous capabilities for integrating different types of external (from other packages) or custom (user modularized) logic without breaking the flow of <code>polars</code> transformations. Using examples from data simulation, model evlauation, and inference, we will explore methods for applying UDFs for transformation and aggregation, transforming complex objects within a <code>polars</code> pipe, and easy “escape hatches” to break the abstraction when necessary.</p>
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>Whenever possible, it is most efficient to express your custom user-defined function (UDF) in the native <code>polars</code> API. When the API affords the logic you need to do this, you can modularize that <code>polars</code> code into a function that takes an expression or a DataFrame as it’s first argument and add it to your <code>polars</code> code with:</p>
+<ul>
+<li><code>pipe()</code> – allows piping of expressions and DataFrames into UDFs</li>
+<li><code>map_columns()</code> – custom pipe function capable of handling contexts like selectors</li>
+</ul>
+<p>For arbitrary python logic to transform expressions (i.e.&nbsp;at the column-level), you can use <code>map_{batches|elemens()}</code> within <code>with_columns()</code>:</p>
+<ul>
+<li><code>map_batches()</code> – for applying non-polars vectorized functions (preferred)</li>
+<li><code>map_elements()</code> – for applying nonvectorized functions (less efficient)</li>
+</ul>
+<p>Similarly, for arbitrary expression aggregation, <code>map_groups()</code> can be used inside of <code>agg()</code>:</p>
+<ul>
+<li><code>map_groups()</code> – to keep everything in the DataFrame</li>
+</ul>
+<p>However, there are numerour hacks and special cases to make your code either more efficient or more readable:</p>
+<ul>
+<li><code>polars</code> extensions may provide a more native Rust implementation of the logic</li>
+<li>creating a generation function can mimic <code>polars</code>’s <a href="https://docs.pola.rs/user-guide/expressions/expression-expansion/">expression expansion</a>, allowing you to apply the same transformation to many columns at once</li>
+<li>the ability to <code>map_*()</code> objects with return type <code>pl.Object</code> means you can fit any number of complex objects (e.g.&nbsp;models) into a <code>polars</code> pipeline that you wish to keep wrangling</li>
+<li><code>partition_by()</code> provides an easy off-ramp for breaking out of the DataFrame abstraction for further processing with comfortable python-native patterns like list comprehensions</li>
+</ul>
+</section>
+<section id="set-up" class="level2">
+<h2 class="anchored" data-anchor-id="set-up">Set Up</h2>
+<p>We’ll load a few packages to begin:</p>
+<div id="ff01e89f" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars.selectors <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cs</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars_ds <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pds</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> numpy.random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> binomial</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.metrics <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> roc_auc_score</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> statsmodels.api <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sm</span></code></pre></div>
+</div>
+</section>
+<section id="applying-polars-udfs" class="level2">
+<h2 class="anchored" data-anchor-id="applying-polars-udfs">Applying <code>polars</code> UDFs</h2>
+<p>Now, imagine you simply want to be able to apply and reuse a user-defined function (UDF) writeen with native <code>polars</code> logic. This is easily done with the <code>pipe()</code> method which can be chained onto either expressions (logic that computes variables in the DataFrame) or full DataFrames. Writing additional transformation logic with the native python API is preferable wherever it is possible since it allows <code>polars</code> to use the same data representations and optimizations.</p>
+<p>We’ll start with a boring toy dataset.</p>
+<div id="69144138" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">data_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb2-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb2-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>: np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),</span>
+<span id="cb2-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>: np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), </span>
+<span id="cb2-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>: np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span></span>
+<span id="cb2-6">}</span>
+<span id="cb2-7">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame(data_dict)</span>
+<span id="cb2-8">df.glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8
+Columns: 4
+$ group &lt;str&gt; 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b'
+$ x     &lt;i64&gt; 1, 2, 3, 4, 5, 6, 7, 8
+$ y     &lt;i64&gt; 8, 7, 6, 5, 4, 3, 2, 1
+$ p     &lt;f64&gt; 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8
+</code></pre>
+</div>
+</div>
+<section id="columns-pipe-and-map_columns" class="level3">
+<h3 class="anchored" data-anchor-id="columns-pipe-and-map_columns">Columns (<code>pipe</code> and <code>map_columns()</code>)</h3>
+<div id="7abec6c1" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> cap(c:pl.Expr, ceil:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pl.Expr: <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> pl.when( c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> ceil).then(ceil).otherwise( c )</span>
+<span id="cb4-2"></span>
+<span id="cb4-3">df.with_columns( pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>).pipe(cap))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">literal</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>This is also works when applying a transformation to mutliple columns with selectors. However, the pipe can result in a conflict in which all variables have the same name (unlike native chaining). This is fixed by appending <code>.name.keep()</code> which access and reapplies the name of the initial column being mapped.</p>
+<div id="47ccab20" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">df.with_columns( cs.numeric().pipe(cap).name.keep() )</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>5</td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>5</td>
+<td>0.2</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>5</td>
+<td>0.3</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>3</td>
+<td>0.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>2</td>
+<td>0.7</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>1</td>
+<td>0.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>If you have no other transformations you wish to do simultaneously, <code>map_columns()</code> is a slightly more concise alternative which accepts a column selector and a single transformation to be applied to all passed columns.</p>
+<div id="06634957" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">df.map_columns( cs.numeric(), cap)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>5</td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>5</td>
+<td>0.2</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>5</td>
+<td>0.3</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>3</td>
+<td>0.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>2</td>
+<td>0.7</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>1</td>
+<td>0.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-frames-pipe" class="level3">
+<h3 class="anchored" data-anchor-id="data-frames-pipe">Data Frames (<code>pipe</code>)</h3>
+<p>Alternatively, you may wish to encapsulate logic operating at the level of the entire DataFrame versus an individual column.</p>
+<div id="d5932d4e" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, threshhold:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pl.DataFrame:</span>
+<span id="cb7-2"></span>
+<span id="cb7-3">    df_out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (</span>
+<span id="cb7-4">        df</span>
+<span id="cb7-5">        .with_columns(</span>
+<span id="cb7-6">            <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>(),</span>
+<span id="cb7-7">            abs_gt_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> threshhold,</span>
+<span id="cb7-8">        )</span>
+<span id="cb7-9">    )</span>
+<span id="cb7-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> df_out </span></code></pre></div>
+</div>
+<p>This too can be chained onto a DataFrame using the <code>pipe()</code>:</p>
+<div id="a20334f3" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df.pipe(calc_diffs)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 6)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">abs</th>
+<th data-quarto-table-cell-role="th">abs_gt_t</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+<th>bool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>7</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>5</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>7</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>Values of other arguments to your function can be passed with kwargs<sup>3</sup></p>
+<div id="69136519" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">df.pipe(calc_diffs, threshhold <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 6)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">abs</th>
+<th data-quarto-table-cell-role="th">abs_gt_t</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+<th>bool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>7</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>7</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>This also allows us to write DataFrame-level functions that operate on different variables by passing the variables as parameters.</p>
+<div id="83048164" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, var1:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, var2:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, threshhold:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pl.DataFrame:</span>
+<span id="cb10-2"></span>
+<span id="cb10-3">    df_out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (</span>
+<span id="cb10-4">        df</span>
+<span id="cb10-5">        .with_columns(</span>
+<span id="cb10-6">            <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(var1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(var2)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>(),</span>
+<span id="cb10-7">            abs_gt_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(var1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(var2)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> threshhold,</span>
+<span id="cb10-8">        )</span>
+<span id="cb10-9">    )</span>
+<span id="cb10-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> df_out </span>
+<span id="cb10-11"></span>
+<span id="cb10-12">df.pipe(calc_diffs, var1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, var2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, threshhold <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 6)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">abs</th>
+<th data-quarto-table-cell-role="th">abs_gt_t</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+<th>bool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>7</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>7</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="applying-custom-series-transformations" class="level2">
+<h2 class="anchored" data-anchor-id="applying-custom-series-transformations">Applying custom series transformations</h2>
+<p>Piping is great, but it can break down when you need to apply column transformations requiring multiple columns as inputs or requiring logic outside of the <code>polars</code> API. That’s where <code>map_batches()</code> and <code>map_elements()</code> become useful.</p>
+<p>These methods chain onto expressions just like other transformations. However, they can accept as arguments any arbitrary python function, as well as specifications for the type of return (scalar or vector, data types). The two methods differ in that <code>map_batches()</code> expects the function to be vectorized whereas <code>map_elements()</code> can use any arbitrary function (but assumes it will have to iterate over inputs).</p>
+<p>With these methods, we can input one or more expressions from a DataFrame and return either a scalar or a vector output.</p>
+<section id="map-batches" class="level3">
+<h3 class="anchored" data-anchor-id="map-batches">Map Batches</h3>
+<p>Imagine we want to simulate draws from a binomial distribution, based on the sample size <code>x</code> and probability <code>p</code> in the dataset above.</p>
+<p>In the simplest case in which our function receives 1 input, we can chain <code>map_batches()</code> onto that expression. Here, we simply provide the function of interest and option fields to confirm that our return value is a scalar (the result of a single coin flip) of type integer:</p>
+<div id="ee5cf40b" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># one column in, one value out</span></span>
+<span id="cb11-2">df.with_columns(</span>
+<span id="cb11-3">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>).map_batches(function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> p: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> p), returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.UInt16)</span>
+<span id="cb11-4">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">coin_flip</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>u16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>However, if our function requires multiple expressions as inputs, we must either create a <code>struct</code> or internally pass the names of those expressions to <code>exprs</code> (which I find cleaner). The function you are mapping must similar assume it is receiving an input containing those expressions in the same order and, thus, accessing them through indexing.</p>
+<div id="7078483f" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># two column in, one value out - with structs</span></span>
+<span id="cb12-2">df.with_columns(</span>
+<span id="cb12-3">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>).map_batches(</span>
+<span id="cb12-4">                               function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>], p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>]), </span>
+<span id="cb12-5">                               returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.UInt16)</span>
+<span id="cb12-6">)</span>
+<span id="cb12-7"></span>
+<span id="cb12-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># two columns in, one value out - with exprs</span></span>
+<span id="cb12-9">df.with_columns(</span>
+<span id="cb12-10">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.map_batches(exprs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>],</span>
+<span id="cb12-11">                               function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]), </span>
+<span id="cb12-12">                               returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.UInt16)</span>
+<span id="cb12-13">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">coin_flip</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>u16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="multiple-outputs" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-outputs">Multiple Outputs</h3>
+<p>Finally, you can also return multiple outputs. Suppose we want to simulate 100 draws not just 1. Our internal function can instead return an array. Afterward, we can calculate the average outcome versus the expected value to see that this worked as intended.</p>
+<div id="8fc270c9" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># many columns out</span></span>
+<span id="cb13-2">df.with_columns(</span>
+<span id="cb13-3">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>).map_batches(</span>
+<span id="cb13-4">                               function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>], </span>
+<span id="cb13-5">                                                             p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>],</span>
+<span id="cb13-6">                                                             size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>,z.shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])</span>
+<span id="cb13-7">                                                             ).transpose(), </span>
+<span id="cb13-8">                                return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Array(pl.UInt16, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>) </span>
+<span id="cb13-9">                                )</span>
+<span id="cb13-10">).with_columns( </span>
+<span id="cb13-11">    avg_outcome <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'coin_flip'</span>).arr.mean(),</span>
+<span id="cb13-12">    exp_value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>)</span>
+<span id="cb13-13">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 7)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">coin_flip</th>
+<th data-quarto-table-cell-role="th">avg_outcome</th>
+<th data-quarto-table-cell-role="th">exp_value</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>array[u16, 100]</th>
+<th>f64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>[0, 0, … 0]</td>
+<td>0.09</td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>[0, 0, … 0]</td>
+<td>0.37</td>
+<td>0.4</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>[0, 1, … 1]</td>
+<td>0.94</td>
+<td>0.9</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>[1, 2, … 4]</td>
+<td>1.48</td>
+<td>1.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>[2, 1, … 4]</td>
+<td>2.47</td>
+<td>2.5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>[4, 1, … 4]</td>
+<td>3.53</td>
+<td>3.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>[5, 5, … 5]</td>
+<td>4.7</td>
+<td>4.9</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>[8, 8, … 7]</td>
+<td>6.54</td>
+<td>6.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="applying-custom-aggregations-map-groups" class="level2">
+<h2 class="anchored" data-anchor-id="applying-custom-aggregations-map-groups">Applying custom aggregations (Map Groups)</h2>
+<p>Similar to column transformations, <code>polars</code> can also handle arbitrary data aggregation logic with <code>map_groups()</code>.</p>
+<p>Consider a DataFrame with multiple model scores:</p>
+<div id="498a8da9" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">data_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb14-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb14-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>: [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb14-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_bad'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, </span>
+<span id="cb14-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_bst'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb14-6">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_rnd'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,</span>
+<span id="cb14-7">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_mix'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>]</span>
+<span id="cb14-8">}</span>
+<span id="cb14-9">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame(data_dict)</span>
+<span id="cb14-10">df.glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8
+Columns: 6
+$ group   &lt;str&gt; 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b'
+$ truth   &lt;i64&gt; 1, 1, 0, 0, 1, 1, 0, 0
+$ mod_bad &lt;f64&gt; 0.25, 0.25, 0.75, 0.75, 0.25, 0.25, 0.75, 0.75
+$ mod_bst &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.99, 0.75, 0.25, 0.01
+$ mod_rnd &lt;f64&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5
+$ mod_mix &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.5, 0.5, 0.5, 0.6
+</code></pre>
+</div>
+</div>
+<p><code>map_groups()</code> allows us to conduct arbitrary aggregations, such as calculating AUROC by group from the <code>scikit-learn</code> package. As you can see, the approach is largely the same: specifying the expressions required, the function used, the return type, and the return structure.</p>
+<div id="1065cb17" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg (</span>
+<span id="cb16-2">    pl.map_groups(</span>
+<span id="cb16-3">    exprs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_mix'</span>],</span>
+<span id="cb16-4">    function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: roc_auc_score(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]),</span>
+<span id="cb16-5">    return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Float64,</span>
+<span id="cb16-6">    returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb16-7">    )</span>
+<span id="cb16-8">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">truth</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"b"</td>
+<td>0.25</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="alternatives-extensions" class="level2">
+<h2 class="anchored" data-anchor-id="alternatives-extensions">Alternatives &amp; extensions</h2>
+<p>Once you understand the different mapping capabilities available with <code>polars</code>, you can use these effectively both to <em>expand</em> the paradigm or to decide when you want to <em>deviate</em> from it. We’ll conclude by looking at some examples of each.</p>
+<section id="extension-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="extension-libraries">Extension libraries</h3>
+<p>Recall that native Rust and <code>polars</code> implementations will generally be faster than the techniques shown. Thus, another good option is to familiarize yourself with the burgeoning ecosystem of <code>polars</code> extensions to see if one suits your needs. <a href="https://github.com/ddotta/awesome-polars?tab=readme-ov-file#librariespackagesscripts">Awesome Polars</a> maintains a growing list of such packages.</p>
+<p>For example, the <code>polars-ds</code> package can natively handle the AUROC use case above as it provides many useful evaluation functions:</p>
+<div id="606d8893" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg (</span>
+<span id="cb17-2">    auroc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pds.query_roc_auc(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_bst'</span>)</span>
+<span id="cb17-3">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">auroc</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"b"</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-generator-trick" class="level3">
+<h3 class="anchored" data-anchor-id="the-generator-trick">The Generator Trick</h3>
+<p>While <code>pds.query_roc_auc()</code> can calculate AUROC out of the box, it expect string column names as inputs – not expressions. That means we cannot benefit from <code>polars</code>’s selectors and expression expansion to calculate multiple combinations of columns with one line of code (e.g.&nbsp;calculation AUROC for each combination of <code>truth</code> and varying model scores).</p>
+<p>To apply an aggregation to multiple column subsets, <a href="https://docs.pola.rs/user-guide/expressions/expression-expansion/#programmatically-generating-expressions">the Polars docs recommend</a> a pattern like this:</p>
+<ul>
+<li>write a wrapper function that handles the iteration and acts as a generator yielding the expression of interest</li>
+<li>obtain relevant selectors to pass into the function (here, you can use the <code>cs.expand_selectors()</code> helpers or any raw parsing of the column names)</li>
+<li>pass the generator into the standard <code>df.group_by(...).agg(...)</code> flow</li>
+</ul>
+<div id="33f0e06e" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> auroc_expressions(models):</span>
+<span id="cb18-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> models:</span>
+<span id="cb18-3">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">yield</span> pds.query_roc_auc( <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>, m).alias(m)</span>
+<span id="cb18-4"></span>
+<span id="cb18-5">mods <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cs.expand_selector(df, cs.starts_with(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_'</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># could also do: [c for c in df.columns if c[:4] == 'mod_']</span></span>
+<span id="cb18-6">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg( auroc_expressions( mods ))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">mod_bad</th>
+<th data-quarto-table-cell-role="th">mod_bst</th>
+<th data-quarto-table-cell-role="th">mod_rnd</th>
+<th data-quarto-table-cell-role="th">mod_mix</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>f64</th>
+<th>f64</th>
+<th>f64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>-0.0</td>
+<td>1.0</td>
+<td>0.5</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>-0.0</td>
+<td>1.0</td>
+<td>0.5</td>
+<td>0.25</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="complex-object-types" class="level3">
+<h3 class="anchored" data-anchor-id="complex-object-types">Complex Object Types</h3>
+<p><code>polars</code> DataFrames can hold arbitrary objects (of datatype <code>pl.Object</code>) – not just scalars and vectors. This means, if we so choose, we can do complex multi-step tasks without leaving the DataFrame<sup>4</sup></p>
+<p>Consider one final sample dataset:</p>
+<div id="ef19c77d" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">data_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb19-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb19-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb19-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>]</span>
+<span id="cb19-5">}</span>
+<span id="cb19-6">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame(data_dict)</span>
+<span id="cb19-7">df.glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8
+Columns: 3
+$ group &lt;str&gt; 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b'
+$ x     &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.99, 0.75, 0.25, 0.01
+$ y     &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.5, 0.5, 0.5, 0.6
+</code></pre>
+</div>
+</div>
+<p>If we wish, we can even use <code>map_groups()</code> to create a column that represents complex objects like <em>models</em> and then <code>map_elements()</code> to extract information from these models.</p>
+<div id="73e24531" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">(</span>
+<span id="cb21-2">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg (</span>
+<span id="cb21-3">    mod <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.map_groups(</span>
+<span id="cb21-4">    exprs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>],</span>
+<span id="cb21-5">    function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: sm.OLS( x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].to_numpy(), sm.add_constant( x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] )).fit() ,</span>
+<span id="cb21-6">    return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Object,</span>
+<span id="cb21-7">    returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb21-8">    )</span>
+<span id="cb21-9">)</span>
+<span id="cb21-10">.with_columns(</span>
+<span id="cb21-11">    params <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: x.params, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.List(pl.Float64)),</span>
+<span id="cb21-12">    r_sq  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: x.rsquared, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Float64)</span>
+<span id="cb21-13">)</span>
+<span id="cb21-14">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">mod</th>
+<th data-quarto-table-cell-role="th">params</th>
+<th data-quarto-table-cell-role="th">r_sq</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>object</th>
+<th>list[f64]</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"b"</td>
+<td>&lt;statsmodels.regression.linear_model.RegressionResultsWrapper object at 0x0000020D3D09A490&gt;</td>
+<td>[3.93, -6.533333]</td>
+<td>0.528971</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>&lt;statsmodels.regression.linear_model.RegressionResultsWrapper object at 0x0000020D5974DC90&gt;</td>
+<td>[-1.7347e-16, 1.0]</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>This pattern can be very useful if you are doing something like, for example, bootstrap aggregation. It might not be the most efficient computationally (not parallelized), but for small problems where speed is not a gamechanger, it can make for concise and readable analysis.</p>
+</section>
+<section id="partitions" class="level3">
+<h3 class="anchored" data-anchor-id="partitions">Partitions</h3>
+<p>However, just because you <em>can</em> keep everything in a DataFrame does not mean you should. The above pattern is useful if your end goal is to extract a singular quantity like a coefficient back into the DataFrame. However, if you ultimately want to go do other things with the objects you are generating, it may make for cleaner code to go ahead and break the DataFrame abstraction.</p>
+<p>A final pattern I find particularly pleasant and effective is using the <code>partition_by()</code> method. This splits a DataFrame into separate frames based on grouping columns and organizes them in either a list (by default) or as a dictionary (when <code>as_dict = True</code>) indexed with a tuple containing the values of the grouping variable(s).</p>
+<div id="50ca67cb" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">dfs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.partition_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>, as_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, include_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb22-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> k,v <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dfs.items():</span>
+<span id="cb22-3">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>k<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  : </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>v<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>('a',)  : shape: (4, 3)
+┌───────┬──────┬──────┐
+│ group ┆ x    ┆ y    │
+│ ---   ┆ ---  ┆ ---  │
+│ str   ┆ f64  ┆ f64  │
+╞═══════╪══════╪══════╡
+│ a     ┆ 0.99 ┆ 0.99 │
+│ a     ┆ 0.75 ┆ 0.75 │
+│ a     ┆ 0.25 ┆ 0.25 │
+│ a     ┆ 0.01 ┆ 0.01 │
+└───────┴──────┴──────┘
+('b',)  : shape: (4, 3)
+┌───────┬──────┬─────┐
+│ group ┆ x    ┆ y   │
+│ ---   ┆ ---  ┆ --- │
+│ str   ┆ f64  ┆ f64 │
+╞═══════╪══════╪═════╡
+│ b     ┆ 0.99 ┆ 0.5 │
+│ b     ┆ 0.75 ┆ 0.5 │
+│ b     ┆ 0.25 ┆ 0.5 │
+│ b     ┆ 0.01 ┆ 0.6 │
+└───────┴──────┴─────┘</code></pre>
+</div>
+</div>
+<p>This allows up to break up the data in the way we wish to process it, and then do processing in more python-native syntax such as a list comprehension. I find this makes highly concise and readable code and is ultimately a better strategy when further data wrangling is not needed.</p>
+<div id="8c306144" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1">dfs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.partition_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>, as_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, include_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb24-2">grps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ k[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dfs.keys() ] <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># turn tuple to scalar bcs only one grouping var in key</span></span>
+<span id="cb24-3">mods <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ sm.OLS( d[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>].to_numpy(), </span>
+<span id="cb24-4">                 sm.add_constant( d[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>].to_numpy() )</span>
+<span id="cb24-5">                ).fit() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> k,d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dfs.items()]</span>
+<span id="cb24-6">coef <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [m.params[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> mods]</span>
+<span id="cb24-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">zip</span>( grps, coef))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>{'a': np.float64(1.0000000000000004), 'b': np.float64(-6.533333333333337)}</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Beyond <code>dplyr</code>, analogous to much of what an R user might find in <code>stringr</code>, <code>lubridate</code>, <code>tidyr</code>, among others↩︎</p></li>
+<li id="fn2"><p>This is a non-uncommon pattern with R <code>tidyverse</code>’s list columns↩︎</p></li>
+<li id="fn3"><p>That is, passed as a named argument to <code>pipe</code> which will, in turn, pass it to the internal function being piped.↩︎</p></li>
+<li id="fn4"><p>This mirrors patterns from <code>tidymodel</code>, <code>dplyr</code>, and <code>purrr</code> in R.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <category>tutorial</category>
+  <guid>https://emilyriederer.com/post/py-rgo-udf/</guid>
+  <pubDate>Sun, 16 Nov 2025 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo-udf/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>MLOrbs?: MLOps in the database with orbital and dbt</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -8403,1002 +10384,6 @@ font-style: inherit;">"{package name}"</span>)</span>
   <guid>https://emilyriederer.com/talk/organization/</guid>
   <pubDate>Thu, 21 Jan 2021 06:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/organization/featured.png" medium="image" type="image/png" height="81" width="144"/>
-</item>
-<item>
-  <title>Generating SQL with {dbplyr} and sqlfluff</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/sql-generation/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p><a href="https://en.wikipedia.org/wiki/Declarative_programming">Declarative programming languages</a> such as HTML, CSS, and SQL are popular because they allow users to focus more on the desired <em>outcome</em> than the exact computational steps required to achieve that outcome. This can increase efficiency and code readability since programmers describe what they <em>want</em> – whether that be how their website is laid out (without worrying about how the browser computes this layout) or how a dataset is structured (regardless of how the database goes about obtaining and aggregating this data).</p>
-<p>However, sometimes this additional layer of abstraction can introduce problems of its own. Most notably, the lack of common <a href="https://en.wikipedia.org/wiki/Control_flow">control flow</a> can introduce a lot of redundancy. This is part of the motivation for <em>pre-processing</em> tools which use more imperative programming concepts such as local variables and for-loops to automatically generate declarative code. Common examples in the world of web development are <a href="https://sass-lang.com/">Sass</a> for CSS and <a href="https://haml.info/docs/yardoc/file.REFERENCE.html">Haml</a> for HTML. Of course, such tools naturally come at a cost of their own by requiring developers to learn yet another tool.<sup>1</sup></p>
-<p>For R (or, specifically <code>tidyverse</code>) users who need to generate SQL code, recent advances in <a href="https://dplyr.tidyverse.org/"><code>dplyr v1.0.0</code></a> and <a href="https://dbplyr.tidyverse.org/"><code>dbplyr v2.0.0</code></a> pose an interesting alternative. By using efficient, readable, and most important <em>familiar</em> syntax, users can generate accurate SQL queries that could otherwise be error-prone to write. For example, computing sums and means for a large number of variables. Coupled with the power of <a href="https://www.sqlfluff.com/"><code>sqlfluff</code></a>, an innovative SQL styler which was announced at DBT’s recent <a href="https://www.getdbt.com/coalesce/agenda/presenting-sqlfluff">coalesce conference</a>, these queries can be made not only accurate but also imminently readable.</p>
-<section id="the-basic-approach" class="level2">
-<h2 class="anchored" data-anchor-id="the-basic-approach">The basic approach</h2>
-<p>In the following example, I’ll briefly walk through the process of generating readable, well-styled SQL using <code>dbplyr</code> and <code>sqlfluff</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(dbplyr)</span>
-<span id="cb1-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(dplyr)</span>
-<span id="cb1-3"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(DBI)</span></code></pre></div>
-</div>
-<p>First, we would connect to our database using the <code>DBI</code> package. For the sake of example, I simply connect to an “in-memory” database, but <a href="https://db.rstudio.com/">a wide range of database connectors</a> are available depending on where your data lives.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">con <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">dbConnect</span>(RSQLite<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SQLite</span>(), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">dbname =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">":memory:"</span>)</span></code></pre></div>
-</div>
-<p>Again, <em>for the sake of this tutorial only</em>, I will write the <code>palmerpenguins::penguins</code> data to our database. Typically, data would already exist in the database of interest.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">copy_to</span>(con, palmerpenguins<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>penguins, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins"</span>)</span></code></pre></div>
-</div>
-<p>For reference, the data looks like this:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">head</span>(palmerpenguins<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>penguins)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 x 8
-  species island    bill_length_mm bill_depth_mm flipper_length_mm body_mass_g
-  &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;       &lt;int&gt;
-1 Adelie  Torgersen           39.1          18.7               181        3750
-2 Adelie  Torgersen           39.5          17.4               186        3800
-3 Adelie  Torgersen           40.3          18                 195        3250
-4 Adelie  Torgersen           NA            NA                  NA          NA
-5 Adelie  Torgersen           36.7          19.3               193        3450
-6 Adelie  Torgersen           39.3          20.6               190        3650
-# i 2 more variables: sex &lt;fct&gt;, year &lt;int&gt;</code></pre>
-</div>
-</div>
-<p>Now, we’re done with set-up. Suppose we want to write a SQL query to calculate the sum, mean, and variance for all of the measures in our dataset measured in milimeters (and ending in “mm”). We can accomplish this by using the <code>tbl()</code> function to connect to our database’s data and describing the results we want with <code>dplyr</code>’s elegant syntax. This is now made especially concise with select helpers (e.g.&nbsp;<code>ends_with()</code>) and the <code>across()</code> function.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">penguins <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tbl</span>(con, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins"</span>)</span></code></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">penguins_aggr <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb7-2">  penguins <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb7-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb7-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize</span>(</span>
-<span id="cb7-5">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">N =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">n</span>(),</span>
-<span id="cb7-6">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), sum, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"TOT_{.col}"</span>),</span>
-<span id="cb7-7">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), var, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"VAR_{.col}"</span>),</span>
-<span id="cb7-8">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), mean, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"AVG_{.col}"</span>),</span>
-<span id="cb7-9">  )</span>
-<span id="cb7-10">penguins_aggr</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># Source:   lazy query [?? x 11]
-# Database: sqlite 3.33.0 [:memory:]
-  species       N TOT_bill_length_mm TOT_bill_depth_mm TOT_flipper_length_mm
-  &lt;chr&gt;     &lt;int&gt;              &lt;dbl&gt;             &lt;dbl&gt;                 &lt;int&gt;
-1 Adelie      152              5858.             2770.                 28683
-2 Chinstrap    68              3321.             1253.                 13316
-3 Gentoo      124              5843.             1843.                 26714
-# i 6 more variables: VAR_bill_length_mm &lt;dbl&gt;, VAR_bill_depth_mm &lt;dbl&gt;,
-#   VAR_flipper_length_mm &lt;dbl&gt;, AVG_bill_length_mm &lt;dbl&gt;,
-#   AVG_bill_depth_mm &lt;dbl&gt;, AVG_flipper_length_mm &lt;dbl&gt;</code></pre>
-</div>
-</div>
-<p>However, since we are using a remote backend, the <code>penguins_aggr</code> object does not contain the resulting data that we see when it is printed (forcing its execution). Instead, it contains a reference to the database’s table and an accumulation of commands than need to be run on the table in the future. We can access this underlying SQL translation with the <code>dbplyr::show_query()</code> and use <code>capture.output()</code> to convert that query (otherwise printed to the R console) to a character vector.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">penguins_query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">capture.output</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>(penguins_aggr))</span>
-<span id="cb9-2">penguins_query</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "&lt;SQL&gt;"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-[2] "SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`"
-[3] "FROM `penguins`"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
-[4] "GROUP BY `species`"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 </code></pre>
-</div>
-</div>
-<p>At this point, we already have a function SQL query and have saved ourselves the hassle of writing nine typo-free aggregation functions. However, since <code>dbplyr</code> was not written to generate “pretty” queries, this is not the most readable or well-formatted code. To clean it up, we can apply the <code>sqlfluff</code> linter and styler.</p>
-<p>As a prerequisite, we slightly reformat the query to remove anything that isn’t native to common SQL and will confuse the linter, such as the first line of the query vector: <code>&lt;SQL&gt;</code>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">penguins_query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> penguins_query[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">length</span>(penguins_query)]</span>
-<span id="cb11-2">penguins_query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">gsub</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"`"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">""</span>, penguins_query)</span>
-<span id="cb11-3">penguins_query</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "SELECT species, COUNT(*) AS N, SUM(bill_length_mm) AS TOT_bill_length_mm, SUM(bill_depth_mm) AS TOT_bill_depth_mm, SUM(flipper_length_mm) AS TOT_flipper_length_mm, VARIANCE(bill_length_mm) AS VAR_bill_length_mm, VARIANCE(bill_depth_mm) AS VAR_bill_depth_mm, VARIANCE(flipper_length_mm) AS VAR_flipper_length_mm, AVG(bill_length_mm) AS AVG_bill_length_mm, AVG(bill_depth_mm) AS AVG_bill_depth_mm, AVG(flipper_length_mm) AS AVG_flipper_length_mm"
-[2] "FROM penguins"                                                                                                                                                                                                                                                                                                                                                                                                                                              
-[3] "GROUP BY species"                                                                                                                                                                                                                                                                                                                                                                                                                                           </code></pre>
-</div>
-</div>
-<p>After cleaning, we can write the results to a temp file.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">tmp <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tempfile</span>()</span>
-<span id="cb13-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">writeLines</span>(penguins_query, tmp)</span></code></pre></div>
-</div>
-<p>The current state of our file looks like this:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">SELECT</span> species, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">COUNT</span>(<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> N, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_flipper_length_mm</span>
-<span id="cb14-2"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">FROM</span> penguins</span>
-<span id="cb14-3"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">GROUP</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">BY</span> species</span></code></pre></div>
-</div>
-<p>Finally, we are ready to use <code>sqlfluff</code>. The <code>lint</code> command highlights errors in our script, and the <code>fix</code> command automatically fixes them (with flags <code>--no-safety</code> and <code>-f</code> requesting that it apply all rules and does not ask for permission to overwrite the file, respectively). However, note that if your stylistic preferences differ from the defaults, <code>sqlfluff</code> is imminently <a href="https://docs.sqlfluff.com/en/stable/rules.html">customizable</a> via YAML.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">system</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"sqlfluff lint"</span>, tmp), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">intern =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>) </span></code></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in system(paste("sqlfluff lint", tmp), intern = TRUE): running command
-'sqlfluff lint C:\Users\emily\AppData\Local\Temp\RtmpOyDJYM\file51f4757357ce'
-had status 1</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>character(0)
-attr(,"status")
-[1] 1</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># intern = TRUE is only useful for the sake of showing linter results for this blog post</span></span>
-<span id="cb18-2"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># it is not needed for interactive use</span></span></code></pre></div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">system</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"sqlfluff fix --no-safety -f"</span>, tmp))</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
-</div>
-</div>
-<p>The results of these commands are a well-formatted and readable query.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">SELECT</span> species, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">COUNT</span>(<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> N, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SUM</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> TOT_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">VARIANCE</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> VAR_flipper_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_length_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(bill_depth_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_bill_depth_mm, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(flipper_length_mm) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> AVG_flipper_length_mm</span>
-<span id="cb21-2"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">FROM</span> penguins</span>
-<span id="cb21-3"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">GROUP</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">BY</span> species</span></code></pre></div>
-</div>
-</section>
-<section id="a-slightly-more-realistic-example" class="level2">
-<h2 class="anchored" data-anchor-id="a-slightly-more-realistic-example">A (slightly) more realistic example</h2>
-<p>One situation in which this approach is useful is when engineering features that might include many subgroups or lags. Some flavors of SQL have <code>PIVOT</code> functions which help to aggregate and reshape data by group; however, this can vary by engine and even those that do (such as <a href="https://docs.snowflake.com/en/sql-reference/constructs/pivot.html">Snowflake</a>) require manually specifying the names of each field. Instead, our <code>dbplyr</code> and <code>sqlfluff</code> can help generate an accurate query to accomplsh this more concisely.</p>
-<p>Now assume we want to find the mean for each measurement separately for years 2007 through 2009. Ultimately, we want these measures organized in a table with one row per species. We can concisely describe this goal with <code>dplyr</code> instead of writing out the definition of each of 9 variables (three metrics for three years) separately.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1">penguins_pivot <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb22-2">  penguins <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb22-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb22-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize_at</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">vars</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>)), </span>
-<span id="cb22-5">               <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">list</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">in09 =</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>L, ., <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>)),</span>
-<span id="cb22-6">                    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">in08 =</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>L, ., <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>)),</span>
-<span id="cb22-7">                    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">in07 =</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">mean</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">if_else</span>(year <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>L, ., <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>)))</span>
-<span id="cb22-8">               ) </span>
-<span id="cb22-9">penguins_pivot</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># Source:   lazy query [?? x 10]
-# Database: sqlite 3.33.0 [:memory:]
-  species   bill_length_mm_in09 bill_depth_mm_in09 flipper_length_mm_in09
-  &lt;chr&gt;                   &lt;dbl&gt;              &lt;dbl&gt;                  &lt;dbl&gt;
-1 Adelie                   13.3               6.19                   65.7
-2 Chinstrap                17.3               6.47                   69.9
-3 Gentoo                   17.0               5.34                   76.4
-# i 6 more variables: bill_length_mm_in08 &lt;dbl&gt;, bill_depth_mm_in08 &lt;dbl&gt;,
-#   flipper_length_mm_in08 &lt;dbl&gt;, bill_length_mm_in07 &lt;dbl&gt;,
-#   bill_depth_mm_in07 &lt;dbl&gt;, flipper_length_mm_in07 &lt;dbl&gt;</code></pre>
-</div>
-</div>
-<p>Following the same process as before, we can convert this to a SQL query.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1">query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">capture.output</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>(penguins_pivot))</span>
-<span id="cb24-2">query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> query[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">length</span>(query)]</span>
-<span id="cb24-3">query <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">gsub</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"`"</span>, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">""</span>, query)</span>
-<span id="cb24-4">tmp <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tempfile</span>()</span>
-<span id="cb24-5"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">writeLines</span>(query, tmp)</span>
-<span id="cb24-6"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">system</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"sqlfluff fix --no-safety -f"</span>, tmp))</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
-</div>
-</div>
-<p>The following query shows the basic results. In this case, the <code>sqlfluff</code> default is significantly more aggressive with identations for the <code>CASE WHEN</code> statements than I personally prefer. If I were to use this in practice, I could refer back to the customizable <a href="https://docs.sqlfluff.com/en/stable/rules.html#"><code>sqlfluff</code> rules</a> and either change their configuration or restrict rules I perceived as unaesthetic or overzealous from running.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">SELECT</span> species, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_length_mm_in09, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_depth_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_depth_mm_in09, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (flipper_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2009</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> flipper_length_mm_in09, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_length_mm_in08, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_depth_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_depth_mm_in08, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (flipper_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2008</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> flipper_length_mm_in08, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_length_mm_in07, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (bill_depth_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> bill_depth_mm_in07, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">AVG</span>(<span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> (<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (flipper_length_mm) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">WHEN</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">NOT</span>(<span class="dt" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">year</span> <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2007</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">THEN</span> (<span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.0</span>) <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">AS</span> flipper_length_mm_in07</span>
-<span id="cb26-2"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">FROM</span> penguins</span>
-<span id="cb26-3"><span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">GROUP</span> <span class="kw" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">BY</span> species</span></code></pre></div>
-</div>
-</section>
-<section id="when-you-cant-connect-to-you-data" class="level2">
-<h2 class="anchored" data-anchor-id="when-you-cant-connect-to-you-data">When you can’t connect to you data</h2>
-<p>Even if, for some reason, you cannot connect to R with your specific dataset, you may still use this approach.</p>
-<p>For example, suppose we cannot connect to the <code>penguins</code> dataset directly, but with the help of a data dictionary we can obtain a list of all of the fields in the dataset.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1">penguins_cols <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">names</span>(palmerpenguins<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>penguins)</span></code></pre></div>
-</div>
-<p>In this case, we can simple mock a fake dataset using the column names, write it to an in-memory database, generate SQL, and style the output as before.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># make fake dataset ----</span></span>
-<span id="cb28-2">penguins_mat <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">rep</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">length</span>(penguins_cols)), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">nrow =</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>)</span>
-<span id="cb28-3">penguins_dat <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">setNames</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">data.frame</span>(penguins_mat), penguins_cols)</span>
-<span id="cb28-4">penguins_dat</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  species island bill_length_mm bill_depth_mm flipper_length_mm body_mass_g sex
-1       1      1              1             1                 1           1   1
-  year
-1    1</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># copy to database ----</span></span>
-<span id="cb30-2">con <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">dbConnect</span>(RSQLite<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">SQLite</span>(), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">dbname =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">":memory:"</span>)</span>
-<span id="cb30-3"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">copy_to</span>(con, penguins_dat, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins_mock"</span>)</span>
-<span id="cb30-4">penguins_mock <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">tbl</span>(con, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"penguins_mock"</span>)</span>
-<span id="cb30-5"></span>
-<span id="cb30-6"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># generate sql ----</span></span>
-<span id="cb30-7">penguins_aggr <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span></span>
-<span id="cb30-8">  penguins_mock <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb30-9">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb30-10">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize</span>(</span>
-<span id="cb30-11">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">N =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">n</span>(),</span>
-<span id="cb30-12">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), sum, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"TOT_{.col}"</span>),</span>
-<span id="cb30-13">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), var, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"VAR_{.col}"</span>),</span>
-<span id="cb30-14">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ends_with</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"mm"</span>), mean, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.names =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"AVG_{.col}"</span>),</span>
-<span id="cb30-15">  )</span>
-<span id="cb30-16"></span>
-<span id="cb30-17"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>(penguins_aggr)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;SQL&gt;
-SELECT `species`, COUNT(*) AS `N`, SUM(`bill_length_mm`) AS `TOT_bill_length_mm`, SUM(`bill_depth_mm`) AS `TOT_bill_depth_mm`, SUM(`flipper_length_mm`) AS `TOT_flipper_length_mm`, VARIANCE(`bill_length_mm`) AS `VAR_bill_length_mm`, VARIANCE(`bill_depth_mm`) AS `VAR_bill_depth_mm`, VARIANCE(`flipper_length_mm`) AS `VAR_flipper_length_mm`, AVG(`bill_length_mm`) AS `AVG_bill_length_mm`, AVG(`bill_depth_mm`) AS `AVG_bill_depth_mm`, AVG(`flipper_length_mm`) AS `AVG_flipper_length_mm`
-FROM `penguins_mock`
-GROUP BY `species`</code></pre>
-</div>
-</div>
-<p>The only caution with this approach is that one should not use <em>type-driven</em> select helpers such <code>summarize_if(is.numeric, ...)</code> because our mock data has some erroneous types (e.g.&nbsp;<code>species</code>, <code>island</code>, and <code>sex</code> are erroneously numeric). Thus, we could generate SQL that would throw errors when applied to actual data. For example, the following SQL code attempts to sum up islands. This is perfectly reasonably given our dummy dataset but would be illogical and problematic when applied in production.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1">penguins_mock <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb32-2">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">group_by</span>(species) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb32-3">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">summarize_if</span>(is.numeric, sum) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb32-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">show_query</span>()</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>&lt;SQL&gt;
-SELECT `species`, SUM(`island`) AS `island`, SUM(`bill_length_mm`) AS `bill_length_mm`, SUM(`bill_depth_mm`) AS `bill_depth_mm`, SUM(`flipper_length_mm`) AS `flipper_length_mm`, SUM(`body_mass_g`) AS `body_mass_g`, SUM(`sex`) AS `sex`, SUM(`year`) AS `year`
-FROM `penguins_mock`
-GROUP BY `species`</code></pre>
-</div>
-</div>
-</section>
-<section id="caveats" class="level2">
-<h2 class="anchored" data-anchor-id="caveats">Caveats</h2>
-<p>I have found this combination of tools to be useful for generating readable, typo-free queries when doing a large number of queries. However, I will end by highlighting when this may not be the best approach.</p>
-<p><strong><code>dbplyr</code> is not intended to generate SQL.</strong> There’s always a risk when using tools for something other than their primary intent. <code>dbplyr</code> is no exception. Overall, it does an excellent job translating SQL and being aware of the unique flavor of various SQL backends. However, translating between languages is a challenging problem, and sometimes the SQL translation may not be the most computationally efficient (e.g.&nbsp;requiring more subqueries) or semantic approach. For multistep or multitable problems, you may wish to use this approach simple for generating a few painful SQL chunks instead of your whole script.</p>
-<p><strong><code>dbplyr</code> <em>is</em> intended for you to <em>not</em> look at the SQL.</strong> One major benefit of <code>dbplyr</code> for R users is distinctly to <em>not</em> change languages and to benefit from a database’s compute power while staying in R. Not only is this use case not the intended purpose, you could go as far as to argue it is almost antithetical. Nevertheless, I do think there are many cases where one should preserve SQL independently; for example, you might need to do data tranformations in a production pipeline that does not run R, not wish to take on additional code dependencies, not be able to connect to your database with R, or be collaborating with non-R users.</p>
-<p><strong><code>sqlfluff</code> is still experimental.</strong> As the developers emphasized in their DBT talk, <code>sqlfluff</code> is still in its early changes and subject to change. While I’m optimistic that this only means this tool will only keep getting better, it’s possible the exact rules, configuration, flags, syntax, etc. may change. Check out the docs for the latest documentation there.</p>
-
-
-</section>
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>That being said, for SQL <a href="https://docs.getdbt.com/tutorial/using-jinja"><code>dbt</code> with Jinja templating support</a> is an intriguing option↩︎</p></li>
-</ol>
-</section></div> ]]></description>
-  <category>rstats</category>
-  <category>data</category>
-  <category>sql</category>
-  <category>tutorial</category>
-  <guid>https://emilyriederer.com/post/sql-generation/</guid>
-  <pubDate>Sat, 16 Jan 2021 06:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/sql-generation/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>

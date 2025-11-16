@@ -39,6 +39,7 @@
       "/post/causal-design-patterns/index.html",
       "/post/column-name-contracts/index.html",
       "/post/rmarkdown-driven-development/index.html",
+      "/post/py-rgo-udf/index.html",
       "/post/orbital-mlops/index.html",
       "/post/quarto-comms/index.html",
       "/post/orbital-xgb/index.html",
@@ -120,6 +121,7 @@
   {
     "listing": "/post/index.html",
     "items": [
+      "/post/py-rgo-udf/index.html",
       "/post/orbital-mlops/index.html",
       "/post/quarto-comms/index.html",
       "/post/orbital-xgb/index.html",

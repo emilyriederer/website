@@ -10,7 +10,1988 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Sat, 16 Aug 2025 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 16 Nov 2025 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>Python Rgonomics: User-defined functions in polars</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo-udf/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://emilyriederer.com/post/py-rgo-udf/featured.jpg" class="img-fluid figure-img"></p>
+<figcaption>Photo credit to <a href="https://unsplash.com/@hansjurgen007">Hans-Jurgen Mager</a> on Unsplash</figcaption>
+</figure>
+</div>
+<p><code>polars</code> API is a delight in part because of its consistency. Transformations are chained sequentially onto the DataFrame in a consistent series of steps without leaving the DataFrame. This helps developers get “in the flow”, produces highly readable and well-structured code, and cna make a very natural transition for users coming from R’s <code>tidyverse</code> who tend to think about data tranformations in a series of “pipes”.</p>
+<p>While the API has excellent coverage over a wide range of standard transformations that data practitioners need<sup>1</sup>, users may often find the need to incorporate user-defined functions (UDFs) into their logic to leverage other python libraries for domain-specific problems. This can arise frequently in data science where models more germane to modeling and statistical testing are, by design, not built separately into polars.</p>
+<p>This creates multiple points of potential friction:</p>
+<ul>
+<li><code>polars</code> is highly readable due to the API’s consistent use of method chaining; applying UDFs shouldn’t break the flow</li>
+<li>users may wish to return more complex “non-scalar” datatypes (e.g.&nbsp;multidimensional arrays, model objects) into the DataFrame<sup>2</sup></li>
+</ul>
+<p>This post is a quick reference to demonstrate <code>polars</code>’ numerous capabilities for integrating different types of external (from other packages) or custom (user modularized) logic without breaking the flow of <code>polars</code> transformations. Using examples from data simulation, model evlauation, and inference, we will explore methods for applying UDFs for transformation and aggregation, transforming complex objects within a <code>polars</code> pipe, and easy “escape hatches” to break the abstraction when necessary.</p>
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>Whenever possible, it is most efficient to express your custom user-defined function (UDF) in the native <code>polars</code> API. When the API affords the logic you need to do this, you can modularize that <code>polars</code> code into a function that takes an expression or a DataFrame as it’s first argument and add it to your <code>polars</code> code with:</p>
+<ul>
+<li><code>pipe()</code> – allows piping of expressions and DataFrames into UDFs</li>
+<li><code>map_columns()</code> – custom pipe function capable of handling contexts like selectors</li>
+</ul>
+<p>For arbitrary python logic to transform expressions (i.e.&nbsp;at the column-level), you can use <code>map_{batches|elemens()}</code> within <code>with_columns()</code>:</p>
+<ul>
+<li><code>map_batches()</code> – for applying non-polars vectorized functions (preferred)</li>
+<li><code>map_elements()</code> – for applying nonvectorized functions (less efficient)</li>
+</ul>
+<p>Similarly, for arbitrary expression aggregation, <code>map_groups()</code> can be used inside of <code>agg()</code>:</p>
+<ul>
+<li><code>map_groups()</code> – to keep everything in the DataFrame</li>
+</ul>
+<p>However, there are numerour hacks and special cases to make your code either more efficient or more readable:</p>
+<ul>
+<li><code>polars</code> extensions may provide a more native Rust implementation of the logic</li>
+<li>creating a generation function can mimic <code>polars</code>’s <a href="https://docs.pola.rs/user-guide/expressions/expression-expansion/">expression expansion</a>, allowing you to apply the same transformation to many columns at once</li>
+<li>the ability to <code>map_*()</code> objects with return type <code>pl.Object</code> means you can fit any number of complex objects (e.g.&nbsp;models) into a <code>polars</code> pipeline that you wish to keep wrangling</li>
+<li><code>partition_by()</code> provides an easy off-ramp for breaking out of the DataFrame abstraction for further processing with comfortable python-native patterns like list comprehensions</li>
+</ul>
+</section>
+<section id="set-up" class="level2">
+<h2 class="anchored" data-anchor-id="set-up">Set Up</h2>
+<p>We’ll load a few packages to begin:</p>
+<div id="ff01e89f" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pl</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars.selectors <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cs</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> polars_ds <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pds</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> numpy.random <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> binomial</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.metrics <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> roc_auc_score</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> statsmodels.api <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> sm</span></code></pre></div>
+</div>
+</section>
+<section id="applying-polars-udfs" class="level2">
+<h2 class="anchored" data-anchor-id="applying-polars-udfs">Applying <code>polars</code> UDFs</h2>
+<p>Now, imagine you simply want to be able to apply and reuse a user-defined function (UDF) writeen with native <code>polars</code> logic. This is easily done with the <code>pipe()</code> method which can be chained onto either expressions (logic that computes variables in the DataFrame) or full DataFrames. Writing additional transformation logic with the native python API is preferable wherever it is possible since it allows <code>polars</code> to use the same data representations and optimizations.</p>
+<p>We’ll start with a boring toy dataset.</p>
+<div id="69144138" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">data_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb2-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb2-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>: np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),</span>
+<span id="cb2-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>: np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), </span>
+<span id="cb2-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>: np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span></span>
+<span id="cb2-6">}</span>
+<span id="cb2-7">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame(data_dict)</span>
+<span id="cb2-8">df.glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8
+Columns: 4
+$ group &lt;str&gt; 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b'
+$ x     &lt;i64&gt; 1, 2, 3, 4, 5, 6, 7, 8
+$ y     &lt;i64&gt; 8, 7, 6, 5, 4, 3, 2, 1
+$ p     &lt;f64&gt; 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8
+</code></pre>
+</div>
+</div>
+<section id="columns-pipe-and-map_columns" class="level3">
+<h3 class="anchored" data-anchor-id="columns-pipe-and-map_columns">Columns (<code>pipe</code> and <code>map_columns()</code>)</h3>
+<div id="7abec6c1" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> cap(c:pl.Expr, ceil:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pl.Expr: <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> pl.when( c <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> ceil).then(ceil).otherwise( c )</span>
+<span id="cb4-2"></span>
+<span id="cb4-3">df.with_columns( pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>).pipe(cap))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">literal</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>This is also works when applying a transformation to mutliple columns with selectors. However, the pipe can result in a conflict in which all variables have the same name (unlike native chaining). This is fixed by appending <code>.name.keep()</code> which access and reapplies the name of the initial column being mapped.</p>
+<div id="47ccab20" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">df.with_columns( cs.numeric().pipe(cap).name.keep() )</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>5</td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>5</td>
+<td>0.2</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>5</td>
+<td>0.3</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>3</td>
+<td>0.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>2</td>
+<td>0.7</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>1</td>
+<td>0.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>If you have no other transformations you wish to do simultaneously, <code>map_columns()</code> is a slightly more concise alternative which accepts a column selector and a single transformation to be applied to all passed columns.</p>
+<div id="06634957" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">df.map_columns( cs.numeric(), cap)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>5</td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>5</td>
+<td>0.2</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>5</td>
+<td>0.3</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>3</td>
+<td>0.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>2</td>
+<td>0.7</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>5</td>
+<td>1</td>
+<td>0.8</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="data-frames-pipe" class="level3">
+<h3 class="anchored" data-anchor-id="data-frames-pipe">Data Frames (<code>pipe</code>)</h3>
+<p>Alternatively, you may wish to encapsulate logic operating at the level of the entire DataFrame versus an individual column.</p>
+<div id="d5932d4e" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, threshhold:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pl.DataFrame:</span>
+<span id="cb7-2"></span>
+<span id="cb7-3">    df_out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (</span>
+<span id="cb7-4">        df</span>
+<span id="cb7-5">        .with_columns(</span>
+<span id="cb7-6">            <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>(),</span>
+<span id="cb7-7">            abs_gt_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> threshhold,</span>
+<span id="cb7-8">        )</span>
+<span id="cb7-9">    )</span>
+<span id="cb7-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> df_out </span></code></pre></div>
+</div>
+<p>This too can be chained onto a DataFrame using the <code>pipe()</code>:</p>
+<div id="a20334f3" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df.pipe(calc_diffs)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 6)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">abs</th>
+<th data-quarto-table-cell-role="th">abs_gt_t</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+<th>bool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>7</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>5</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>7</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>Values of other arguments to your function can be passed with kwargs<sup>3</sup></p>
+<div id="69136519" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">df.pipe(calc_diffs, threshhold <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 6)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">abs</th>
+<th data-quarto-table-cell-role="th">abs_gt_t</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+<th>bool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>7</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>7</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>This also allows us to write DataFrame-level functions that operate on different variables by passing the variables as parameters.</p>
+<div id="83048164" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, var1:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, var2:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, threshhold:<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> pl.DataFrame:</span>
+<span id="cb10-2"></span>
+<span id="cb10-3">    df_out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (</span>
+<span id="cb10-4">        df</span>
+<span id="cb10-5">        .with_columns(</span>
+<span id="cb10-6">            <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(var1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(var2)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>(),</span>
+<span id="cb10-7">            abs_gt_t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (pl.col(var1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> pl.col(var2)).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">abs</span>() <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> threshhold,</span>
+<span id="cb10-8">        )</span>
+<span id="cb10-9">    )</span>
+<span id="cb10-10">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">return</span> df_out </span>
+<span id="cb10-11"></span>
+<span id="cb10-12">df.pipe(calc_diffs, var1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, var2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, threshhold <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 6)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">abs</th>
+<th data-quarto-table-cell-role="th">abs_gt_t</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>i64</th>
+<th>bool</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>7</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+<td>false</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>3</td>
+<td>false</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+<td>true</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>7</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="applying-custom-series-transformations" class="level2">
+<h2 class="anchored" data-anchor-id="applying-custom-series-transformations">Applying custom series transformations</h2>
+<p>Piping is great, but it can break down when you need to apply column transformations requiring multiple columns as inputs or requiring logic outside of the <code>polars</code> API. That’s where <code>map_batches()</code> and <code>map_elements()</code> become useful.</p>
+<p>These methods chain onto expressions just like other transformations. However, they can accept as arguments any arbitrary python function, as well as specifications for the type of return (scalar or vector, data types). The two methods differ in that <code>map_batches()</code> expects the function to be vectorized whereas <code>map_elements()</code> can use any arbitrary function (but assumes it will have to iterate over inputs).</p>
+<p>With these methods, we can input one or more expressions from a DataFrame and return either a scalar or a vector output.</p>
+<section id="map-batches" class="level3">
+<h3 class="anchored" data-anchor-id="map-batches">Map Batches</h3>
+<p>Imagine we want to simulate draws from a binomial distribution, based on the sample size <code>x</code> and probability <code>p</code> in the dataset above.</p>
+<p>In the simplest case in which our function receives 1 input, we can chain <code>map_batches()</code> onto that expression. Here, we simply provide the function of interest and option fields to confirm that our return value is a scalar (the result of a single coin flip) of type integer:</p>
+<div id="ee5cf40b" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># one column in, one value out</span></span>
+<span id="cb11-2">df.with_columns(</span>
+<span id="cb11-3">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>).map_batches(function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> p: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> p), returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.UInt16)</span>
+<span id="cb11-4">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">coin_flip</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>u16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>However, if our function requires multiple expressions as inputs, we must either create a <code>struct</code> or internally pass the names of those expressions to <code>exprs</code> (which I find cleaner). The function you are mapping must similar assume it is receiving an input containing those expressions in the same order and, thus, accessing them through indexing.</p>
+<div id="7078483f" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># two column in, one value out - with structs</span></span>
+<span id="cb12-2">df.with_columns(</span>
+<span id="cb12-3">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>).map_batches(</span>
+<span id="cb12-4">                               function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>], p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>]), </span>
+<span id="cb12-5">                               returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.UInt16)</span>
+<span id="cb12-6">)</span>
+<span id="cb12-7"></span>
+<span id="cb12-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># two columns in, one value out - with exprs</span></span>
+<span id="cb12-9">df.with_columns(</span>
+<span id="cb12-10">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.map_batches(exprs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>],</span>
+<span id="cb12-11">                               function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]), </span>
+<span id="cb12-12">                               returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.UInt16)</span>
+<span id="cb12-13">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">coin_flip</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>u16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="multiple-outputs" class="level3">
+<h3 class="anchored" data-anchor-id="multiple-outputs">Multiple Outputs</h3>
+<p>Finally, you can also return multiple outputs. Suppose we want to simulate 100 draws not just 1. Our internal function can instead return an array. Afterward, we can calculate the average outcome versus the expected value to see that this worked as intended.</p>
+<div id="8fc270c9" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># many columns out</span></span>
+<span id="cb13-2">df.with_columns(</span>
+<span id="cb13-3">    coin_flip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.struct(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>).map_batches(</span>
+<span id="cb13-4">                               function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>], </span>
+<span id="cb13-5">                                                             p <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>],</span>
+<span id="cb13-6">                                                             size <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>,z.shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])</span>
+<span id="cb13-7">                                                             ).transpose(), </span>
+<span id="cb13-8">                                return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Array(pl.UInt16, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>) </span>
+<span id="cb13-9">                                )</span>
+<span id="cb13-10">).with_columns( </span>
+<span id="cb13-11">    avg_outcome <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'coin_flip'</span>).arr.mean(),</span>
+<span id="cb13-12">    exp_value <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'p'</span>)</span>
+<span id="cb13-13">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (8, 7)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+<th data-quarto-table-cell-role="th">p</th>
+<th data-quarto-table-cell-role="th">coin_flip</th>
+<th data-quarto-table-cell-role="th">avg_outcome</th>
+<th data-quarto-table-cell-role="th">exp_value</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>i64</th>
+<th>i64</th>
+<th>f64</th>
+<th>array[u16, 100]</th>
+<th>f64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>1</td>
+<td>8</td>
+<td>0.1</td>
+<td>[0, 0, … 0]</td>
+<td>0.09</td>
+<td>0.1</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>2</td>
+<td>7</td>
+<td>0.2</td>
+<td>[0, 0, … 0]</td>
+<td>0.37</td>
+<td>0.4</td>
+</tr>
+<tr class="odd">
+<td>"a"</td>
+<td>3</td>
+<td>6</td>
+<td>0.3</td>
+<td>[0, 1, … 1]</td>
+<td>0.94</td>
+<td>0.9</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>4</td>
+<td>5</td>
+<td>0.4</td>
+<td>[1, 2, … 4]</td>
+<td>1.48</td>
+<td>1.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>5</td>
+<td>4</td>
+<td>0.5</td>
+<td>[2, 1, … 4]</td>
+<td>2.47</td>
+<td>2.5</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>6</td>
+<td>3</td>
+<td>0.6</td>
+<td>[4, 1, … 4]</td>
+<td>3.53</td>
+<td>3.6</td>
+</tr>
+<tr class="odd">
+<td>"b"</td>
+<td>7</td>
+<td>2</td>
+<td>0.7</td>
+<td>[5, 5, … 5]</td>
+<td>4.7</td>
+<td>4.9</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>8</td>
+<td>1</td>
+<td>0.8</td>
+<td>[8, 8, … 7]</td>
+<td>6.54</td>
+<td>6.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="applying-custom-aggregations-map-groups" class="level2">
+<h2 class="anchored" data-anchor-id="applying-custom-aggregations-map-groups">Applying custom aggregations (Map Groups)</h2>
+<p>Similar to column transformations, <code>polars</code> can also handle arbitrary data aggregation logic with <code>map_groups()</code>.</p>
+<p>Consider a DataFrame with multiple model scores:</p>
+<div id="498a8da9" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">data_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb14-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb14-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>: [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb14-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_bad'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, </span>
+<span id="cb14-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_bst'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb14-6">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_rnd'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,</span>
+<span id="cb14-7">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_mix'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>]</span>
+<span id="cb14-8">}</span>
+<span id="cb14-9">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame(data_dict)</span>
+<span id="cb14-10">df.glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8
+Columns: 6
+$ group   &lt;str&gt; 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b'
+$ truth   &lt;i64&gt; 1, 1, 0, 0, 1, 1, 0, 0
+$ mod_bad &lt;f64&gt; 0.25, 0.25, 0.75, 0.75, 0.25, 0.25, 0.75, 0.75
+$ mod_bst &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.99, 0.75, 0.25, 0.01
+$ mod_rnd &lt;f64&gt; 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5
+$ mod_mix &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.5, 0.5, 0.5, 0.6
+</code></pre>
+</div>
+</div>
+<p><code>map_groups()</code> allows us to conduct arbitrary aggregations, such as calculating AUROC by group from the <code>scikit-learn</code> package. As you can see, the approach is largely the same: specifying the expressions required, the function used, the return type, and the return structure.</p>
+<div id="1065cb17" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg (</span>
+<span id="cb16-2">    pl.map_groups(</span>
+<span id="cb16-3">    exprs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_mix'</span>],</span>
+<span id="cb16-4">    function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: roc_auc_score(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]),</span>
+<span id="cb16-5">    return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Float64,</span>
+<span id="cb16-6">    returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb16-7">    )</span>
+<span id="cb16-8">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">truth</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"b"</td>
+<td>0.25</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="alternatives-extensions" class="level2">
+<h2 class="anchored" data-anchor-id="alternatives-extensions">Alternatives &amp; extensions</h2>
+<p>Once you understand the different mapping capabilities available with <code>polars</code>, you can use these effectively both to <em>expand</em> the paradigm or to decide when you want to <em>deviate</em> from it. We’ll conclude by looking at some examples of each.</p>
+<section id="extension-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="extension-libraries">Extension libraries</h3>
+<p>Recall that native Rust and <code>polars</code> implementations will generally be faster than the techniques shown. Thus, another good option is to familiarize yourself with the burgeoning ecosystem of <code>polars</code> extensions to see if one suits your needs. <a href="https://github.com/ddotta/awesome-polars?tab=readme-ov-file#librariespackagesscripts">Awesome Polars</a> maintains a growing list of such packages.</p>
+<p>For example, the <code>polars-ds</code> package can natively handle the AUROC use case above as it provides many useful evaluation functions:</p>
+<div id="606d8893" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg (</span>
+<span id="cb17-2">    auroc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pds.query_roc_auc(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_bst'</span>)</span>
+<span id="cb17-3">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 2)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">auroc</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"b"</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-generator-trick" class="level3">
+<h3 class="anchored" data-anchor-id="the-generator-trick">The Generator Trick</h3>
+<p>While <code>pds.query_roc_auc()</code> can calculate AUROC out of the box, it expect string column names as inputs – not expressions. That means we cannot benefit from <code>polars</code>’s selectors and expression expansion to calculate multiple combinations of columns with one line of code (e.g.&nbsp;calculation AUROC for each combination of <code>truth</code> and varying model scores).</p>
+<p>To apply an aggregation to multiple column subsets, <a href="https://docs.pola.rs/user-guide/expressions/expression-expansion/#programmatically-generating-expressions">the Polars docs recommend</a> a pattern like this:</p>
+<ul>
+<li>write a wrapper function that handles the iteration and acts as a generator yielding the expression of interest</li>
+<li>obtain relevant selectors to pass into the function (here, you can use the <code>cs.expand_selectors()</code> helpers or any raw parsing of the column names)</li>
+<li>pass the generator into the standard <code>df.group_by(...).agg(...)</code> flow</li>
+</ul>
+<div id="33f0e06e" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">def</span> auroc_expressions(models):</span>
+<span id="cb18-2">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> models:</span>
+<span id="cb18-3">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">yield</span> pds.query_roc_auc( <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'truth'</span>, m).alias(m)</span>
+<span id="cb18-4"></span>
+<span id="cb18-5">mods <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cs.expand_selector(df, cs.starts_with(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod_'</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># could also do: [c for c in df.columns if c[:4] == 'mod_']</span></span>
+<span id="cb18-6">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg( auroc_expressions( mods ))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 5)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">mod_bad</th>
+<th data-quarto-table-cell-role="th">mod_bst</th>
+<th data-quarto-table-cell-role="th">mod_rnd</th>
+<th data-quarto-table-cell-role="th">mod_mix</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>f64</th>
+<th>f64</th>
+<th>f64</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"a"</td>
+<td>-0.0</td>
+<td>1.0</td>
+<td>0.5</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>"b"</td>
+<td>-0.0</td>
+<td>1.0</td>
+<td>0.5</td>
+<td>0.25</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="complex-object-types" class="level3">
+<h3 class="anchored" data-anchor-id="complex-object-types">Complex Object Types</h3>
+<p><code>polars</code> DataFrames can hold arbitrary objects (of datatype <code>pl.Object</code>) – not just scalars and vectors. This means, if we so choose, we can do complex multi-step tasks without leaving the DataFrame<sup>4</sup></p>
+<p>Consider one final sample dataset:</p>
+<div id="ef19c77d" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">data_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb19-2">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>: [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'a'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'b'</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,</span>
+<span id="cb19-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb19-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>: [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.99</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.25</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>[<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>]</span>
+<span id="cb19-5">}</span>
+<span id="cb19-6">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.DataFrame(data_dict)</span>
+<span id="cb19-7">df.glimpse()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8
+Columns: 3
+$ group &lt;str&gt; 'a', 'a', 'a', 'a', 'b', 'b', 'b', 'b'
+$ x     &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.99, 0.75, 0.25, 0.01
+$ y     &lt;f64&gt; 0.99, 0.75, 0.25, 0.01, 0.5, 0.5, 0.5, 0.6
+</code></pre>
+</div>
+</div>
+<p>If we wish, we can even use <code>map_groups()</code> to create a column that represents complex objects like <em>models</em> and then <code>map_elements()</code> to extract information from these models.</p>
+<div id="73e24531" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">(</span>
+<span id="cb21-2">df.group_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>).agg (</span>
+<span id="cb21-3">    mod <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.map_groups(</span>
+<span id="cb21-4">    exprs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>],</span>
+<span id="cb21-5">    function <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: sm.OLS( x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].to_numpy(), sm.add_constant( x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] )).fit() ,</span>
+<span id="cb21-6">    return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Object,</span>
+<span id="cb21-7">    returns_scalar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb21-8">    )</span>
+<span id="cb21-9">)</span>
+<span id="cb21-10">.with_columns(</span>
+<span id="cb21-11">    params <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: x.params, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.List(pl.Float64)),</span>
+<span id="cb21-12">    r_sq  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">lambda</span> x: x.rsquared, return_dtype <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pl.Float64)</span>
+<span id="cb21-13">)</span>
+<span id="cb21-14">)</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (2, 4)</small>
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">group</th>
+<th data-quarto-table-cell-role="th">mod</th>
+<th data-quarto-table-cell-role="th">params</th>
+<th data-quarto-table-cell-role="th">r_sq</th>
+</tr>
+<tr class="odd">
+<th>str</th>
+<th>object</th>
+<th>list[f64]</th>
+<th>f64</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>"b"</td>
+<td>&lt;statsmodels.regression.linear_model.RegressionResultsWrapper object at 0x0000020D3D09A490&gt;</td>
+<td>[3.93, -6.533333]</td>
+<td>0.528971</td>
+</tr>
+<tr class="even">
+<td>"a"</td>
+<td>&lt;statsmodels.regression.linear_model.RegressionResultsWrapper object at 0x0000020D5974DC90&gt;</td>
+<td>[-1.7347e-16, 1.0]</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<p>This pattern can be very useful if you are doing something like, for example, bootstrap aggregation. It might not be the most efficient computationally (not parallelized), but for small problems where speed is not a gamechanger, it can make for concise and readable analysis.</p>
+</section>
+<section id="partitions" class="level3">
+<h3 class="anchored" data-anchor-id="partitions">Partitions</h3>
+<p>However, just because you <em>can</em> keep everything in a DataFrame does not mean you should. The above pattern is useful if your end goal is to extract a singular quantity like a coefficient back into the DataFrame. However, if you ultimately want to go do other things with the objects you are generating, it may make for cleaner code to go ahead and break the DataFrame abstraction.</p>
+<p>A final pattern I find particularly pleasant and effective is using the <code>partition_by()</code> method. This splits a DataFrame into separate frames based on grouping columns and organizes them in either a list (by default) or as a dictionary (when <code>as_dict = True</code>) indexed with a tuple containing the values of the grouping variable(s).</p>
+<div id="50ca67cb" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1">dfs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.partition_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>, as_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, include_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb22-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> k,v <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dfs.items():</span>
+<span id="cb22-3">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>k<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  : </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>v<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>('a',)  : shape: (4, 3)
+┌───────┬──────┬──────┐
+│ group ┆ x    ┆ y    │
+│ ---   ┆ ---  ┆ ---  │
+│ str   ┆ f64  ┆ f64  │
+╞═══════╪══════╪══════╡
+│ a     ┆ 0.99 ┆ 0.99 │
+│ a     ┆ 0.75 ┆ 0.75 │
+│ a     ┆ 0.25 ┆ 0.25 │
+│ a     ┆ 0.01 ┆ 0.01 │
+└───────┴──────┴──────┘
+('b',)  : shape: (4, 3)
+┌───────┬──────┬─────┐
+│ group ┆ x    ┆ y   │
+│ ---   ┆ ---  ┆ --- │
+│ str   ┆ f64  ┆ f64 │
+╞═══════╪══════╪═════╡
+│ b     ┆ 0.99 ┆ 0.5 │
+│ b     ┆ 0.75 ┆ 0.5 │
+│ b     ┆ 0.25 ┆ 0.5 │
+│ b     ┆ 0.01 ┆ 0.6 │
+└───────┴──────┴─────┘</code></pre>
+</div>
+</div>
+<p>This allows up to break up the data in the way we wish to process it, and then do processing in more python-native syntax such as a list comprehension. I find this makes highly concise and readable code and is ultimately a better strategy when further data wrangling is not needed.</p>
+<div id="8c306144" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1">dfs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> df.partition_by(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'group'</span>, as_dict <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, include_key <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb24-2">grps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ k[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dfs.keys() ] <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># turn tuple to scalar bcs only one grouping var in key</span></span>
+<span id="cb24-3">mods <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [ sm.OLS( d[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>].to_numpy(), </span>
+<span id="cb24-4">                 sm.add_constant( d[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>].to_numpy() )</span>
+<span id="cb24-5">                ).fit() <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> k,d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> dfs.items()]</span>
+<span id="cb24-6">coef <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [m.params[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> mods]</span>
+<span id="cb24-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">zip</span>( grps, coef))</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>{'a': np.float64(1.0000000000000004), 'b': np.float64(-6.533333333333337)}</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Beyond <code>dplyr</code>, analogous to much of what an R user might find in <code>stringr</code>, <code>lubridate</code>, <code>tidyr</code>, among others↩︎</p></li>
+<li id="fn2"><p>This is a non-uncommon pattern with R <code>tidyverse</code>’s list columns↩︎</p></li>
+<li id="fn3"><p>That is, passed as a named argument to <code>pipe</code> which will, in turn, pass it to the internal function being piped.↩︎</p></li>
+<li id="fn4"><p>This mirrors patterns from <code>tidymodel</code>, <code>dplyr</code>, and <code>purrr</code> in R.↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <category>tutorial</category>
+  <guid>https://emilyriederer.com/post/py-rgo-udf/</guid>
+  <pubDate>Sun, 16 Nov 2025 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo-udf/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>MLOrbs?: MLOps in the database with orbital and dbt</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -5180,104 +7161,6 @@ Note
   <guid>https://emilyriederer.com/talk/causal-design-patterns/</guid>
   <pubDate>Wed, 07 Jun 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/causal-design-patterns/featured.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>Industry information management for causal inference</title>
-  <dc:creator>Emily Riederer</dc:creator>
-  <link>https://emilyriederer.com/post/causal-data/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://emilyriederer.com/post/causal-data/featured.png" class="img-fluid figure-img"></p>
-<figcaption>Data strategy motivated by causal methods</figcaption>
-</figure>
-</div>
-<p><em>This post summarizes the final third of my talk at Data Science Salon NYC in June 2023. Please see the <a href="../..\talk/causal-design-patterns">talk details</a> for more content.</em></p>
-<p>Techniques of observational causal inference are becoming increasingly popular in industry as a complement to experimentation. Causal methods offer the promise of accelerating measurement agendas and facilitating the estimation of previously un-measurable targets by allowing analysts to extract causal insights from “found” data (e.g.&nbsp;observational data collected without specific intent). However, if executed without careful attention to their assumptions and limitations, they can lead to spurious conclusions.</p>
-<p>Both experimental and observational methods attempt to address the <strong>fundamental problem of causal inference</strong>: that is, the fact that for a given treatment of interest, we can never “see” the <em>individual-level outcome</em> both for the case when an individual received a treatment and a counterfactual scenario in which <em>for the same individual in the exact same context</em> that treatment was withheld. Some literature casts this as a “missing data” problem.<sup>1</sup> Counterfactual data is uncollectable; however, this fundamental missingness can be partially mitigated by diligent collection of <em>other</em> types of quantitative and qualitative information to control for confounding<sup>2</sup> and interrogate assumptions.</p>
-<p>In this post, I argue that industry has unique advantages when using causal techniques over the social science disciplines that originated many foundational methods due to industry’s (theoretically) superior ability to observe and capture relevant supplemental data and context. Examining the implicit assumptions in common <a href="../..\post/causal-design-patterns">causal design patterns</a> motivates the types of proactive enterprise information management – including data, metadata, and knowledge management – that will help preserve the raw inputs that future data scientists will need to effectively deploy causal techniques on historical data and answer questions that our organizations cannot even anticipate today. By casting an intentionally wide net on what information we observationally collect, we increase the likelihood that the future “found” data will have what those analysts need to succeed.</p>
-<section id="why-industry-needs-causal-inference" class="level2">
-<h2 class="anchored" data-anchor-id="why-industry-needs-causal-inference">Why industry needs causal inference</h2>
-<p><img src="https://emilyriederer.com/post/causal-data/why-not-experiment.png" class="img-fluid"></p>
-<p>Industry data science tends to highly value the role of A/B testing and experimentation. However, there are many situations where experimentation is not an optimal approach to learning. Experiments can be infeasible if we worry about the ethics or reputational risk of offering disparate customer treatments; they may be impractical in situations that are hard to randomize or avoid spillover effects; they can be costly to run and configure either in direct or opportunity costs; and, finally, they can just be <em>slow</em> if we wish to measure complex and long-term impacts on customer behaviors (e.g.&nbsp;retention, lifetime value).</p>
-</section>
-<section id="what-causal-methods-require" class="level2">
-<h2 class="anchored" data-anchor-id="what-causal-methods-require">What causal methods require</h2>
-<p><img src="https://emilyriederer.com/post/causal-data/patterns-and-variation.png" class="img-fluid"></p>
-<p>These limitations are one of the reasons why observational causal inference is gaining increasing popularity in industry. Methods of observational causal inference allows us to estimate treatment effects without randomized controlled experimentation by using existing historical data. At the highest level, these methods work by replacing <em>randomization</em> with strategies to exploit other forms of <em>semi-random variation</em> in historical exposures of a population to a treatment. Since this semi-random <em>variation</em> could be susceptible to confounding, observational methods supplement variation with <em>additional data</em> to control for other observable sources of bias in our estimates and <em>contextual assumptions</em> about the data generating process.</p>
-<p>My previous post on <a href="../..\post/causal-design-patterns">causal design patterns</a> outlines a number of foundational causal methods, but I’ll briefly recap to emphasize the different ways that sources of variation, data, and context are used:</p>
-<ul>
-<li><strong>Stratification and Inverse Propensity Score Weighting</strong>:
-<ul>
-<li>Exploits “similar” populations of treated and untreated individuals</li>
-<li>Assumes we can observe and control for common causes of the treatment and the outcome</li>
-</ul></li>
-<li><strong>Regression Discontinuity</strong>:
-<ul>
-<li>Exploits a sharp, semi-arbitrary cut-off between treated and untreated individuals</li>
-<li>Assumes that the outcome is continuous with respect to the assigment variable and the assignment mechanism is unknown to individuals (to avoid self-selection)</li>
-</ul></li>
-<li><strong>Difference in Differences</strong>:
-<ul>
-<li>Exploits variation between <em>behavior over time</em> of treated and untreated <em>groups</em></li>
-<li>Assumes that the treatment assignment is unrelated to expected future outcomes and that the treatment is well-isolated to the treatment group</li>
-</ul></li>
-</ul>
-<p>Notably, the assumptions mentioned above are largely untestable statistically (e.g.&nbsp;not like testing for normality or multicolinearity) but rely on knowledge of past strategies and policies that guided differential treatment in historical data.<sup>3</sup></p>
-</section>
-<section id="industrys-unique-advantages-deploying-causal-inference" class="level2">
-<h2 class="anchored" data-anchor-id="industrys-unique-advantages-deploying-causal-inference">Industry’s unique advantages deploying causal inference</h2>
-<p><img src="https://emilyriederer.com/post/causal-data/industry-advantages.png" class="img-fluid"></p>
-<p>Many causal methods originated in fields like epidemiology, economics, political science, and other social sciences. In such fields, direct experimentation is often impossible and even first-hand data collection is less common. Often, researchers may have to rely on pre-existing data sources like censuses, surveys, and administrative data (e.g.&nbsp;electronic health records).</p>
-<p>Despite the lineage of these methods, industry has many advantages over traditional research fields in using them because each company controls the entire “universe” in which its customers exist. This should in theory provide a distinct advantage when collecting each of the three “ingredients” that causal methods use to replace randomization:</p>
-<ul>
-<li><strong>Variation</strong>: We control customer engagement strategies through methods like customer segmentation or models. Subsequent customer treatments are completely known to us but inherently have some arbitrary, judgmental component to exploit</li>
-<li><strong>Data</strong>: We tend to be able to collect more measurements of our customers both as a snapshot (more variety in fields) and longitudinally (more observations over time) that can be brought into our analyses to control for confounders<sup>4</sup>, reduce other sources of variation in our estimate, and have additional ‘out of time’ data left over to conduct forms of validation like placebo tests</li>
-<li><strong>Context</strong>: We tend to know how past strategies were set-up, how they looked to individuals involved, and <em>why</em> those decisions were made. This can be critical in reasoning whether our assumptions hold</li>
-</ul>
-<p>However, to convert this theoretical benefit to a practical one requires information management.</p>
-</section>
-<section id="data-management-for-causal-inference" class="level2">
-<h2 class="anchored" data-anchor-id="data-management-for-causal-inference">Data management for causal inference</h2>
-<p><img src="https://emilyriederer.com/post/causal-data/featured.png" class="img-fluid"></p>
-<p>While all causal methods will be enhanced with better enterprise information management, it’s easiest to see the motivation by thinking back to specific examples. Causal inference can benefit from better data, metadata, and knowledge management. These are illustrated by propensity score weighting, regression discontinuity, and diff-in-diff respectively.</p>
-<p><strong>Integrated Data Management</strong></p>
-<p>Earlier, we posited that one advantage that industry has over academia for causal inference is access to richer historical data sources as a higher level of resolution (more measures per individual at more time points). A rich set of customer measures is critical for stratification and propensity score weighting where we attempt to control for selection on observables by balancing populations along dimensions that might be common causes of treatment assignment and outcome. (And, we may also wish to control for other unrelated sources of variation that effect only the outcome to develop more precise estimates.)</p>
-<p>However, this is only true if customer data is proactively <em>collected, cleaned, and harmonized</em> across sources in the true spirit of a customer 360 view. Enterprises may collect data about customers from many different operational systems – for example, demographic information provided at registration, digital data on their logins and web activity, campaign data on attempted customer touchpoints and engagement, behavioral or fulfillment data on purchases / subscription renewals / etc. Any of these sources could be useful “observables” that help close confounding pathways in our analyses.</p>
-<p>To make this data useful and accessible for analysis, it must be <em>proactively integrated</em> into a common source like a data warehouse, <em>well-documented</em> to help future users understand the nuances of each system, <em>harmonized</em> so fields have standard definitions (e.g.&nbsp;common definitions of an “account” and a “customer”), and <em>unified</em> by using techniques like entity resolution to ensure all sources share common identifiers so that they can be merged for analysis.</p>
-<p><strong>Metadata Management</strong></p>
-<p>Beyond those “typical” sources of customer data, our past customer strategies create data beyond the data directly generated by our customers. Metadata about past campaigns such as precise business logic on the different treatments offered (e.g.&nbsp;if sending customers a discount, what algorithmically determined the amount?), the campaign targeting and segmentation (e.g.&nbsp;What historical behaviors were used to segments customers? Was treatment determined by a predictive model?), and launch timing can all be critical to clearly identifying those sources of variation that we wish to exploit. For example, we might know that we once ran an re-engagement campaign to attempt the nudge interaction from customers who didn’t log-in to a website for some amount of time, but knowing whether that campaign was targeting customers &gt;30 days inactive or &gt;45 days inactive impacts our ability to analyze it with a regression discontinuity.</p>
-<p>This means that we need to <em>treat metadata as first-class data</em> and ensure that it is extracted from operational source systems (or intent docs, config files, etc.), structured in a machine-readable format, and preserved in analytical data stores along with our customer data.</p>
-<p>The importance of “metadata as data” extends beyond business-as-usual organization strategies. We can also fuel future causal inference with better metadata management of past formal experiments and execution errors.</p>
-<p>As discussed above, formal experiments may represent a substantial <em>investment</em> in company resources so the data collected from them should be regarded as an <em>asset</em>. Beyond their utility for one-time reads and decisions, experiment designs and results should be carefully catalogued along with the assigned treatment group and the randomization criteria (such as fields characterizing <a href="https://www.census.gov/programs-surveys/acs/technical-documentation/user-notes/2022-07.html">sampling weights</a> as provided in US Census data). This can support future <em>observational</em> analysis of past experiments, including generalizing and transporting results to different populations.</p>
-<p>Furthermore, even <em>mistakes</em> in executing past strategies may become “natural experiments” to help businesses understand scenarios that they might never have prioritized for testing. So, machine-readable incident logs and impacted populations can be useful as well.</p>
-<p><strong>Knowledge Management</strong></p>
-<p>Of course, not <em>all</em> information can be condensed into a nice, machine-readable spreadsheet. Methods like difference-in-differences illustrate how conceptual context can also help us battle-test assumptions like whether the decision-to-treat could have spilled over into the control population or been influenced by an anticipated change in the future outcome. This is the one area where industry may sometimes <em>lag</em> social sciences in information since some population-level treatments like a state law or local ordinance often have documented histories through the legislative process, news coverage, and historical knowledge about their implementation.</p>
-<p>Industry can catch up on knowledge management by documenting and preserving in a centralized knowledge repository key information about strategic decisions undertaken, the motivating factors, and the anticipated customer experience. Such documents are inevitably created when working on new projects through memos ad decks intended to communicate the business case, intent, and expected customer experience. However, proactively figuring out how to <em>organize and index</em> this information through a classification system and <em>democratize access</em> through centralized knowledge repositories is critical to giving future users entree to this tribal knowledge. Projects like Airbnb’s <a href="https://github.com/airbnb/knowledge-repo">Knowledge Repository</a> suggest what such a system might look like in practice.</p>
-
-
-</section>
-
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>For example, see https://arxiv.org/abs/1710.10251↩︎</p></li>
-<li id="fn2"><p>If you’ve heard of ‘selection on observables’ in causal literature, richer data means observables!↩︎</p></li>
-<li id="fn3"><p>There are some exceptions to this like placebo tests, bunching checks, etc.↩︎</p></li>
-<li id="fn4"><p>Notable, the availability of more data absolutely does <em>not</em> mean that we should simply “dump in” all the data we have. Controlling for certain variables like colliders is counterproductive.↩︎</p></li>
-</ol>
-</section></div> ]]></description>
-  <category>causal</category>
-  <category>data</category>
-  <guid>https://emilyriederer.com/post/causal-data/</guid>
-  <pubDate>Tue, 30 May 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/post/causal-data/featured.png" medium="image" type="image/png" height="60" width="144"/>
 </item>
 </channel>
 </rss>

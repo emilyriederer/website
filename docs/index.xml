@@ -52,7 +52,7 @@
 <p><img src="https://emilyriederer.com/post/py-rgo-crosspol/air.png" class="img-fluid"></p>
 <p>While the Air <a href="https://github.com/posit-dev/air">README</a> acknowledges multiple non-R inspirations , the most obvious parallel is to Astral’s <code>ruff</code>, a performant python code styler also written in Rust.</p>
 <p>Air isn’t the only present from the Posit to R developers. A similar and exciting project from Posit with a clear python analog is <a href="https://github.com/r-lib/rig">rig</a>. Rig helps developers manage and switch between multiple R installations with a look, feel, and aspirations similar to python’s <code>pyenv</code>. While installation woes and simultaneous installation management tend to be more critical to the python language, bringing this modern developer tooling to the R world is a useful contribution to developing more robust tooling.</p>
-<p>Beyond these more concrete examples, python has long been a first-moved in bringing engineering practices into engineering data work due, in turn, to the diversity of its own community mixing DS and traditional software engineering audiences. Countless testing, orchestration, CI/CD tools in R have followed python corrolaries, likely due to some amount of influence.<sup>2</sup></p>
+<p>Beyond these more concrete examples, python has long been a first-moved in bringing engineering practices into engineering data work due, in turn, to the diversity of its own community mixing DS and traditional software engineering audiences. Countless testing<sup>2</sup>, orchestration, CI/CD tools in R have followed python corrolaries, likely due to some amount of influence.<sup>3</sup></p>
 </section>
 <section id="it-goes-both-ways" class="level2">
 <h2 class="anchored" data-anchor-id="it-goes-both-ways">It goes both ways</h2>
@@ -67,7 +67,8 @@
 
 <ol>
 <li id="fn1"><p>And memory is no small feat given that I’d made the questionable decision to get up at 2AM to fly in that same day and had been awake about 14 hours by the time of the session↩︎</p></li>
-<li id="fn2"><p>A related discussion happened on a recent episode of <a href="https://posit.co/thetestset/episode/kelly-bodwin-quarto-hacks-ai-in-the-classroom-and-why-r-should-stay-weird/">The Test Set</a> podcast as the crew debated whether R or python is more diverse with python spanning more distinct domains (e.g.&nbsp;DS vs SWE) but R having much more breadth <em>among data people</em> (e.g.&nbsp;biostats, polisci, etc.)↩︎</p></li>
+<li id="fn2"><p>Testing was also the topic of the final talk in this session by Libby McKenna on <a href="https://www.youtube.com/watch?v=GEP61GjwTjE"><code>testthat</code></a>. I focus on it less here as there’s less of a clear R/python linkage, but it provides a very nice introduction to code testing. Check it out!↩︎</p></li>
+<li id="fn3"><p>A related discussion happened on a recent episode of <a href="https://posit.co/thetestset/episode/kelly-bodwin-quarto-hacks-ai-in-the-classroom-and-why-r-should-stay-weird/">The Test Set</a> podcast as the crew debated whether R or python is more diverse with python spanning more distinct domains (e.g.&nbsp;DS vs SWE) but R having much more breadth <em>among data people</em> (e.g.&nbsp;biostats, polisci, etc.)↩︎</p></li>
 </ol>
 </section></div> ]]></description>
   <category>rstats</category>

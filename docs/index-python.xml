@@ -10,7 +10,72 @@
 <atom:link href="https://emilyriederer.com/index-python.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.4.554</generator>
-<lastBuildDate>Sun, 16 Nov 2025 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 30 Dec 2025 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>R + Python: From polyglot to crosspolination</title>
+  <dc:creator>Emily Riederer</dc:creator>
+  <link>https://emilyriederer.com/post/py-rgo-crosspol/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>In October, the Python Software Foundation <a href="https://pyfound.blogspot.com/2025/10/NSF-funding-statement.html">announced</a> that it had made the difficult decision to forgo a $1.5M National Science Foundation grant. The grant was intended to improve structural vulnerabilities in the Python language and PyPI, but came with the unpalatable stipulation that no part of the PSF as a whole could “operate any programs that advance or promote DEI [diversity, equity, and inclusion]”. This followed a similar <a href="https://carpentries.org/blog/2025/06/announcing-withdrawal-of-nsf-pose-proposal/">announcement</a> over the summer from The Carpentries, a non-profit devoted to teaching researchers good practices in reproducible software engineering and data management, made a similar decision earlier this year.</p>
+<p>But what even is open source without diversity? What would it even mean to “promise” to strip diversity from an ecosystem predicated on identifying shared needs and collaboratively developing solutions across different timezones, cultures, and contexts?</p>
+<p>Looking back on 2025, nothing illustrated the importance of diversity across open source communities better than <a href="https://posit.co/conference/">posit::conf(2025)</a>. My most memorable session<sup>1</sup> was titled “Sparking Developer Joy”.</p>
+<p>Taken at face value, the session offered fantastic and tangible idea for improving the developer/user experience in both R and python. I’d recommend it on those merits alone. But on subtler and unspoken level, the combination of talks served as a celebration of how much stronger both the R and python ecosystems have become as developers who “grew up” in their different contexts and communities cross-polinitate ideas.</p>
+<p>I end the year with a brief reflection on the session and what they represent about the broader state of python and R tooling (with a few digressions on core R history). I won’t attempt to recap these great talks in full; I highly encourage everyone to watch them in full on YouTube for a clarity of thought and level of detail to which I won’t aspire. Instead, I’ll just briefly pull on the throughlines: <strong>intellectual diversity makes communities and tools better</strong>.</p>
+<p><em>But don’t let me distract you. As the clock winds down on 2025, if you are considering making charitable donations, consider helping the PSF or The Carpentries fill the gap that their values have cost them.</em></p>
+<section id="r-package-empathy-in-python" class="level2">
+<h2 class="anchored" data-anchor-id="r-package-empathy-in-python">R package empathy in python</h2>
+<p>R has always known its target audience. Built by statisticians, it just gets us data people.</p>
+<p>Rich Iannone and Michael Chow gave stunning back-to-back talks on how to build python packages with better user experiences. Rich focused broadly on how to make a package “nice” while Michael detailed a specific, novel approach to address a common gap in documentation. Both pointed to examples from Great Tables (<a href="https://gt.rstudio.com/">R</a>/<a href="https://posit-dev.github.io/great-tables/articles/intro.html">python</a>) and pointblank (<a href="https://rstudio.github.io/pointblank/">R</a>/<a href="https://posit-dev.github.io/pointblank/">python</a>), two tools that they developed first for R and then for python.</p>
+<p>Each talk illustrated how the strong community norms from R package development have already and can continue to improve the python analogs.</p>
+<p><img src="https://emilyriederer.com/post/py-rgo-crosspol/rich.png" class="img-fluid"></p>
+<p>Rich’s talk <a href="https://www.youtube.com/watch?v=J6e2BKjHyPg">Making things nice in python</a> defined five aspects of making python packages “nice”: making them compatible with existing workflows:</p>
+<ul>
+<li>Accommodating different needs / backends (e.g.&nbsp;DataFrame interoperability with <code>narwhals</code>)</li>
+<li>Making cumbersome things easy by adopting language-standard syntactic sugar (e.g.&nbsp;<code>polars</code> column selectors)</li>
+<li>Making learning easy (e.g.&nbsp;with user guides, examples, blogs, in addition to a standard API reference)</li>
+<li>Shipping batteries-included for onboarding with built-in example datasets</li>
+</ul>
+<p>Of these, I claim 2-4 as having distinctly R-like roots. Interoperability, syntactic sugar, and making the cumbersome easy echoes the tidyverse design principles, and shipping sample data in packages is a “first class” activity in R package development with the standard <code>data/</code> directory for this specific purpose.</p>
+<p>In fact, beyond packages, the core R language has shipped with sample data since… before it existed! In-built datasets trace back to R’s precursor S. The <code>iris</code> package help page cites to the 1988 book “The New S Language” as including this dataset, although it then appeared as a three-dimensional array now found in the built-in <code>iris3</code> object.</p>
+<p><img src="https://emilyriederer.com/post/py-rgo-crosspol/michael.png" class="img-fluid"></p>
+<p>Michael’s talk <a href="https://www.youtube.com/watch?v=ML8z8xkqIA0">The curse of documentation</a> doubled down on the importance of “medium weight” documentation to fill the chasm between an atomic API reference and an all-in gallery of fully baked examples. Specifically, he argued for the importance of long-form documentation that helps users understand the mental model and core philosophy behind a package API so they can reason about it. He then went on to provide some brilliant frameworks for writing such resources, but I’ll leave you to watch the video since that’s not the point of this post.</p>
+<p>Here, again, I cannot help but feel the R-native influence on these suggestions. Vignettes have deep roots in the tradition of R packages. <a href="https://www.r-project.org/doc/obit/fritz.html">Fritz Leisch</a>, an early pioneer on the R Core Development Team, first unlocked the ability to render R code in LaTeX through Sweave (a precursor to R Markddown and then Quarto) which first enabled vignettes. The concept of vignettes was formalized with the release of <a href="https://stat.ethz.ch/pipermail/r-announce/2011/000544.html">R 2.14.0 (“The Great Pumpkin”) in 2011</a> which introduced the <code>vignettes/</code> directory distinct from the <code>inst/doc/</code> directory which stores reference-level documentation (the exact contrast Michael draws in his talk!) The convention became so prevalent that each Bioconductor package <a href="https://www.bioconductor.org/help/package-vignettes/">requires at least one vignette</a>. More recently, vignettes gained increasing visibility as R Markdown removed the LaTex dependency, making vignettes easy (and dare I say joyful?) to write, and more recently <code>pkgdown</code> helped create aesthetic documentation websites featuring vignettes framed as <a href="https://pkgdown.r-lib.org/reference/build_articles.html">articles</a>.</p>
+</section>
+<section id="python-rigor-devtools-for-r" class="level2">
+<h2 class="anchored" data-anchor-id="python-rigor-devtools-for-r">Python-rigor devtools for R</h2>
+<p>What made this session even more powerful, however, was that reminder that ideas do not flow in just one direction. We also saw <a href="https://www.youtube.com/watch?v=DJVSEOjvwb8">Davis Vaughn and Lionel Henry present on Air</a>, an R language server and code formatter which promises blazing speed and a stunning hex sticker.</p>
+<p><img src="https://emilyriederer.com/post/py-rgo-crosspol/air.png" class="img-fluid"></p>
+<p>While the Air <a href="https://github.com/posit-dev/air">README</a> acknowledges multiple non-R inspirations , the most obvious parallel is to Astral’s <code>ruff</code>, a performant python code styler also written in Rust.</p>
+<p>Air isn’t the only present from the Posit to R developers. A similar and exciting project from Posit with a clear python analog is <a href="https://github.com/r-lib/rig">rig</a>. Rig helps developers manage and switch between multiple R installations with a look, feel, and aspirations similar to python’s <code>pyenv</code>. While installation woes and simultaneous installation management tend to be more critical to the python language, bringing this modern developer tooling to the R world is a useful contribution to developing more robust tooling.</p>
+<p>Beyond these more concrete examples, python has long been a first-moved in bringing engineering practices into engineering data work due, in turn, to the diversity of its own community mixing DS and traditional software engineering audiences. Countless testing, orchestration, CI/CD tools in R have followed python corrolaries, likely due to some amount of influence.<sup>2</sup></p>
+</section>
+<section id="it-goes-both-ways" class="level2">
+<h2 class="anchored" data-anchor-id="it-goes-both-ways">It goes both ways</h2>
+<p>This also is not to say that R is <em>uniquely and exclusively</em> good at design and python is <em>uniquely and exclusively</em> good at engineering. It goes both ways. For example, python’s <code>scikit-learn</code> API has an undeniable impact on <code>tidymodels</code>, as the R community sought an analogous all-encompassing tool for modeling with common workflows for training pipelines; conversely, while CRAN has its ups and downs, Julie Tibshirani recently published a <a href="https://jtibs.substack.com/p/if-all-the-world-were-a-monorepo">reflection</a> on the value of the paradigm, perhaps with takeaways for the wildwest of PyPI.</p>
+<p>The examples are endless, and enumeration is not the point. I’ll just end the year saying that I’m thinking about the room I was in in Atlanta back in August where people with wildly different backgrounds came together to learn and incidentally happened on the perfect example of how different contexts colliding makes them better. Should we be so lucky.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>And memory is no small feat given that I’d made the questionable decision to get up at 2AM to fly in that same day and had been awake about 14 hours by the time of the session↩︎</p></li>
+<li id="fn2"><p>A related discussion happened on a recent episode of <a href="https://posit.co/thetestset/episode/kelly-bodwin-quarto-hacks-ai-in-the-classroom-and-why-r-should-stay-weird/">The Test Set</a> podcast as the crew debated whether R or python is more diverse with python spanning more distinct domains (e.g.&nbsp;DS vs SWE) but R having much more breadth <em>among data people</em> (e.g.&nbsp;biostats, polisci, etc.)↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>rstats</category>
+  <category>python</category>
+  <guid>https://emilyriederer.com/post/py-rgo-crosspol/</guid>
+  <pubDate>Tue, 30 Dec 2025 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/post/py-rgo-crosspol/air.png" medium="image" type="image/png" height="81" width="144"/>
+</item>
 <item>
   <title>Python Rgonomics: User-defined functions in polars</title>
   <dc:creator>Emily Riederer</dc:creator>

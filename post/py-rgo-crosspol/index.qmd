@@ -1,6 +1,6 @@
 ---
-title: "R + Python: From polyglot to crosspolination"
-description: "A combined reflection on 2025, posit::conf(2025), and the necessity of diversity in open source"
+title: "R + Python: From polyglot to pluralism"
+description: "We used to have a language war, then peaceful polyglot co-existence. Now, it's clear that we're actively better off learning from each other. A reflection on 2025, posit::conf, what R and python stacks can learn from each other, and the criticality of diversity in open source"
 author: "Emily Riederer"
 date: "2025-12-30"
 categories: [rstats, python]

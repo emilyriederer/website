@@ -40,8 +40,8 @@ website:
         href: project/index.html
       - icon: github
         href: https://github.com/emilyriederer
-      - icon: twitter
-        href: https://twitter.com/emilyriederer
+      - icon: bluesky
+        href: https://bsky.app/profile/emilyriederer.bsky.social
       - icon: linkedin
         href: https://linkedin.com/in/emilyriederer
       - icon: rss

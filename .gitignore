@@ -2,3 +2,4 @@
 /.Rproj.user/
 /.env
 post/*/.venv
+**/*.quarto_ipynb

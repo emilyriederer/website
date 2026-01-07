@@ -4,9 +4,9 @@ image: profile.jpg
 about:
   template: jolla
   links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/emilyriederer
+    - icon: bluesky
+      text: BlueSky
+      href: https://bsky.app/profile/emilyriederer.bsky.social
     - icon: linkedin
       text: LinkedIn
       href: https://linkedin.com/in/emilyriederer

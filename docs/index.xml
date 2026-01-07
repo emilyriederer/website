@@ -9,7 +9,7 @@
 <link>https://emilyriederer.com/</link>
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.554</generator>
+<generator>quarto-1.8.26</generator>
 <lastBuildDate>Tue, 30 Dec 2025 06:00:00 GMT</lastBuildDate>
 <item>
   <title>R + Python: From polyglot to pluralism</title>
@@ -244,6 +244,7 @@ $ p     &lt;f64&gt; 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8
 <div id="7abec6c1" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> cap(c:pl.Expr, ceil:<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
@@ -254,6 +255,7 @@ font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-&gt;</span> pl.Expr: <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> pl.when( c <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;</span> ceil).then(ceil).otherwise( c )</span>
@@ -524,6 +526,7 @@ font-style: inherit;">'x'</span>).pipe(cap))</span></code></pre></div>
 <div id="d5932d4e" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, threshhold:<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
@@ -569,6 +572,7 @@ font-style: inherit;">&gt;</span> threshhold,</span>
 <span id="cb7-9">    )</span>
 <span id="cb7-10">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> df_out </span></code></pre></div>
 </div>
 <p>This too can be chained onto a DataFrame using the <code>pipe()</code>:</p>
@@ -785,6 +789,7 @@ font-style: inherit;">3</span>)</span></code></pre></div>
 <div id="83048164" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, var1:<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">str</span> <span class="op" style="color: #5E5E5E;
@@ -834,6 +839,7 @@ font-style: inherit;">&gt;</span> threshhold,</span>
 <span id="cb10-9">    )</span>
 <span id="cb10-10">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> df_out </span>
 <span id="cb10-11"></span>
 <span id="cb10-12">df.pipe(calc_diffs, var1 <span class="op" style="color: #5E5E5E;
@@ -973,6 +979,7 @@ font-style: inherit;">'p'</span>).map_batches(function <span class="op" style="c
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> p: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -1094,6 +1101,7 @@ font-style: inherit;">'p'</span>).map_batches(</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
@@ -1129,6 +1137,7 @@ font-style: inherit;">'p'</span>],</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> z[<span class="dv" style="color: #AD0000;
@@ -1256,6 +1265,7 @@ font-style: inherit;">'p'</span>).map_batches(</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
@@ -1544,6 +1554,7 @@ font-style: inherit;">'mod_mix'</span>],</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: roc_auc_score(x[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>], x[<span class="dv" style="color: #AD0000;
@@ -1664,14 +1675,18 @@ font-style: inherit;">'mod_bst'</span>)</span>
 <div id="33f0e06e" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> auroc_expressions(models):</span>
 <span id="cb18-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> models:</span>
 <span id="cb18-3">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> pds.query_roc_auc( <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'truth'</span>, m).alias(m)</span>
@@ -1832,6 +1847,7 @@ font-style: inherit;">'y'</span>],</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: sm.OLS( x[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>].to_numpy(), sm.add_constant( x[<span class="dv" style="color: #AD0000;
@@ -1854,6 +1870,7 @@ font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: x.params, return_dtype <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> pl.List(pl.Float64)),</span>
@@ -1863,6 +1880,7 @@ font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: x.rsquared, return_dtype <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> pl.Float64)</span>
@@ -1934,8 +1952,10 @@ background-color: null;
 font-style: inherit;">True</span>)</span>
 <span id="cb22-2"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> k,v <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> dfs.items():</span>
 <span id="cb22-3">    <span class="bu" style="color: null;
 background-color: null;
@@ -2000,8 +2020,10 @@ font-style: inherit;">=</span> [ k[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> dfs.keys() ] <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># turn tuple to scalar bcs only one grouping var in key</span></span>
@@ -2015,8 +2037,10 @@ background-color: null;
 font-style: inherit;">'y'</span>].to_numpy() )</span>
 <span id="cb24-5">                ).fit() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> k,d <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> dfs.items()]</span>
 <span id="cb24-6">coef <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2024,8 +2048,10 @@ font-style: inherit;">=</span> [m.params[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> mods]</span>
 <span id="cb24-7"><span class="bu" style="color: null;
 background-color: null;
@@ -2199,6 +2225,7 @@ font-style: inherit;">as</span> pl</span>
 <span id="cb1-3"></span>
 <span id="cb1-4"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> duckdb.<span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">connect</span>(<span class="st" style="color: #20794D;
@@ -2366,8 +2393,10 @@ font-style: inherit;">')'</span>,<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">''</span>) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> c <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> X_tran.columns]</span>
 <span id="cb10-12"></span>
 <span id="cb10-13"><span class="co" style="color: #5E5E5E;
@@ -2427,8 +2456,10 @@ font-style: inherit;">=</span> {</span>
 background-color: null;
 font-style: inherit;">=</span> {e: type_map.get(t) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> e, t <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">zip</span>(X.columns, X.dtypes)}</span>
@@ -2436,8 +2467,10 @@ font-style: inherit;">zip</span>(X.columns, X.dtypes)}</span>
 background-color: null;
 font-style: inherit;">=</span> {e: type_map.get(t) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> e, t <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">zip</span>(X_tran.columns, X_tran.dtypes)}</span>
@@ -2529,6 +2562,7 @@ font-style: inherit;">import</span> parse_one, exp </span>
 <span id="cb11-3"></span>
 <span id="cb11-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> clean_sql(sql_raw: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">str</span>, </span>
@@ -2646,14 +2680,17 @@ font-style: inherit;">=</span> parse_one(sql_raw)</span>
 <span id="cb11-38">    </span>
 <span id="cb11-39">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> e <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> ast.expressions:</span>
 <span id="cb11-40">        <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># rename prediction column</span></span>
 <span id="cb11-41">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> cols_renm.get(e.alias) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> <span class="st" style="color: #20794D;
@@ -2683,8 +2720,10 @@ background-color: null;
 font-style: inherit;">None</span>)</span>
 <span id="cb11-44">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> e.alias <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> cols_renm.keys():</span>
 <span id="cb11-45">            e.<span class="bu" style="color: null;
 background-color: null;
@@ -2712,10 +2751,13 @@ background-color: null;
 font-style: inherit;">=</span>exp.to_identifier(col_id))</span>
 <span id="cb11-51">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> ast.find(exp.CTE) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
@@ -2732,10 +2774,13 @@ background-color: null;
 font-style: inherit;"># add model version to outer query if desired</span></span>
 <span id="cb11-57">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> model_version <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
@@ -2807,6 +2852,7 @@ font-style: inherit;">'"TBL_REF"'</span>, ref_str) </span>
 <span id="cb11-73">  </span>
 <span id="cb11-74">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> sql_fnl</span></code></pre></div>
 </details>
 </div>
@@ -2839,6 +2885,7 @@ font-style: inherit;">as</span> pl</span>
 <span id="cb12-3"></span>
 <span id="cb12-4"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> duckdb.<span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">connect</span>(<span class="st" style="color: #20794D;
@@ -3478,8 +3525,10 @@ font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(n_cols)]</span>
@@ -3487,8 +3536,10 @@ font-style: inherit;">range</span>(n_cols)]</span>
 background-color: null;
 font-style: inherit;">=</span> {c:orbital.types.DoubleColumnType() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> c <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> nm_cols}</span></code></pre></div>
 </div>
 <a class="quarto-notebook-link" id="nblink-1" href="orbital-xgb-preview.html#cell-data-prep">Source: End-to-end notebook</a></div>
@@ -3779,6 +3830,7 @@ Override <code>orbital</code>’s <code>parse_pipeline()</code>
 <div id="override-parse" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> parse_pipeline_local(</span>
 <span id="cb7-2">    pipeline: Pipeline, features: orbital.types.FeaturesTypes</span>
 <span id="cb7-3">) <span class="op" style="color: #5E5E5E;
@@ -3795,13 +3847,17 @@ font-style: inherit;">=</span>[</span>
 <span id="cb7-8">            (fname, ftype._to_onnxtype())</span>
 <span id="cb7-9">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> fname, ftype <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> features.items()</span>
 <span id="cb7-10">            <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> ftype.is_passthrough</span>
 <span id="cb7-11">        ],</span>
 <span id="cb7-12">        target_opset<span class="op" style="color: #5E5E5E;
@@ -3818,6 +3874,7 @@ font-style: inherit;">3</span>}</span>
 <span id="cb7-13">    )</span>
 <span id="cb7-14">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> orbital.ast.ParsedPipeline._from_onnx_model(onnx_model, features)</span></code></pre></div>
 </div>
 <a class="quarto-notebook-link" id="nblink-5" href="orbital-xgb-preview.html#cell-override-parse">Source: End-to-end notebook</a></div>
@@ -4847,8 +4904,10 @@ font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> l]</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>[2, 3, 4]</code></pre>
@@ -4861,10 +4920,13 @@ font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> l <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
@@ -4885,6 +4947,7 @@ font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
@@ -4895,10 +4958,13 @@ font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> i <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> l]</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>[2, 2, 4]</code></pre>
@@ -4908,9 +4974,11 @@ font-style: inherit;">in</span> l]</span></code></pre></div>
 <div id="4647a4b9" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> add_one(i): </span>
 <span id="cb29-2">  <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> i<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
@@ -4926,6 +4994,7 @@ font-style: inherit;">list</span>(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> i: i<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
@@ -4978,8 +5047,10 @@ font-style: inherit;">1</span>, p, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">100</span>)) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> probs ]</span>
 <span id="cb31-6">coin_flips</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
@@ -4998,8 +5069,10 @@ font-style: inherit;">1</span>, p, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">100</span>)) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> probs ]</span>
 <span id="cb33-2"><span class="bu" style="color: null;
 background-color: null;
@@ -5425,8 +5498,10 @@ font-style: inherit;">=</span> [ [q<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>i <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> q <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> [<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
@@ -5435,8 +5510,10 @@ font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>]] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> a]</span>
 <span id="cb41-3">pl.DataFrame({<span class="st" style="color: #20794D;
 background-color: null;
@@ -5514,16 +5591,20 @@ font-style: inherit;">'b'</span>)</span></code></pre></div>
 <div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">pl.DataFrame(</span>
 <span id="cb42-2">  [(x, y) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> y <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
@@ -5652,6 +5733,7 @@ background-color: null;
 font-style: inherit;"># to write a pickle</span></span>
 <span id="cb45-2"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(<span class="st" style="color: #20794D;

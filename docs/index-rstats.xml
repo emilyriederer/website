@@ -9,7 +9,7 @@
 <link>https://emilyriederer.com/#category=rstats</link>
 <atom:link href="https://emilyriederer.com/index-rstats.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.4.554</generator>
+<generator>quarto-1.8.26</generator>
 <lastBuildDate>Tue, 30 Dec 2025 06:00:00 GMT</lastBuildDate>
 <item>
   <title>R + Python: From polyglot to pluralism</title>
@@ -244,6 +244,7 @@ $ p     &lt;f64&gt; 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8
 <div id="7abec6c1" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> cap(c:pl.Expr, ceil:<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
@@ -254,6 +255,7 @@ font-style: inherit;">5</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-&gt;</span> pl.Expr: <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> pl.when( c <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;</span> ceil).then(ceil).otherwise( c )</span>
@@ -524,6 +526,7 @@ font-style: inherit;">'x'</span>).pipe(cap))</span></code></pre></div>
 <div id="d5932d4e" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, threshhold:<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
@@ -569,6 +572,7 @@ font-style: inherit;">&gt;</span> threshhold,</span>
 <span id="cb7-9">    )</span>
 <span id="cb7-10">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> df_out </span></code></pre></div>
 </div>
 <p>This too can be chained onto a DataFrame using the <code>pipe()</code>:</p>
@@ -785,6 +789,7 @@ font-style: inherit;">3</span>)</span></code></pre></div>
 <div id="83048164" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> calc_diffs(df:pl.DataFrame, var1:<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">str</span> <span class="op" style="color: #5E5E5E;
@@ -834,6 +839,7 @@ font-style: inherit;">&gt;</span> threshhold,</span>
 <span id="cb10-9">    )</span>
 <span id="cb10-10">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> df_out </span>
 <span id="cb10-11"></span>
 <span id="cb10-12">df.pipe(calc_diffs, var1 <span class="op" style="color: #5E5E5E;
@@ -973,6 +979,7 @@ font-style: inherit;">'p'</span>).map_batches(function <span class="op" style="c
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> p: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -1094,6 +1101,7 @@ font-style: inherit;">'p'</span>).map_batches(</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
@@ -1129,6 +1137,7 @@ font-style: inherit;">'p'</span>],</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> z[<span class="dv" style="color: #AD0000;
@@ -1256,6 +1265,7 @@ font-style: inherit;">'p'</span>).map_batches(</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> z: binomial(n <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> z.struct[<span class="st" style="color: #20794D;
@@ -1544,6 +1554,7 @@ font-style: inherit;">'mod_mix'</span>],</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: roc_auc_score(x[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>], x[<span class="dv" style="color: #AD0000;
@@ -1664,14 +1675,18 @@ font-style: inherit;">'mod_bst'</span>)</span>
 <div id="33f0e06e" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> auroc_expressions(models):</span>
 <span id="cb18-2">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> models:</span>
 <span id="cb18-3">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">yield</span> pds.query_roc_auc( <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'truth'</span>, m).alias(m)</span>
@@ -1832,6 +1847,7 @@ font-style: inherit;">'y'</span>],</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: sm.OLS( x[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>].to_numpy(), sm.add_constant( x[<span class="dv" style="color: #AD0000;
@@ -1854,6 +1870,7 @@ font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: x.params, return_dtype <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> pl.List(pl.Float64)),</span>
@@ -1863,6 +1880,7 @@ font-style: inherit;">=</span> pl.col(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'mod'</span>).map_elements(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> x: x.rsquared, return_dtype <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> pl.Float64)</span>
@@ -1934,8 +1952,10 @@ background-color: null;
 font-style: inherit;">True</span>)</span>
 <span id="cb22-2"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> k,v <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> dfs.items():</span>
 <span id="cb22-3">    <span class="bu" style="color: null;
 background-color: null;
@@ -2000,8 +2020,10 @@ font-style: inherit;">=</span> [ k[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> dfs.keys() ] <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># turn tuple to scalar bcs only one grouping var in key</span></span>
@@ -2015,8 +2037,10 @@ background-color: null;
 font-style: inherit;">'y'</span>].to_numpy() )</span>
 <span id="cb24-5">                ).fit() <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> k,d <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> dfs.items()]</span>
 <span id="cb24-6">coef <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -2024,8 +2048,10 @@ font-style: inherit;">=</span> [m.params[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> m <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> mods]</span>
 <span id="cb24-7"><span class="bu" style="color: null;
 background-color: null;
@@ -2199,6 +2225,7 @@ font-style: inherit;">as</span> pl</span>
 <span id="cb1-3"></span>
 <span id="cb1-4"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> duckdb.<span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">connect</span>(<span class="st" style="color: #20794D;
@@ -2366,8 +2393,10 @@ font-style: inherit;">')'</span>,<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">''</span>) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> c <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> X_tran.columns]</span>
 <span id="cb10-12"></span>
 <span id="cb10-13"><span class="co" style="color: #5E5E5E;
@@ -2427,8 +2456,10 @@ font-style: inherit;">=</span> {</span>
 background-color: null;
 font-style: inherit;">=</span> {e: type_map.get(t) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> e, t <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">zip</span>(X.columns, X.dtypes)}</span>
@@ -2436,8 +2467,10 @@ font-style: inherit;">zip</span>(X.columns, X.dtypes)}</span>
 background-color: null;
 font-style: inherit;">=</span> {e: type_map.get(t) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> e, t <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">zip</span>(X_tran.columns, X_tran.dtypes)}</span>
@@ -2529,6 +2562,7 @@ font-style: inherit;">import</span> parse_one, exp </span>
 <span id="cb11-3"></span>
 <span id="cb11-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> clean_sql(sql_raw: <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">str</span>, </span>
@@ -2646,14 +2680,17 @@ font-style: inherit;">=</span> parse_one(sql_raw)</span>
 <span id="cb11-38">    </span>
 <span id="cb11-39">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> e <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> ast.expressions:</span>
 <span id="cb11-40">        <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># rename prediction column</span></span>
 <span id="cb11-41">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> cols_renm.get(e.alias) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> <span class="st" style="color: #20794D;
@@ -2683,8 +2720,10 @@ background-color: null;
 font-style: inherit;">None</span>)</span>
 <span id="cb11-44">        <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> e.alias <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> cols_renm.keys():</span>
 <span id="cb11-45">            e.<span class="bu" style="color: null;
 background-color: null;
@@ -2712,10 +2751,13 @@ background-color: null;
 font-style: inherit;">=</span>exp.to_identifier(col_id))</span>
 <span id="cb11-51">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> ast.find(exp.CTE) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
@@ -2732,10 +2774,13 @@ background-color: null;
 font-style: inherit;"># add model version to outer query if desired</span></span>
 <span id="cb11-57">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> model_version <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">not</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
@@ -2807,6 +2852,7 @@ font-style: inherit;">'"TBL_REF"'</span>, ref_str) </span>
 <span id="cb11-73">  </span>
 <span id="cb11-74">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> sql_fnl</span></code></pre></div>
 </details>
 </div>
@@ -2839,6 +2885,7 @@ font-style: inherit;">as</span> pl</span>
 <span id="cb12-3"></span>
 <span id="cb12-4"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> duckdb.<span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">connect</span>(<span class="st" style="color: #20794D;
@@ -3885,8 +3932,10 @@ font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> l]</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>[2, 3, 4]</code></pre>
@@ -3899,10 +3948,13 @@ font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> l <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
@@ -3923,6 +3975,7 @@ font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> i <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
@@ -3933,10 +3986,13 @@ font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> i <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> l]</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>[2, 2, 4]</code></pre>
@@ -3946,9 +4002,11 @@ font-style: inherit;">in</span> l]</span></code></pre></div>
 <div id="4647a4b9" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">def</span> add_one(i): </span>
 <span id="cb29-2">  <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> i<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
@@ -3964,6 +4022,7 @@ font-style: inherit;">list</span>(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">map</span>(<span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> i: i<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
@@ -4016,8 +4075,10 @@ font-style: inherit;">1</span>, p, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">100</span>)) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> probs ]</span>
 <span id="cb31-6">coin_flips</span></code></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
@@ -4036,8 +4097,10 @@ font-style: inherit;">1</span>, p, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">100</span>)) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> p <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> probs ]</span>
 <span id="cb33-2"><span class="bu" style="color: null;
 background-color: null;
@@ -4463,8 +4526,10 @@ font-style: inherit;">=</span> [ [q<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>i <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> q <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> [<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
@@ -4473,8 +4538,10 @@ font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>]] <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> a]</span>
 <span id="cb41-3">pl.DataFrame({<span class="st" style="color: #20794D;
 background-color: null;
@@ -4552,16 +4619,20 @@ font-style: inherit;">'b'</span>)</span></code></pre></div>
 <div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1">pl.DataFrame(</span>
 <span id="cb42-2">  [(x, y) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> x <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">3</span>) <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> y <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
@@ -4690,6 +4761,7 @@ background-color: null;
 font-style: inherit;"># to write a pickle</span></span>
 <span id="cb45-2"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">with</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">open</span>(<span class="st" style="color: #20794D;
@@ -6227,6 +6299,7 @@ Note
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> </span>
 <span id="cb3-2">  store_id, </span>
 <span id="cb3-3">  <span class="fu" style="color: #4758AB;
@@ -6234,18 +6307,23 @@ background-color: null;
 font-style: inherit;">avg</span>(amt_spend)</span>
 <span id="cb3-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> spend</span>
 <span id="cb3-5"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span>
 <span id="cb3-6"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span></code></pre></div>
@@ -6279,6 +6357,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> </span>
 <span id="cb4-2">  store_id, </span>
 <span id="cb4-3">  <span class="co" style="color: #5E5E5E;
@@ -6288,6 +6367,7 @@ font-style: inherit;">-- wrong answers</span></span>
 background-color: null;
 font-style: inherit;">avg</span>(amt_spend) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> wrong1,  </span>
 <span id="cb4-5">  <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -6297,6 +6377,7 @@ font-style: inherit;">/</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">count</span>(amt_spend) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> wrong2,</span>
 <span id="cb4-6">  <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -6311,6 +6392,7 @@ font-style: inherit;">count</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> right1,</span>
 <span id="cb4-8">  <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -6320,21 +6402,27 @@ font-style: inherit;">coalesce</span>(amt_spend, <span class="dv" style="color: 
 background-color: null;
 font-style: inherit;">0</span>)) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> right2</span>
 <span id="cb4-9"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> spend</span>
 <span id="cb4-10"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span>
 <span id="cb4-11"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span></code></pre></div>
@@ -6378,6 +6466,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> </span>
 <span id="cb5-2">  spend.<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -6385,21 +6474,26 @@ font-style: inherit;">*</span>,</span>
 <span id="cb5-3">  returns.amt_return</span>
 <span id="cb5-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> </span>
 <span id="cb5-5">  spend</span>
 <span id="cb5-6">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">join</span></span>
 <span id="cb5-7">  returns </span>
 <span id="cb5-8">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">on</span></span>
 <span id="cb5-9">  spend.store_id <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> returns.store_id <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span></span>
 <span id="cb5-10">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6463,6 +6557,7 @@ font-style: inherit;">month</span></span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span></span>
 <span id="cb6-2">  spend.<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -6470,16 +6565,20 @@ font-style: inherit;">*</span>,</span>
 <span id="cb6-3">  returns.amt_return</span>
 <span id="cb6-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> </span>
 <span id="cb6-5">  spend</span>
 <span id="cb6-6">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">join</span></span>
 <span id="cb6-7">  returns </span>
 <span id="cb6-8">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">on</span></span>
 <span id="cb6-9">  <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -6493,6 +6592,7 @@ font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="
 background-color: null;
 font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span></span>
 <span id="cb6-10">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6572,6 +6672,7 @@ font-style: inherit;">month</span></span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span></span>
 <span id="cb7-2">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6582,19 +6683,24 @@ font-style: inherit;">sum</span>(amt_spend <span class="op" style="color: #5E5E5
 background-color: null;
 font-style: inherit;">-</span> amt_return) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> net_spend</span>
 <span id="cb7-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> </span>
 <span id="cb7-5">  spend</span>
 <span id="cb7-6">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">join</span></span>
 <span id="cb7-7">  returns </span>
 <span id="cb7-8">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">on</span></span>
 <span id="cb7-9">  <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -6608,6 +6714,7 @@ font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="
 background-color: null;
 font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span></span>
 <span id="cb7-10">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6618,15 +6725,19 @@ background-color: null;
 font-style: inherit;">month</span></span>
 <span id="cb7-11"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span>
 <span id="cb7-12"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span></code></pre></div>
@@ -6657,6 +6768,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span></span>
 <span id="cb8-2">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6668,19 +6780,24 @@ font-style: inherit;">month</span>, </span>
 background-color: null;
 font-style: inherit;">-</span> amt_return <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> net_spend</span>
 <span id="cb8-7"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> </span>
 <span id="cb8-8">  spend</span>
 <span id="cb8-9">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">join</span></span>
 <span id="cb8-10">  returns </span>
 <span id="cb8-11">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">on</span></span>
 <span id="cb8-12">  <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -6694,6 +6811,7 @@ font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="
 background-color: null;
 font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span></span>
 <span id="cb8-13">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6783,6 +6901,7 @@ font-style: inherit;">month</span></span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span></span>
 <span id="cb9-2">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6801,6 +6920,7 @@ font-style: inherit;">coalesce</span>(amt_return,<span class="dv" style="color: 
 background-color: null;
 font-style: inherit;">0</span>)) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> right1,</span>
 <span id="cb9-4">  <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -6810,19 +6930,24 @@ font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">sum</span>(amt_return) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> right2</span>
 <span id="cb9-5"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> </span>
 <span id="cb9-6">  spend</span>
 <span id="cb9-7">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">join</span></span>
 <span id="cb9-8">  returns </span>
 <span id="cb9-9">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">on</span></span>
 <span id="cb9-10">  <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -6836,6 +6961,7 @@ font-style: inherit;">coalesce</span>(returns.store_id, <span class="dv" style="
 background-color: null;
 font-style: inherit;">999</span>) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span></span>
 <span id="cb9-11">  spend.<span class="dt" style="color: #AD0000;
 background-color: null;
@@ -6846,15 +6972,19 @@ background-color: null;
 font-style: inherit;">month</span></span>
 <span id="cb9-12"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span>
 <span id="cb9-13"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span></code></pre></div>
@@ -6905,29 +7035,36 @@ font-style: inherit;">1</span></span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> </span>
 <span id="cb10-2">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">sum</span>(x) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> sum_x, </span>
 <span id="cb10-3">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">sum</span>(<span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span>(x <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">null</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>)) <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> n_null_x</span>
 <span id="cb10-4"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> tbl</span></code></pre></div>
 <table class="table table-sm table-striped small">
 <thead>
@@ -7056,15 +7193,18 @@ sum  3.0</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>, x<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span>y <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">as</span> z</span>
 <span id="cb15-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> tbl</span></code></pre></div>
 <table class="table table-sm table-striped small">
 <thead>
@@ -7202,6 +7342,7 @@ font-style: inherit;">-</span> np.array(y)</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">lambda</span> d: d.x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span> d.y)</span></code></pre></div>
@@ -7222,10 +7363,12 @@ font-style: inherit;">-</span> d.y)</span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> tbl1</span></code></pre></div>
 <table class="table table-sm table-striped small">
 <thead>
@@ -7247,10 +7390,12 @@ font-style: inherit;">from</span> tbl1</span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> tbl2</span></code></pre></div>
 <table class="table table-sm table-striped small">
 <thead>
@@ -7273,24 +7418,30 @@ font-style: inherit;">from</span> tbl2</span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> tbl1.<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>, tbl2.Y </span>
 <span id="cb21-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> </span>
 <span id="cb21-3">  tbl1 <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">join</span> tbl2 </span>
 <span id="cb21-4">  <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">on</span> </span>
 <span id="cb21-5">  tbl1.A <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> tbl2.A <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">and</span> </span>
 <span id="cb21-6">  tbl1.B <span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -7492,12 +7643,15 @@ font-style: inherit;">==</span> np.nan</span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">select</span> A, B, X </span>
 <span id="cb29-2"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">from</span> tbl1 </span>
 <span id="cb29-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">where</span> B <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
@@ -7979,6 +8133,7 @@ txtSQL = "SELECT * FROM Users WHERE UserId = " + txtUserId;</code></pre>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">prod =</span> golem<span class="sc" style="color: #5E5E5E;
@@ -7989,6 +8144,7 @@ font-style: inherit;">app_prod</span>()) {</span>
 <span id="cb12-2">  </span>
 <span id="cb12-3">  <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> (prod) {</span>
 <span id="cb12-4">    </span>
 <span id="cb12-5">    con <span class="ot" style="color: #003B4F;
@@ -8032,6 +8188,7 @@ font-style: inherit;">25060</span>)</span>
 <span id="cb12-11">    </span>
 <span id="cb12-12">  } <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">else</span> {</span>
 <span id="cb12-13">    </span>
 <span id="cb12-14">    <span class="fu" style="color: #4758AB;
@@ -8916,6 +9073,7 @@ font-style: inherit;">dbGetQuery</span>(con, query)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(path) {<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">paste</span>(<span class="fu" style="color: #4758AB;
@@ -9191,6 +9349,7 @@ from
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(stub, ...) {</span>
 <span id="cb19-2">  </span>
 <span id="cb19-3">  path <span class="ot" style="color: #003B4F;
@@ -9273,12 +9432,15 @@ font-style: inherit;">"query-data.sql"</span>)</span></code></pre></div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">INSERT</span> <span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">INTO</span> test_tbl</span>
 <span id="cb22-2">  ( x, y, z )</span>
 <span id="cb22-3"><span class="kw" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">VALUES</span></span>
 <span id="cb22-4">  (<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -9442,6 +9604,7 @@ font-style: inherit;">"test_tbl"</span>, test_df)</span></code></pre></div>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(username, password) {</span>
 <span id="cb1-2"></span>
 <span id="cb1-3">conn <span class="ot" style="color: #003B4F;
@@ -9497,6 +9660,7 @@ font-style: inherit;">return</span>(conn)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>() {</span>
 <span id="cb2-2"></span>
 <span id="cb2-3">conn <span class="ot" style="color: #003B4F;
@@ -9564,10 +9728,12 @@ font-style: inherit;">return</span>(conn)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>() {</span>
 <span id="cb3-2"></span>
 <span id="cb3-3"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> (<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">any</span>(<span class="fu" style="color: #4758AB;
@@ -9656,10 +9822,12 @@ font-style: inherit;">return</span>(conn)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>() {</span>
 <span id="cb4-2"></span>
 <span id="cb4-3"><span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> (<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">any</span>(<span class="fu" style="color: #4758AB;
@@ -9777,6 +9945,7 @@ font-style: inherit;">return</span>(conn)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(data, time, metric, group) {</span>
 <span id="cb5-2"></span>
 <span id="cb5-3">  gg <span class="ot" style="color: #003B4F;
@@ -9824,6 +9993,7 @@ font-style: inherit;">return</span>(gg)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(data, metric, group) {</span>
 <span id="cb6-2"></span>
 <span id="cb6-3">  gg <span class="ot" style="color: #003B4F;
@@ -9870,6 +10040,7 @@ font-style: inherit;">return</span>(gg)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(data, </span>
 <span id="cb7-2">                       <span class="at" style="color: #657422;
 background-color: null;
@@ -9935,6 +10106,7 @@ font-style: inherit;">return</span>(gg)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(vbl_names) {</span>
 <span id="cb8-2">  </span>
 <span id="cb8-3">  <span class="co" style="color: #5E5E5E;
@@ -9962,6 +10134,7 @@ background-color: null;
 font-style: inherit;"># report missing / required names ----</span></span>
 <span id="cb8-8">  <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">if</span> (<span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">length</span>(not_present) <span class="sc" style="color: #5E5E5E;
@@ -10004,6 +10177,7 @@ font-style: inherit;">FALSE</span>)</span>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(data, </span>
 <span id="cb9-2">                       <span class="at" style="color: #657422;
 background-color: null;
@@ -10218,6 +10392,7 @@ font-style: inherit;">vars</span>(COHORT_QUARTER))</span></code></pre></div>
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">function</span>(<span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">proj_type =</span> <span class="fu" style="color: #4758AB;

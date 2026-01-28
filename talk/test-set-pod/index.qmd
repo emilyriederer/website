@@ -1,0 +1,17 @@
+---
+title: The Test Set Pod - Column selectors, data quality, and learning in public (Season 1, Episode 14)
+description: A Posit podcast hosted by Michael Chow, Hadley Wickham, and Wes McKiney. We discuss a wide range of topics spanning polyglot workflows, syntactic sugar and the origins of column selectors, and much more. 
+location: The Test Set Podcast
+image: featured.png
+categories: [python, rstats, sql, data]
+date: 2026-01-26
+---
+
+## Quick Links
+
+- [Test Set Episode Website](https://posit.co/thetestset/episode/emily-riederer-column-selectors-data-quality-and-learning-in-public/)  
+- [Apple Podcasts](https://podcasts.apple.com/us/podcast/emily-riederer-column-selectors-data-quality-and/id1823736938?i=1000746761256) | [Spotify](https://open.spotify.com/episode/0JslJ1bpUKNd6L469ObZBl) | [YouTube](https://www.youtube.com/watch?v=Yjmu18r_j64)
+
+## Episode Notes
+
+Emily’s had a wild ride through modeling, data engineering, machine learning, and back again, and she knows a thing or three about the evolution of SQL tooling (from nightmare multi-page scripts to the dbt renaissance). She reveals how building internal packages became her gateway to making work enjoyable. Plus: the surprising Stata origins of column selectors, the eternal struggle of naming packages across R and Python, and why watching people code teaches you more than any tutorial ever could. The conversation gets real about imposter syndrome and the magic of tacit knowledge. 

@@ -166,7 +166,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/index.html</loc>
-    <lastmod>2025-07-21T00:25:12.077Z</lastmod>
+    <lastmod>2026-01-28T02:53:24.769Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/abstraction-extraction/index.html</loc>
@@ -230,7 +230,7 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/post/quarto-comms/index.html</loc>
-    <lastmod>2025-07-28T10:06:31.435Z</lastmod>
+    <lastmod>2026-01-28T02:53:24.860Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/recap-causal-2023/index.html</loc>
@@ -334,11 +334,11 @@
   </url>
   <url>
     <loc>https://emilyriederer.com/docs/post/orbital-xgb/orbital-xgb.out.html</loc>
-    <lastmod>2025-07-31T01:13:12.642Z</lastmod>
+    <lastmod>2026-01-28T03:49:38.420Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/docs/post/quarto-comms/raw-analysis.out.html</loc>
-    <lastmod>2025-07-28T11:33:34.625Z</lastmod>
+    <lastmod>2026-01-28T03:49:38.421Z</lastmod>
   </url>
   <url>
     <loc>https://emilyriederer.com/post/orbital-mlops/index.html</loc>
@@ -359,5 +359,9 @@
   <url>
     <loc>https://emilyriederer.com/post/py-rgo-crosspol/index.html</loc>
     <lastmod>2025-12-31T14:02:42.451Z</lastmod>
+  </url>
+  <url>
+    <loc>https://emilyriederer.com/talk/test-set-pod/index.html</loc>
+    <lastmod>2026-01-28T03:47:54.065Z</lastmod>
   </url>
 </urlset>

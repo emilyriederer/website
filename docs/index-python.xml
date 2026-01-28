@@ -10,7 +10,40 @@
 <atom:link href="https://emilyriederer.com/index-python.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Tue, 30 Dec 2025 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 26 Jan 2026 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>The Test Set Pod - Column selectors, data quality, and learning in public (Season 1, Episode 14)</title>
+  <link>https://emilyriederer.com/talk/test-set-pod/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="quick-links" class="level2">
+<h2 class="anchored" data-anchor-id="quick-links">Quick Links</h2>
+<ul>
+<li><a href="https://posit.co/thetestset/episode/emily-riederer-column-selectors-data-quality-and-learning-in-public/">Test Set Episode Website</a><br>
+</li>
+<li><a href="https://podcasts.apple.com/us/podcast/emily-riederer-column-selectors-data-quality-and/id1823736938?i=1000746761256">Apple Podcasts</a> | <a href="https://open.spotify.com/episode/0JslJ1bpUKNd6L469ObZBl">Spotify</a> | <a href="https://www.youtube.com/watch?v=Yjmu18r_j64">YouTube</a></li>
+</ul>
+</section>
+<section id="episode-notes" class="level2">
+<h2 class="anchored" data-anchor-id="episode-notes">Episode Notes</h2>
+<p>Emily’s had a wild ride through modeling, data engineering, machine learning, and back again, and she knows a thing or three about the evolution of SQL tooling (from nightmare multi-page scripts to the dbt renaissance). She reveals how building internal packages became her gateway to making work enjoyable. Plus: the surprising Stata origins of column selectors, the eternal struggle of naming packages across R and Python, and why watching people code teaches you more than any tutorial ever could. The conversation gets real about imposter syndrome and the magic of tacit knowledge.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>python</category>
+  <category>rstats</category>
+  <category>sql</category>
+  <category>data</category>
+  <guid>https://emilyriederer.com/talk/test-set-pod/</guid>
+  <pubDate>Mon, 26 Jan 2026 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/test-set-pod/featured.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>R + Python: From polyglot to pluralism</title>
   <dc:creator>Emily Riederer</dc:creator>

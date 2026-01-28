@@ -10,7 +10,40 @@
 <atom:link href="https://emilyriederer.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Tue, 30 Dec 2025 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 26 Jan 2026 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>The Test Set Pod - Column selectors, data quality, and learning in public (Season 1, Episode 14)</title>
+  <link>https://emilyriederer.com/talk/test-set-pod/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="quick-links" class="level2">
+<h2 class="anchored" data-anchor-id="quick-links">Quick Links</h2>
+<ul>
+<li><a href="https://posit.co/thetestset/episode/emily-riederer-column-selectors-data-quality-and-learning-in-public/">Test Set Episode Website</a><br>
+</li>
+<li><a href="https://podcasts.apple.com/us/podcast/emily-riederer-column-selectors-data-quality-and/id1823736938?i=1000746761256">Apple Podcasts</a> | <a href="https://open.spotify.com/episode/0JslJ1bpUKNd6L469ObZBl">Spotify</a> | <a href="https://www.youtube.com/watch?v=Yjmu18r_j64">YouTube</a></li>
+</ul>
+</section>
+<section id="episode-notes" class="level2">
+<h2 class="anchored" data-anchor-id="episode-notes">Episode Notes</h2>
+<p>Emily’s had a wild ride through modeling, data engineering, machine learning, and back again, and she knows a thing or three about the evolution of SQL tooling (from nightmare multi-page scripts to the dbt renaissance). She reveals how building internal packages became her gateway to making work enjoyable. Plus: the surprising Stata origins of column selectors, the eternal struggle of naming packages across R and Python, and why watching people code teaches you more than any tutorial ever could. The conversation gets real about imposter syndrome and the magic of tacit knowledge.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>python</category>
+  <category>rstats</category>
+  <category>sql</category>
+  <category>data</category>
+  <guid>https://emilyriederer.com/talk/test-set-pod/</guid>
+  <pubDate>Mon, 26 Jan 2026 06:00:00 GMT</pubDate>
+  <media:content url="https://emilyriederer.com/talk/test-set-pod/featured.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>R + Python: From polyglot to pluralism</title>
   <dc:creator>Emily Riederer</dc:creator>
@@ -7229,44 +7262,6 @@ Note
   <guid>https://emilyriederer.com/talk/dbtplyr/</guid>
   <pubDate>Thu, 21 Sep 2023 05:00:00 GMT</pubDate>
   <media:content url="https://emilyriederer.com/talk/dbtplyr/featured.png" medium="image" type="image/png" height="82" width="144"/>
-</item>
-<item>
-  <title>Scaling Personalized Volunteer Emails</title>
-  <link>https://emilyriederer.com/talk/midterm-email/</link>
-  <description><![CDATA[ 
-
-
-
-
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
-<p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
-<span><i class="bi bi-play"></i> <a href="https://youtu.be/5UGUcgxTWTM">Video</a> </span></p>
-</div>
-<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<p>In this four-minute lightning talk, I explain how Two Million Texans used components of our existing data stack to provide personalized success metrics and action recommendations to over 5,000 volunteers in the lead up to the 2022 midterm elections. I briefly describe our pipeline and how we frontloaded key computational steps in BigQuery to circumvent limitations of downstream tools.</p>
-</div>
-<div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
-<div id="slides" style="width:100%; aspect-ratio:16/11;">
-<embed src="slides.pdf#zoom=Fit" width="100%" height="100%">
-</div>
-</div>
-<div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
-<div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/5UGUcgxTWTM" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-</div>
-</div>
-</div>
-
-
-
- ]]></description>
-  <category>data</category>
-  <category>elt</category>
-  <guid>https://emilyriederer.com/talk/midterm-email/</guid>
-  <pubDate>Wed, 21 Jun 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://emilyriederer.com/talk/midterm-email/featured.png" medium="image" type="image/png" height="80" width="144"/>
 </item>
 </channel>
 </rss>

@@ -2,6 +2,7 @@
   {
     "listing": "/talk/index.html",
     "items": [
+      "/talk/test-set-pod/index.html",
       "/talk/casual-pod/index.html",
       "/talk/epi-pipes/index.html",
       "/talk/python-rgonomics/index.html",
@@ -89,6 +90,7 @@
       "/talk/causal-design-patterns/index.html",
       "/talk/organization/index.html",
       "/talk/rmarkdown-driven-development/index.html",
+      "/talk/test-set-pod/index.html",
       "/talk/casual-pod/index.html",
       "/talk/epi-pipes/index.html",
       "/talk/python-rgonomics/index.html",

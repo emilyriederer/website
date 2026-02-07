@@ -3169,6 +3169,7 @@ $ n_records   &lt;i64&gt; 48
 
 
 
+
 <p>Data science stakeholder communication is hard. The typical explanation of this is to parody data scientists as “too technical” to communicate with their audiences. But I’ve always found it unsatisfying to believe that “being technical” makes it too challenging to connect with the 0.1% of the population so similar to ourselves that we all happen to work in the same organization.</p>
 <p>Instead, I believe communication is rarely taught intentionally and, worse, is modeled poorly by educational communication which has different goals. This leads to an “explain all the things” mindset that is enabled by literate programming tools like notebooks. It’s said that “writing is thinking”, and literate programming excels at capturing our stream of conscience. However, our stream of conscience does not excel at succinct retrospective explanations of our work’s impact.</p>
 <p>Data scientist do not have a communication problem. They have a problem in ordering their story for impact and engagement, driven by their background, context, and tools.</p>
@@ -3294,9 +3295,14 @@ Tip
 <pre><code>{{&lt; embed raw-analysis.ipynb#tbl-pit-eo &gt;}}</code></pre>
 <p>That produces this:</p>
 <div class="quarto-embed-nb-cell">
-<div id="tbl-pit-eo" class="cell anchored" data-execution_count="10">
+<div class="cell" data-execution_count="10">
+<div id="tbl-pit-eo" class="cell quarto-float quarto-figure quarto-figure-center anchored" data-execution_count="10">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl quarto-uncaptioned" id="tbl-pit-eo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1
+</figcaption>
+<div aria-describedby="tbl-pit-eo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display">
-<div>
 
 
 
@@ -3352,19 +3358,19 @@ Tip
  
 </style>
 
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table do-not-create-environment caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <thead>
-<tr class="header gt_heading">
-<th colspan="3" class="gt_heading gt_title gt_font_normal">Executive Orders Issued by Term</th>
+<tr class="gt_heading header">
+<td colspan="3" class="gt_heading gt_title gt_font_normal">Executive Orders Issued by Term</td>
 </tr>
-<tr class="odd gt_heading">
-<th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Normalized for first 184 days in office (12.6% of term)</th>
+<tr class="gt_heading even">
+<td colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Normalized for first 184 days in office (12.6% of term)</td>
 </tr>
-<tr class="header gt_col_headings gt_spanner_row">
+<tr class="gt_col_headings gt_spanner_row header">
 <th rowspan="2" id="term_label" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Term</th>
 <th colspan="2" id="Count" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><span class="gt_column_spanner">Count</span></th>
 </tr>
-<tr class="odd gt_col_headings">
+<tr class="gt_col_headings even">
 <th id="n_ttl_pit" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Point in time</th>
 <th id="n_ttl" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Full term</th>
 </tr>
@@ -3408,8 +3414,9 @@ Tip
         
 
 
-            
 </div>
+</div>
+</figure>
 </div>
 </div>
 <a class="quarto-notebook-link" id="nblink-1" href="raw-analysis-preview.html#cell-tbl-pit-eo">Source: Demo Notebook</a></div>
@@ -3419,7 +3426,7 @@ Tip
 <div class="quarto-embed-nb-cell">
 <div id="cell-fig-cum-eo" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
-<div id="fig-cum-eo" class="quarto-figure quarto-figure-center quarto-float anchored">
+<div id="fig-cum-eo" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cum-eo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="https://emilyriederer.com/post/quarto-comms/index_files/figure-html/raw-analysis-fig-cum-eo-output-1.png" id="fig-cum-eo" class="img-fluid figure-img">
@@ -3431,11 +3438,11 @@ Figure&nbsp;1
 </div>
 </div>
 </div>
-<a class="quarto-notebook-link" id="nblink-2" href="raw-analysis-preview.html#cell-fig-cum-eo">Source: Demo Notebook</a></div>
+</div>
 <p>If I had done a particularly good job of summarizing my thoughts immediately after seeing this plot, I might have already written them in a markdown cell over there. Embeds technically also work to embed markdown cells, so the following line you see is embedded from my other notebook also:</p>
 <div class="quarto-embed-nb-cell">
 <p>I have some thoughts…</p>
-<a class="quarto-notebook-link" id="nblink-3" href="raw-analysis-preview.html#cell-txt-md">Source: Demo Notebook</a></div>
+</div>
 <p>However, I don’t advocate for embedding text. I think using a final <code>qmd</code> file as a single, self-contained spot to document your analysis has a lot of benefits.</p>
 <p>And then I could go on to add my relevant thoughts and analysis of specific to that plot. But, in this case, another part of professional communication is staying on topic.</p>
 

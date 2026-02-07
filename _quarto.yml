@@ -48,7 +48,7 @@ website:
         href: index.xml
   page-footer:
     left: |
-      <span class="faux-block">{{< fa brands creative-commons >}} 2016-2023 Emily Riederer</span><br/>
+      <span class="faux-block">{{< fa brands creative-commons >}} 2016-2026 Emily Riederer</span><br/>
       <span class="faux-block">Licensed under [{{< fa brands creative-commons >}} {{< fa brands creative-commons-by >}} Creative Commons CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)</span>      
     center: |
     right: |

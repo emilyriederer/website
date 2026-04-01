@@ -9,7 +9,7 @@ image: "featured.jpg"
 
 ![ Photo credit to the inimitable [Allison Horst](https://allisonhorst.com/)](featured.jpg)
 
-About a year ago, I wrote the [original version of Python Rgonomics](post/py-rgo) to help fellow former R users who were entering into the world of python. The general point of the article was that new python tooling (e.g. `polars` versus `pandas`) has evolved to a point where there are tools that remain truly performant and pythonic while still having a more similar user experience for those coming from the R world. I also discussed this at [posit::conf(2025)](talk/python-rgnomics). 
+About a year ago, I wrote the [original version of Python Rgonomics](/post/py-rgo) to help fellow former R users who were entering into the world of python. The general point of the article was that new python tooling (e.g. `polars` versus `pandas`) has evolved to a point where there are tools that remain truly performant and pythonic while still having a more similar user experience for those coming from the R world. I also discussed this at [posit::conf(2025)](talk/python-rgnomics). 
 
 Ironically, the thesis held so true that it condemned my first 2024 post on the topic. 2024 saw the release of a few game-changing tools that further streamline and simplify the python workflow. This post provides an updated set of recommendations. Specifically, it highlights:
 
@@ -98,7 +98,7 @@ The first hurdle is often getting started -- both in terms of installing the too
 
 As data practitioners know, we'll spend most of our time on cleaning and wrangling. As such, R users may struggle particularly to abandon their favorite tools for exploratory data analysis like `dplyr` and `ggplot2`. Fans of those packages often appreciate how their functional paradigm helps achieve a "flow state". Precise syntax may differ, but new developments in the python wrangling stack provide increasingly close analogs to some of these beloved Rgonomics. 
 
-- **Data Wrangling**: ([See my separate post on `polars`](post/py-rgo-polars))Although `pandas` is undoubtedly the best-known wrangling tool in the python space, I believe the growing [`polars`](https://pola.rs/) project offers the best experience for a transitioning developer (along with other nice-to-have benefits like being dependency free and blazingly fast). `polars` may feel more natural and less error-prone to R users for may reasons:
+- **Data Wrangling**: ([See my separate post on `polars`](/post/py-rgo-polars))Although `pandas` is undoubtedly the best-known wrangling tool in the python space, I believe the growing [`polars`](https://pola.rs/) project offers the best experience for a transitioning developer (along with other nice-to-have benefits like being dependency free and blazingly fast). `polars` may feel more natural and less error-prone to R users for may reasons:
   + it has more internal consistent (and similar to `dplyr`) syntax such as `select`, `filter`, etc. and has demonstrated that the project values a clean API (e.g. recently renaming `groupby` to `group_by`)
   + it does not rely on the distinction between columns and indexes which can feel unintuitive and introduces a new set of concepts to learn
   + it consistently returns copies of dataframes (while `pandas` sometimes alters in-place) so code is more idempotent and avoids a whole class of failure modes for new users

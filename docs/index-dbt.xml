@@ -21,6 +21,7 @@
 
 
 
+
 <p>So, you build a great predictive model. <em>Now what</em>?</p>
 <p><a href="https://mlops.community/">MLOps</a> is hard. Deploying a model involves different tools, skills, and risks than model development. This dooms some data science projects to die on their creator’s hard drive.</p>
 <p>Tools like <code>dbt</code> and <code>SQLMesh</code> entered the scene to solve a similar problem for data analysts. These tools offer an opinionatee frameowrk for organizing multiple related SQL scripts into fully tested, orchestrated, and version conotrolled projects. Data analysts can deliver end-to-end pipelines by applying their existing business context, SQL experience, and database modeling<sup>1</sup> acumen into existing infrastructure, resulting in the rise of “analytics engineering”.</p>
@@ -41,7 +42,7 @@
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-R and python compatibility
+<span class="screen-reader-only">Note</span>R and python compatibility
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -141,7 +142,7 @@ R and python compatibility
 <p>The sample IBM data is provided as “one big table”, so I <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/setup/prep-seeds.py">break things up</a> to look a bit more like normalized database data representing subscription information, billing information, demographics, and churn targets. I also add a few columns to simulate different months, censor data I want to pretend is in the future, and add a few data errors for fun.</p>
 <p>Here’s a preview of the resulting tables, connected by a <code>customer_id</code> primary key:</p>
 <div id="fd49b6b8" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
 <span id="cb1-2"><span class="im" style="color: #00769E;
@@ -180,14 +181,14 @@ font-style: inherit;">'demo'</span>).pl()</span>
 background-color: null;
 font-style: inherit;">=</span> con.table(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'chrn'</span>).pl()</span></code></pre></div>
+font-style: inherit;">'chrn'</span>).pl()</span></code></pre></div></div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Services Enrolled</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Billing Information</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Demographics</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Churn</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">Services Enrolled</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Billing Information</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Demographics</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false" href="">Churn</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <div id="3392b80b" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">df_serv.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">df_serv.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 12
@@ -209,7 +210,7 @@ $ dt_renewal        &lt;date&gt; 2025-07-01, 2025-07-01, 2025-07-01, 2025-07-01,
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <div id="bef8abfd" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">df_bill.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">df_bill.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 6
@@ -225,7 +226,7 @@ $ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1
 </div>
 <div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
 <div id="76140c3e" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">df_demo.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">df_demo.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 5
@@ -240,7 +241,7 @@ $ dependents     &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'No', 'Yes', 'No', 'N
 </div>
 <div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
 <div id="70ba30c9" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df_chrn.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df_chrn.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 2
@@ -260,7 +261,7 @@ $ churn       &lt;str&gt; 'No', 'No', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Ye
 <div id="321ca8cb" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Pipeline to orbital</summary>
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># build pipeline(s)</span></span>
 <span id="cb10-2"></span>
@@ -432,7 +433,7 @@ font-style: inherit;">=</span> orbital.export_sql(tbl, orb_ppl_pred, dialect<spa
 background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"duckdb"</span>)</span></code></pre></div>
+font-style: inherit;">"duckdb"</span>)</span></code></pre></div></div>
 </details>
 </div>
 <section id="features" class="level4">
@@ -478,7 +479,7 @@ font-style: inherit;">"duckdb"</span>)</span></code></pre></div>
 <div id="f3f49349" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Cleaning function definition</summary>
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> sqlglot</span>
 <span id="cb11-2"><span class="im" style="color: #00769E;
@@ -780,7 +781,7 @@ font-style: inherit;">'"TBL_REF"'</span>, ref_str) </span>
 <span id="cb11-74">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> sql_fnl</span></code></pre></div>
+font-style: inherit;">return</span> sql_fnl</span></code></pre></div></div>
 </details>
 </div>
 <p>I run the SQL generated from both <code>ppl_feat</code> and <code>ppl_rafo</code> through this function before writing them to <code>models/churn_model/prep_feat.sql</code> and <code>models/churn_model/pred_churn.sql</code> in my <a href="https://github.com/emilyriederer/orbital-exploration/tree/main/dbt_orb_demo/models/churn_model"><code>dbt</code> <code>models/</code> directory</a>.</p>
@@ -801,7 +802,7 @@ font-style: inherit;">return</span> sql_fnl</span></code></pre></div>
 <h3 class="anchored" data-anchor-id="datamart-preview">Datamart Preview</h3>
 <p>Below, we can tour the resulting datasets:</p>
 <div id="b2ea61bd" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
 <span id="cb12-2"><span class="im" style="color: #00769E;
@@ -845,14 +846,14 @@ font-style: inherit;">'main_snapshots.pred_churn_snapshot'</span>).pl()</span>
 background-color: null;
 font-style: inherit;">=</span> con.table(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'main_audit.accepted_values_serv_internet_service__DSL__Fiber_optic__No'</span>).pl()</span></code></pre></div>
+font-style: inherit;">'main_audit.accepted_values_serv_internet_service__DSL__Fiber_optic__No'</span>).pl()</span></code></pre></div></div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" aria-controls="tabset-2-1" aria-selected="true">Raw Training Data</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" aria-controls="tabset-2-2" aria-selected="false">Prepared Features</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" aria-controls="tabset-2-3" aria-selected="false">Predictions</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" aria-controls="tabset-2-4" aria-selected="false">Snapshots</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" aria-controls="tabset-2-5" aria-selected="false">Failures</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" aria-controls="tabset-2-1" aria-selected="true" href="">Raw Training Data</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" aria-controls="tabset-2-2" aria-selected="false" href="">Prepared Features</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" aria-controls="tabset-2-3" aria-selected="false" href="">Predictions</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" aria-controls="tabset-2-4" aria-selected="false" href="">Snapshots</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" aria-controls="tabset-2-5" aria-selected="false" href="">Failures</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" aria-labelledby="tabset-2-1-tab">
 <div id="ccd80876" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df_feat.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df_feat.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 21
@@ -883,7 +884,7 @@ $ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1
 </div>
 <div id="tabset-2-2" class="tab-pane" aria-labelledby="tabset-2-2-tab">
 <div id="ca44dedc" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df_prep.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df_prep.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 47
@@ -940,7 +941,7 @@ $ model_version                              &lt;str&gt; '1.0', '1.0', '1.0', '1
 </div>
 <div id="tabset-2-3" class="tab-pane" aria-labelledby="tabset-2-3-tab">
 <div id="20932f04" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df_pred.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df_pred.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 3
@@ -954,7 +955,7 @@ $ model_version &lt;str&gt; '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.
 <div id="tabset-2-4" class="tab-pane" aria-labelledby="tabset-2-4-tab">
 <p>Score versioned and timestamped predictions from snapshots for auditability.</p>
 <div id="69ab0cd9" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">df_snap.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">df_snap.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 7
@@ -972,7 +973,7 @@ $ dbt_valid_to   &lt;datetime[μs]&gt; 9999-12-31 00:00:00, 9999-12-31 00:00:00,
 <div id="tabset-2-5" class="tab-pane" aria-labelledby="tabset-2-5-tab">
 <p>What happens when the <code>internet_service</code> field is recoded in production data from “Fiber optic” to “Fiber” after training? If we are checking for <code>accepted_values</code>, we capture that change in our failures table before scoring on bad data!</p>
 <div id="a775d800" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">df_fail.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">df_fail.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 1
 Columns: 2
@@ -1063,6 +1064,7 @@ $ n_records   &lt;i64&gt; 48
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/grouping-data-quality-crosspost/featured.jpg" class="img-fluid figure-img"></p>
@@ -1087,6 +1089,7 @@ $ n_records   &lt;i64&gt; 48
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/grouping-data-quality-update/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1157,6 +1160,7 @@ $ n_records   &lt;i64&gt; 48
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/convo-dbt-update/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1259,10 +1263,11 @@ from {{ ref('mydata') }}</code></pre>
 
 
 
+
 <p><img src="https://emilyriederer.com/post/convo-dbt/featured.png" class="img-fluid" alt="Data model DAG autogenerated by dbt"> In my post <a href="../..\post/column-name-contracts/">Column Names as Contracts</a>, I explore how using controlled vocabularies to name fields in a data table can create performance contracts between data producers and data consumers<sup>1</sup>. In short, I argue that field names can encode metadata<sup>2</sup> and illustrate with R and python how these names can be used to improve data documentation, wrangling, and validation.</p>
 <p>However, demonstrations with R and python are biased towards the needs of data consumers. These popular data analysis tools provide handy, high-level interfaces for programmatically operating on columns. For example, <code>dplyr</code>’s <a href="https://tidyselect.r-lib.org/reference/select_helpers.html">select helpers</a> make it easy to quickly manipulate all columns whose names match given patterns. For example, suppose I know that all variables beginning with <code>IND_</code> are binary and non-null so I may sum them to get a count or average them to get a valid proportion. I can succinctly write:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">summarize_at</span>(my_data,</span>
 <span id="cb1-2">             <span class="at" style="color: #657422;
@@ -1278,11 +1283,11 @@ font-style: inherit;">"IND"</span>)),</span>
 background-color: null;
 font-style: inherit;">.funs =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">list</span>(sum, mean))</span></code></pre></div>
+font-style: inherit;">list</span>(sum, mean))</span></code></pre></div></div>
 </div>
 <p>In contrast, SQL remains a mainstay for data producers – both for use in traditional relational databases and SQL interfaces for modern large-scale data processing engines like Spark. As a <em>very</em> high-level and declarative language, SQL variants generally don’t offer a control flow (e.g.&nbsp;for loops, if statements) or programmatic control which would allow for column operations that are similar to the one shown above. That is, one might have to manually write:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> </span>
@@ -1297,7 +1302,7 @@ font-style: inherit;">sum</span>(ind_b)</span>
 <span id="cb2-6"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">from</span> my_data</span></code></pre></div>
+font-style: inherit;">from</span> my_data</span></code></pre></div></div>
 </div>
 <p>But that is tedious, static (would not automatically adapt to the addition of more indicator variables), and error-prone (easy to miss or mistype a variable).</p>
 <p>Although SQL itself is relatively inflexible, recent tools have added a layer of “programmability” on top of SQL which affords far more flexibility and customization. In this post, I’ll demonstrate how one such tool, <code>dbt</code>, can help data producers consistently apply controlled vocabularies when defining, manipulating, and testing tables for analytical users.</p>
@@ -1440,7 +1445,7 @@ font-style: inherit;">from</span> my_data</span></code></pre></div>
 </ul>
 <p>For a conceptual mental map, once all the wrangling and cleaning is done for each of the tables above, we might have psuedocode for the final table that looks something like this.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
@@ -1483,7 +1488,7 @@ font-style: inherit;">join</span></span>
 <span id="cb3-9">  fips <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">using</span> (cd_county)</span></code></pre></div>
+font-style: inherit;">using</span> (cd_county)</span></code></pre></div></div>
 </div>
 <p>But as we’re about to see, <code>dbt</code> allows us to get a bit more complex and elegant.</p>
 </section>
@@ -1494,7 +1499,7 @@ font-style: inherit;">using</span> (cd_county)</span></code></pre></div>
 <p>Templates, and specifically loops, help write more concise and proof-readable SQL code when deriving a large number of variables with similar logic. For example, below we collapse the raw prediction data (which is represented as one record for <code>each county</code> x <code>each day being prediction</code> x <code>each day a prediction was made</code>) to one record for each county and each day being predicted with different columns containing the numeric value of each prediction of cases, hospitalizations, and deaths at <code>lags</code> (defined in the <code>dbt_project.yml</code> configuration file) of 7, 14, 21, and 28 days prior to the date being predicted.</p>
 <p>Ordinarily, deriving these 12 variables (3 measures x 4 lags) would pose significant room for typos in either the code or the variable names, but in this script, the Jinja template of <code>n_case_pred_{{l}}</code> ensures consistency.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1">{{</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1">{{</span>
 <span id="cb4-2">    config(</span>
 <span id="cb4-3">        <span class="kw" style="color: #003B4F;
 background-color: null;
@@ -1717,11 +1722,11 @@ font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span></span></code></pre></div>
+font-style: inherit;">3</span></span></code></pre></div></div>
 </div>
 <p>This script renders to the following:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span></span>
@@ -2136,11 +2141,11 @@ font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span></span></code></pre></div>
+font-style: inherit;">3</span></span></code></pre></div></div>
 </div>
 <p>This script and the other three that derive our base tables (<code>actual</code>, <code>prediction</code>, <code>fips</code>, and <code>hpsa</code>) can be found in <a href="https://github.com/emilyriederer/dbt-convo-covid/tree/main/models">the <code>models</code> directory</a> of the repo. After they are individually created, they are combined into the <code>model_monitor_staging</code> table in the relatively uninteresting <a href="https://github.com/emilyriederer/dbt-convo-covid/blob/main/models/model_monitor_staging.sql">script</a>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1">{{</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1">{{</span>
 <span id="cb6-2">    config(</span>
 <span id="cb6-3">        <span class="kw" style="color: #003B4F;
 background-color: null;
@@ -2281,7 +2286,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">from</span> {{this}}</span>
 <span id="cb6-27">  )</span>
-<span id="cb6-28">{% endif %}</span></code></pre></div>
+<span id="cb6-28">{% endif %}</span></code></pre></div></div>
 </div>
 </section>
 <section id="variable-manipulation-with-regex-macros" class="level2">
@@ -2290,7 +2295,7 @@ font-style: inherit;">from</span> {{this}}</span>
 <p>This time, we again use Jinja templating along with another dbt feature: custom macros. The final script in our pipeline (<a href="https://github.com/emilyriederer/dbt-convo-covid/blob/main/models/model_monitor.sql"><code>model_monitor</code></a>) uses custom macros <code>get_column_names()</code> to determine all of the column names in the staging table and <code>get_matches()</code> to subset this list for variable names which match regular expressions corresponding to different prefixes.</p>
 <p>Then, we iterate over each of these lists to apply certain treatments to each set of columns such as casting <code>cols_n</code> and <code>cols_dt</code> variables to <code>int64</code> and <code>date</code> respectively, rounding <code>cols_prop</code> variables to three decimal places, and coalescing <code>cols_ind</code> variables to be 0 if null.<sup>9</sup></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1">{{</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1">{{</span>
 <span id="cb7-2">    config(</span>
 <span id="cb7-3">        <span class="kw" style="color: #003B4F;
 background-color: null;
@@ -2531,13 +2536,13 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">from</span> {{this}}</span>
 <span id="cb7-48">  )</span>
-<span id="cb7-49">{% endif %}</span></code></pre></div>
+<span id="cb7-49">{% endif %}</span></code></pre></div></div>
 </div>
 <p>Note how abstract this query template is. In fact, it completely avoids referencing specific variables in our table.<sup>10</sup> If we should decide to go back and add more fields (for example, actual and predicted recoveries) into our upstream models, they will receive the correct post-processing and validation as long as they are named appropriately.</p>
 <p>For a peak under the hood, here’s how those two macros work.</p>
 <p>First, <code>get_column_names()</code> simply queries the databases’ built in <a href="https://en.wikipedia.org/wiki/Information_schema"><code>INFORMATION_SCHEMA</code></a><sup>11</sup> to collect all column names of a given table. In the case of the <code>model_monitor.sql</code> script, the table provided is the staging table (<code>model_monitor_staging</code>) which was made in the previous step.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1">{% macro get_column_names(relation) %}</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1">{% macro get_column_names(relation) %}</span>
 <span id="cb8-2"></span>
 <span id="cb8-3">{% <span class="kw" style="color: #003B4F;
 background-color: null;
@@ -2627,11 +2632,11 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span>(results_list) }}</span>
 <span id="cb8-19"></span>
-<span id="cb8-20">{% endmacro %}</span></code></pre></div>
+<span id="cb8-20">{% endmacro %}</span></code></pre></div></div>
 </div>
 <p>Next, the <code>get_matches()</code> macro simply iterates through a list of characters (such as the column names obtained in the previous step) and appends only those that match our regex to the final list that is returned.<sup>12</sup> <sup>13</sup> (Thanks to <a href="https://twitter.com/dsmd4vid">David Sanchez</a> on the <code>dbt</code> Slack community for helping me figure out how to call the <code>re</code> library from within Jinja.)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1">{% macro get_matches(input_list, regex) %}</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1">{% macro get_matches(input_list, regex) %}</span>
 <span id="cb9-2"></span>
 <span id="cb9-3">{% <span class="kw" style="color: #003B4F;
 background-color: null;
@@ -2664,7 +2669,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">return</span>(results_list) }}</span>
 <span id="cb9-11"></span>
-<span id="cb9-12">{% endmacro %}</span></code></pre></div>
+<span id="cb9-12">{% endmacro %}</span></code></pre></div></div>
 </div>
 <p>These macros live in the <a href="https://github.com/emilyriederer/dbt-convo-covid/tree/main/macros"><code>macros/</code> directory</a> of the repository.</p>
 </section>
@@ -2674,7 +2679,7 @@ font-style: inherit;">return</span>(results_list) }}</span>
 <p><code>dbt</code>’s testing framework allows for testing any data model in the project – not just the final table. This is very useful to intercept errors as soon as they happen instead of trying to backtrack from bad output many steps later. Some tests are built-in but others can be custom written as SQL <code>SELECT</code> statements.</p>
 <p>Built-in tests for properties of individual columns include <code>unique</code>, <code>not_null</code>, and <code>relationship</code><sup>14</sup>. These can be implemented in the <code>schema.yml</code> configuration file under the <code>tests</code> key-value pair for each relevant column, and can sometimes be shared across models with the YAML <code>&amp;</code> and <code>*</code> (as shown below with the same <code>basetest</code> checks being applied to the <code>actual</code> and <code>prediction</code> data models) which allows for naming and repeating blocks (think copy-paste). However, even with a relatively small number of tests and columns, its cumbersome and easy to overlook a column.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">version</span><span class="kw" style="color: #003B4F;
 background-color: null;
@@ -3584,13 +3589,13 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"ind_county_hpsa = 1"</span></span></code></pre></div>
+font-style: inherit;">"ind_county_hpsa = 1"</span></span></code></pre></div></div>
 </div>
 <p>Instead, developers may also define custom tests as SQL <code>SELECT</code> statements which returns only records that fail the test. Like data models, tests may also use Jinja and macros. This allows us to abstract some of our data validation tests to target all variables with a specific naming convention (and, thus, performance contract) at any arbitrary point in the pipeline.</p>
 <p>For example, in the <code>model_monitor</code> data model shown in the last section, we explicitly cast all variables that start with <code>n</code> to be integers. However, before we do this, we should probably ensure that these fields are truly “integer-like”; otherwise, if we are casting values that have unexpected fractional components, we are simply masking inaccurate data.</p>
 <p>The following test checks whether the <code>n</code> variables in the <code>model_monitor_staging</code> table (before casting) are sufficiently “integer like”. It first retrieves all fields in this tables, next subsets all field names only to those with <code>n</code> prefixes, and finally uses Jinja to create a SQL script with separate <code>WHERE</code> conditions to check if the absolute difference between each <code>n</code> variable and its value after being cast to an integer is ever greater than 0.01 (which would imply a violation.)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1">{% <span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1">{% <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">set</span> cols <span class="op" style="color: #5E5E5E;
@@ -3656,11 +3661,11 @@ font-style: inherit;">or</span> </span>
 <span id="cb11-9">   <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">FALSE</span></span></code></pre></div>
+font-style: inherit;">FALSE</span></span></code></pre></div></div>
 </div>
 <p>We can apply the same trick to testing more conditions on the final table. For example, the following test checks whether every <code>prop</code> variable is truly bounded between 0 and 1 (by returning any times where this is <em>not</em> the case.)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1">{% <span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1">{% <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">set</span> cols <span class="op" style="color: #5E5E5E;
@@ -3725,11 +3730,11 @@ font-style: inherit;">or</span> </span>
 background-color: null;
 font-weight: bold;
 font-style: inherit;">FALSE</span></span>
-<span id="cb12-10">   </span></code></pre></div>
+<span id="cb12-10">   </span></code></pre></div></div>
 </div>
 <p>Finally, we may also use tests to ensure our naming conventions are upheld. The following script once again calls the <code>INFORMATION_SCHEMA</code> table (as did our <code>get_column_names()</code> macro) to obtain a table with one record for each column name in the final table. It next uses the <code>regexp_extract()</code> SQL function with capturing groups to create separate columns (<code>l1</code>, <code>l2</code>, <code>l3</code>) for each underscore-delimited section of the naming. Finally, the <code>WHERE</code> conditions filter the output for any stubs that do not match the convention.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">with</span> cols <span class="kw" style="color: #003B4F;
@@ -3873,12 +3878,12 @@ font-style: inherit;">'hpsa'</span>,<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'pred'</span>, <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'actl'</span>)</span></code></pre></div>
+font-style: inherit;">'actl'</span>)</span></code></pre></div></div>
 </div>
 <p>We could further extend the script above and impose a <em>hierarchy</em> on our controlled vocabulary by adding additional conditions to the <code>WHERE</code> clause. For example, since the <code>HPSA</code> stub only makes sense as a suffix to <code>COUNTY</code> (e.g.&nbsp;there’s no such thing as a health professional shortage area <em>case</em> or <em>death</em>), we could add the additional condition <code>or (l3 = 'hpsa' and not l2 = 'county')</code>.</p>
 <p>Similarly, we can query the <code>INFORMATION_SCHEMA</code> to validate that each column has its implied data type.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">with</span> cols_type <span class="kw" style="color: #003B4F;
@@ -4030,7 +4035,7 @@ font-style: inherit;">not</span> data_type <span class="op" style="color: #5E5E5
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'DATE'</span>)</span></code></pre></div>
+font-style: inherit;">'DATE'</span>)</span></code></pre></div></div>
 </div>
 <p>As with our <code>model_monitor.sql</code> data model, the beauty of these tests is that they have abstracted away the column names themselves. So, they will continue to test all of the correct pieces of intent regardless of whether columns are added or removed from the table. Like macros, these could also be put into a package so that the same tests could be applied to all tables in a database.</p>
 <p>The code for these tests, and a few more similar examples, are located in the <a href="https://github.com/emilyriederer/dbt-convo-covid/tree/main/tests"><code>tests/</code> directory</a> of the repository. They can be run on the command line with the <code>dbt test</code> command.</p>
@@ -4039,7 +4044,7 @@ font-style: inherit;">'DATE'</span>)</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="sample-output">Sample Output</h2>
 <p>To conclude, I show a few top rows of output from the final model monitoring table:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
@@ -4054,11 +4059,11 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">limit</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span></span></code></pre></div>
+font-style: inherit;">5</span></span></code></pre></div></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 3%">
 <col style="width: 3%">
@@ -4247,7 +4252,7 @@ font-style: inherit;">5</span></span></code></pre></div>
 <p>Although this post primarily focuses on uses of <code>dbt</code> to help data producers apply controlled vocabularies, dbt also provides an interesting framework for transitioning projects to data consumers with the use of their <a href="https://docs.getdbt.com/docs/building-a-dbt-project/analyses">Analyses</a> feature. Analyses are additional SQL script templates that are not sent to the database to produce tables or views.Instead, running <code>dbt compile</code> simply renders these scripts for use in analyses or BI tools.</p>
 <p>For example of an “analysis”, and as another example of templating in action, the following script uses our published table to compute the percent difference between actual observations and each prediction.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span></span>
@@ -4330,11 +4335,11 @@ background-color: null;
 font-style: inherit;">'model_monitor'</span>) }} <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">as</span> mm</span></code></pre></div>
+font-style: inherit;">as</span> mm</span></code></pre></div></div>
 </div>
 <p>It compiles to:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span></span>
@@ -4663,7 +4668,7 @@ background-color: null;
 font-style: inherit;">302611</span>`.`dbt_emily`.`model_monitor` <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">as</span> mm</span></code></pre></div>
+font-style: inherit;">as</span> mm</span></code></pre></div></div>
 </div>
 
 

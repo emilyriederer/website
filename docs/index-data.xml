@@ -54,6 +54,7 @@
 
 
 
+
 <p>So, you build a great predictive model. <em>Now what</em>?</p>
 <p><a href="https://mlops.community/">MLOps</a> is hard. Deploying a model involves different tools, skills, and risks than model development. This dooms some data science projects to die on their creator’s hard drive.</p>
 <p>Tools like <code>dbt</code> and <code>SQLMesh</code> entered the scene to solve a similar problem for data analysts. These tools offer an opinionatee frameowrk for organizing multiple related SQL scripts into fully tested, orchestrated, and version conotrolled projects. Data analysts can deliver end-to-end pipelines by applying their existing business context, SQL experience, and database modeling<sup>1</sup> acumen into existing infrastructure, resulting in the rise of “analytics engineering”.</p>
@@ -74,7 +75,7 @@
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-R and python compatibility
+<span class="screen-reader-only">Note</span>R and python compatibility
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -174,7 +175,7 @@ R and python compatibility
 <p>The sample IBM data is provided as “one big table”, so I <a href="https://github.com/emilyriederer/orbital-exploration/blob/main/dbt_orb_demo/setup/prep-seeds.py">break things up</a> to look a bit more like normalized database data representing subscription information, billing information, demographics, and churn targets. I also add a few columns to simulate different months, censor data I want to pretend is in the future, and add a few data errors for fun.</p>
 <p>Here’s a preview of the resulting tables, connected by a <code>customer_id</code> primary key:</p>
 <div id="fd49b6b8" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
 <span id="cb1-2"><span class="im" style="color: #00769E;
@@ -213,14 +214,14 @@ font-style: inherit;">'demo'</span>).pl()</span>
 background-color: null;
 font-style: inherit;">=</span> con.table(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'chrn'</span>).pl()</span></code></pre></div>
+font-style: inherit;">'chrn'</span>).pl()</span></code></pre></div></div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Services Enrolled</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Billing Information</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Demographics</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Churn</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">Services Enrolled</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Billing Information</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Demographics</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false" href="">Churn</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <div id="3392b80b" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">df_serv.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">df_serv.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 12
@@ -242,7 +243,7 @@ $ dt_renewal        &lt;date&gt; 2025-07-01, 2025-07-01, 2025-07-01, 2025-07-01,
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
 <div id="bef8abfd" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">df_bill.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">df_bill.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 6
@@ -258,7 +259,7 @@ $ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1
 </div>
 <div id="tabset-1-3" class="tab-pane" aria-labelledby="tabset-1-3-tab">
 <div id="76140c3e" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">df_demo.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">df_demo.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 5
@@ -273,7 +274,7 @@ $ dependents     &lt;str&gt; 'No', 'No', 'No', 'No', 'No', 'No', 'Yes', 'No', 'N
 </div>
 <div id="tabset-1-4" class="tab-pane" aria-labelledby="tabset-1-4-tab">
 <div id="70ba30c9" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df_chrn.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">df_chrn.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 7043
 Columns: 2
@@ -293,7 +294,7 @@ $ churn       &lt;str&gt; 'No', 'No', 'Yes', 'No', 'Yes', 'Yes', 'No', 'No', 'Ye
 <div id="321ca8cb" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Pipeline to orbital</summary>
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># build pipeline(s)</span></span>
 <span id="cb10-2"></span>
@@ -465,7 +466,7 @@ font-style: inherit;">=</span> orbital.export_sql(tbl, orb_ppl_pred, dialect<spa
 background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"duckdb"</span>)</span></code></pre></div>
+font-style: inherit;">"duckdb"</span>)</span></code></pre></div></div>
 </details>
 </div>
 <section id="features" class="level4">
@@ -511,7 +512,7 @@ font-style: inherit;">"duckdb"</span>)</span></code></pre></div>
 <div id="f3f49349" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Cleaning function definition</summary>
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> sqlglot</span>
 <span id="cb11-2"><span class="im" style="color: #00769E;
@@ -813,7 +814,7 @@ font-style: inherit;">'"TBL_REF"'</span>, ref_str) </span>
 <span id="cb11-74">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> sql_fnl</span></code></pre></div>
+font-style: inherit;">return</span> sql_fnl</span></code></pre></div></div>
 </details>
 </div>
 <p>I run the SQL generated from both <code>ppl_feat</code> and <code>ppl_rafo</code> through this function before writing them to <code>models/churn_model/prep_feat.sql</code> and <code>models/churn_model/pred_churn.sql</code> in my <a href="https://github.com/emilyriederer/orbital-exploration/tree/main/dbt_orb_demo/models/churn_model"><code>dbt</code> <code>models/</code> directory</a>.</p>
@@ -834,7 +835,7 @@ font-style: inherit;">return</span> sql_fnl</span></code></pre></div>
 <h3 class="anchored" data-anchor-id="datamart-preview">Datamart Preview</h3>
 <p>Below, we can tour the resulting datasets:</p>
 <div id="b2ea61bd" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
 <span id="cb12-2"><span class="im" style="color: #00769E;
@@ -878,14 +879,14 @@ font-style: inherit;">'main_snapshots.pred_churn_snapshot'</span>).pl()</span>
 background-color: null;
 font-style: inherit;">=</span> con.table(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'main_audit.accepted_values_serv_internet_service__DSL__Fiber_optic__No'</span>).pl()</span></code></pre></div>
+font-style: inherit;">'main_audit.accepted_values_serv_internet_service__DSL__Fiber_optic__No'</span>).pl()</span></code></pre></div></div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" aria-controls="tabset-2-1" aria-selected="true">Raw Training Data</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" aria-controls="tabset-2-2" aria-selected="false">Prepared Features</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" aria-controls="tabset-2-3" aria-selected="false">Predictions</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" aria-controls="tabset-2-4" aria-selected="false">Snapshots</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" aria-controls="tabset-2-5" aria-selected="false">Failures</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" aria-controls="tabset-2-1" aria-selected="true" href="">Raw Training Data</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" aria-controls="tabset-2-2" aria-selected="false" href="">Prepared Features</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" aria-controls="tabset-2-3" aria-selected="false" href="">Predictions</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" aria-controls="tabset-2-4" aria-selected="false" href="">Snapshots</a></li><li class="nav-item"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" aria-controls="tabset-2-5" aria-selected="false" href="">Failures</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" aria-labelledby="tabset-2-1-tab">
 <div id="ccd80876" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df_feat.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">df_feat.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 21
@@ -916,7 +917,7 @@ $ total_charges     &lt;f64&gt; 29.85, 1889.5, 108.15, 1840.75, 151.65, 820.5, 1
 </div>
 <div id="tabset-2-2" class="tab-pane" aria-labelledby="tabset-2-2-tab">
 <div id="ca44dedc" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df_prep.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df_prep.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 47
@@ -973,7 +974,7 @@ $ model_version                              &lt;str&gt; '1.0', '1.0', '1.0', '1
 </div>
 <div id="tabset-2-3" class="tab-pane" aria-labelledby="tabset-2-3-tab">
 <div id="20932f04" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df_pred.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">df_pred.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 3
@@ -987,7 +988,7 @@ $ model_version &lt;str&gt; '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.0', '1.
 <div id="tabset-2-4" class="tab-pane" aria-labelledby="tabset-2-4-tab">
 <p>Score versioned and timestamped predictions from snapshots for auditability.</p>
 <div id="69ab0cd9" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">df_snap.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1">df_snap.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 6944
 Columns: 7
@@ -1005,7 +1006,7 @@ $ dbt_valid_to   &lt;datetime[μs]&gt; 9999-12-31 00:00:00, 9999-12-31 00:00:00,
 <div id="tabset-2-5" class="tab-pane" aria-labelledby="tabset-2-5-tab">
 <p>What happens when the <code>internet_service</code> field is recoded in production data from “Fiber optic” to “Fiber” after training? If we are checking for <code>accepted_values</code>, we capture that change in our failures table before scoring on bad data!</p>
 <div id="a775d800" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">df_fail.glimpse()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">df_fail.glimpse()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 1
 Columns: 2
@@ -1094,6 +1095,7 @@ $ n_records   &lt;i64&gt; 48
 
 
 
+
 <section id="quick-links" class="level2">
 <h2 class="anchored" data-anchor-id="quick-links">Quick Links</h2>
 <p><span><i class="bi bi-mic"></i> <a href="https://casualinfer.libsyn.com/site.pdf">Podcast Episode</a> </span></p>
@@ -1117,8 +1119,9 @@ $ n_records   &lt;i64&gt; 48
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Slides</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span></p>
@@ -1150,6 +1153,7 @@ $ n_records   &lt;i64&gt; 48
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/data-discovery-ad-hoc/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1266,6 +1270,7 @@ from invoices;</code></pre>
 
 
 
+
 <p>We’ve all worked with poorly documented dataset, and we all know it isn’t pretty. However, it’s surprisingly easy for teams to continue to fall into “documentation debt” and deprioritize this foundational work in favor of flashy new projects. These tradeoff discussions may become even more painful in 2024 as teams are continually asked to do more with less.</p>
 <p>Recently, I had the opportunity to articulate some of the underappreciated benefits of data documentation in a <a href="https://www.selectstar.com/blog/why-you-need-data-documentation-in-2024">cross-post with Select Star</a>. This builds on my prior post showing that <a href="../..\post/docs-closer-than-you-think/">documentation can be strategically created throughout the data development process</a>. To make the case for taking those “raw” documentation resources to a polished final form, I return to the jobs-to-be-done framework that I’ve previously employed to talk about <a href="../..\post/team-of-packages/">the value of innersource packages</a>. In this perspective, documentation is like hiring an extra resource (or more!) to your team.</p>
 <p>Some of the jobs discussed are:</p>
@@ -1305,6 +1310,7 @@ from invoices;</code></pre>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/docs-closer-than-you-think/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1353,6 +1359,7 @@ from invoices;</code></pre>
 
 
 
+
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
 <p>In October, I joined a Halloween-themed panel along with Chad Sanderson and Joe Reis to discuss our horror stories of data quality gone wrong and how to build successful data quality strategies in large organizations. Key takeaways are summarized on <a href="https://www.montecarlodata.com/blog-scary-data-quality-stories-7-tips-for-preventing-your-own-data-downtime-nightmare/">Monte Carlo’s blog</a>.</p>
@@ -1374,8 +1381,9 @@ from invoices;</code></pre>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false" href="">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
@@ -1409,6 +1417,7 @@ from invoices;</code></pre>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/causal-data/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1510,8 +1519,9 @@ from invoices;</code></pre>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false" href="">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
@@ -1552,6 +1562,7 @@ from invoices;</code></pre>
 
 
 
+
 <p><img src="https://emilyriederer.com/post/abstraction-airbyte/featured.PNG" class="img-fluid"></p>
 <p>I previously shared the first in my three-part series of guest posts on Airbyte’s developer blog about ETL. The first focused on errors in data extraction. The next two focused on the countless, small decisions one makes when loading data, and finally the DataOps burden to keep things up-and-running.</p>
 <p>This post serves only to serve as a quick reference to those posts:</p>
@@ -1577,6 +1588,7 @@ from invoices;</code></pre>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/abstraction-extraction/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1622,6 +1634,7 @@ from invoices;</code></pre>
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/grouping-data-quality-crosspost/featured.jpg" class="img-fluid figure-img"></p>
@@ -1649,8 +1662,9 @@ from invoices;</code></pre>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false">Video</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Slides</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" aria-controls="tabset-1-4" aria-selected="false" href="">Video</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-file-bar-graph"></i> <a href="slides.pdf">Slides</a> </span><br>
@@ -1688,6 +1702,7 @@ from invoices;</code></pre>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/duckdb-carolina/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1737,7 +1752,7 @@ from invoices;</code></pre>
 <p>To explain, we’ll first level-set with a brief demo of some of the most relevant features of <code>DuckDB</code>.</p>
 <p>Suppose we have flat files of data, like a <code>sample.csv</code> (just many orders of magnitude larger!)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
 background-color: null;
@@ -1769,24 +1784,24 @@ background-color: null;
 font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">9</span>]})</span>
-<span id="cb1-3">df.head()</span></code></pre></div>
+<span id="cb1-3">df.head()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   a  b  c
 0  1  4  7
 1  2  5  8
 2  3  6  9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">df.to_csv(<span class="st" style="color: #20794D;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">df.to_csv(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'sample.csv'</span>, index <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">False</span>)</span></code></pre></div>
+font-style: inherit;">False</span>)</span></code></pre></div></div>
 </div>
 <p><code>DuckDB</code> can directly infer it’s schema and read it in a SQL-like interface by using functions like <code>read_csv_auto()</code> in the <code>FROM</code> clause.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
 <span id="cb4-2">con <span class="op" style="color: #5E5E5E;
@@ -1799,18 +1814,18 @@ background-color: null;
 font-style: inherit;">=</span> con.execute(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"select * from read_csv_auto('sample.csv')"</span>).fetchdf()</span>
-<span id="cb4-4">df.head()</span></code></pre></div>
+<span id="cb4-4">df.head()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   a  b  c
 0  1  4  7
 1  2  5  8
 2  3  6  9</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">con.close()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">con.close()</span></code></pre></div></div>
 </div>
 <p>While very useful, this is of course bulky to type. We may also set-up a persistent DuckDB database as a <code>.duckdb</code> file as save tables with CTAS statements, as with any normal relational database. Below, we create the <code>sample-db.duckdb</code> database and add one table and one view with our data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">con <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">con <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> duckdb.<span class="ex" style="color: null;
 background-color: null;
@@ -1822,24 +1837,24 @@ background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"create or replace table sample as (select * from read_csv_auto('sample.csv'));"</span></span>
-<span id="cb7-3">con.execute(ctas)</span></code></pre></div>
+<span id="cb7-3">con.execute(ctas)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;duckdb.DuckDBPyConnection object at 0x0000000030026F70&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">cvas <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">cvas <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"create or replace view sample_vw as (select * from read_csv_auto('sample.csv'));"</span> </span>
-<span id="cb9-2">con.execute(cvas)</span></code></pre></div>
+<span id="cb9-2">con.execute(cvas)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;duckdb.DuckDBPyConnection object at 0x0000000030026F70&gt;</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">con.close()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">con.close()</span></code></pre></div></div>
 </div>
 <p>Now, suppose the data in <code>sample.csv</code> changes (now with 4 rows versus 3).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">df <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">df <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> pd.DataFrame({<span class="st" style="color: #20794D;
 background-color: null;
@@ -1878,11 +1893,11 @@ font-style: inherit;">'sample.csv'</span>, index <span class="op" style="color: 
 background-color: null;
 font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">False</span>)</span></code></pre></div>
+font-style: inherit;">False</span>)</span></code></pre></div></div>
 </div>
 <p>Our table stored the data directly within the database (“disconnected” from the file) so it remains the same as before whereas our view changed.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">con <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">con <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> duckdb.<span class="ex" style="color: null;
 background-color: null;
@@ -1900,12 +1915,12 @@ font-style: inherit;">=</span> con.execute(<span class="st" style="color: #20794
 background-color: null;
 font-style: inherit;">"select count(1) from sample_vw"</span>).fetchdf()</span>
 <span id="cb13-4">con.close()</span>
-<span id="cb13-5">df1.head()</span></code></pre></div>
+<span id="cb13-5">df1.head()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   count(1)
 0         3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df2.head()</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">df2.head()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   count(1)
 0         4</code></pre>
@@ -1940,7 +1955,7 @@ font-style: inherit;">"select count(1) from sample_vw"</span>).fetchdf()</span>
 <p><a href="https://duckdb.org/docs/guides/import/parquet_export">Conversion from CSV to Parquet</a> itself can be done with DuckDB. However, as of writing, I don’t believe that writing to a Hive-partitioned dataset is possible, so for this step, I used <code>pyarrow</code>, the python interface to <a href="https://arrow.apache.org/">Apache Arrow</a> (another promising, memory-conserving data processing framework.)</p>
 <p>This snippet from <a href="https://raw.githubusercontent.com/emilyriederer/nc-votes-duckdb/master/etl/transform-register.py">etl/transform-register.py</a> demonstrates streaming a CSV by chunk and writing it out to county-level partitions:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># convert to hive-partitioned parquet</span></span>
 <span id="cb17-2"><span class="cf" style="color: #003B4F;
@@ -2001,12 +2016,12 @@ background-color: null;
 font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'county_id'</span>]</span>
-<span id="cb17-19">        )</span></code></pre></div>
+<span id="cb17-19">        )</span></code></pre></div></div>
 </div>
 <p>(Notably: counties are rather imbalanced in size and not the most important geography in many election contexts. This is for example purpose only, but partitions should always be picked based on how you expect to use the data. )</p>
 <p>Once all the data in transformed, we can “load” our DuckDB database with relative-path references to our data. Again, this step can be done through any DuckDB API or the command line. Below, I use python in the <a href="https://github.com/emilyriederer/nc-votes-duckdb/blob/master/etl/load-db.py">etl/load-db.py</a> to create the <code>nc.duckdb</code> database and create references to the different datasets.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
 <span id="cb18-2"><span class="im" style="color: #00769E;
@@ -2155,7 +2170,7 @@ background-color: null;
 font-style: inherit;">=</span> opt)</span>
 <span id="cb18-30">  con.execute(cvas)</span>
 <span id="cb18-31"></span>
-<span id="cb18-32">con.close()</span></code></pre></div>
+<span id="cb18-32">con.close()</span></code></pre></div></div>
 </div>
 <p>Similarly, other views could be defined as desired that query these views to do further data transformation.</p>
 </section>
@@ -2171,7 +2186,7 @@ font-style: inherit;">=</span> opt)</span>
 <section id="python" class="level3">
 <h3 class="anchored" data-anchor-id="python">python</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> duckdb</span>
 <span id="cb19-2">con <span class="op" style="color: #5E5E5E;
@@ -2186,13 +2201,13 @@ background-color: null;
 font-style: inherit;">=</span> con.execute(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'select count(1) from early_vote'</span>).fetchdf()</span>
-<span id="cb19-4">con.close()</span></code></pre></div>
+<span id="cb19-4">con.close()</span></code></pre></div></div>
 </div>
 </section>
 <section id="r" class="level3">
 <h3 class="anchored" data-anchor-id="r">R</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">library</span>(duckdb)</span>
 <span id="cb20-2">con <span class="ot" style="color: #003B4F;
@@ -2217,7 +2232,7 @@ font-style: inherit;">dbDisconnect</span>(con, <span class="at" style="color: #6
 background-color: null;
 font-style: inherit;">shutdown =</span> <span class="cn" style="color: #8f5902;
 background-color: null;
-font-style: inherit;">TRUE</span>)</span></code></pre></div>
+font-style: inherit;">TRUE</span>)</span></code></pre></div></div>
 </div>
 </section>
 <section id="cli" class="level3">
@@ -2337,6 +2352,7 @@ order by 1,2
 
 
 
+
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://emilyriederer.com/post/nulls-polyglot/featured.jpg" class="img-fluid figure-img"></p>
@@ -2355,7 +2371,7 @@ order by 1,2
 <section id="tldr" class="level2">
 <h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
 <p>A summary of these different behaviors is provided below:</p>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th style="text-align: center;"></th>
@@ -2428,7 +2444,7 @@ order by 1,2
 <p>In both cases, nulls are used in the <code>'AMT_*'</code> fields to denote zeros for the respective <code>month x store_id</code> combinations`.</p>
 <p>To calculate something as simple as the average gross spend per store across months, an analyst might attempt to write:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> </span>
@@ -2457,8 +2473,8 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span></span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">1</span></span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">store_id</th>
@@ -2486,7 +2502,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 <p>Instead of measuring “average monthly spend in Q1 by store”, we’re measuring “averaging monthly spend in Q1 by store <em>conditional on</em> there being spend”.</p>
 <p>To obtain the correct result, one would write:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> </span>
@@ -2556,8 +2572,8 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span></span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">1</span></span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">store_id</th>
@@ -2595,7 +2611,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 <p>With a better understand of gross sales, the analyst might next proceed to compute net sales.</p>
 <p>This first requires joining the <code>spend</code> and <code>returns</code> tables. Naively, they might attempt:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> </span>
@@ -2632,8 +2648,8 @@ font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">month</span></span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">month</span></span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">STORE_ID</th>
@@ -2686,7 +2702,7 @@ font-style: inherit;">month</span></span></code></pre></div>
 <p>Once again, this isn’t a “random” or inconsequential error. Continuing to use this corrupted dataset changes the computand from “net sales by month” to “net sales by month at physical retail locations”.</p>
 <p>To remedy this, we can force <code>store_id</code> to take on a value:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span></span>
@@ -2731,8 +2747,8 @@ font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">month</span></span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">month</span></span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">STORE_ID</th>
@@ -2801,7 +2817,7 @@ font-style: inherit;">month</span></span></code></pre></div>
 </div>
 <p>And next we proceed with computing sales by month net of returns across all stores:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span></span>
@@ -2871,8 +2887,8 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span></span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">1</span></span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">month</th>
@@ -2897,7 +2913,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 </div>
 <p>However, by now, you should not be surprised that this result is also incorrect. If we inspect the sequence of computations, we realize that SQL is also stricter in its null handing in <em>rowwise computations</em> than <em>column-wise aggregations</em>. The subtraction of <code>amt_spend</code> and <code>amt_return</code> obliterates the total when either is null. So, we fail to include the gross spend at Store 1 in January simply because there were no returns (and vice versa for Internet sales in March).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span></span>
@@ -2950,8 +2966,8 @@ font-style: inherit;">month</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> returns.<span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">month</span></span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">month</span></span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">month</th>
@@ -3030,7 +3046,7 @@ font-style: inherit;">month</span></span></code></pre></div>
 </div>
 <p>A few ways to get the correct answer are shown below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span></span>
@@ -3118,8 +3134,8 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">by</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span></span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">1</span></span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">month</th>
@@ -3164,7 +3180,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 <h3 class="anchored" data-anchor-id="aggregation">Aggregation</h3>
 <p>SQL, as we saw before, simply ignores nulls in aggregation functions.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> </span>
@@ -3196,8 +3212,8 @@ font-style: inherit;">as</span> n_null_x</span>
 <span id="cb10-4"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">from</span> tbl</span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">from</span> tbl</span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">sum_x</th>
@@ -3214,7 +3230,7 @@ font-style: inherit;">from</span> tbl</span></code></pre></div>
 </div>
 <p>Built by and for statistician’s, R is scandalized at the very idea of attempting to do math with null columns. For aggregation functions, it returns <code>NA</code> as a form of protest should any entry of the vector provided be null. (This can be overridden with the <code>na.rm</code> parameter.)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">x <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">x <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -3244,12 +3260,12 @@ font-style: inherit;">summarize</span>(df, <span class="at" style="color: #65742
 background-color: null;
 font-style: inherit;">x =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">sum</span>(x))</span></code></pre></div>
+font-style: inherit;">sum</span>(x))</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NA</code></pre>
 </div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">x</th>
@@ -3265,7 +3281,7 @@ font-style: inherit;">sum</span>(x))</span></code></pre></div>
 </div>
 <p>When it comes to python, well, it depends. Base and <code>numpy</code> operations act more like R whereas <code>pandas</code> aggregation acts more like SQL.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
 background-color: null;
@@ -3308,7 +3324,7 @@ font-style: inherit;">sum</span>(x)</span>
 background-color: null;
 font-style: inherit;">'x'</span>: [<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'sum'</span>]})</span></code></pre></div>
+font-style: inherit;">'sum'</span>]})</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>nan
 nan
@@ -3322,7 +3338,7 @@ sum  3.0</code></pre>
 <p>All of SQL, R, and python return NA when <code>NA</code>s are used in atomic or rowwise transformations.</p>
 <p>In SQL:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
@@ -3336,8 +3352,8 @@ font-style: inherit;">as</span> z</span>
 <span id="cb15-2"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">from</span> tbl</span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">from</span> tbl</span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">x</th>
@@ -3366,7 +3382,7 @@ font-style: inherit;">from</span> tbl</span></code></pre></div>
 </div>
 <p>In R:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1">df <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1">df <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -3408,9 +3424,9 @@ background-color: null;
 font-style: inherit;">with</span>(df, x<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span>y)</span>
-<span id="cb16-5">df</span></code></pre></div>
+<span id="cb16-5">df</span></code></pre></div></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">x</th>
@@ -3436,7 +3452,7 @@ font-style: inherit;">-</span>y)</span>
 </tr>
 </tbody>
 </table>
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">x</th>
@@ -3466,7 +3482,7 @@ font-style: inherit;">-</span>y)</span>
 </div>
 <p>In python:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">np.array(x) <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1">np.array(x) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span> np.array(y)</span>
 <span id="cb17-2">df.assign(z <span class="op" style="color: #5E5E5E;
@@ -3476,7 +3492,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">lambda</span> d: d.x <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">-</span> d.y)</span></code></pre></div>
+font-style: inherit;">-</span> d.y)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>array([-2., -2., nan])
      x  y    z
@@ -3492,7 +3508,7 @@ font-style: inherit;">-</span> d.y)</span></code></pre></div>
 <p>As we saw in the case study, SQL does not match on nulls.</p>
 <p>Consider <code>tbl1</code> and <code>tbl2</code> as shown below:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
@@ -3500,8 +3516,8 @@ background-color: null;
 font-style: inherit;">*</span> <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">from</span> tbl1</span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">from</span> tbl1</span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">A</th>
@@ -3519,7 +3535,7 @@ font-style: inherit;">from</span> tbl1</span></code></pre></div>
 </table>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
@@ -3527,8 +3543,8 @@ background-color: null;
 font-style: inherit;">*</span> <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">from</span> tbl2</span></code></pre></div>
-<table class="table table-sm table-striped small">
+font-style: inherit;">from</span> tbl2</span></code></pre></div></div>
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">A</th>
@@ -3547,7 +3563,7 @@ font-style: inherit;">from</span> tbl2</span></code></pre></div>
 </div>
 <p>Attempts to join return no results:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> tbl1.<span class="op" style="color: #5E5E5E;
@@ -3576,8 +3592,8 @@ font-weight: bold;
 font-style: inherit;">and</span> </span>
 <span id="cb21-6">  tbl1.B <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> tbl2.B</span></code></pre></div>
-<table>
+font-style: inherit;">=</span> tbl2.B</span></code></pre></div></div>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th style="text-align: right;">A</th>
@@ -3592,7 +3608,7 @@ font-style: inherit;">=</span> tbl2.B</span></code></pre></div>
 </div>
 <p>In contrast, default behavior for base R’s <code>merge</code> and <code>dplyr</code> <em>does match</em> on nulls. (Although, either behavior can be altered with the <code>incomparables</code> or <code>na_matches</code> arguments, respectively.)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1">df1 <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1">df1 <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -3649,9 +3665,9 @@ font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"A"</span>, <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"B"</span>))</span></code></pre></div>
+font-style: inherit;">"B"</span>))</span></code></pre></div></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">A</th>
@@ -3669,7 +3685,7 @@ font-style: inherit;">"B"</span>))</span></code></pre></div>
 </tr>
 </tbody>
 </table>
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: right;">A</th>
@@ -3691,7 +3707,7 @@ font-style: inherit;">"B"</span>))</span></code></pre></div>
 </div>
 <p>Similarly, <code>pandas</code> also matches on nulls for joining.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -3737,7 +3753,7 @@ font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'A'</span>,<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'B'</span>])</span></code></pre></div>
+font-style: inherit;">'B'</span>])</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   A   B     X      Y
 0  1 NaN  True  False</code></pre>
@@ -3746,22 +3762,22 @@ font-style: inherit;">'B'</span>])</span></code></pre></div>
 <p><code>R</code> and <code>python</code>’s behavior here seems most surprising. One might expect joining to work the same as raw logical evaluation works. However, neither language “likes” null comparison in its raw form. Instead, the default behavior is intentionally altered in these higher-level joining functions.</p>
 <p>In R:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><span class="cn" style="color: #8f5902;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><span class="cn" style="color: #8f5902;
 background-color: null;
 font-style: inherit;">NA</span> <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> <span class="cn" style="color: #8f5902;
 background-color: null;
-font-style: inherit;">NA</span></span></code></pre></div>
+font-style: inherit;">NA</span></span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] NA</code></pre>
 </div>
 </div>
 <p>In python:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1">np.nan <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1">np.nan <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">==</span> np.nan</span></code></pre></div>
+font-style: inherit;">==</span> np.nan</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>False</code></pre>
 </div>
@@ -3772,7 +3788,7 @@ font-style: inherit;">==</span> np.nan</span></code></pre></div>
 <p>Finally, both SQL and R drop null records used in filtering statements since comparisons with these values are incapable of returning a TRUE/FALSE value that is used to subset the rows. In python, however, pandas does preserve nulls in filter conditions.</p>
 <p>Using the same <code>tbl1</code> shown above, we can also confirm that SQL proactively drops nulls in where clauses where they cannot be readily compared to non-null values. This seems quite consistent with its behavior in the joining case.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb29-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">select</span> A, B, X </span>
@@ -3787,8 +3803,8 @@ font-style: inherit;">where</span> B <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span></span></code></pre></div>
-<table>
+font-style: inherit;">1</span></span></code></pre></div></div>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th style="text-align: right;">a</th>
@@ -3802,7 +3818,7 @@ font-style: inherit;">1</span></span></code></pre></div>
 </div>
 <p>Both base R and <code>dplyr</code> paradigms follow suit here.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1">df1 <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1">df1 <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -3834,9 +3850,9 @@ font-style: inherit;">filter</span>(df1, B <span class="sc" style="color: #5E5E5
 background-color: null;
 font-style: inherit;">!=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">1</span>)</span></code></pre></div>
+font-style: inherit;">1</span>)</span></code></pre></div></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped small">
+<table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -3854,7 +3870,7 @@ font-style: inherit;">1</span>)</span></code></pre></div>
 </tr>
 </tbody>
 </table>
-<table>
+<table class="caption-top">
 <thead>
 <tr class="header">
 <th style="text-align: right;">A</th>
@@ -3869,7 +3885,7 @@ font-style: inherit;">1</span>)</span></code></pre></div>
 </div>
 <p>However, bucking the trend, multiple approaches to subsetting <code>pandas</code> data will not drop nulls in filtering comparisons.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1">df1 <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1">df1 <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> pd.DataFrame([[<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -3891,7 +3907,7 @@ background-color: null;
 font-style: inherit;">1</span>]</span>
 <span id="cb31-3">df1.query(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
+font-style: inherit;">'B != 1'</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   A   B     X
 0  1 NaN  True
@@ -3923,6 +3939,7 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/grouping-data-quality-update/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -3996,8 +4013,9 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
 
 
 
+
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false">Listen</a></li></ul>
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">Quick Links</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">Abstract</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" aria-controls="tabset-1-3" aria-selected="false" href="">Listen</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
 <p><span><i class="bi bi-play"></i> <a href="https://www.dataengineeringpodcast.com/controlled-vocabulary-with-dbtplyr-episode-252/">Pod</a> </span><br>
@@ -4027,6 +4045,7 @@ font-style: inherit;">'B != 1'</span>)</span></code></pre></div>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/shiny-db/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -4065,7 +4084,7 @@ sslmode  : require</code></pre>
 <h3 class="anchored" data-anchor-id="connecting-to-the-database">Connecting to the database</h3>
 <p>We can use the connection parameters provided to connect to the database using R’s <code>DBI</code> package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">con <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">con <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -4100,7 +4119,7 @@ font-style: inherit;">"abc123"</span>,</span>
 background-color: null;
 font-style: inherit;">port     =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">25060</span>)</span></code></pre></div>
+font-style: inherit;">25060</span>)</span></code></pre></div></div>
 </div>
 <p>We will talk about ways to not hardcode one’s password in the last section.</p>
 </section>
@@ -4110,7 +4129,7 @@ font-style: inherit;">25060</span>)</span></code></pre></div>
 <p>If you know SQL DDL, you can write a <a href="https://www.tutorialspoint.com/sql_certificate/using_ddl_statements.html">CREATE TABLE statement</a> which defines a tables names, fields, and data types. However, this can feel verbose or uncomfortable to analysts who mostly use DML (e.g.&nbsp;<code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>).</p>
 <p>Fortunately, you can also define a table using R’s <code>DBI</code> package. First, create a simple dataframe with a single record to help R infer the appropriate and expected data types. Then pass the first <em>zero</em> rows of the table (essentially, only the schema) to <code>DBI::dbCreateTable()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">df <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">df <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -4143,11 +4162,11 @@ font-style: inherit;">fields =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">head</span>(df, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0</span>))</span></code></pre></div>
+font-style: inherit;">0</span>))</span></code></pre></div></div>
 </div>
 <p>To prove that this works, I show a “round trip” of the data using an in-memory SQLite database. Note that this is <em>not</em> an option for persistent storage because in-memory databases are not persistent. This is only to “prove” that this approach can create database tables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">con_lite <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">con_lite <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -4198,17 +4217,17 @@ font-style: inherit;">0</span>))</span>
 background-color: null;
 font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">dbListTables</span>(con_lite)</span></code></pre></div>
+font-style: inherit;">dbListTables</span>(con_lite)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "my_data"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">DBI<span class="sc" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">DBI<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">dbReadTable</span>(con_lite, <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"my_data"</span>)</span></code></pre></div>
+font-style: inherit;">"my_data"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] x y z
 &lt;0 rows&gt; (or 0-length row.names)</code></pre>
@@ -4221,7 +4240,7 @@ font-style: inherit;">"my_data"</span>)</span></code></pre></div>
 <p>Once your database is set-up and ready to go, you can begin to integrate it into your application.</p>
 <p>I was using the <a href="https://thinkr-open.github.io/golem/"><code>golem</code> framework</a> for my application, so I connected to the database and made the initial data pull by adding the following lines in my top-level <code>app_server.R</code> file.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">con <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">con <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -4234,7 +4253,7 @@ font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">dbReadTable</span>(con, <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"my_data"</span>)</span></code></pre></div>
+font-style: inherit;">"my_data"</span>)</span></code></pre></div></div>
 </div>
 <p>The custom <code>db_con()</code> function contains <em>roughly</em> the <code>DBI::dbConnect()</code> code we saw above, but I turned it into a function to incorporate some added complexity which I will describe shortly.</p>
 <p>Most of the rest of my application uses Shiny modules, and this connection object and initial data pull can be seamless passed into either.</p>
@@ -4265,7 +4284,7 @@ font-style: inherit;">"my_data"</span>)</span></code></pre></div>
 <p>No matter how safe the data itself is, it still may be at risk if anyone can obtain our database credentials.</p>
 <p>Previously, I demonstrated how to connect to a database from R like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">con <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">con <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -4300,11 +4319,11 @@ font-style: inherit;">"abc123"</span>,</span>
 background-color: null;
 font-style: inherit;">port     =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">25060</span>)</span></code></pre></div>
+font-style: inherit;">25060</span>)</span></code></pre></div></div>
 </div>
 <p>However, you should never ever put your password in plaintext like this. Instead, you can use <em>environment variables</em> to store the value of sensitive credentials like a password or even a username like this:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">con <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">con <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> DBI<span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -4341,7 +4360,7 @@ font-style: inherit;">"DB_PASS"</span>),</span>
 background-color: null;
 font-style: inherit;">port     =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">25060</span>)</span></code></pre></div>
+font-style: inherit;">25060</span>)</span></code></pre></div></div>
 </div>
 <p>Then, you can define that same environment variable more securely in <a href="https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/">within the App Platform</a>.</p>
 </section>
@@ -4364,7 +4383,7 @@ txtSQL = "SELECT * FROM Users WHERE UserId = " + txtUserId;</code></pre>
 <p>To accomplish this, I wrapped my database connection in a custom <code>db_con()</code> function that checks if the app is running in development or production (using <code>golem::app_prod()</code> which in turn checks the <code>R_CONFIG_ACTIVE</code> environment variable) and connects to different databases in either case. In the development case, it creates an in-memory SQLite database and remakes the empty table.</p>
 <p>(Another alternative to creating the database on-the-fly is to <a href="https://datacarpentry.org/R-ecology-lesson/05-r-and-databases.html#Creating_a_new_SQLite_database">pre-make a SQLite database</a> saved to a <code>.sqlite</code> file and connect to that. But for this example, my sample table is so simple, creating it manually takes a negligible amount of time and keeps things quite readable, so I left it as-is.)</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">db_con <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">db_con <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
 background-color: null;
@@ -4481,7 +4500,7 @@ font-style: inherit;">"my_data"</span>, df)</span>
 background-color: null;
 font-style: inherit;">return</span>(con)</span>
 <span id="cb12-22">  </span>
-<span id="cb12-23">}</span></code></pre></div>
+<span id="cb12-23">}</span></code></pre></div></div>
 </div>
 </section>
 <section id="managing-connections" class="level3">

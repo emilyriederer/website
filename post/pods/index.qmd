@@ -1,0 +1,76 @@
+---
+title: "Skills for humans: 25 data-adjacent podcast recommendations"
+description: "Skills help our agents know that certain bodies of knowledge exist and enable them to go deeper when needed. I use podcasts for the same effect. In our fragmented data-sphere, it's harder that ever to keep up. In this post, I share 25 shows I follow to source new ideas."
+author: "Emily Riederer"
+date: "2026-07-05"
+categories: []
+image: "featured.jpg"
+---
+
+![ Photo credit [C D-X](https://unsplash.com/@cdx2) on Unsplash](featured.jpg)
+
+A deeply relatable aspect of agentic coding is their use of progressive disclosure in skills and references. Most of my career successes have come from integrating ideas or approaches from unrelated disciplines. As a result, I'm enjoy foraging for information and constantly surveying the landscape. I may not have the full "skill" in my "context", but I try to always add new ideas to my mental index so I can dig deeper when I suspect there's a high probability of relevance. 
+
+For me, one major vector of this foraging in listening to podcasts. I listen to podcasts like it is my full-time job^[Almost literally. I tend to listen >2.5 hours a day at 2.5x speed, or nearly 2300 hours/year, versus 2400 hours/year spent working 50 hours/week * 48 weeks/year.]. Especially in our post-"data Twitter" world, they have become one of my most reliable sources of new ideas. Of course, being audio and "unskimmable", podcasts have lower discoverability and require a greater time commitment to separate out the good from the mediocre. 
+
+Below, I list out 25 shows that allows get my attention when they cross my feed with a brief description on why you might want to reference each. 
+
+## Statistical Modeling and Experimentation
+
+These shows tend to provide deep and technical discussions of modeling techniques. Most come from academia or the biostats since many industries where modeling *is* the competitive advantage are more hesitant to share their methodologies. 
+
+- [In the Interim...](https://podcasts.apple.com/us/podcast/in-the-interim/id1796598706): Pragmatic discussions of clinical trial design and analysis from Berry Consultants. This show excels and putting statistical methods in conversation with pragmatic constraints of solving real problems (trial funding, ethics, quantifying success)
+- [Learning Bayesian Statistics](https://podcasts.apple.com/us/podcast/learning-bayesian-statistics/id1501066708): Deep dives from Bayesian practitioners in wildly diverse fields
+- [Casual Inference](https://podcasts.apple.com/us/podcast/casual-inference/id1485892859): Energetic and engaging conversations about applying causal methods, pulling both from the authors' own research and interviews with practitioners
+- [Serious EPI](https://podcasts.apple.com/us/podcast/serious-epi/id1520680479): This show also goes deep discussion causal and epidemiological methods. The past few seasons have focused on stepping through epidemiology textbooks chapter-by-chapter
+
+## Data and Analytics Engineering 
+
+These shows center new tools and companies in the data engineering ecosystem. Whether or not you are "on the market" for tools, this provides great insight into the key challenges and frameworks that exist to solve different problems. 
+
+- [The Analytics Engineering Podcast](https://podcasts.apple.com/us/podcast/the-analytics-engineering-podcast/id1574755368): Wide-ranging discussions from dbt Labs with different data engineering leaders
+- [The Data Engineering Podcast](https://podcasts.apple.com/us/podcast/data-engineering-podcast/id1193040557): From the prolific Tobias Macey, each episode interviews a data practitioner on a novel approach or tool in the data engineering space. I especially appreciate the attention on describing the key problem the tool solves in a vendor-agnostic way and the always-on questions about when it is *not* the right tool for the job and the biggest gaps in data engineering
+
+## Data Culture / Practitioners 
+
+These shows tend to focus deep and thoughtful interviews with practitioners and provide a real sense of what "doing data" really means. I do not attempt to describe them one-at-a-time as they are more interview-driven and vary by guest.
+
+- [The Test Set](https://podcasts.apple.com/us/podcast/the-test-set-by-posit/id1823736938)
+- [Causal Bandits](https://podcasts.apple.com/us/podcast/causal-bandits-podcast/id1653303318)
+- [Data Renegades](https://podcasts.apple.com/us/podcast/data-renegades/id1855131080)
+- [Talk Python to Me](https://podcasts.apple.com/us/podcast/talk-python-to-me-python-software-development/id979020229)
+
+## Artificial Intelligence
+
+AI is moving fast, but it can be hard to separate out the signal from the noise. These shows tend to avoid the hype and offer pragmatic discussions of legitimate challenges and opportunities in the space. 
+
+- [Practical AI](https://podcasts.apple.com/us/podcast/practical-ai-machine-learning-data-science/id1400603716): News, commentary, and interviews on developments in AI
+- [Vanishing Gradients](https://podcasts.apple.com/us/podcast/vanishing-gradients/id1610318868): Deep-dive interviews with practitioners
+- [Latent Space](https://podcasts.apple.com/us/podcast/latent-space-the-ai-engineer-podcast/id1674008350)
+- [The Data Exchange](https://podcasts.apple.com/us/podcast/the-data-exchange-podcast/id1472505299)
+- [High Signal](https://podcasts.apple.com/us/podcast/high-signal-b2b-saas-marketing-and-founder-stories/id1685955610)
+
+## General Technology / Language "Digests"
+
+These shows discuss aspects of general language evolution (new tools and trends) and the craft of engineering at large. 
+
+- [R Weekly](https://podcasts.apple.com/us/podcast/r-weekly-highlights/id1514757187): Live summary of the R Weekly newsletter
+- [The Real Python Podcast](https://podcasts.apple.com/us/podcast/the-real-python-podcast/id1501905538): Round-up of new articles on Real Python and the surrounding community
+- [Thoughtworks](https://podcasts.apple.com/us/podcast/thoughtworks-podcasts/id1059439242): General discussion of engineering topics
+- [Maintainable](https://podcasts.apple.com/us/podcast/maintainable/id1443686915): Interviews with software engineers with a focus on open-source maintainers
+
+## Fintech
+
+Podcasts are always a great way to learn about the industry in which you work and understand what matters to the business. In addition to fintech / consumer finance, I enjoy keeping up with the insurance industry since the two fields have many parallels. 
+
+- [Fintech Takes](https://podcasts.apple.com/us/podcast/fintech-takes/id1661141731): Wide-ranging discussions of industry trends (e.g. funding rounds), product trends, deep dives (e.g. cashflow underwriting), and the evolving regulatory landscape
+- [Consumer Finance Monitor](https://podcasts.apple.com/us/podcast/consumer-finance-monitor/id1435221062): Law firm advising consumer finance clients, providing a perspective on regulatory topics and business opportunities (e.g. different banking charter models)
+- [Actuary Voices](https://podcasts.apple.com/us/podcast/actuary-voices/id1494056262): Interviews with those in actuarial science and the broader insurance field
+
+## Adjacent Domains
+
+Of course, quite a lot of being good at data is remaining tethered to the real world. These shows help me stay grounded in product design (or philosophically, focusing on end users), real-world markets, and the broader consequences of tech work. 
+
+- [Lenny's Podcast](https://podcasts.apple.com/us/podcast/lennys-podcast-product-growth-career/id1627920305): Thought-provoking discussions on product management, user experience, and strategy. This mentality is critical for data practitioners as well to keep us honest about leading with a real problem.
+- [Odd Lots](https://podcasts.apple.com/us/podcast/odd-lots/id1056200096): Fascinating deep dives across all different sectors and industries. The range of this podcast is wide (from AI, supply chain, all sorts of niche industries) but builds a "business sense" of how our economic fabric is woven that myopic data scientists often lack. Plus, they're guaranteed to cover your industry eventually. Months ago, I stopped mid-run to text my colleagues after hearing a CEO discuss his company's *unhinged* (according to me) approach to the exact problem we were facing. 
+- [Tech Policy Press](https://podcasts.apple.com/us/podcast/tech-policy-press/id1552554702): Weekly overviews of trends in legislation and regulation related to broader tech. Many topics hit on algorithmic and data privacy regulation, as a good reminder of the responsibility borne by our field. 

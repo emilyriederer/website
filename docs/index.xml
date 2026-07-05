@@ -12,7 +12,7 @@
 <generator>quarto-1.8.26</generator>
 <lastBuildDate>Sun, 05 Jul 2026 05:00:00 GMT</lastBuildDate>
 <item>
-  <title>Skills for humans: 25 data-adjacent podcast recommendations</title>
+  <title>Skills for humans: 24 data-adjacent podcast recommendations</title>
   <dc:creator>Emily Riederer</dc:creator>
   <link>https://emilyriederer.com/post/pods/</link>
   <description><![CDATA[ 
@@ -28,9 +28,9 @@
 <figcaption>Photo credit <a href="https://unsplash.com/@cdx2">C D-X</a> on Unsplash</figcaption>
 </figure>
 </div>
-<p>A deeply relatable aspect of agentic coding is their use of progressive disclosure in skills and references. Most of my career successes have come from integrating ideas or approaches from unrelated disciplines. As a result, I’m enjoy foraging for information and constantly surveying the landscape. I may not have the full “skill” in my “context”, but I try to always add new ideas to my mental index so I can dig deeper when I suspect there’s a high probability of relevance.</p>
-<p>For me, one major vector of this foraging in listening to podcasts. I listen to podcasts like it is my full-time job<sup>1</sup>. Especially in our post-“data Twitter” world, they have become one of my most reliable sources of new ideas. Of course, being audio and “unskimmable”, podcasts have lower discoverability and require a greater time commitment to separate out the good from the mediocre.</p>
-<p>Below, I list out 25 shows that allows get my attention when they cross my feed with a brief description on why you might want to reference each.</p>
+<p>A deeply relatable aspect of agentic coding is their use of progressive disclosure in skills and references. Most of my career successes have come from integrating ideas or approaches from unrelated disciplines. As a result, I’m enjoy foraging for information and surveying the landscape. I may not have the full “skill” in my “context”, but I try to always add new ideas to my mental index so I can dig deeper when I suspect there’s a high probability of relevance.</p>
+<p>For me, one major vector of this foraging in listening to podcasts. I listen to podcasts like it is my full-time job<sup>1</sup>. Especially in our post-“data Twitter” world, they have become one of my most reliable sources of new ideas. Of course, being audio and “unskimmable”, podcasts have lower discoverability and require a greater time commitment to separate out the good from the mediocre. Believe it or not, despite the length this <em>is</em> a curated list (although I avoid “naming and shaming” those that didn’t make the cut because YMMV.) But whether or not you listen end-to-end, it can be almost equally instructive seeing what topics are being covered.</p>
+<p>Below, I list out 29 shows that allows get my attention when they cross my feed with a brief description on why you might want to reference each. 24 are general-purpose data, engingeering, and technology while the last 5 are more domain-specific for my current work in fintech.</p>
 <section id="statistical-modeling-and-experimentation" class="level2">
 <h2 class="anchored" data-anchor-id="statistical-modeling-and-experimentation">Statistical Modeling and Experimentation</h2>
 <p>These shows tend to provide deep and technical discussions of modeling techniques. Most come from academia or the biostats since many industries where modeling <em>is</em> the competitive advantage are more hesitant to share their methodologies.</p>
@@ -78,24 +78,29 @@
 <li><a href="https://podcasts.apple.com/us/podcast/the-real-python-podcast/id1501905538">The Real Python Podcast</a>: Round-up of new articles on Real Python and the surrounding community</li>
 <li><a href="https://podcasts.apple.com/us/podcast/thoughtworks-podcasts/id1059439242">Thoughtworks</a>: General discussion of engineering topics</li>
 <li><a href="https://podcasts.apple.com/us/podcast/maintainable/id1443686915">Maintainable</a>: Interviews with software engineers with a focus on open-source maintainers</li>
+<li><a href="https://podcasts.apple.com/us/podcast/the-pragmatic-engineer/id1769051199">The Pragmatic Engineer</a>: You’ve likely seen Gergely Orsoz’s content on the software engineer profession and career path across social media. Here, he goes deeper with practitioners on what they are buidling and experiencing in the industry<br>
+</li>
+<li><a href="https://podcasts.apple.com/us/podcast/hanselminutes-with-scott-hanselman/id117488860">Hanselminute with Scott Hanselman</a>: More great interviews hosted by an industry veteran</li>
 </ul>
 </section>
-<section id="fintech" class="level2">
-<h2 class="anchored" data-anchor-id="fintech">Fintech</h2>
-<p>Podcasts are always a great way to learn about the industry in which you work and understand what matters to the business. In addition to fintech / consumer finance, I enjoy keeping up with the insurance industry since the two fields have many parallels.</p>
-<ul>
-<li><a href="https://podcasts.apple.com/us/podcast/fintech-takes/id1661141731">Fintech Takes</a>: Wide-ranging discussions of industry trends (e.g.&nbsp;funding rounds), product trends, deep dives (e.g.&nbsp;cashflow underwriting), and the evolving regulatory landscape</li>
-<li><a href="https://podcasts.apple.com/us/podcast/consumer-finance-monitor/id1435221062">Consumer Finance Monitor</a>: Law firm advising consumer finance clients, providing a perspective on regulatory topics and business opportunities (e.g.&nbsp;different banking charter models)</li>
-<li><a href="https://podcasts.apple.com/us/podcast/actuary-voices/id1494056262">Actuary Voices</a>: Interviews with those in actuarial science and the broader insurance field</li>
-</ul>
-</section>
-<section id="adjacent-domains" class="level2">
-<h2 class="anchored" data-anchor-id="adjacent-domains">Adjacent Domains</h2>
+<section id="complementary-fields" class="level2">
+<h2 class="anchored" data-anchor-id="complementary-fields">Complementary Fields</h2>
 <p>Of course, quite a lot of being good at data is remaining tethered to the real world. These shows help me stay grounded in product design (or philosophically, focusing on end users), real-world markets, and the broader consequences of tech work.</p>
 <ul>
 <li><a href="https://podcasts.apple.com/us/podcast/lennys-podcast-product-growth-career/id1627920305">Lenny’s Podcast</a>: Thought-provoking discussions on product management, user experience, and strategy. This mentality is critical for data practitioners as well to keep us honest about leading with a real problem.</li>
 <li><a href="https://podcasts.apple.com/us/podcast/odd-lots/id1056200096">Odd Lots</a>: Fascinating deep dives across all different sectors and industries. The range of this podcast is wide (from AI, supply chain, all sorts of niche industries) but builds a “business sense” of how our economic fabric is woven that myopic data scientists often lack. Plus, they’re guaranteed to cover your industry eventually. Months ago, I stopped mid-run to text my colleagues after hearing a CEO discuss his company’s <em>unhinged</em> (according to me) approach to the exact problem we were facing.</li>
 <li><a href="https://podcasts.apple.com/us/podcast/tech-policy-press/id1552554702">Tech Policy Press</a>: Weekly overviews of trends in legislation and regulation related to broader tech. Many topics hit on algorithmic and data privacy regulation, as a good reminder of the responsibility borne by our field.</li>
+</ul>
+</section>
+<section id="domain-specific-fintech" class="level2">
+<h2 class="anchored" data-anchor-id="domain-specific-fintech">Domain Specific (Fintech)</h2>
+<p>Finally, podcasts are always a great way to learn about the industry in which you work and understand what matters to the business. For me, that means learning about fintech / consumer finance. I also enjoy keeping up with the insurance industry since the two fields have many parallels.</p>
+<ul>
+<li><a href="https://podcasts.apple.com/us/podcast/fintech-takes/id1661141731">Fintech Takes</a>: Wide-ranging discussions of industry trends (e.g.&nbsp;funding rounds), product trends, deep dives (e.g.&nbsp;cashflow underwriting), and the evolving regulatory landscape</li>
+<li><a href="https://podcasts.apple.com/us/podcast/the-free-toaster/id1788975428">The Free Toaster</a>: Fintech industry news and deep dives specifically around the acquisitions marketing funnel. This is a unique space in fintech due to high CAC, laws restricting data use, selection dynamics, and slow reads on LTV</li>
+<li><a href="https://podcasts.apple.com/us/podcast/consumer-finance-monitor/id1435221062">Consumer Finance Monitor</a>: Law firm advising consumer finance clients, providing a perspective on regulatory topics and business opportunities (e.g.&nbsp;different banking charter models)</li>
+<li><a href="https://podcasts.apple.com/us/podcast/the-future-of-insurance/id1566053333">The Future of Insurance</a>: Interviews with insurance leaders with a strong emphasis on how new technologies and data are changing the industry’s legacy practices</li>
+<li><a href="https://podcasts.apple.com/us/podcast/actuary-voices/id1494056262">Actuary Voices</a>: Interviews with those in actuarial science and the broader insurance field</li>
 </ul>
 
 

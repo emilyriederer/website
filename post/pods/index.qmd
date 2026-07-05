@@ -1,5 +1,5 @@
 ---
-title: "Skills for humans: 25 data-adjacent podcast recommendations"
+title: "Skills for humans: 24 data-adjacent podcast recommendations"
 description: "Skills help our agents know that certain bodies of knowledge exist and enable them to go deeper when needed. I use podcasts for the same effect. In our fragmented data-sphere, it's harder that ever to keep up. In this post, I share 25 shows I follow to source new ideas."
 author: "Emily Riederer"
 date: "2026-07-05"
@@ -9,11 +9,11 @@ image: "featured.jpg"
 
 ![ Photo credit [C D-X](https://unsplash.com/@cdx2) on Unsplash](featured.jpg)
 
-A deeply relatable aspect of agentic coding is their use of progressive disclosure in skills and references. Most of my career successes have come from integrating ideas or approaches from unrelated disciplines. As a result, I'm enjoy foraging for information and constantly surveying the landscape. I may not have the full "skill" in my "context", but I try to always add new ideas to my mental index so I can dig deeper when I suspect there's a high probability of relevance. 
+A deeply relatable aspect of agentic coding is their use of progressive disclosure in skills and references. Most of my career successes have come from integrating ideas or approaches from unrelated disciplines. As a result, I'm enjoy foraging for information and surveying the landscape. I may not have the full "skill" in my "context", but I try to always add new ideas to my mental index so I can dig deeper when I suspect there's a high probability of relevance. 
 
-For me, one major vector of this foraging in listening to podcasts. I listen to podcasts like it is my full-time job^[Almost literally. I tend to listen >2.5 hours a day at 2.5x speed, or nearly 2300 hours/year, versus 2400 hours/year spent working 50 hours/week * 48 weeks/year.]. Especially in our post-"data Twitter" world, they have become one of my most reliable sources of new ideas. Of course, being audio and "unskimmable", podcasts have lower discoverability and require a greater time commitment to separate out the good from the mediocre. 
+For me, one major vector of this foraging in listening to podcasts. I listen to podcasts like it is my full-time job^[Almost literally. I tend to listen >2.5 hours a day at 2.5x speed, or nearly 2300 hours/year, versus 2400 hours/year spent working 50 hours/week * 48 weeks/year.]. Especially in our post-"data Twitter" world, they have become one of my most reliable sources of new ideas. Of course, being audio and "unskimmable", podcasts have lower discoverability and require a greater time commitment to separate out the good from the mediocre. Believe it or not, despite the length this *is* a curated list (although I avoid "naming and shaming" those that didn't make the cut because YMMV.) But whether or not you listen end-to-end, it can be almost equally instructive seeing what topics are being covered.  
 
-Below, I list out 25 shows that allows get my attention when they cross my feed with a brief description on why you might want to reference each. 
+Below, I list out 29 shows that allows get my attention when they cross my feed with a brief description on why you might want to reference each. 24 are general-purpose data, engingeering, and technology while the last 5 are more domain-specific for my current work in fintech. 
 
 ## Statistical Modeling and Experimentation
 
@@ -58,19 +58,23 @@ These shows discuss aspects of general language evolution (new tools and trends)
 - [The Real Python Podcast](https://podcasts.apple.com/us/podcast/the-real-python-podcast/id1501905538): Round-up of new articles on Real Python and the surrounding community
 - [Thoughtworks](https://podcasts.apple.com/us/podcast/thoughtworks-podcasts/id1059439242): General discussion of engineering topics
 - [Maintainable](https://podcasts.apple.com/us/podcast/maintainable/id1443686915): Interviews with software engineers with a focus on open-source maintainers
+- [The Pragmatic Engineer](https://podcasts.apple.com/us/podcast/the-pragmatic-engineer/id1769051199): You've likely seen Gergely Orsoz's content on the software engineer profession and career path across social media. Here, he goes deeper with practitioners on what they are buidling and experiencing in the industry  
+- [Hanselminute with Scott Hanselman](https://podcasts.apple.com/us/podcast/hanselminutes-with-scott-hanselman/id117488860): More great interviews hosted by an industry veteran
 
-## Fintech
-
-Podcasts are always a great way to learn about the industry in which you work and understand what matters to the business. In addition to fintech / consumer finance, I enjoy keeping up with the insurance industry since the two fields have many parallels. 
-
-- [Fintech Takes](https://podcasts.apple.com/us/podcast/fintech-takes/id1661141731): Wide-ranging discussions of industry trends (e.g. funding rounds), product trends, deep dives (e.g. cashflow underwriting), and the evolving regulatory landscape
-- [Consumer Finance Monitor](https://podcasts.apple.com/us/podcast/consumer-finance-monitor/id1435221062): Law firm advising consumer finance clients, providing a perspective on regulatory topics and business opportunities (e.g. different banking charter models)
-- [Actuary Voices](https://podcasts.apple.com/us/podcast/actuary-voices/id1494056262): Interviews with those in actuarial science and the broader insurance field
-
-## Adjacent Domains
+## Complementary Fields
 
 Of course, quite a lot of being good at data is remaining tethered to the real world. These shows help me stay grounded in product design (or philosophically, focusing on end users), real-world markets, and the broader consequences of tech work. 
 
 - [Lenny's Podcast](https://podcasts.apple.com/us/podcast/lennys-podcast-product-growth-career/id1627920305): Thought-provoking discussions on product management, user experience, and strategy. This mentality is critical for data practitioners as well to keep us honest about leading with a real problem.
 - [Odd Lots](https://podcasts.apple.com/us/podcast/odd-lots/id1056200096): Fascinating deep dives across all different sectors and industries. The range of this podcast is wide (from AI, supply chain, all sorts of niche industries) but builds a "business sense" of how our economic fabric is woven that myopic data scientists often lack. Plus, they're guaranteed to cover your industry eventually. Months ago, I stopped mid-run to text my colleagues after hearing a CEO discuss his company's *unhinged* (according to me) approach to the exact problem we were facing. 
 - [Tech Policy Press](https://podcasts.apple.com/us/podcast/tech-policy-press/id1552554702): Weekly overviews of trends in legislation and regulation related to broader tech. Many topics hit on algorithmic and data privacy regulation, as a good reminder of the responsibility borne by our field. 
+
+## Domain Specific (Fintech)
+
+Finally, podcasts are always a great way to learn about the industry in which you work and understand what matters to the business. For me, that means learning about fintech / consumer finance. I also enjoy keeping up with the insurance industry since the two fields have many parallels. 
+
+- [Fintech Takes](https://podcasts.apple.com/us/podcast/fintech-takes/id1661141731): Wide-ranging discussions of industry trends (e.g. funding rounds), product trends, deep dives (e.g. cashflow underwriting), and the evolving regulatory landscape
+- [The Free Toaster](https://podcasts.apple.com/us/podcast/the-free-toaster/id1788975428): Fintech industry news and deep dives specifically around the acquisitions marketing funnel. This is a unique space in fintech due to high CAC, laws restricting data use, selection dynamics, and slow reads on LTV
+- [Consumer Finance Monitor](https://podcasts.apple.com/us/podcast/consumer-finance-monitor/id1435221062): Law firm advising consumer finance clients, providing a perspective on regulatory topics and business opportunities (e.g. different banking charter models)
+- [The Future of Insurance](https://podcasts.apple.com/us/podcast/the-future-of-insurance/id1566053333): Interviews with insurance leaders with a strong emphasis on how new technologies and data are changing the industry's legacy practices 
+- [Actuary Voices](https://podcasts.apple.com/us/podcast/actuary-voices/id1494056262): Interviews with those in actuarial science and the broader insurance field
